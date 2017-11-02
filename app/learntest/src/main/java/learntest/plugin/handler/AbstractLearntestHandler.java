@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jface.viewers.ISelection;
@@ -211,7 +212,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	/* END PLUGIN HANDLER */
 
-	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
+	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params, CompilationUnit cu) {
 		try {
 			
 			log.info("");
@@ -238,12 +239,14 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			l2tParams.setApproach(LearnTestApproach.L2T);
 			l2tParams.setInitialTests(null);
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
+			l2tParams.setCu(cu);
 			l2tAverageInfo = runLearntest(l2tAverageInfo, l2tParams);
 
 			log.info("run randoop..");
 			randoopParam.setApproach(LearnTestApproach.RANDOOP);
 			randoopParam.setInitialTests(l2tParams.getInitialTests());
 			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
+			randoopParam.setCu(cu);
 			ranAverageInfo = runLearntest(ranAverageInfo, randoopParam);
 
 			TargetMethod method = params.getTargetMethod();
@@ -471,6 +474,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		}
 		String fullName = targetMethod.getMethodFullName();
 		int line = targetMethod.getLineNum();
+		System.out.println(fullName + "." + line);
 		if (set.contains(fullName + "." + line)) {
 			return true;
 		}

@@ -168,7 +168,7 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 				checkJobCancelation(monitor);
 				try {
 					LearnTestParams params = initLearntestParams(targetMethod);
-					Trial trial = evaluateLearntestForSingleMethod(params);
+					Trial trial = evaluateLearntestForSingleMethod(params, null);
 					if (trial != null) {
 						multiTrial.addTrial(trial);
 					}
@@ -210,7 +210,7 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 	}
 
 	@Override
-	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params) {
+	protected Trial evaluateLearntestForSingleMethod(LearnTestParams params, CompilationUnit cu) {
 		try {
 
 			log.info("");

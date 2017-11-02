@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,15 +36,20 @@ import learntest.core.commons.utils.VariableUtils;
 import learntest.core.commons.utils.VariableUtils.VarInfo;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
+import learntest.core.rule.EqualVarRelationShip;
 import learntest.plugin.utils.Settings;
+import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
+import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
+import libsvm.core.Model;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
@@ -62,10 +68,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	protected LearnedDataProcessor dataPreprocessor;
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
-	
-	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
-	List<VarInfo> relevantVars ;
-	private String logFile ;
+
+	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(),
+			branchFalseRecord = new HashMap<>();
+	List<VarInfo> relevantVars;
+	private String logFile;
+
+	private CompilationUnit cu;
 
 	public PrecondDecisionLearner(LearningMediator mediator, String logFile) {
 		super(mediator);
@@ -73,30 +82,31 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		RunTimeInfo.createFile(logFile);
 	}
 
-	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
+	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap)
+			throws SavException {
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
 		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()));
-		
+
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("dominationMap : \n");
 		for (CfgNodeDomainInfo info : dominationMap.values()) {
 			if (!info.dominatees.isEmpty()) {
-				sBuffer.append(info+"\n\n");
+				sBuffer.append(info + "\n\n");
 			}
-		}		
+		}
 		FileUtils.write(logFile, sBuffer.toString());
 		log.info(sBuffer.toString());
 		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
 			this.relevantVars = null;
-		}else {
+		} else {
 			this.relevantVars = VariableUtils.varsTransform(relevantVarMap, inputProbes.getOriginalVars());
 		}
 
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()));
-				
+
 		return probes;
 	}
 
@@ -110,7 +120,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			node = queue.poll();
 			log.debug("parsing the node in line " + node.getLine() + "(" + node + ")");
 
-			// for (CfgNode dominator : CfgUtils.getPrecondInherentDominatee(node))
+			// for (CfgNode dominator :
+			// CfgUtils.getPrecondInherentDominatee(node))
 			// { /** update dominator node's condition*/
 			// if (!visitedNodes.contains(dominator.getIdx())) {
 			// learn(dominator, probes, visitedNodes);
@@ -118,77 +129,99 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			// }
 			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
 			if (needToLearn(nodeProbe)) {
-				List<ExecVar> targetVars ;
+
+				List<ExecVar> targetVars;
+				relevantVars = null;
 				if (relevantVars != null) {
 					targetVars = relevantVars.get(node.getIdx()).getExecVars();
-				}else {
+				} else {
 					targetVars = probes.getOriginalVars();
 				}
-						
 
-				if (targetVars.size()>50) { /** discard those method with too many variables */
-					log.debug("targetVars size is "+targetVars.size() + " > 50, return directly!!!");
+				if (targetVars.size() > 50) { /**
+												 * discard those method with too
+												 * many variables
+												 */
+					log.debug("targetVars size is " + targetVars.size() + " > 50, return directly!!!");
 					return;
 				}
-				
+
 				Pair<OrCategoryCalculator, Boolean> pair = null;
 				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
-				if (loopTimes <100 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
-					/** todo : handle the loop
-					 *  loop header dominate and is dominated by nodes in loop, 
-					 *  thus in order to break the wait lock, loop header should be learned first without learing nodes in loop 
-					 * */
+				if (loopTimes < 100 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
+					/**
+					 * todo : handle the loop loop header dominate and is
+					 * dominated by nodes in loop, thus in order to break the
+					 * wait lock, loop header should be learned first without
+					 * learing nodes in loop
+					 */
 					pair = getPreconditions(probes, node, true);
-				}else {
+				} else {
 					pair = getPreconditions(probes, node, false);
 				}
-				
+
 				if (!pair.second()) {
-					log.debug("to learn the node in line " + node.getLine() + "(" + node + "), its dominator has to be learned before");
+					log.debug("to learn the node in line " + node.getLine() + "(" + node
+							+ "), its dominator has to be learned before");
 					queue.add(node);
 					continue;
 				}
-				log.debug("relevant vars : "+targetVars);
+				log.debug("relevant vars : " + targetVars);
 				OrCategoryCalculator preconditions = pair.first();
-//				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-//				dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
-				if (!dataPreprocessor.sampleForMissingBranch(node, this)){
-					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+				// dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+				// dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
+				EqualVarRelationShip relationShip = null;
+				if ( (relationShip = getHeuristicRule(nodeProbe, cu)) != null) { // heuristic rules help to get condition directly
+					updatePrecondition(nodeProbe, relationShip);
+					
+				} else {
+					if (!dataPreprocessor.sampleForMissingBranch(node, this)) {
+						dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+					}
+
+					updatePrecondition(nodeProbe, preconditions, targetVars);
 				}
-				
-				updatePrecondition(nodeProbe, preconditions, targetVars);
+
 				nodeProbe.getPrecondition().setVisited(true);
-			}else {
+			} else {
 				nodeProbe.getPrecondition().setVisited(true);
 			}
 
 			visitedNodes.add(node.getIdx());
 			List<CfgNode> childDecisonNodes = dominationMap.get(node).getDominatees();
-			
+
 			/**
-			 * handle the situation that first branch node does not dominate fellow branch node
+			 * handle the situation that first branch node does not dominate
+			 * fellow branch node
 			 */
 			for (CfgNode cfgNode : DecisionProbes.getChildDecision(node)) {
 				if (!childDecisonNodes.contains(cfgNode) && !visitedNodes.contains(cfgNode.getIdx())) {
 					childDecisonNodes.add(cfgNode);
 				}
 			}
-			
+
 			childDecisonNodes.sort(new DomainationComparator(dominationMap));
 			for (CfgNode dependentee : CollectionUtils.nullToEmpty(childDecisonNodes)) {
-				if (null != dependentee && !visitedNodes.contains(dependentee.getIdx())&& !queue.contains(dependentee)) {
+				if (null != dependentee && !visitedNodes.contains(dependentee.getIdx())
+						&& !queue.contains(dependentee)) {
 					queue.add(dependentee);
 				}
 			}
-			
+
 			if (queue.isEmpty()) {
 				checkLearnedComplete(visitedNodes, probes.getCfg().getDecisionNodes(), queue);
 			}
 		}
 	}
 
+	private EqualVarRelationShip getHeuristicRule(DecisionNodeProbe nodeProbe, CompilationUnit cu2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/**
 	 * check if all decision nodes are learned, otherwise poll all
+	 * 
 	 * @param visitedNodes
 	 * @param decisionNodes
 	 * @param queue
@@ -197,19 +230,20 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		for (CfgNode cfgNode : decisionNodes) {
 			if (!visitedNodes.contains(cfgNode.getIdx())) {
 				queue.add(cfgNode);
-				log.debug("this node is missed : "+cfgNode);
+				log.debug("this node is missed : " + cfgNode);
 			}
 		}
-		
+
 	}
 
 	private boolean needToLearn(DecisionNodeProbe nodeProbe) {
-//		return !nodeProbe.areAllbranchesUncovered() || nodeProbe.needToLearnPrecond();
+		// return !nodeProbe.areAllbranchesUncovered() ||
+		// nodeProbe.needToLearnPrecond();
 
 		if (!nodeProbe.areAllbranchesUncovered()) {
 			log.debug("All branches are uncovered!");
 			return true;
-		}else {
+		} else {
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
 			for (CfgNode dependentee : dominationMap.get(nodeProbe.getNode()).getDominatees()) {
 				DecisionNodeProbe dependenteeProbe = probes.getNodeProbe(dependentee);
@@ -221,25 +255,39 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		}
 	}
 
-	protected void updatePrecondition(DecisionNodeProbe nodeProbe, OrCategoryCalculator preconditions, List<ExecVar> targetVars) throws SavException {
+	protected void updatePrecondition(DecisionNodeProbe nodeProbe, OrCategoryCalculator preconditions,
+			List<ExecVar> targetVars) throws SavException {
 		/* at this point only 1 branch is missing at most */
 		CoveredBranches coveredType = nodeProbe.getCoveredBranches();
-		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormula(nodeProbe, coveredType, preconditions, targetVars);
-//		Formula oneMore = generateLoopFormula(nodeProbe);
+		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormula(nodeProbe, coveredType, preconditions,
+				targetVars);
+		// Formula oneMore = generateLoopFormula(nodeProbe);
 		Formula truefalseFormula = trueFalseResult == null ? null : trueFalseResult.formula;
 		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
 		nodeProbe.clearCache();
+
+		log.info("final formula : " + truefalseFormula);
+	}
+	
+	protected void updatePrecondition(DecisionNodeProbe nodeProbe,	EqualVarRelationShip relationShip) throws SavException {
 		
-		log.info("final formula : "+ truefalseFormula);
+		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormulaByHerustic(nodeProbe.getDecisionProbes().getOriginalVars(), relationShip);
+		Formula truefalseFormula = trueFalseResult == null ? null : trueFalseResult.formula;
+		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
+		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
+		nodeProbe.clearCache();
+		log.info("final formula : " + truefalseFormula);
 	}
 
-	protected Pair<OrCategoryCalculator, Boolean> getPreconditions(DecisionProbes probes, CfgNode node, boolean isLoopHeader) {
+	protected Pair<OrCategoryCalculator, Boolean> getPreconditions(DecisionProbes probes, CfgNode node,
+			boolean isLoopHeader) {
 		return probes.getPrecondition(node, dominationMap, isLoopHeader);
 	}
 
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
-			CoveredBranches coveredType, OrCategoryCalculator preconditions, List<ExecVar> targetVars) throws SavException {
+			CoveredBranches coveredType, OrCategoryCalculator preconditions, List<ExecVar> targetVars)
+					throws SavException {
 
 		if (!orgNodeProbe.needToLearnPrecond()) {
 			log.debug("no need to learn precondition");
@@ -256,11 +304,11 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 		/* do generate formula and return */
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
-		PositiveSeparationMachine mcm = new LearningMachine(negative);		
+		PositiveSeparationMachine mcm = new LearningMachine(negative);
 		log.info("generate initial formula");
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm, targetVars);
 		double acc = mcm.getModelAccuracy();
-		if (mcm.getDataPoints().size()<=1) {
+		if (mcm.getDataPoints().size() <= 1) {
 			log.info("there is only one data point !!! svm could not learn");
 			return null;
 		}
@@ -286,8 +334,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			log.debug("selective sampling: ");
 			log.debug("original vars: {}, targetVars : {}", probes.getOriginalVars(), targetVars);
 			/* after running sampling, probes will be updated as well */
-			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, orignalVars,
-					preconditions, mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars), logFile);
+			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, orignalVars, preconditions,
+					mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars), logFile);
 			if (sampleResult == null) {
 				log.debug("sampling result is null");
 				continue;
@@ -295,8 +343,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			INodeCoveredData newData = sampleResult.getNewData(nodeProbe);
 			nodeProbe.getPreconditions(preconditions).clearInvalidData(newData);
 			mcm.getLearnedModels().clear();
-			addDataPoint(mcm.getDataLabels(), targetVars,
-					newData.getTrueValues(), newData.getFalseValues(), mcm);
+			addDataPoint(mcm.getDataLabels(), targetVars, newData.getTrueValues(), newData.getFalseValues(), mcm);
 			recordSample(probes, sampleResult, logFile);
 
 			mcm.train();
@@ -317,8 +364,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			}
 
 		}
-		
-		if (trueFlaseFormula != null ) {
+
+		if (trueFlaseFormula != null) {
 			/** record learned formulas */
 			if (!learnedFormulas.containsKey(node)) {
 				learnedFormulas.put(node, new FormulaInfo(node));
@@ -334,149 +381,206 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		return result;
 	}
 
-	private Formula generateInitialFormula(DecisionNodeProbe nodeProbe, PositiveSeparationMachine mcm, List<ExecVar> targetVars)
-			throws SAVExecutionTimeOutException {
-//		DecisionProbes probes = nodeProbe.getDecisionProbes();
-//		mcm.setDefaultParams();
-//		List<String> labels = probes.getLabels();
-//		mcm.setDataLabels(labels);
-//		mcm.setDefaultParams();
-//		addDataPoint(labels, probes.getOriginalVars(), targetVars,
-//				nodeProbe.getTrueValues(), nodeProbe.getFalseValues(), mcm);
-//		mcm.train();
-//		Formula newFormula = mcm.getLearnedMultiFormula(probes.getOriginalVars(), labels);
-		
+	private Formula generateInitialFormula(DecisionNodeProbe nodeProbe, PositiveSeparationMachine mcm,
+			List<ExecVar> targetVars) throws SAVExecutionTimeOutException {
+		// DecisionProbes probes = nodeProbe.getDecisionProbes();
+		// mcm.setDefaultParams();
+		// List<String> labels = probes.getLabels();
+		// mcm.setDataLabels(labels);
+		// mcm.setDefaultParams();
+		// addDataPoint(labels, probes.getOriginalVars(), targetVars,
+		// nodeProbe.getTrueValues(), nodeProbe.getFalseValues(), mcm);
+		// mcm.train();
+		// Formula newFormula =
+		// mcm.getLearnedMultiFormula(probes.getOriginalVars(), labels);
+
 		mcm.setDefaultParams();
-		
+
 		List<String> labels = new LinkedList<>();
 		for (ExecVar var : targetVars) {
 			labels.add(var.getLabel());
 		}
-		
+
 		mcm.setDataLabels(labels);
 		mcm.setDefaultParams();
-		addDataPoint(mcm.getDataLabels(), targetVars,
-				nodeProbe.getTrueValues(), nodeProbe.getFalseValues(), mcm);
+		addDataPoint(mcm.getDataLabels(), targetVars, nodeProbe.getTrueValues(), nodeProbe.getFalseValues(), mcm);
 		mcm.train();
 		Formula newFormula = mcm.getLearnedMultiFormula(targetVars, labels);
 
 		return newFormula;
 	}
 
-	private void addDataPoint(List<String> labels, List<ExecVar> targetVars, Collection<BreakpointValue> trueV, Collection<BreakpointValue> falseV,
-			PositiveSeparationMachine mcm) {
+	private TrueFalseLearningResult generateTrueFalseFormulaByHerustic(List<ExecVar> originalVars, EqualVarRelationShip relationShip) throws SavException {
+		
+		List<String> labels = new LinkedList<>();
+		for (ExecVar var : originalVars) {
+			labels.add(var.getLabel());
+		}
+		List<Divider> dividers = constructDividers(labels, relationShip);
+
+		Formula trueFlaseFormula = null;
+		for (Divider divider : dividers) {
+			Formula current = new FormulaProcessor<ExecVar>(originalVars).process(divider, labels, true);
+			if (trueFlaseFormula == null) {
+				trueFlaseFormula = current;
+			} else {
+				trueFlaseFormula = new AndFormula(trueFlaseFormula, current);
+			}
+		}
+
+		TrueFalseLearningResult result = new TrueFalseLearningResult();
+		result.formula = trueFlaseFormula;
+		result.dividers = dividers;
+		return result;
+	}
+
+	private List<Divider> constructDividers(List<String> labels, EqualVarRelationShip relationShip) {
+		List<Divider> dividers = new LinkedList<>();
+		double[] result1 = new double[labels.size()], result2 = new double[labels.size()];
+		String left = relationShip.getLeft(), right = relationShip.getRight();
+		int indexL = 0, indexR = 0;
+		for (int i = 0; i < labels.size(); i++) {
+			if (labels.get(i).equals(left)) {
+				indexL = i;
+			}else if (labels.get(i).equals(right)) {
+				indexR = i;
+			}
+		}
+		result1[indexL] = 1;
+		result1[indexR] = -1;
+		result2[indexL] = -1;
+		result2[indexR] = 1;
+		
+		Divider divider1 = new Divider(result1, 0), divider2 = new Divider(result2, 0);
+		dividers.add(divider1);
+		dividers.add(divider2);
+		return dividers;
+	}
+
+	private void addDataPoint(List<String> labels, List<ExecVar> targetVars, Collection<BreakpointValue> trueV,
+			Collection<BreakpointValue> falseV, PositiveSeparationMachine mcm) {
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("add data point to svm : =============================\n");
-		sBuffer.append("new data true : "+trueV.size()+" , "+trueV.toString()+"\n");
+		sBuffer.append("new data true : " + trueV.size() + " , " + trueV.toString() + "\n");
 		for (BreakpointValue value : trueV) {
 			addBkp(labels, targetVars, value, Category.POSITIVE, mcm, sBuffer);
 		}
-		sBuffer.append("new data false : "+falseV.size()+" , "+falseV.toString()+"\n");		
+		sBuffer.append("new data false : " + falseV.size() + " , " + falseV.toString() + "\n");
 		for (BreakpointValue value : falseV) {
 			addBkp(labels, targetVars, value, Category.NEGATIVE, mcm, sBuffer);
 		}
 		log.info(sBuffer.toString());
-//		log.info("new data true : "+trueV.size()+" , "+trueV.toString());
-//		log.info("new data false : "+falseV.size()+" , "+falseV.toString());		
+		// log.info("new data true : "+trueV.size()+" , "+trueV.toString());
+		// log.info("new data false : "+falseV.size()+" , "+falseV.toString());
 
 		FileUtils.write(logFile, sBuffer.toString());
 	}
 
-	private void addBkp(List<String> labels, List<ExecVar> targetVars, BreakpointValue bValue, 
-			Category category, Machine machine, StringBuffer sBuffer) {
+	private void addBkp(List<String> labels, List<ExecVar> targetVars, BreakpointValue bValue, Category category,
+			Machine machine, StringBuffer sBuffer) {
 		double[] lineVals = new double[labels.size()];
 		int i = 0;
 		sBuffer.append("(");
 		for (ExecVar var : targetVars) {
-			final Double value ;
+			final Double value;
 			value = bValue.getValue(var.getLabel(), 0.0);
 			lineVals[i++] = value;
-			sBuffer.append(var.getLabel()+":"+value+", ");
+			sBuffer.append(var.getLabel() + ":" + value + ", ");
 		}
 		/** below is about derived vars like x*y */
-//		if (i < labels.size()) {
-//			int size = targetVars.size();
-//			for (int j = 0; j < size; j++) {
-//				 double value = bValue.getValue(targetVars.get(j).getLabel(), 0.0);
-//				for (int k = j + 1; k < size; k++) {
-//					 lineVals[i ++] = value * bValue.getValue(targetVars.get(k).getLabel(), 0.0);
-//				}
-//			}
-//		}
+		// if (i < labels.size()) {
+		// int size = targetVars.size();
+		// for (int j = 0; j < size; j++) {
+		// double value = bValue.getValue(targetVars.get(j).getLabel(), 0.0);
+		// for (int k = j + 1; k < size; k++) {
+		// lineVals[i ++] = value *
+		// bValue.getValue(targetVars.get(k).getLabel(), 0.0);
+		// }
+		// }
+		// }
 		sBuffer.append(")\n");
 		machine.addDataPoint(category, lineVals);
 	}
 
-//	private Formula generateLoopFormula(DecisionNodeProbe nodeProbe) throws SavException {
-//		if (!nodeProbe.getNode().isLoopHeader() || !nodeProbe.getCoveredBranches().coversTrue()) {
-//			return null;
-//		}
-//		log.debug("generate loop formula..");
-//		System.currentTimeMillis();
-//		if (nodeProbe.getOneTimeValues().isEmpty() || nodeProbe.getMoreTimesValues().isEmpty()) {
-//			log.info("Missing once loop data");
-//			return null;
-//		} else if (nodeProbe.getMoreTimesValues().isEmpty()) {
-//			log.info("Missing more than once loop data");
-//			return null;
-//		}
-//		return generateConcreteLoopFormula(nodeProbe);
-//	}
+	// private Formula generateLoopFormula(DecisionNodeProbe nodeProbe) throws
+	// SavException {
+	// if (!nodeProbe.getNode().isLoopHeader() ||
+	// !nodeProbe.getCoveredBranches().coversTrue()) {
+	// return null;
+	// }
+	// log.debug("generate loop formula..");
+	// System.currentTimeMillis();
+	// if (nodeProbe.getOneTimeValues().isEmpty() ||
+	// nodeProbe.getMoreTimesValues().isEmpty()) {
+	// log.info("Missing once loop data");
+	// return null;
+	// } else if (nodeProbe.getMoreTimesValues().isEmpty()) {
+	// log.info("Missing more than once loop data");
+	// return null;
+	// }
+	// return generateConcreteLoopFormula(nodeProbe);
+	// }
 
-//	private Formula generateConcreteLoopFormula(DecisionNodeProbe nodeProbe) throws SavException {
-//		Formula formula = null;
-//		if (nodeProbe.needToLearnPrecond()) {
-//			NegativePointSelection negative = new ByDistanceNegativePointSelection();
-//			PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
-//			formula = generateInitialFormula(nodeProbe, mcm);
-//
-//			int times = 0;
-//			double acc = mcm.getModelAccuracy();
-//			List<ExecVar> originalVars = nodeProbe.getDecisionProbes().getOriginalVars();
-//			List<String> labels = nodeProbe.getDecisionProbes().getLabels();
-//			while (formula != null && times < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
-//
-//				/** record learned formulas */
-//				CfgNode node = nodeProbe.getNode();
-//				if (!learnedFormulas.containsKey(node)) {
-//					learnedFormulas.put(node, new FormulaInfo(node));
-//				}
-//				learnedFormulas.get(node).addLoopFormula(formula.toString(), acc);
-//
-//				SamplingResult samples = dataPreprocessor.sampleForModel(nodeProbe, originalVars,
-//						nodeProbe.getPreconditions(), mcm.getLearnedDividers());
-//				INodeCoveredData newData = samples.getNewData(nodeProbe);
-//				addDataPoints(labels, originalVars, newData.getMoreTimesValues(), Category.POSITIVE, mcm);
-//				addDataPoints(labels, originalVars, newData.getOneTimeValues(), Category.NEGATIVE, mcm);
-//				recordSample(nodeProbe.getDecisionProbes(), samples);
-//				acc = mcm.getModelAccuracy();
-//				if (acc == 1.0) {
-//					break;
-//				}
-//				mcm.train();
-//				Formula tmp = mcm.getLearnedMultiFormula(originalVars, labels);
-//
-//				double accTmp = mcm.getModelAccuracy();
-//				// if (tmp == null) {
-//				// break;
-//				// }
-//				if (!tmp.equals(formula) && accTmp > acc) {
-//					formula = tmp;
-//					acc = accTmp;
-//				} else {
-//					break;
-//				}
-//				times++;
-//			}
-//			
-//			if (formula!=null && acc < 0.5) {
-//				formula = null;
-//			}
-//
-//		}
-//
-//		return formula;
-//	}
+	// private Formula generateConcreteLoopFormula(DecisionNodeProbe nodeProbe)
+	// throws SavException {
+	// Formula formula = null;
+	// if (nodeProbe.needToLearnPrecond()) {
+	// NegativePointSelection negative = new ByDistanceNegativePointSelection();
+	// PositiveSeparationMachine mcm = new PositiveSeparationMachine(negative);
+	// formula = generateInitialFormula(nodeProbe, mcm);
+	//
+	// int times = 0;
+	// double acc = mcm.getModelAccuracy();
+	// List<ExecVar> originalVars =
+	// nodeProbe.getDecisionProbes().getOriginalVars();
+	// List<String> labels = nodeProbe.getDecisionProbes().getLabels();
+	// while (formula != null && times < FORMULAR_LEARN_MAX_ATTEMPT &&
+	// nodeProbe.needToLearnPrecond()) {
+	//
+	// /** record learned formulas */
+	// CfgNode node = nodeProbe.getNode();
+	// if (!learnedFormulas.containsKey(node)) {
+	// learnedFormulas.put(node, new FormulaInfo(node));
+	// }
+	// learnedFormulas.get(node).addLoopFormula(formula.toString(), acc);
+	//
+	// SamplingResult samples = dataPreprocessor.sampleForModel(nodeProbe,
+	// originalVars,
+	// nodeProbe.getPreconditions(), mcm.getLearnedDividers());
+	// INodeCoveredData newData = samples.getNewData(nodeProbe);
+	// addDataPoints(labels, originalVars, newData.getMoreTimesValues(),
+	// Category.POSITIVE, mcm);
+	// addDataPoints(labels, originalVars, newData.getOneTimeValues(),
+	// Category.NEGATIVE, mcm);
+	// recordSample(nodeProbe.getDecisionProbes(), samples);
+	// acc = mcm.getModelAccuracy();
+	// if (acc == 1.0) {
+	// break;
+	// }
+	// mcm.train();
+	// Formula tmp = mcm.getLearnedMultiFormula(originalVars, labels);
+	//
+	// double accTmp = mcm.getModelAccuracy();
+	// // if (tmp == null) {
+	// // break;
+	// // }
+	// if (!tmp.equals(formula) && accTmp > acc) {
+	// formula = tmp;
+	// acc = accTmp;
+	// } else {
+	// break;
+	// }
+	// times++;
+	// }
+	//
+	// if (formula!=null && acc < 0.5) {
+	// formula = null;
+	// }
+	//
+	// }
+	//
+	// return formula;
+	// }
 
 	public boolean isUsingPrecondApproache() {
 		return true;
@@ -487,11 +591,11 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		List<Divider> dividers;
 	}
 
-	public HashMap<String, Collection<BreakpointValue>> getTrueSample(){
+	public HashMap<String, Collection<BreakpointValue>> getTrueSample() {
 		return branchTrueRecord;
 	}
-	
-	public HashMap<String, Collection<BreakpointValue>> getFalseSample(){
+
+	public HashMap<String, Collection<BreakpointValue>> getFalseSample() {
 		return branchFalseRecord;
 	}
 
@@ -507,10 +611,15 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	public int nodeIdx2Offset(CfgNode node) {
 		return this.relevantVars.get(node.getIdx()).getOffset();
 	}
-	
+
 	@Override
 	public void cleanup() {
 		getTrueSample().clear();
 		getFalseSample().clear();
 	}
+
+	public void setCu(CompilationUnit cu) {
+		this.cu = cu;
+	}
+
 }

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import learntest.core.LearnTestParams;
+import learntest.core.Visitor;
 import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.LearnTestConfig;
@@ -128,7 +129,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				cu.accept(collector);
 				List<MethodInfo> validMethods = collector.getValidMethods();
 				updateRuntimeInfo(info, cu, collector.getTotalMethodNum(), validMethods.size());
-				evaluateForMethodList(excelHandler, validMethods, monitor);
+				evaluateForMethodList(excelHandler, validMethods, monitor, cu);
 			}
 		}
 		return info;
@@ -142,16 +143,19 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	protected void evaluateForMethodList(TrialExcelHandler excelHandler, List<MethodInfo> targetMethods,
-			IProgressMonitor monitor) {
+			IProgressMonitor monitor, CompilationUnit cu) {
 		if (targetMethods.isEmpty()) {
 			return;
 		}
 		for (MethodInfo targetMethod : targetMethods) {
 
 			/* todo : test special method start */
-			if (!ifInTxt(targetMethod, "D:\\eclipse-java-mars\\eclipse\\check.txt")) {
+			if (!ifInTxt(targetMethod, "D:/eclipse/eclipse-java-mars-clean/eclipse/check.txt")) {
 				continue;
 			}
+			
+			Visitor visitor = new Visitor(41, cu);
+			cu.accept(visitor);
 			/* todo : test special method end */
 
 			log.info("-----------------------------------------------------------------------------------------------");
@@ -163,7 +167,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				checkJobCancelation(monitor);
 				try {
 					LearnTestParams params = initLearntestParams(targetMethod);
-					Trial trial = evaluateLearntestForSingleMethod(params);
+					Trial trial = evaluateLearntestForSingleMethod(params, cu);
 					if (trial != null) {
 						validTrial++;
 						multiTrial.addTrial(trial);

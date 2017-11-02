@@ -11,6 +11,8 @@ package learntest.core;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
@@ -33,6 +35,7 @@ public class LearnTestParams {
 	private SystemPreferences systemConfig;
 	private int maxTcs;
 	private int initialTcTotal = 1;// by default
+	private CompilationUnit cu;
 	
 	public LearnTestParams(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
@@ -44,6 +47,14 @@ public class LearnTestParams {
 		setTargetMethod(methodInfo);
 	}
 	
+	public CompilationUnit getCu() {
+		return cu;
+	}
+
+	public void setCu(CompilationUnit cu) {
+		this.cu = cu;
+	}
+
 	public void renew(MethodInfo targetMethod) {
 		setTargetMethod(targetMethod);
 		initialTests = null;
