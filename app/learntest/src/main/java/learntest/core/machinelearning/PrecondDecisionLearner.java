@@ -193,8 +193,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					cu.accept(visitor);
 					relationShip = visitor.getRelationShip();
 				}
-				if ( (relationShip = getHeuristicRule(nodeProbe, cu)) != null) { // heuristic rules help to get condition directly
-					updatePrecondition(nodeProbe, relationShip);
+				if (relationShip != null) { // heuristic rules help to get condition directly
+					updatePreconditionWithHerustic(nodeProbe, preconditions, relationShip);
 					
 				} else {
 					if (!dataPreprocessor.sampleForMissingBranch(node, this)) {
@@ -234,11 +234,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				checkLearnedComplete(visitedNodes, probes.getCfg().getDecisionNodes(), queue);
 			}
 		}
-	}
-
-	private EqualVarRelationShip getHeuristicRule(DecisionNodeProbe nodeProbe, CompilationUnit cu2) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
@@ -292,10 +287,15 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		log.info("final formula : " + truefalseFormula);
 	}
 	
-	protected void updatePrecondition(DecisionNodeProbe nodeProbe,	RelationShip relationShip) throws SavException {
+	protected void updatePreconditionWithHerustic(DecisionNodeProbe nodeProbe,	OrCategoryCalculator preconditions, RelationShip relationShip) throws SavException {
 		
-		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormulaByHerustic(nodeProbe.getDecisionProbes().getOriginalVars(), relationShip);
+		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormulaByHerustic(nodeProbe, preconditions, relationShip);
 		Formula truefalseFormula = trueFalseResult == null ? null : trueFalseResult.formula;
+		if (truefalseFormula != null) {
+			CfgNode node = nodeProbe.getNode();
+			learnedFormulas.put(node, new FormulaInfo(node));
+			learnedFormulas.get(node).addTFFormula(truefalseFormula.toString(), 1.1);
+		}
 		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
 		nodeProbe.clearCache();
@@ -432,8 +432,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		return newFormula;
 	}
 
-	private TrueFalseLearningResult generateTrueFalseFormulaByHerustic(List<ExecVar> originalVars, RelationShip relationShip) throws SavException {
-		
+	private TrueFalseLearningResult generateTrueFalseFormulaByHerustic(DecisionNodeProbe nodeProbe, OrCategoryCalculator preconditions, RelationShip relationShip) throws SavException {
+		List<ExecVar> originalVars = nodeProbe.getDecisionProbes().getOriginalVars();
 		List<String> labels = new LinkedList<>();
 		for (ExecVar var : originalVars) {
 			labels.add(var.getLabel());
@@ -442,18 +442,19 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 		Formula trueFlaseFormula = null;
 		if (relationShip instanceof EqualVarRelationShip) {
-			for (Divider divider : dividers) {
-				Formula current = new FormulaProcessor<ExecVar>(originalVars).process(divider, labels, true);
-				if (trueFlaseFormula == null) {
-					trueFlaseFormula = current;
-				} else {
-					trueFlaseFormula = new AndFormula(trueFlaseFormula, current);
-				}
-			}
+			trueFlaseFormula = new FormulaProcessor<ExecVar>(originalVars).process(dividers.get(0), labels, true, Operator.EQ);
+//			for (Divider divider : dividers) {
+//				Formula current = new FormulaProcessor<ExecVar>(originalVars).process(divider, labels, true);
+//				if (trueFlaseFormula == null) {
+//					trueFlaseFormula = current;
+//				} else {
+//					trueFlaseFormula = new AndFormula(trueFlaseFormula, current);
+//				}
+//			}
 		}else if (relationShip instanceof NotEqualVarRelationShip) {
 			trueFlaseFormula = new FormulaProcessor<ExecVar>(originalVars).process(dividers.get(0), labels, true, Operator.NE);
 		}
-
+		dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile);
 		TrueFalseLearningResult result = new TrueFalseLearningResult();
 		result.formula = trueFlaseFormula;
 		result.dividers = dividers;
@@ -464,7 +465,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		List<Divider> dividers = new LinkedList<>();
 		if (relationShip instanceof EqualVarRelationShip || relationShip instanceof NotEqualVarRelationShip) {
 			double[] result1 = new double[labels.size()], result2 = new double[labels.size()];
-			String left = ((EqualVarRelationShip)relationShip).getLeft(), right = ((EqualVarRelationShip)relationShip).getRight();
+			String left = relationShip.getLeft(), right = relationShip.getRight();
 			int indexL = 0, indexR = 0;
 			for (int i = 0; i < labels.size(); i++) {
 				if (labels.get(i).equals(left)) {
@@ -475,12 +476,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			}
 			result1[indexL] = 1;
 			result1[indexR] = -1;
-			result2[indexL] = -1;
-			result2[indexR] = 1;
 			
 			Divider divider1 = new Divider(result1, 0), divider2 = new Divider(result2, 0);
 			dividers.add(divider1);
-			dividers.add(divider2);
 		}
 		return dividers;
 	}

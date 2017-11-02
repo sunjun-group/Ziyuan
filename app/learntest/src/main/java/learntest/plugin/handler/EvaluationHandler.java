@@ -153,9 +153,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			if (!ifInTxt(targetMethod, "D:/eclipse/eclipse-java-mars-clean/eclipse/check.txt")) {
 				continue;
 			}
-			
-			Visitor visitor = new Visitor(41, cu);
-			cu.accept(visitor);
+			System.currentTimeMillis();
 			/* todo : test special method end */
 
 			log.info("-----------------------------------------------------------------------------------------------");
