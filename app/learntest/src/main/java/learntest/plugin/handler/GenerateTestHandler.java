@@ -1,10 +1,17 @@
 package learntest.plugin.handler;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +20,10 @@ import learntest.core.RunTimeInfo;
 import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.machinelearning.FormulaInfo;
+import learntest.plugin.LearnTestConfig;
+import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IStatusUtils;
+import learntest.plugin.utils.LearnTestUtil;
 import sav.common.core.utils.TextFormatUtils;
 
 public class GenerateTestHandler extends AbstractLearntestHandler {
@@ -45,8 +55,10 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	
 	public RunTimeInfo generateTest() throws CoreException{
 		try {
+			
 			LearnTestParams l2tParam = initLearntestParamsFromPreference();
 			l2tParam.setApproach(LearnTestApproach.L2T);
+			l2tParam.setCu(constructCu(l2tParam.getTargetMethod().getClassName()));
 			RunTimeInfo l2tRuntimeInfo = runLearntest(l2tParam);
 
 			LearnTestParams randoopParam = l2tParam.createNew();
@@ -73,6 +85,34 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 		} 
 	}
 	
+	private CompilationUnit constructCu(String className) {
+
+		String projectName = LearnTestConfig.getINSTANCE().getProjectName();
+		final List<IPackageFragmentRoot> roots = IProjectUtils
+				.getSourcePkgRoots(IProjectUtils.getJavaProject(projectName));
+		try {
+			for (IPackageFragmentRoot root : roots) {
+				for (IJavaElement element : root.getChildren()) {
+					if (element instanceof IPackageFragment) {
+						IPackageFragment pkg = (IPackageFragment) element; 
+						for (IJavaElement javaElement : pkg.getChildren()) {
+							if (javaElement instanceof ICompilationUnit) {
+								if (javaElement.getElementName().equals(className.substring(className.lastIndexOf('.')+1)+".java")) {
+									ICompilationUnit icu = (ICompilationUnit) javaElement;
+									CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
+									return cu;
+								}
+							}
+						}
+					}
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public void print(RunTimeInfo runtimeInfo, LearnTestParams params){
 		if (runtimeInfo != null) {
 			log.info(params.getApproach().getName());
