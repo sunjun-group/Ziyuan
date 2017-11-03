@@ -61,6 +61,7 @@ public class CFGConstructor {
 	}
 	
 	private Map<Integer, List<Variable>> analyzeRelevantVars(CFG cfg) {
+		System.currentTimeMillis();
 		Map<Integer, List<Variable>> map = new HashMap<>();
 		for(int i=0; i<cfg.getNodeList().size(); i++){
 			CFGNode node = cfg.getNodeList().get(i);
@@ -75,6 +76,7 @@ public class CFGConstructor {
 	}
 
 	private List<Variable> getRelevantVarList(CFGNode node) {
+
 		List<CFGNode> block = retrieveBlock(node);
 		Collections.sort(block, new Comparator<CFGNode>() {
 			@Override
@@ -166,6 +168,9 @@ public class CFGConstructor {
 					break;
 				}
 			}
+			if (n != null) {
+				blockParents.add(n);
+			}
 		}
 		
 		if(!node.getChildren().isEmpty() && node.getChildren().size()==1){
@@ -178,6 +183,9 @@ public class CFGConstructor {
 				else{
 					break;
 				}
+			}
+			if (n != null) {
+				blockParents.add(n);
 			}
 		}
 		
