@@ -44,16 +44,8 @@ public class VariableUtils {
 			execVarMap.put(execVar.getLabel(), execVar);
 		}
 		List<VarInfo> list = new ArrayList<>(relevantVarMap.size());
-		
-		List<Entry<Integer, List<Variable>>> entries = new ArrayList<>();
-		entries.addAll(relevantVarMap.entrySet());
-		Collections.sort(entries, new Comparator<Entry<Integer, List<Variable>>>(){
-			@Override
-			public int compare(Entry<Integer, List<Variable>> e1, Entry<Integer, List<Variable>> e2) {
-				return e1.getKey() - e2.getKey();
-			}			
-		});
-		for (Entry<Integer, List<Variable>> entry : entries) {
+
+		for (Entry<Integer, List<Variable>> entry : relevantVarMap.entrySet()) {
 			VarInfo info = new VarInfo(entry.getKey(), entry.getValue());
 			info.setExecVar(execVarMap, originalVars);
 			list.add(info);
@@ -95,7 +87,8 @@ public class VariableUtils {
 				boolean found = false;
 				if (var.getVarID() != null) {
 					for (String execVarId : execVarMap.keySet()) {
-						if (execVarId.startsWith(var.getVarID())) {
+						if (execVarId.equals(var.getVarID()) ||
+								execVarId.startsWith(var.getVarID()+".")) { // Variable does not indicate array.isNull and array.length
 							ExecVar execVar = execVarMap.get(execVarId);
 							VarInfo info = new VarInfo(originalVars.indexOf(execVar), null);
 							info.execVars = new LinkedList<>();
