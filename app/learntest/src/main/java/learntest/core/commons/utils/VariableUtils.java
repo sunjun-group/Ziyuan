@@ -9,6 +9,8 @@
 package learntest.core.commons.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,7 +44,16 @@ public class VariableUtils {
 			execVarMap.put(execVar.getLabel(), execVar);
 		}
 		List<VarInfo> list = new ArrayList<>(relevantVarMap.size());
-		for (Entry<Integer, List<Variable>> entry : relevantVarMap.entrySet()) {
+		
+		List<Entry<Integer, List<Variable>>> entries = new ArrayList<>();
+		entries.addAll(relevantVarMap.entrySet());
+		Collections.sort(entries, new Comparator<Entry<Integer, List<Variable>>>(){
+			@Override
+			public int compare(Entry<Integer, List<Variable>> e1, Entry<Integer, List<Variable>> e2) {
+				return e1.getKey() - e2.getKey();
+			}			
+		});
+		for (Entry<Integer, List<Variable>> entry : entries) {
 			VarInfo info = new VarInfo(entry.getKey(), entry.getValue());
 			info.setExecVar(execVarMap, originalVars);
 			list.add(info);
