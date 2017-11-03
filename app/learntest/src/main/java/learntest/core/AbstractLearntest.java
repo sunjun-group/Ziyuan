@@ -87,6 +87,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 				if (cvg > bestCvg) {
 					bestCvg = cvg;
 					params.setInitialTests(new JunitTestsInfo(gentestResult, appClasspath.getClassLoader()));
+					params.setGeneratedInitTest(new JunitTestsInfo(gentestResult, appClasspath.getClassLoader()));
 				} else if (gentestResult != null) {
 					// remove files
 					FileUtils.deleteFiles(gentestResult.getAllFiles());

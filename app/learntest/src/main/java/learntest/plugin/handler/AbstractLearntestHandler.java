@@ -237,7 +237,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 			log.info("run l2t..");
 			l2tParams.setApproach(LearnTestApproach.L2T);
-			l2tParams.setInitialTests(null);
+			l2tParams.setInitialTests(jdartParam.getGeneratedInitTest());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			l2tParams.setCu(cu);
 			l2tAverageInfo = runLearntest(l2tAverageInfo, l2tParams);

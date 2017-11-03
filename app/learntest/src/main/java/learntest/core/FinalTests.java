@@ -67,10 +67,10 @@ public class FinalTests {
 				}
 			}
 
-//			List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage, -1);
-//			for (String line : lines) {
-//				log.debug(line);
-//			}
+			List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage, -1);
+			for (String line : lines) {
+				log.debug(line);
+			}
 		}
 	}
 

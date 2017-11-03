@@ -31,7 +31,7 @@ public class LearnTestParams {
 	private AppJavaClassPath appClasspath;
 	private LearnTestApproach approach;
 	private TargetMethod targetMethod;
-	private JunitTestsInfo initialTests;
+	private JunitTestsInfo initialTests, generatedInitTest;
 	private SystemPreferences systemConfig;
 	private int maxTcs;
 	private int initialTcTotal = 1;// by default
@@ -88,6 +88,14 @@ public class LearnTestParams {
 		this.initialTests = initialTests;
 	}
 	
+	public JunitTestsInfo getGeneratedInitTest() {
+		return generatedInitTest;
+	}
+
+	public void setGeneratedInitTest(JunitTestsInfo generatedInitTest) {
+		this.generatedInitTest = generatedInitTest;
+	}
+
 	public JunitTestsInfo getInitialTests() {
 		if (initialTests == null) {
 			initialTests = new JunitTestsInfo();

@@ -150,7 +150,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodInfo targetMethod : targetMethods) {
 
 			/* todo : test special method start */
-			if (!ifInTxt(targetMethod, "D:/eclipse/eclipse-java-mars-clean/eclipse/check.txt")) {
+			if (!ifInTxt(targetMethod, LearntestConstants.CHECK_METHOD_FILE_NAME)) {
 				continue;
 			}
 			System.currentTimeMillis();

@@ -19,6 +19,8 @@ public class LearntestConstants {
 	
 	public static final String SKIP_METHOD_FILE_NAME = "skip.txt";
 	
+	public static final String CHECK_METHOD_FILE_NAME = "check.txt";
+	
 	public static final long GENTEST_METHOD_EXEC_TIMEOUT = 200l; //ms
 
 }
