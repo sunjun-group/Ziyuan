@@ -82,7 +82,7 @@ public class TestSeqGenerator {
 	public Sequence generateSequence(double[] solution, List<ExecVar> vars, Set<String> failToSetVars) throws SavException {
 		Sequence sequence = new Sequence();
 		Set<Integer> failToSetIdxies = new HashSet<Integer>();
-		
+		System.currentTimeMillis();
 		int firstVarIdx = 0;		
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		Set<String> nullVars = new HashSet<String>();
@@ -151,7 +151,7 @@ public class TestSeqGenerator {
 							&& VarArrayType.getDimension((VarArrayType)type) == 1) {
 						/* only try to change length for an array with dimension = 1 */
 						int newVal = value < 0 ? 0 : (int)value;
-						variable = arrayValueGenerator.generate(type, firstVarIdx, newVal);
+						variable = arrayValueGenerator.generate(type, firstVarIdx, newVal, valueGenerator);
 						sequence.append(variable);
 						firstVarIdx += variable.getNewVariables().size();
 						varMap.put(receiver, variable);
@@ -342,7 +342,7 @@ public class TestSeqGenerator {
 					if (variable == null) {
 						IType type = typeMap.get(classMap.get(receiver));
 						if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
-							variable = arrayValueGenerator.generate(type, firstVarIdx, value.intValue() < 0 ? 0 : value.intValue());
+							variable = arrayValueGenerator.generate(type, firstVarIdx, value.intValue() < 0 ? 0 : value.intValue(), valueGenerator);
 							sequence.append(variable);
 							firstVarIdx += variable.getNewVariables().size();
 							varMap.put(receiver, variable);

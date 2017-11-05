@@ -41,8 +41,34 @@ public class ArrayValueGenerator extends ValueGenerator {
 				type.getRawType(), lastContenType.getRawType());
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
+		System.currentTimeMillis();
 		// Generate the array content
-		int[] location = next(null, arrayConstructor.getSizes());
+		int[] location = next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
+		while (location != null) {
+			/* keep level the same for better chance to generate a non-null value for content, this would be make
+			 * more sense in case of an array.
+			 */
+			GeneratedVariable newVar = appendVariable(variable,
+					level, lastContenType);
+			int localVariableID = newVar.getReturnVarId(); // the last ID
+
+			// get the variable
+			RArrayAssignment arrayAssignment = new RArrayAssignment(
+					arrayConstructor.getOutVarId(), location, localVariableID);
+			variable.append(arrayAssignment);
+			location = next(location, arrayConstructor.getSizes());
+		}
+		return true;
+	}
+	
+	public boolean doAppendVariable(GeneratedVariable variable, int level, int sizes[]) throws SavException {
+		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
+				type.getRawType(), lastContenType.getRawType());
+		variable.append(arrayConstructor);
+		variable.commitReturnVarIdIfNotExist();
+		System.currentTimeMillis();
+		// Generate the array content
+		int[] location = next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
 		while (location != null) {
 			/* keep level the same for better chance to generate a non-null value for content, this would be make
 			 * more sense in case of an array.

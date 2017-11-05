@@ -88,8 +88,6 @@ public class Visitor extends ASTVisitor {
 	public boolean checkLineRange(ASTNode node) {
 		int lineNumS = cu.getLineNumber(node.getStartPosition()),
 				lineNumE = cu.getLineNumber(node.getStartPosition() + node.getLength());
-
-		System.out.println(node.getClass() + "," + lineNumS + "," + lineNumE);
 		if (lineNumS <= line && lineNumE >= line) {
 			return true;
 		}
@@ -97,8 +95,6 @@ public class Visitor extends ASTVisitor {
 	}
 
 	public boolean visit(MethodDeclaration node) {
-
-		System.out.println(node.getName());
 		if (checkLineRange(node)) {
 			inTargetMethod = true;
 			return true;
@@ -115,14 +111,12 @@ public class Visitor extends ASTVisitor {
 				Expression left = node.getLeftOperand(), right = node.getRightOperand();
 				if (basicType(left) && basicType(right)) { // base case, no need to continue to visit
 					if (operator.toString().equals(Operator.EQUALS.toString())) {
-						System.out.println(left.toString() + "," + right.toString());
 						if (left instanceof QualifiedName && right instanceof QualifiedName) {
 							relationShips.add(new EqualVarRelationShip(left.toString(), right.toString()));
 						}else {
 							relationShips.add(null);							
 						}
 					} else if (operator.toString().equals(Operator.NOT_EQUALS.toString())) {
-						System.out.println(left.toString() + "," + right.toString());
 						if (left instanceof QualifiedName && right instanceof QualifiedName) {
 							relationShips.add(new NotEqualVarRelationShip(left.toString(), right.toString()));
 						}else {
@@ -152,7 +146,6 @@ public class Visitor extends ASTVisitor {
 			int lineNumS = cu.getLineNumber(node.getStartPosition()),
 					lineNumE = cu.getLineNumber(node.getStartPosition() + node.getLength());
 			if (lineNumS == lineNumE) {
-				PrefixExpression.Operator operator = node.getOperator();
 				Expression operand = node.getOperand();
 				if (basicType(operand)) { // base case, no need to continue to visit
 					relationShips.add(null);
