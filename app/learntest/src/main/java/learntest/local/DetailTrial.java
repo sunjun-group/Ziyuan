@@ -5,7 +5,7 @@ package learntest.local;
 public class DetailTrial {
 	private String methodName;
 	private int line;
-	private double randoop, l2t, advantage;
+	private double randoop, l2t, advantage, jdart;
 	private String l2tBetter, ranBetter;
 	private int learnedState;
 	public String getMethodName() {
@@ -55,6 +55,12 @@ public class DetailTrial {
 	}
 	public void setLearnedState(int learnedState) {
 		this.learnedState = learnedState;
+	}
+	public double getJdart() {
+		return jdart;
+	}
+	public void setJdart(double jdart) {
+		this.jdart = jdart;
 	}
 	
 }

@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.Status;
 
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
+import learntest.core.commons.data.LearnTestApproach;
 
 public class RunJDartHandler extends AbstractLearntestHandler {
 
@@ -14,6 +15,7 @@ public class RunJDartHandler extends AbstractLearntestHandler {
 		try {
 			JDartLearntest jdart = new JDartLearntest(getAppClasspath());
 			LearnTestParams params = initLearntestParamsFromPreference();
+			params.setApproach(LearnTestApproach.JDART);
 			jdart.jdart(params);
 //			jdart.run(initLearntestParams());
 		} catch (Exception e) {

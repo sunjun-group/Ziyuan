@@ -15,13 +15,13 @@ import java.util.List;
 public class ExcelExplorer2 {
 	HashMap<String, HashSet<MethodTrial>> map = new HashMap<>();
 	public static void main(String[] args) throws Exception {
-		String root = "D:/eclipse/", project = "apache-common-math-2.2" ;
+		String root = "D:\\git\\apache-common-math-2.2\\apache-common-math-2.2\\learntest\\", project = "apache-common-math-2.2" ;
 		String jdartP = "apache-common-math-2.2-jdart.xlsx",
 				l2tP = "apache-common-math-2.2-l2t-l2tAdv.xlsx";
-		String output = root + project + ".l2tAdv.merge..xlsx";
+		String output = root + project + ".l2tAdv.merge.xlsx";
 //		ExcelExplorer2.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
 		
-		output = root + project + "_whole.xlsx";
+		output = root + "apache-common-math-2.2.xlsx";
 		ExcelExplorer2 explorer = new ExcelExplorer2();
 		explorer.calculateBranchD(root, output);
 		if (explorer.map != null) {
@@ -29,7 +29,8 @@ public class ExcelExplorer2 {
 			System.out.println("l2t better than other approach: " + set.size());
 			for (Iterator iterator = set.iterator(); iterator.hasNext();) {
 				MethodTrial value = (MethodTrial) iterator.next();
-				System.out.println(value.getMethodName() + "." + value.getLine());				
+				System.out.println(value.getMethodName() + "." + value.getLine() + " , " + value.getL2tMaxCov() +
+						" , " + value.getRandoopMaxCov() + " , " + value.getJdartCov());				
 			}
 			System.out.println();
 		}
@@ -113,7 +114,7 @@ public class ExcelExplorer2 {
 				writer.println("methods : " + methodTrials.size());
 				writer.println(branchInfo(methodTrials, l2tBetter, randBetter));
 				writer.println(evosuiteInfo(methodTrials));
-				writer.println(jdartInfo(methodTrials));
+//				writer.println(jdartInfo(methodTrials));
 				writer.println();
 				writer.println("l2tBetter : " + l2tBetter.size());
 				for (DetailTrial detailTrial : l2tBetter) {
@@ -218,16 +219,17 @@ public class ExcelExplorer2 {
 				
 				if (detailTrial.getL2t() > 0 && detailTrial.getL2t() < evosuiteCov) {
 					evosuiteBetter++;
-				}else if (detailTrial.getL2t() > 0 && detailTrial.getL2t() > evosuiteCov) {
+				}else if (evosuiteCov > 0 && detailTrial.getL2t() > 0 && detailTrial.getL2t() > evosuiteCov) {
 					evosuiteWorse++;
 					set.add(trial);
+					System.out.println("evosuite worse : " + trial.getMethodName() + "." + trial.getLine());
 				}
 				if (detailTrial.getL2t() <= 0.25 && evosuiteCov == 1) {
 					sigCount++;
 				}
 			}
 			if(sigCount == trial.getTrials().size()){
-				System.out.println("diffSig : " + trial.getMethodName() + "." + trial.getLine());
+//				System.out.println("diffSig : " + trial.getMethodName() + "." + trial.getLine());
 				diffSig++;
 			}
 		}
@@ -250,12 +252,12 @@ public class ExcelExplorer2 {
 		methodRecorder.append("jdart better methods : \n");
 		List<String> jdartE ,jdartB ,jdartW;
 		jdartE = jdartB = jdartW = new LinkedList<>();
-		for (MethodTrial trial : methodTrials) {
-			double jdartCov = trial.getJdartCov();		
+		for (MethodTrial trial : methodTrials) {	
 			boolean jdartBetter = false;
 			for (DetailTrial detailTrial : trial.getTrials()) {
-				
-				if (detailTrial.getL2t() > 0 && jdartCov > detailTrial.getL2t()) {
+
+				double jdartCov = detailTrial.getJdart(), l2tCov = detailTrial.getL2t();	
+				if (l2tCov> 0 && jdartCov > l2tCov) {
 					jdartB.add( trial.getMethodName() + "." + trial.getLine() + " , " + jdartCov + "," + detailTrial.getL2t());
 					jdartBetter = true;
 				}else if (jdartCov == detailTrial.getL2t()) {

@@ -17,6 +17,8 @@ public class MethodTrial {
 	private int jdartCnt;
 	private double evosuiteCov;
 	private String evosuiteInfo;
+	private double l2tMaxCov;
+	private double randoopMaxCov;
 	
 	public List<DetailTrial> getTrials() {
 		return trials;
@@ -71,6 +73,18 @@ public class MethodTrial {
 	}
 	public void setEvosuiteInfo(String evosuiteInfo) {
 		this.evosuiteInfo = evosuiteInfo;
+	}
+	public double getL2tMaxCov() {
+		return l2tMaxCov;
+	}
+	public void setL2tMaxCov(double l2tMaxCov) {
+		this.l2tMaxCov = l2tMaxCov;
+	}
+	public double getRandoopMaxCov() {
+		return randoopMaxCov;
+	}
+	public void setRandoopMaxCov(double randoopMaxCov) {
+		this.randoopMaxCov = randoopMaxCov;
 	}
 	
 	

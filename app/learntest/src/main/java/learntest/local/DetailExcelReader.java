@@ -1,5 +1,5 @@
 package learntest.local;
-import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_L2T_WORSE_THAN_RAND;
+import static learntest.plugin.export.io.excel.TrialHeader.*;
 import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_RAND_WORSE_THAN_L2T;
 import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_ADV;
 import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_L;
@@ -45,6 +45,7 @@ import learntest.plugin.export.io.excel.TrialExcelConstants;
 import learntest.plugin.export.io.excel.TrialHeader;
 import learntest.plugin.export.io.excel.common.ExcelReader;
 import learntest.plugin.export.io.excel.common.ExcelSettings;
+import mosek.Env.mark;
 import sav.common.core.utils.Assert;
 
 /**
@@ -100,6 +101,9 @@ public class DetailExcelReader extends ExcelReader {
 		trial.setEvosuiteCov(getDoubleCellValue(row, EVOSUITECOV));
 		trial.setEvosuiteInfo(getStringCellValue(row, EVOSUITEINFO));
 		
+		double l2tMaxCov = 0;
+		double randoopMaxCov = 0;
+		
 		for (int i = 0; i < 5; i++) {
 			DetailTrial dTrial = new DetailTrial();
 			dTrial.setLine(trial.getLine());
@@ -111,9 +115,16 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setAdvantage(getDoubleCellValue(row, FIRST_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, FIRST_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, FIRST_TRIAL_R));
+					dTrial.setJdart(getDoubleCellValue(row, FIRST_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, FIRST_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, FIRST_L2T_WORSE_THAN_RAND));
 					trial.getTrials().add(dTrial);
+					if (dTrial.getL2t() > l2tMaxCov) {
+						l2tMaxCov = dTrial.getL2t();
+					}
+					if (dTrial.getRandoop() > randoopMaxCov) {
+						randoopMaxCov = dTrial.getRandoop();
+					}
 				}
 				break;
 			case 1:
@@ -122,9 +133,16 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setAdvantage(getDoubleCellValue(row, SECOND_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, SECOND_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, SECOND_TRIAL_R));
+					dTrial.setJdart(getDoubleCellValue(row, SECOND_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, SECOND_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, SECOND_L2T_WORSE_THAN_RAND));
 					trial.getTrials().add(dTrial);
+					if (dTrial.getL2t() > l2tMaxCov) {
+						l2tMaxCov = dTrial.getL2t();
+					}
+					if (dTrial.getRandoop() > randoopMaxCov) {
+						randoopMaxCov = dTrial.getRandoop();
+					}
 				}
 				break;
 			case 2:
@@ -133,9 +151,16 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setAdvantage(getDoubleCellValue(row, THIRD_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, THIRD_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, THIRD_TRIAL_R));
+					dTrial.setJdart(getDoubleCellValue(row, THIRD_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, THIRD_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, THIRD_L2T_WORSE_THAN_RAND));
 					trial.getTrials().add(dTrial);
+					if (dTrial.getL2t() > l2tMaxCov) {
+						l2tMaxCov = dTrial.getL2t();
+					}
+					if (dTrial.getRandoop() > randoopMaxCov) {
+						randoopMaxCov = dTrial.getRandoop();
+					}
 				}
 				break;
 			case 3:
@@ -144,9 +169,16 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setAdvantage(getDoubleCellValue(row, FORTH_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, FORTH_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, FORTH_TRIAL_R));
+					dTrial.setJdart(getDoubleCellValue(row, FORTH_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, FORTH_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, FORTH_L2T_WORSE_THAN_RAND));
 					trial.getTrials().add(dTrial);
+					if (dTrial.getL2t() > l2tMaxCov) {
+						l2tMaxCov = dTrial.getL2t();
+					}
+					if (dTrial.getRandoop() > randoopMaxCov) {
+						randoopMaxCov = dTrial.getRandoop();
+					}
 				}
 				break;
 			case 4:
@@ -155,9 +187,16 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setAdvantage(getDoubleCellValue(row, FIFTH_TRIAL_ADV));
 					dTrial.setL2t(getDoubleCellValue(row, FIFTH_TRIAL_L2T));
 					dTrial.setRandoop(getDoubleCellValue(row, FIFTH_TRIAL_R));
+					dTrial.setJdart(getDoubleCellValue(row, FIFTH_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, FIFTH_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, FIFTH_L2T_WORSE_THAN_RAND));
 					trial.getTrials().add(dTrial);
+					if (dTrial.getL2t() > l2tMaxCov) {
+						l2tMaxCov = dTrial.getL2t();
+					}
+					if (dTrial.getRandoop() > randoopMaxCov) {
+						randoopMaxCov = dTrial.getRandoop();
+					}
 				}
 				break;
 
@@ -165,6 +204,8 @@ public class DetailExcelReader extends ExcelReader {
 				break;
 			}
 		}
+		trial.setL2tMaxCov(l2tMaxCov);
+		trial.setRandoopMaxCov(randoopMaxCov);
 		data.add(trial);
 
 	}
