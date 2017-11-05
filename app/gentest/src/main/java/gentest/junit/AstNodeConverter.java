@@ -240,7 +240,11 @@ public class AstNodeConverter implements StatementVisitor {
 			case Short:
 				return new IntegerLiteralExpr(value.toString());
 			case Double:
-				return new DoubleLiteralExpr(value.toString());
+				String valueStr = value.toString();
+				if ("NaN".equals(valueStr)) {
+					valueStr = "Double.NaN";
+				}
+				return new DoubleLiteralExpr(valueStr);
 			case Float:
 				return new LongLiteralExpr(value.toString() + "f");
 			case Long:
