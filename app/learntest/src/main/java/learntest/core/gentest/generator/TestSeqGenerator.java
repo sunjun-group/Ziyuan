@@ -23,6 +23,7 @@ import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.type.VarArrayType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
+import gentest.core.value.generator.ArrayValueGenerator;
 import gentest.core.value.generator.ValueGeneratorMediator;
 import net.sf.javailp.Result;
 import sav.common.core.SavException;
@@ -39,13 +40,13 @@ public class TestSeqGenerator {
 	private PrimitiveFixValueGenerator fixValueGenerator;
 	@Inject
 	private FixLengthArrayValueGenerator arrayValueGenerator;
-	
+
 	private static final String RECEIVER_PARAM_KEY = VarScope.THIS.getDisplayName();
 	private Map<String, Class<?>> classMap;
 	private Map<Class<?>, IType> typeMap;
 	private MethodCall target;
 	private IType receiverType;
-	
+
 	public TestSeqGenerator() {
 		classMap = new HashMap<String, Class<?>>();
 		typeMap = new HashMap<Class<?>, IType>();
@@ -53,14 +54,14 @@ public class TestSeqGenerator {
 
 	public void setTarget(MethodCall target) {
 		this.target = target;
-		
+
 		receiverType = null;
 		if (target.requireReceiver()) {
 			receiverType = typeCreator.forClass(target.getReceiverType());
 			classMap.put(RECEIVER_PARAM_KEY, receiverType.getRawType());
 			typeMap.put(receiverType.getRawType(), receiverType);
 		}
-		
+
 		IType[] paramTypes = null;
 		if (receiverType == null) {
 			paramTypes = typeCreator.forType(target.getMethod().getGenericParameterTypes());
@@ -74,16 +75,17 @@ public class TestSeqGenerator {
 			Class<?> clazz = paramTypes[index].getRawType();
 			if (Modifier.isPublic(clazz.getModifiers())) {
 				classMap.put(param, clazz);
-				typeMap.put(clazz, paramTypes[index ++]);
+				typeMap.put(clazz, paramTypes[index++]);
 			}
 		}
 	}
-	
-	public Sequence generateSequence(double[] solution, List<ExecVar> vars, Set<String> failToSetVars) throws SavException {
+
+	public Sequence generateSequence(double[] solution, List<ExecVar> vars, Set<String> failToSetVars)
+			throws SavException {
 		Sequence sequence = new Sequence();
 		Set<Integer> failToSetIdxies = new HashSet<Integer>();
 		System.currentTimeMillis();
-		int firstVarIdx = 0;		
+		int firstVarIdx = 0;
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		Set<String> nullVars = new HashSet<String>();
 		/* generate variables for method parameters */
@@ -91,7 +93,7 @@ public class TestSeqGenerator {
 			firstVarIdx = appendVariables(solution, vars, sequence, failToSetIdxies, firstVarIdx, varMap, nullVars,
 					idx);
 		}
-		
+
 		String[] paramNames = target.getParamNames();
 		int[] paramIds = new int[paramNames.length];
 		for (int i = 0; i < paramIds.length; i++) {
@@ -103,7 +105,7 @@ public class TestSeqGenerator {
 				varMap.put(paramNames[i], param);
 			}
 			paramIds[i] = param.getReturnVarId();
-		}		
+		}
 
 		RqueryMethod rmethod = null;
 		if (target.requireReceiver()) {
@@ -127,8 +129,8 @@ public class TestSeqGenerator {
 	private int appendVariables(double[] solution, List<ExecVar> vars, Sequence sequence, Set<Integer> failToSetIdxies,
 			int firstVarIdx, Map<String, ISelectedVariable> varMap, Set<String> nullVars, int idx) throws SavException {
 		ExecVar var = vars.get(idx);
-		double value  = solution[idx];
-		
+		double value = solution[idx];
+
 		String[] parts = var.getLabel().split("[.]");
 		String receiver = parts[0];
 		if (!classMap.containsKey(receiver)) {
@@ -141,26 +143,39 @@ public class TestSeqGenerator {
 			sequence.append(variable);
 			varMap.put(var.getLabel(), variable);
 			firstVarIdx += variable.getNewVariables().size();
-			
+
 		} else {
 			ISelectedVariable variable = varMap.get(receiver);
 			if (variable == null) {
 				IType type = typeMap.get(classMap.get(receiver));
 				if (type.isArray()) {
-					if (parts.length == 2 && parts[1].equals("length")
-							&& VarArrayType.getDimension((VarArrayType)type) == 1) {
-						/* only try to change length for an array with dimension = 1 */
-						int newVal = value < 0 ? 0 : (int)value;
-						variable = arrayValueGenerator.generate(type, firstVarIdx, newVal, valueGenerator);
-						sequence.append(variable);
-						firstVarIdx += variable.getNewVariables().size();
-						varMap.put(receiver, variable);
-						solution[idx] = newVal ;
-						return firstVarIdx;
-					} else {
-						failToSetIdxies.add(idx);
-						return firstVarIdx;
-					}
+					if (parts.length == 2 && parts[1].equals("length"))
+						if (VarArrayType.getDimension((VarArrayType) type) == 1) {
+							/*
+							 * only try to change length for an array with
+							 * dimension = 1
+							 */
+							int newVal = value < 0 ? 0 : (int) value;
+							variable = arrayValueGenerator.generate(type, firstVarIdx, newVal, valueGenerator);
+							sequence.append(variable);
+							firstVarIdx += variable.getNewVariables().size();
+							varMap.put(receiver, variable);
+							solution[idx] = newVal;
+							return firstVarIdx;
+						} else {
+							/*
+							 * only try to change first dimensional length for an array with
+							 * dimension > 1
+							 */
+							int newVal = value < 0 ? 0 : (int) value;
+							ArrayValueGenerator generator = new ArrayValueGenerator(type);
+							variable = generator.generate(type, firstVarIdx, newVal, valueGenerator);
+							sequence.append(variable);
+							firstVarIdx += variable.getNewVariables().size();
+							varMap.put(receiver, variable);
+							solution[idx] = newVal;
+							return firstVarIdx;
+						}
 				} else {
 					variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
 					sequence.append(variable);
@@ -168,7 +183,7 @@ public class TestSeqGenerator {
 					varMap.put(receiver, variable);
 				}
 			}
-			
+
 			for (int i = 1; i < parts.length - 2; i++) {
 				String cur = receiver + "." + parts[i];
 				if (varMap.containsKey(cur)) {
@@ -189,11 +204,12 @@ public class TestSeqGenerator {
 						sequence.append(field);
 						varMap.put(cur, field);
 						Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)), variable.getReturnVarId());
-						int[] varId = new int[] {field.getReturnVarId()};
+						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+								variable.getReturnVarId());
+						int[] varId = new int[] { field.getReturnVarId() };
 						method.setInVarIds(varId);
 						sequence.append(method);
-						
+
 						variable = field;
 						receiver = cur;
 					} catch (Exception e) {
@@ -202,16 +218,16 @@ public class TestSeqGenerator {
 					}
 				}
 			}
-			
-			String last = parts[parts.length -  1];
-			
+
+			String last = parts[parts.length - 1];
+
 			int i = parts.length - 2;
 			if (i > 0) {
-				String cur = receiver + "." + parts[i];				
+				String cur = receiver + "." + parts[i];
 				if (last.equals("isNull") && value == 1) {
 					nullVars.add(cur);
 					return firstVarIdx;
-				}					
+				}
 				if (varMap.containsKey(cur)) {
 					receiver = cur;
 					variable = varMap.get(receiver);
@@ -220,7 +236,8 @@ public class TestSeqGenerator {
 					try {
 						Class<?> fieldClazz = lookupFieldAndGetType(clazz, parts[i]);
 						if (!Modifier.isPublic(fieldClazz.getModifiers())) {
-							log.debug("modify variable {}: cannot init instance for an invisible class {}", var.getLabel(), fieldClazz);
+							log.debug("modify variable {}: cannot init instance for an invisible class {}",
+									var.getLabel(), fieldClazz);
 							return firstVarIdx;
 						}
 						classMap.put(cur, fieldClazz);
@@ -234,11 +251,12 @@ public class TestSeqGenerator {
 						sequence.append(field);
 						varMap.put(cur, field);
 						Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)), variable.getReturnVarId());
-						int[] varId = new int[] {field.getReturnVarId()};
+						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+								variable.getReturnVarId());
+						int[] varId = new int[] { field.getReturnVarId() };
 						method.setInVarIds(varId);
 						sequence.append(method);
-						
+
 						variable = field;
 						receiver = cur;
 					} catch (Exception e) {
@@ -267,10 +285,11 @@ public class TestSeqGenerator {
 				sequence.append(field);
 				firstVarIdx += field.getNewVariables().size();
 				varMap.put(cur, field);
-				
+
 				Method setter = findSetMethod(clazz, last, fieldClazz);
-				RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)), variable.getReturnVarId());
-				int[] varId = new int[] {field.getReturnVarId()};
+				RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+						variable.getReturnVarId());
+				int[] varId = new int[] { field.getReturnVarId() };
 				method.setInVarIds(varId);
 				sequence.append(method);
 			} catch (Exception e) {
@@ -279,12 +298,12 @@ public class TestSeqGenerator {
 		}
 		return firstVarIdx;
 	}
-	
+
 	private Method findSetMethod(Class<?> clazz, String fieldName, Class<?> fieldType) throws Exception {
 		String methodName = new StringBuilder("set").append(StringUtils.capitalize(fieldName)).toString();
 		return clazz.getMethod(methodName, fieldType);
 	}
-	
+
 	private Class<?> lookupFieldAndGetType(Class<?> clazz, String fieldName) {
 		if (clazz == Object.class || clazz == null) {
 			return null;
@@ -301,7 +320,7 @@ public class TestSeqGenerator {
 		}
 		return field.getType();
 	}
-	
+
 	private void addFailToSetValues(Set<Integer> failToSetIdxies, List<ExecVar> vars, Set<String> failToSetVars) {
 		for (int idx : failToSetIdxies) {
 			failToSetVars.add(vars.get(idx).getVarId());
@@ -317,18 +336,18 @@ public class TestSeqGenerator {
 	public Sequence generateSequence(Result result, List<String> variables) throws SavException {
 		Sequence sequence = new Sequence();
 
-		int firstVarIdx = 0;		
+		int firstVarIdx = 0;
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		Set<String> nullVars = new HashSet<String>();
-		//prepare inputs for target method
+		// prepare inputs for target method
 		for (String var : variables) {
 			if (result.containsVar(var)) {
-				Number value  = result.get(var);
-				
+				Number value = result.get(var);
+
 				String[] parts = var.split("[.]");
 				String receiver = parts[0];
 				if (!classMap.containsKey(receiver)) {
-//					System.err.println("not input parameter [" + var + "]");
+					// System.err.println("not input parameter [" + var + "]");
 					continue;
 				}
 				if (parts.length == 1) {
@@ -342,7 +361,8 @@ public class TestSeqGenerator {
 					if (variable == null) {
 						IType type = typeMap.get(classMap.get(receiver));
 						if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
-							variable = arrayValueGenerator.generate(type, firstVarIdx, value.intValue() < 0 ? 0 : value.intValue(), valueGenerator);
+							variable = arrayValueGenerator.generate(type, firstVarIdx,
+									value.intValue() < 0 ? 0 : value.intValue(), valueGenerator);
 							sequence.append(variable);
 							firstVarIdx += variable.getNewVariables().size();
 							varMap.put(receiver, variable);
@@ -354,7 +374,7 @@ public class TestSeqGenerator {
 							varMap.put(receiver, variable);
 						}
 					}
-					
+
 					for (int i = 1; i < parts.length - 2; i++) {
 						String cur = receiver + "." + parts[i];
 						if (varMap.containsKey(cur)) {
@@ -375,29 +395,31 @@ public class TestSeqGenerator {
 								sequence.append(field);
 								varMap.put(cur, field);
 								Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-								RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)), variable.getReturnVarId());
-								int[] varId = new int[] {field.getReturnVarId()};
+								RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+										variable.getReturnVarId());
+								int[] varId = new int[] { field.getReturnVarId() };
 								method.setInVarIds(varId);
 								sequence.append(method);
-								
+
 								variable = field;
 								receiver = cur;
 							} catch (Exception e) {
-//								System.err.println("can not find setter for " + cur);
+								// System.err.println("can not find setter for "
+								// + cur);
 								break;
 							}
 						}
 					}
-					
-					String last = parts[parts.length -  1];
-					
+
+					String last = parts[parts.length - 1];
+
 					int i = parts.length - 2;
 					if (i > 0) {
-						String cur = receiver + "." + parts[i];				
+						String cur = receiver + "." + parts[i];
 						if (last.equals("isNull") && value.intValue() == 1) {
 							nullVars.add(cur);
 							continue;
-						}					
+						}
 						if (varMap.containsKey(cur)) {
 							receiver = cur;
 							variable = varMap.get(receiver);
@@ -416,15 +438,17 @@ public class TestSeqGenerator {
 								sequence.append(field);
 								varMap.put(cur, field);
 								Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-								RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)), variable.getReturnVarId());
-								int[] varId = new int[] {field.getReturnVarId()};
+								RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+										variable.getReturnVarId());
+								int[] varId = new int[] { field.getReturnVarId() };
 								method.setInVarIds(varId);
 								sequence.append(method);
-								
+
 								variable = field;
 								receiver = cur;
 							} catch (Exception e) {
-//								System.err.println("can not find setter for " + cur);
+								// System.err.println("can not find setter for "
+								// + cur);
 								break;
 							}
 						}
@@ -450,8 +474,9 @@ public class TestSeqGenerator {
 						firstVarIdx += field.getNewVariables().size();
 						varMap.put(cur, field);
 						Method setter = findSetMethod(clazz, last, fieldClazz);
-						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)), variable.getReturnVarId());
-						int[] varId = new int[] {field.getReturnVarId()};
+						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+								variable.getReturnVarId());
+						int[] varId = new int[] { field.getReturnVarId() };
 						method.setInVarIds(varId);
 						sequence.append(method);
 					} catch (Exception e) {
@@ -459,9 +484,9 @@ public class TestSeqGenerator {
 						continue;
 					}
 				}
-			}			
+			}
 		}
-		
+
 		String[] paramNames = target.getParamNames();
 		int[] paramIds = new int[paramNames.length];
 		for (int i = 0; i < paramIds.length; i++) {
@@ -473,13 +498,16 @@ public class TestSeqGenerator {
 				varMap.put(paramNames[i], param);
 			}
 			paramIds[i] = param.getReturnVarId();
-		}		
+		}
 
 		RqueryMethod rmethod = null;
 		if (target.requireReceiver()) {
 			ISelectedVariable receiverParam = valueGenerator.generate(receiverType, firstVarIdx, true);
-			/*sequence.appendReceiver(receiverParam, target.getReceiverType());
-			rmethod = new RqueryMethod(target, sequence.getReceiver(target.getReceiverType()).getVarId());*/
+			/*
+			 * sequence.appendReceiver(receiverParam, target.getReceiverType());
+			 * rmethod = new RqueryMethod(target,
+			 * sequence.getReceiver(target.getReceiverType()).getVarId());
+			 */
 			sequence.append(receiverParam);
 			firstVarIdx += receiverParam.getNewVariables().size();
 			rmethod = new RqueryMethod(target, receiverParam.getReturnVarId());
@@ -488,8 +516,8 @@ public class TestSeqGenerator {
 		}
 		rmethod.setInVarIds(paramIds);
 		sequence.append(rmethod);
-		
+
 		return sequence;
 	}
-	
+
 }

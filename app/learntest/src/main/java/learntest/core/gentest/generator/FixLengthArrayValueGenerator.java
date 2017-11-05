@@ -1,12 +1,9 @@
 package learntest.core.gentest.generator;
 
-import gentest.core.data.statement.RArrayConstructor;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
-import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ArrayValueGenerator;
 import gentest.core.value.generator.ValueGeneratorMediator;
-import sav.common.core.SavException;
 
 public class FixLengthArrayValueGenerator {
 	
