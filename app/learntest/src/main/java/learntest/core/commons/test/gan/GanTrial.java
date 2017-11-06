@@ -34,6 +34,7 @@ public class GanTrial {
 		if (ganAcc == null) {
 			ganAcc = new GanAccuracy();
 			ganAcc.setNodeIdx(nodeIdx);
+			accMap.put(nodeIdx, ganAcc);
 		}
 		ganAcc.getAccList().add(acc);
 	}

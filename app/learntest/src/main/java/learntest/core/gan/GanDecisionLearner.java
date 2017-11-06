@@ -90,7 +90,6 @@ public class GanDecisionLearner implements IInputLearner {
 		};
 		for (CfgNode node : inputProbes.getCfg().getDecisionNodes()) {
 			refineNode(node, inputProbes, trainingVars);
-			
 		}
 		machine.stop();
 		return inputProbes;
