@@ -365,7 +365,7 @@ public class ProblemBuilder {
 					problem.setVarType(var.getLabel(), Integer.class);
 					/*problem.setVarLowerBound(var.getLabel(), Short.MIN_VALUE);
 					problem.setVarUpperBound(var.getLabel(), Short.MAX_VALUE);*/
-					if (var.getVarId().endsWith(".length")) {
+					if (var.isArrayLength()) {
 						int arrayLengthBound = Settings.getArrayLengthBound();
 						problem.setVarLowerBound(var.getLabel(), -arrayLengthBound);
 						problem.setVarUpperBound(var.getLabel(), arrayLengthBound);

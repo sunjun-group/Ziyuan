@@ -97,4 +97,15 @@ public class ExecVar implements Var {
 		}
 		return 0;
 	}
+	
+	/**
+	 * a simple solution to judge whether represent array length
+	 * @return
+	 */
+	public boolean isArrayLength(){
+		if (varId.endsWith(".length")) {
+			return true;
+		}
+		return false;
+	}
 }

@@ -388,8 +388,12 @@ public class IlpSelectiveSampling {
 					continue;
 				}
 			}
-			Number value = Randomness.nextInt(-Settings.getBound(), Settings.getBound());
 			ExecVar var = vars.get(i);
+			int bound = Settings.getBound();
+			if (var.isArrayLength()) {
+				bound = Settings.getArrayLengthBound();
+			}
+			Number value = Randomness.nextInt(-bound, bound);
 			if (var.getType() == ExecVarType.BOOLEAN) {
 				if (value.intValue() > 0) {
 					sample[i] = 1;
