@@ -16,6 +16,7 @@ import java.util.Queue;
 
 import org.eclipse.core.commands.ExecutionException;
 
+import config.PathConfiguration;
 import jdart.model.TestInput;
 import jdart.model.TestVar;
 import main.RunJPF;
@@ -335,7 +336,7 @@ public class JDartCore {
 	}
 	
 	public static String getRuntimeCP() {
-		String jdartPath = getJdartRoot(), savPath = "E:\\git\\Ziyuan\\app\\sav.commons";
+		String jdartPath = getJdartRoot(), savPath = PathConfiguration.savRoot;
 		StringBuffer sb = new StringBuffer();
 		sb.append(jdartPath+"\\bin;");
 		sb.append(getJarPaths(jdartPath+"\\libs"));
@@ -346,7 +347,7 @@ public class JDartCore {
 	}
 	
 	public static String getJdartRoot() {
-		String jdartPath = "E:\\git\\Ziyuan\\jdart";
+		String jdartPath = PathConfiguration.jdartRoot;
 		return jdartPath;
 	}
 	
