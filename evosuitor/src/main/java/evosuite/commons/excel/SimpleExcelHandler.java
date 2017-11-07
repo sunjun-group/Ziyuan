@@ -84,7 +84,7 @@ public abstract class SimpleExcelHandler<T> {
 		return newExperimentalExcelFile(trialFilePrefix, FIRST_FILE_IDX);
 	}
 
-	public Pair<File, Integer> getLastExperimentalExcel(String trialFilePrefix) {
+	public Pair<File, Integer> getLastExperimentalExcel(final String trialFilePrefix) {
 		File folder = new File(excelRootFolder);
 		File[] files = folder.listFiles(new FilenameFilter() {
 			@Override
