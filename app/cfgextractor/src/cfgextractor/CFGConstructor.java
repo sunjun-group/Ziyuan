@@ -78,12 +78,7 @@ public class CFGConstructor {
 	private List<Variable> getRelevantVarList(CFGNode node) {
 
 		List<CFGNode> block = retrieveBlock(node);
-		Collections.sort(block, new Comparator<CFGNode>() {
-			@Override
-			public int compare(CFGNode o1, CFGNode o2) {
-				return o2.getInstructionHandle().getPosition()-o1.getInstructionHandle().getPosition();
-			}
-		});
+		
 		List<Variable> relevantVars = new ArrayList<>();
 		for(CFGNode n: block){
 			for(Variable readV: n.getReadVars()){
@@ -93,42 +88,45 @@ public class CFGConstructor {
 			}
 		}
 		
-		System.currentTimeMillis();
-		
 		boolean isChange = true;
 		while(isChange){
 			int relSize = relevantVars.size();
-			List<Integer> visitedNodes = new ArrayList<>();
+			HashSet<Integer> visitedNodes = new HashSet<>();
 			increaseRelVars(relevantVars, node, visitedNodes);
 			
 			isChange = relSize!=relevantVars.size();
 		}
 		
-		System.currentTimeMillis();
+//		System.currentTimeMillis();
 		
 		return relevantVars;
 	}
 
-	private void increaseRelVars(List<Variable> relevantVars, CFGNode node, List<Integer> visitedNodes) {
+	private void increaseRelVars(List<Variable> relevantVars, CFGNode node, HashSet<Integer> visitedNodes) {
 		visitedNodes.add(node.getIndex());	
 		
-		List<CFGNode> blockParents = retrieveBlock(node);
-		if(blockParents.isEmpty()){
+//		List<CFGNode> block = retrieveBlock(node);
+//		List<CFGNode> parentsInBlock = findParentsOfNodeInBlock(node, block);
+		
+		List<CFGNode> block = retrieveBlock(node);
+		if(block.isEmpty()){
 			return;
 		}
-		for(CFGNode bN: blockParents){
+		for(CFGNode bN: block){
 			visitedNodes.add(bN.getIndex());				
 		}
 		
 		Variable writtenVar = null;
-		for(CFGNode parent: blockParents){
-			if(!parent.getWritenVars().isEmpty()){
-				writtenVar = parent.getWritenVars().get(0);
+		for(CFGNode blockNode: block){
+			if(!blockNode.getWritenVars().isEmpty()){
+				writtenVar = blockNode.getWritenVars().get(0);
 			}
 			
 			if(writtenVar!=null){
 				if(isVarListContains(writtenVar, relevantVars)){
-					for(Variable readVar: parent.getReadVars()){
+					List<Variable> readVars = findBlockReadVars(blockNode);
+					System.currentTimeMillis();
+					for(Variable readVar: readVars){
 						if(!isVarListContains(readVar, relevantVars)){
 							relevantVars.add(readVar);						
 						}
@@ -139,8 +137,9 @@ public class CFGConstructor {
 		}
 		
 		
-		if(!blockParents.isEmpty()){
-			CFGNode newStart = blockParents.get(blockParents.size()-1);
+		if(!block.isEmpty()){
+			CFGNode newStart = block.get(block.size()-1);
+//			CFGNode newStart = block.get(0);
 			for(CFGNode parent: newStart.getParents()){
 				if(!visitedNodes.contains(parent.getIndex())){
 					increaseRelVars(relevantVars, parent, visitedNodes);				
@@ -150,47 +149,70 @@ public class CFGConstructor {
 		
 	}
 
+	private List<Variable> findBlockReadVars(CFGNode blockNode) {
+		List<Variable> readVars = new ArrayList<>();
+		List<CFGNode> block = retrieveBlock(blockNode);
+		for(CFGNode node: block){
+			if(node.getLineNo()<=blockNode.getLineNo()){
+				for(Variable readVar: node.getReadVars()){
+					if(!isVarListContains(readVar, readVars)){
+						readVars.add(readVar);
+					}
+					
+				}				
+			}
+			
+		}
+		
+		return readVars;
+	}
+
+	/**
+	 * The definition of a block: a block is a chain of CFG nodes. In such a chain, 
+	 * except the root of the chain, each node can has only one parent and one child.
+	 * As for the root, it can has more than two parents but only one child.
+	 * @param node
+	 * @return
+	 */
 	private List<CFGNode> retrieveBlock(CFGNode node) {
 		/**
 		 * identify a block
 		 */
-		List<CFGNode> blockParents = new ArrayList<>();
-		blockParents.add(node);
+		List<CFGNode> block = new ArrayList<>();
+		block.add(node);
 		
-		if(!node.getParents().isEmpty() && node.getParents().size()==1){
-			CFGNode n = node.getParents().get(0);
-			while(n!=null && n.getParents().size()<=1 && n.getChildren().size()<=1){
-				blockParents.add(n);
-				if(n.getParents().size()==1){
-					n = n.getParents().get(0);					
-				}
-				else{
-					break;
-				}
+		while(!node.getParents().isEmpty() &&
+				node.getParents().size()==1){
+			CFGNode parent = node.getParents().get(0);
+			if(parent.getChildren().size()<=1){
+				block.add(parent);
+				node = parent;
 			}
-			if (n != null) {
-				blockParents.add(n);
+			else{
+				break;
 			}
 		}
 		
-		if(!node.getChildren().isEmpty() && node.getChildren().size()==1){
-			CFGNode n = node.getChildren().get(0);
-			while(n!=null && n.getChildren().size()<=1 && n.getParents().size()<=1){
-				blockParents.add(n);
-				if(n.getChildren().size()==1){
-					n = n.getChildren().get(0);					
-				}
-				else{
-					break;
-				}
+		while(!node.getChildren().isEmpty() &&
+				node.getChildren().size()==1){
+			CFGNode child = node.getChildren().get(0);
+			if(child.getParents().size()<=1){
+				block.add(child);
+				node = child;
 			}
-			if (n != null) {
-				blockParents.add(n);
+			else{
+				break;
 			}
 		}
 		
+		Collections.sort(block, new Comparator<CFGNode>() {
+			@Override
+			public int compare(CFGNode o1, CFGNode o2) {
+				return o2.getInstructionHandle().getPosition()-o1.getInstructionHandle().getPosition();
+			}
+		});
 		
-		return blockParents;
+		return block;
 	}
 
 	private boolean isVarListContains(Variable writtenVar, List<Variable> relevantVars) {
