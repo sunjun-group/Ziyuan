@@ -191,6 +191,36 @@
             </visibleWhen>
          </command>
          
+         <command
+                 commandId="learntest.plugin.commands.javaGentest"
+                 label="as JDART">
+            <parameter
+                  name="learntest.approach"
+                  value="JDART">
+            </parameter>
+             <visibleWhen
+                  checkEnabled="true">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <or>
+                     <adapt
+                           type="org.eclipse.jdt.core.IJavaElement">
+                     </adapt>
+                     <and>
+                        <with
+                              variable="selection">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="learntest.plugin.tester.isTestableSelectedText">
+                           </test>
+                        </with>
+                     </and>
+                  </or>
+               </iterate>
+            </visibleWhen>
+         </command>
+         
           <command
                  commandId="learntest.plugin.commands.javaGentest"
                  label="as L2T_GAN">

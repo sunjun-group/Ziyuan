@@ -59,7 +59,7 @@ public class SystemPreferences {
 		return value == null ? null : (T) value; 
 	}
 	
-	public <T> T get(SystemVariables var) {
+	public <T> T get(ISystemVariable var) {
 		return get(var.getName(), var.getDefValue());
 	}
 

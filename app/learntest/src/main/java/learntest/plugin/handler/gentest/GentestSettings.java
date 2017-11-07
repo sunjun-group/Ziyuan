@@ -8,10 +8,14 @@
 
 package learntest.plugin.handler.gentest;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 
 import cfgcoverage.jacoco.CfgJaCoCoConfigs;
+import learntest.core.ILearnTestSolution;
+import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.plugin.commons.PluginException;
@@ -55,7 +59,14 @@ public class GentestSettings {
 		preferences.set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
 	}
 	
+	public static void configureJdart(LearnTestParams params) throws CoreException {
+		configureJdart(params.getSystemConfig());
+	}
+	
 	public static void configureJdart(SystemPreferences preferences) throws CoreException {
+		if (preferences.get(LearntestSystemVariable.JDART_APP_PROPRETIES) != null) {
+			return;
+		}
 		try {
 			preferences.set(LearntestSystemVariable.JDART_APP_PROPRETIES,
 					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
@@ -66,10 +77,14 @@ public class GentestSettings {
 		}
 	}
 
-	public static void settingByApproach(LearnTestParams params) {
+	public static void settingByApproach(LearnTestParams params, int i, List<Integer> sampleSizes)
+			throws CoreException {
 		switch (params.getApproach()) {
 		case GAN:
-			params.setInitialTcTotal(100);
+			params.setInitialTcTotal(sampleSizes.get(i - 1));
+			break;
+		case JDART:
+			configureJdart(params);
 			break;
 		case L2T:
 		case RANDOOP:
@@ -77,6 +92,15 @@ public class GentestSettings {
 			break;
 		default:
 			throw new IllegalArgumentException("approachType is not specified in learntestParams!");
+		}
+	}
+
+	public static ILearnTestSolution initLearntestSolution(LearnTestParams params) {
+		switch (params.getApproach()) {
+		case JDART:
+			return new JDartLearntest(params.getAppClasspath());
+		default:
+			return new learntest.core.LearnTest(params.getAppClasspath());
 		}
 	}
 }

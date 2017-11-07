@@ -39,11 +39,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.core.ILearnTestSolution;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.MethodInfo;
-import learntest.core.commons.test.TestTool;
 import learntest.core.commons.test.TestTools;
 import learntest.plugin.LearntestLogger;
 import learntest.plugin.LearntestPlugin;
@@ -136,7 +136,6 @@ public class JavaGentestHandler extends AbstractHandler {
 			LearnTestParams params = new LearnTestParams(appClasspath);
 			params.setApproach(approach);
 			params.setTestMode(false);
-			GentestSettings.settingByApproach(params);
 			MethodCollector methodCollector = new MethodCollector(GentestTypeFilter.createFilters(), 
 					GentestMethodFilter.createFilters());
 			try {
@@ -339,17 +338,18 @@ public class JavaGentestHandler extends AbstractHandler {
 			sampleSizes.add(i);
 		}
 	}
+	
 	private RunTimeInfo runLearntest(LearnTestParams params) throws PluginException {
 		RunTimeInfo averageInfo = null;
 		double bestCoverage = 0;
 		TestTools.getCurTestTool().startMethod(params.getTargetMethod().getMethodFullName());
-		for (int i = 1; i <= 10; i++) {
+		for (int i = 1; i <= 1; i++) {
 			try {
 				log.info("\n\n------------- Round {} ------------------------", i);
 				SAVTimer.enableExecutionTimeout = true;
 				SAVTimer.exeuctionTimeout = 50000000;
-				learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
-				params.setInitialTcTotal(sampleSizes.get(i - 1));
+				ILearnTestSolution learntest = GentestSettings.initLearntestSolution(params);
+				GentestSettings.settingByApproach(params, i, sampleSizes);
 				TestTools.getCurTestTool().startRound(i, params);
 				RunTimeInfo runtimeInfo = learntest.run(params);
 				log.info("---------- Result Round {} ------------------", i);

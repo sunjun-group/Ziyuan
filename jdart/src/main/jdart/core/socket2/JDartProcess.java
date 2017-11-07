@@ -18,6 +18,7 @@ import jdart.core.JDartParams;
 import jdart.core.util.ByteConverter;
 import jdart.core.util.TaskManager;
 import jdart.model.TestInput;
+import sav.strategies.vm.VMConfiguration;
 
 public class JDartProcess {
 
@@ -71,9 +72,10 @@ public class JDartProcess {
 		BufferedReader br = null;
 		List<TestInput> list = new ArrayList<>();
 		long pid = -1;
+		Process process = null;
 		try {
 			int tryTime = 1;
-			int port = 8989;
+			int port = VMConfiguration.findFreePort(); //LLT: this is normal way to find free port.
 			while (tryTime <= 1000) {
 				try {
 					s = new ServerSocket(port);
@@ -97,7 +99,8 @@ public class JDartProcess {
 			ProcessBuilder builder = new ProcessBuilder(javaBin, "-Xms1024m", "-Xmx9000m", "-cp", classpath, className,
 					targetClassCP, mainEntry, targetClass, methodName, paramString, app, site, "" + port);
 			builder.directory(new File(JDartCore.getJdartRoot()));
-			Process process = builder.start();
+			process = builder.start();
+			final Process shareProcess = process;
 			pid = TaskManager.getPid(process);
 			log.info("" + pid);
 			log.info(ManagementFactory.getRuntimeMXBean().getName());
@@ -105,7 +108,7 @@ public class JDartProcess {
 				@Override
 				public void run() {
 					try {
-						printerInfo(process);
+						printerInfo(shareProcess);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -126,7 +129,11 @@ public class JDartProcess {
 			e.printStackTrace();
 		} finally {
 			log.info("kill pid : " + pid);
-			TaskManager.kill(pid);
+//			LLT: it is too dangerous to kill process using task manager, we should only destroy process instead.
+//			if (process != null && process.isAlive()) {
+//				process.destroyForcibly();
+//			}
+			TaskManager.kill(pid); 
 			log.info("IntraServer Close.....");
 			try {
 				if (br != null) {

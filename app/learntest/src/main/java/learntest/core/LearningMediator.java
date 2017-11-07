@@ -121,6 +121,8 @@ public class LearningMediator {
 			return new RandomLearner(this, params.getMaxTcs(), "./logs/"+methodName+".randoop."+time+".log");
 		case GAN:
 			return new GanDecisionLearner(this);
+		default:
+			break;
 		}
 		return null; // this should never happen
 	}
@@ -218,10 +220,6 @@ public class LearningMediator {
 			log.error("Error when Compiling final tests: {}, {}", e.getMessage(), e);
 			return new LineCoverageResult(targetMethod.getMethodInfo());
 		}
-	}
-
-	public GenTestPackage getGenTestPackage() {
-		return genTestPackage;
 	}
 
 	public void setGenTestPackage(GenTestPackage genTestPackage) {

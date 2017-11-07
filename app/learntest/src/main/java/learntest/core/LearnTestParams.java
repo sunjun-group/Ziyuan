@@ -158,5 +158,10 @@ public class LearnTestParams {
 		public String getName() {
 			return name();
 		}
+
+		@Override
+		public Object getDefValue() {
+			return null;
+		}
 	}
 }
