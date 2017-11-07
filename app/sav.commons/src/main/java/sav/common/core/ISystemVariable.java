@@ -16,4 +16,6 @@ public interface ISystemVariable {
 
 	String getName();
 
+	Object getDefValue();
+
 }
