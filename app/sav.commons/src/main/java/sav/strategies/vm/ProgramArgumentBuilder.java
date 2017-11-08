@@ -64,4 +64,7 @@ public class ProgramArgumentBuilder {
 		return arguments;
 	}
 
+	public String[] getArgArr() {
+		return arguments.toArray(new String[arguments.size()]);
+	}
 }
