@@ -9,6 +9,7 @@
 package evosuite;
 
 import java.io.File;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.junit.Before;
@@ -26,6 +27,14 @@ public class MathEvosuiteTest extends EvosuiteTest {
 	private String TRUNK;
 	private String absoluteBaseDir;
 	private String absoluteEvoSrcFolder;
+	
+	public MathEvosuiteTest() {
+		try {
+			setup();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Before
 	public void setup() throws Exception {
@@ -89,6 +98,13 @@ public class MathEvosuiteTest extends EvosuiteTest {
 		Configuration config = initTxtConfiguration();
 		EvosuitEvaluation evosuit = new EvosuitEvaluation(appClasspath);
 		evosuit.run(config);
+	}
+	
+	@Test
+	public void runMathProject(List<String> methods) throws Exception {
+		Configuration config = initTxtConfiguration();
+		EvosuitEvaluation evosuit = new EvosuitEvaluation(appClasspath);
+		evosuit.run(config, methods);
 	}
 
 	@Test

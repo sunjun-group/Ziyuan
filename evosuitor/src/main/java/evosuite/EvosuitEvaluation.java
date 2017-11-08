@@ -44,8 +44,12 @@ public class EvosuitEvaluation {
 		coverageCounter = new CoverageCounter(appClasspath);
 	}
 
-	public void run(Configuration config) {
+	public void run(Configuration config){
 		List<String> methods = config.loadValidMethods();
+		run(config, methods);
+	}
+	
+	public void run(Configuration config, List<String> methods) {
 		Map<String, TargetClass> targetClassMap = toTargetClass(methods);
 		for (TargetClass targetClass : targetClassMap.values()) {
 			EvoJavaFileAdaptor adaptor = null;
