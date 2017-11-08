@@ -99,8 +99,7 @@ public class MathEvosuiteTest extends EvosuiteTest {
 		EvosuitEvaluation evosuit = new EvosuitEvaluation(appClasspath);
 		evosuit.run(config);
 	}
-	
-	@Test
+
 	public void runMathProject(List<String> methods) throws Exception {
 		Configuration config = initTxtConfiguration();
 		EvosuitEvaluation evosuit = new EvosuitEvaluation(appClasspath);
