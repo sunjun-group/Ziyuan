@@ -23,6 +23,7 @@ import evosuite.commons.CoverageUtils;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.JavaCompiler;
 import sav.strategies.vm.VMConfiguration;
@@ -76,7 +77,9 @@ public class EvosuitEvaluation {
 						EvosuiteResult result = EvosuiteRunner.run(params);
 						CfgCoverage coverage = coverageCounter.calculateCoverage(config, targetClass.generatePackage(i), result);
 						result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
+						System.out.println("Coverage calculated by Ziyuan!@#$: " + result.branchCoverage);
 						result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
+						System.out.println(StringUtils.newLineJoin(result.coverageInfo));
 						config.updateResult(targetClass.getMethodFullName(i), line, result);
 					} catch (Exception e) {
 						revert(adaptor);
