@@ -18,6 +18,7 @@ import jdart.model.PrimaryTestVar;
 import jdart.model.TestInput;
 import jdart.model.TestVar;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.NumberUtils;
 import sav.common.core.utils.PrimitiveUtils;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.BooleanValue;
@@ -89,6 +90,9 @@ public class JdartTestInputUtils {
 	}
 
 	private static String getChildId(ExecValue parent, TestVar var) {
+		if (parent.getType() == ExecVarType.ARRAY && NumberUtils.isNumber(var.getName())) {
+			return ((ArrayValue) parent).getElementId(Integer.valueOf(var.getName()));
+		}
 		return parent.getChildId(var.getName());
 	}
 

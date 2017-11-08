@@ -17,15 +17,9 @@ import java.util.Set;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.CollectionUtils;
-import sav.strategies.dto.execute.value.BooleanValue;
-import sav.strategies.dto.execute.value.ByteValue;
-import sav.strategies.dto.execute.value.CharValue;
-import sav.strategies.dto.execute.value.DoubleValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
-import sav.strategies.dto.execute.value.FloatValue;
-import sav.strategies.dto.execute.value.IntegerValue;
-import sav.strategies.dto.execute.value.LongValue;
+import sav.strategies.dto.execute.value.PrimitiveValue;
 
 /**
  * @author LLT
@@ -117,38 +111,9 @@ public class BreakpointDataUtils {
 		return labels;
 	}
 
-	public static void addToBreakpointValue(BreakpointValue bkpVal, ExecVar execVar, Number value) {
-		ExecValue child = null;
-		String id = execVar.getVarId();
-		switch (execVar.getType()) {
-		case BOOLEAN:
-			child = BooleanValue.of(id, value.intValue() > 0 ? true : false);
-			break;
-		case BYTE:
-			child = ByteValue.of(id, value.byteValue());
-			break;
-		case CHAR:
-			child = CharValue.of(id, (char) value.intValue());
-			break;
-		case DOUBLE:
-			child = DoubleValue.of(id, value.doubleValue());
-			break;
-		case FLOAT:
-			child = FloatValue.of(id, value.floatValue());
-			break;
-		case INTEGER:
-			child = IntegerValue.of(id, value.intValue());
-			break;
-		case LONG:
-			child = LongValue.of(id, value.longValue());
-			break;
-		case SHORT:
-			child = LongValue.of(id, value.longValue());
-			break;
-		default:
-			break;
-		}
-		bkpVal.add(child);
+	public static void addToBreakpointValue(ExecValue parentVal, ExecVar execVar, Number value) {
+		ExecValue child = PrimitiveValue.valueOf(execVar, value);
+		parentVal.add(child);
 	}
 	
 	public static List<double[]> toDataPoint(List<ExecVar> vars, List<BreakpointValue> values) {

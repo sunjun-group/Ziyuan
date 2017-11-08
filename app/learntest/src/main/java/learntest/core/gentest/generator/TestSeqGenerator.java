@@ -3,6 +3,8 @@ package learntest.core.gentest.generator;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,18 +19,25 @@ import com.google.inject.Inject;
 
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
+import gentest.core.data.statement.RArrayAssignment;
 import gentest.core.data.statement.RqueryMethod;
 import gentest.core.data.type.IType;
 import gentest.core.data.type.ITypeCreator;
-import gentest.core.data.type.VarArrayType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
-import gentest.core.value.generator.ArrayValueGenerator;
 import gentest.core.value.generator.ValueGeneratorMediator;
-import net.sf.javailp.Result;
+import icsetlv.common.dto.BreakpointValue;
+import learntest.core.commons.utils.DomainUtils;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
+import sav.strategies.dto.execute.value.ArrayValue;
+import sav.strategies.dto.execute.value.ArrayValue.ArrValueElement;
+import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
+import sav.strategies.dto.execute.value.IntegerValue;
+import sav.strategies.dto.execute.value.ReferenceValue;
 
 public class TestSeqGenerator {
 	private static final Logger log = LoggerFactory.getLogger(TestSeqGenerator.class);
@@ -82,18 +91,31 @@ public class TestSeqGenerator {
 
 	public Sequence generateSequence(double[] solution, List<ExecVar> vars, Set<String> failToSetVars)
 			throws SavException {
+		BreakpointValue breakpointValue = DomainUtils.toHierachyBreakpointValue(solution, vars);
+		Sequence sequence = generateSequence(breakpointValue, failToSetVars);
+		resetFailValues(vars, failToSetVars, solution);
+		return sequence;
+	}
+	
+	private void resetFailValues(List<ExecVar> vars, Set<String> failToSetVars, double[] solution) {
+		for (int i = 0; i < solution.length; i++) {
+			if (failToSetVars.contains(vars.get(i).getVarId())) {
+				solution[i] = 0.0;
+			}
+		}
+	}
+
+	public Sequence generateSequence(BreakpointValue breakpointValue, Set<String> failToSetVars)
+			throws SavException {
 		Sequence sequence = new Sequence();
-		Set<Integer> failToSetIdxies = new HashSet<Integer>();
 		System.currentTimeMillis();
 		int firstVarIdx = 0;
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		Set<String> nullVars = new HashSet<String>();
 		/* generate variables for method parameters */
-		for (int idx = 0; idx < vars.size(); idx++) {
-			firstVarIdx = appendVariables(solution, vars, sequence, failToSetIdxies, firstVarIdx, varMap, nullVars,
-					idx);
-		}
+		firstVarIdx = appendVariables(breakpointValue, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
 
+		/* generate method parameters */
 		String[] paramNames = target.getParamNames();
 		int[] paramIds = new int[paramNames.length];
 		for (int i = 0; i < paramIds.length; i++) {
@@ -121,182 +143,202 @@ public class TestSeqGenerator {
 		}
 		rmethod.setInVarIds(paramIds);
 		sequence.append(rmethod);
-		addFailToSetValues(failToSetIdxies, vars, failToSetVars);
-		resetFailValues(failToSetIdxies, solution);
 		return sequence;
 	}
 
-	private int appendVariables(double[] solution, List<ExecVar> vars, Sequence sequence, Set<Integer> failToSetIdxies,
-			int firstVarIdx, Map<String, ISelectedVariable> varMap, Set<String> nullVars, int idx) throws SavException {
-		ExecVar var = vars.get(idx);
-		double value = solution[idx];
-
-		String[] parts = var.getLabel().split("[.]");
-		String receiver = parts[0];
+	private int appendVariables(BreakpointValue value, Sequence sequence, Set<String> failToSetVars,
+			Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx) throws SavException {
+		for (ExecValue childVal : CollectionUtils.nullToEmpty(value.getChildren())) {
+			firstVarIdx = appendVariables(null, childVal, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
+		}
+		return firstVarIdx;
+	}
+	
+	private int appendVariables(ExecValue parent, ExecValue value, Sequence sequence, Set<String> failToSetVars,
+			Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx) throws SavException {
+		String receiver = value.getVarId();
+		/* receiver type doesnot exist */
 		if (!classMap.containsKey(receiver)) {
-			failToSetIdxies.add(idx);
+			addFailToSetVars(value, failToSetVars);
 			return firstVarIdx;
 		}
-		if (parts.length == 1) {
-			IType type = typeMap.get(classMap.get(var.getLabel()));
-			GeneratedVariable variable = fixValueGenerator.generate(type, firstVarIdx, value);
+		if (classMap.get(receiver).isArray()) {
+			value = ArrayValue.convert(value);
+		}
+
+		ExecVarType varType = value.getType();
+		/* receiver type exist */
+		if (value.isPrimitive()) {
+			IType type = typeMap.get(classMap.get(value.getVarId()));
+			GeneratedVariable variable = fixValueGenerator.generate(type, firstVarIdx, value.getDoubleVal());
 			sequence.append(variable);
-			varMap.put(var.getLabel(), variable);
+			varMap.put(value.getVarId(), variable);
 			firstVarIdx += variable.getNewVariables().size();
+		} else if (varType == ExecVarType.ARRAY) {
+			firstVarIdx = appendArrayVariables(parent, (ArrayValue) value, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
+		} else if (varType == ExecVarType.REFERENCE) {
+			firstVarIdx = appendReferenceVariables(parent, (ReferenceValue) value, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
+		}
+		
+		return firstVarIdx;
+	}
 
-		} else {
-			ISelectedVariable variable = varMap.get(receiver);
-			if (variable == null) {
-				IType type = typeMap.get(classMap.get(receiver));
-				if (type.isArray()) {
-					if (parts.length == 2 && parts[1].equals("length"))
-						if (VarArrayType.getDimension((VarArrayType) type) == 1) {
-							/*
-							 * only try to change length for an array with
-							 * dimension = 1
-							 */
-							int newVal = value < 0 ? 0 : (int) value;
-							variable = arrayValueGenerator.generate(type, firstVarIdx, newVal, valueGenerator);
-							sequence.append(variable);
-							firstVarIdx += variable.getNewVariables().size();
-							varMap.put(receiver, variable);
-							solution[idx] = newVal;
-							return firstVarIdx;
-						} else {
-							/*
-							 * only try to change first dimensional length for an array with
-							 * dimension > 1
-							 */
-							int newVal = value < 0 ? 0 : (int) value;
-							ArrayValueGenerator generator = new ArrayValueGenerator(type);
-							variable = generator.generate(type, firstVarIdx, newVal, valueGenerator);
-							sequence.append(variable);
-							firstVarIdx += variable.getNewVariables().size();
-							varMap.put(receiver, variable);
-							solution[idx] = newVal;
-							return firstVarIdx;
-						}
-				} else {
-					variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
-					sequence.append(variable);
-					firstVarIdx += variable.getNewVariables().size();
-					varMap.put(receiver, variable);
-				}
-			}
-
-			for (int i = 1; i < parts.length - 2; i++) {
-				String cur = receiver + "." + parts[i];
-				if (varMap.containsKey(cur)) {
-					receiver = cur;
-					variable = varMap.get(receiver);
-				} else {
-					Class<?> clazz = classMap.get(receiver);
-					try {
-						Class<?> fieldClazz = lookupFieldAndGetType(clazz, parts[i]);
-						classMap.put(cur, fieldClazz);
-						IType type = typeMap.get(fieldClazz);
-						if (type == null) {
-							type = typeCreator.forClass(fieldClazz);
-							typeMap.put(fieldClazz, type);
-						}
-						ISelectedVariable field = valueGenerator.generate(type, firstVarIdx, true);
-						firstVarIdx += field.getNewVariables().size();
-						sequence.append(field);
-						varMap.put(cur, field);
-						Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
-								variable.getReturnVarId());
-						int[] varId = new int[] { field.getReturnVarId() };
-						method.setInVarIds(varId);
-						sequence.append(method);
-
-						variable = field;
-						receiver = cur;
-					} catch (Exception e) {
-						failToSetIdxies.add(idx);
-						return firstVarIdx;
-					}
-				}
-			}
-
-			String last = parts[parts.length - 1];
-
-			int i = parts.length - 2;
-			if (i > 0) {
-				String cur = receiver + "." + parts[i];
-				if (last.equals("isNull") && value == 1) {
-					nullVars.add(cur);
-					return firstVarIdx;
-				}
-				if (varMap.containsKey(cur)) {
-					receiver = cur;
-					variable = varMap.get(receiver);
-				} else {
-					Class<?> clazz = classMap.get(receiver);
-					try {
-						Class<?> fieldClazz = lookupFieldAndGetType(clazz, parts[i]);
-						if (!Modifier.isPublic(fieldClazz.getModifiers())) {
-							log.debug("modify variable {}: cannot init instance for an invisible class {}",
-									var.getLabel(), fieldClazz);
-							return firstVarIdx;
-						}
-						classMap.put(cur, fieldClazz);
-						IType type = typeMap.get(fieldClazz);
-						if (type == null) {
-							type = typeCreator.forClass(fieldClazz);
-							typeMap.put(fieldClazz, type);
-						}
-						ISelectedVariable field = valueGenerator.generate(type, firstVarIdx, true);
-						firstVarIdx += field.getNewVariables().size();
-						sequence.append(field);
-						varMap.put(cur, field);
-						Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
-								variable.getReturnVarId());
-						int[] varId = new int[] { field.getReturnVarId() };
-						method.setInVarIds(varId);
-						sequence.append(method);
-
-						variable = field;
-						receiver = cur;
-					} catch (Exception e) {
-						failToSetIdxies.add(idx);
-						return firstVarIdx;
-					}
-				}
-				if (last.equals("isNull")) {
-					return firstVarIdx;
-				}
-			}
-			String cur = receiver + "." + last;
-			if (varMap.containsKey(cur)) {
+	private int appendReferenceVariables(ExecValue parent, ReferenceValue value, Sequence sequence,
+			Set<String> failToSetVars, Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx)
+			throws SavException {
+		String receiver = value.getVarId();
+		if (value.isNull()) {
+			if (value.getChildren().size() > 1) {
+				log.warn("reset isNull to false for variable: {}", value.getVarId());
+				value.setNull(false);
+			} else {
+				nullVars.add(value.getVarId());
 				return firstVarIdx;
 			}
-			Class<?> clazz = classMap.get(receiver);
+		}
+		
+		ISelectedVariable variable = varMap.get(receiver);
+		if (variable == null) {
+			variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
+			sequence.append(variable);
+			firstVarIdx += variable.getNewVariables().size();
+			varMap.put(receiver, variable);
+		}
+		
+		/* navigate its children */
+		for (ExecValue fieldValue : CollectionUtils.nullToEmpty(value.getChildren())) {
 			try {
-				Class<?> fieldClazz = lookupFieldAndGetType(clazz, last);
-				classMap.put(cur, fieldClazz);
-				IType type = typeMap.get(fieldClazz);
-				if (type == null) {
-					type = typeCreator.forClass(fieldClazz);
-					typeMap.put(fieldClazz, type);
+				String fieldId = fieldValue.getVarId();
+				Class<?> clazz = classMap.get(receiver);
+				String fieldName = value.getFieldName(fieldValue);
+				if (ReferenceValue.NULL_CODE.equals(fieldName)) {
+					continue;
 				}
-				ISelectedVariable field = fixValueGenerator.generate(type, firstVarIdx, value);
-				sequence.append(field);
-				firstVarIdx += field.getNewVariables().size();
-				varMap.put(cur, field);
-
-				Method setter = findSetMethod(clazz, last, fieldClazz);
-				RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
-						variable.getReturnVarId());
-				int[] varId = new int[] { field.getReturnVarId() };
-				method.setInVarIds(varId);
-				sequence.append(method);
+				Class<?> fieldClazz = classMap.get(fieldId);
+				if (fieldClazz == null) {
+					fieldClazz = lookupFieldAndGetType(clazz, fieldName);
+					updateClassTypeMap(fieldId, fieldClazz);
+				}
+				firstVarIdx = appendVariables(value, fieldValue, sequence, failToSetVars, varMap, nullVars,
+						firstVarIdx);
+				ISelectedVariable field = varMap.get(fieldId);
+				if (field != null) {
+					Method setter = findSetMethod(clazz, fieldName, fieldClazz);
+					RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+							variable.getReturnVarId());
+					int[] varId = new int[] { field.getReturnVarId() };
+					method.setInVarIds(varId);
+					sequence.append(method);
+				}
 			} catch (Exception e) {
+				addFailToSetVars(fieldValue, failToSetVars);
 				return firstVarIdx;
 			}
 		}
 		return firstVarIdx;
+	}
+
+	public void updateClassTypeMap(String varId, Class<?> varClazz) {
+		classMap.put(varId, varClazz);
+		IType type = typeMap.get(varClazz);
+		if (type == null) {
+			type = typeCreator.forClass(varClazz);
+			typeMap.put(varClazz, type);
+		}
+	}
+
+	private int appendArrayVariables(ExecValue parent, ArrayValue value, Sequence sequence, Set<String> failToSetVars,
+			Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx) throws SavException {
+		String varId = value.getVarId();
+		ISelectedVariable variable = varMap.get(varId);
+		int[] arrayLength = getArrayLength(value);
+		int dimension = arrayLength.length;
+		if (dimension == 0) {
+			if (!value.isNull()) {
+				log.warn("reset isNull to true for variable: {}", value.getVarId());
+			}
+			value.setNull(true);
+			nullVars.add(varId);
+			return firstVarIdx;
+		}
+		IType type = typeMap.get(classMap.get(varId));
+		if (variable == null) {
+			variable = arrayValueGenerator.generate(type, firstVarIdx, arrayLength);
+			sequence.append(variable);
+			firstVarIdx += variable.getNewVariables().size();
+			varMap.put(varId, variable);
+		}
+		Class<?> arrContentClazz = getContentClass(classMap.get(varId));
+		IType arrContentType = getContentType(type);
+		for (ExecValue element : value.collectAllValue(new ArrayList<>())) {
+			classMap.put(element.getVarId(), arrContentClazz);
+			IType eleType = typeMap.get(arrContentClazz);
+			if (eleType == null) {
+				typeMap.put(arrContentClazz, arrContentType);
+			}
+			firstVarIdx = appendVariables(value, element, sequence, failToSetVars, varMap, nullVars,
+					firstVarIdx);
+			ISelectedVariable elementVar = varMap.get(element.getVarId());
+			int[] location = value.getLocation(element, dimension);
+			RArrayAssignment arrayAssignment = new RArrayAssignment(
+					variable.getReturnVarId(), location, elementVar.getReturnVarId());
+			((GeneratedVariable)variable).append(arrayAssignment);
+		}
+		return firstVarIdx;
+	}
+
+	private IType getContentType(IType type) {
+		IType contentType = type;
+		while (contentType .isArray()) {
+			contentType = contentType.getComponentType();
+		}
+		return contentType;
+	}
+
+	private Class<?> getContentClass(Class<?> clazz) {
+		Class<?> contentClazz = clazz;
+		while(contentClazz.isArray()) {
+			contentClazz = contentClazz.getComponentType();
+		}
+		return contentClazz;
+	}
+
+	private int[] getArrayLength(ArrayValue value) {
+		int[] lengths = new int[10];
+		for (int i = 0; i < 10; i++) {
+			lengths[i] = -1;
+		}
+		getArrayLength(value, lengths, 0);
+		int dimension = 0;
+		for (int i = 0; i < 10; i++) {
+			if (lengths[i] < 0) {
+				dimension = i;
+				break;
+			}
+		}
+		return Arrays.copyOf(lengths, dimension);
+	}
+
+	private void getArrayLength(ArrayValue value, int[] lengths, int idx) {
+		int length = -1;
+		IntegerValue lengthValue = value.getLengthValue();
+		if (lengthValue != null) {
+			length = lengthValue.getIntegerVal();
+		}
+		for (ArrValueElement element : CollectionUtils.nullToEmpty(value.getElements())) {
+			int minLength = element.getIdx() + 1;
+			if (length < minLength) {
+				length = minLength;
+			}
+			if (element.getValue().getType() == ExecVarType.ARRAY) {
+				getArrayLength((ArrayValue) element.getValue(), lengths, idx);
+			}
+		}
+		lengths[idx] = Math.max(lengths[idx], length); 
+	}
+
+	private void addFailToSetVars(ExecValue value, Set<String> failToSetVars) {
+		failToSetVars.add(value.getVarId());
 	}
 
 	private Method findSetMethod(Class<?> clazz, String fieldName, Class<?> fieldType) throws Exception {
@@ -319,205 +361,6 @@ public class TestSeqGenerator {
 			}
 		}
 		return field.getType();
-	}
-
-	private void addFailToSetValues(Set<Integer> failToSetIdxies, List<ExecVar> vars, Set<String> failToSetVars) {
-		for (int idx : failToSetIdxies) {
-			failToSetVars.add(vars.get(idx).getVarId());
-		}
-	}
-
-	private void resetFailValues(Set<Integer> failToSetIdxies, double[] solution) {
-		for (int idx : failToSetIdxies) {
-			solution[idx] = 0.0;
-		}
-	}
-
-	public Sequence generateSequence(Result result, List<String> variables) throws SavException {
-		Sequence sequence = new Sequence();
-
-		int firstVarIdx = 0;
-		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
-		Set<String> nullVars = new HashSet<String>();
-		// prepare inputs for target method
-		for (String var : variables) {
-			if (result.containsVar(var)) {
-				Number value = result.get(var);
-
-				String[] parts = var.split("[.]");
-				String receiver = parts[0];
-				if (!classMap.containsKey(receiver)) {
-					// System.err.println("not input parameter [" + var + "]");
-					continue;
-				}
-				if (parts.length == 1) {
-					IType type = typeMap.get(classMap.get(var));
-					GeneratedVariable variable = fixValueGenerator.generate(type, firstVarIdx, value);
-					sequence.append(variable);
-					varMap.put(var, variable);
-					firstVarIdx += variable.getNewVariables().size();
-				} else {
-					ISelectedVariable variable = varMap.get(receiver);
-					if (variable == null) {
-						IType type = typeMap.get(classMap.get(receiver));
-						if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
-							variable = arrayValueGenerator.generate(type, firstVarIdx,
-									value.intValue() < 0 ? 0 : value.intValue(), valueGenerator);
-							sequence.append(variable);
-							firstVarIdx += variable.getNewVariables().size();
-							varMap.put(receiver, variable);
-							continue;
-						} else {
-							variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
-							sequence.append(variable);
-							firstVarIdx += variable.getNewVariables().size();
-							varMap.put(receiver, variable);
-						}
-					}
-
-					for (int i = 1; i < parts.length - 2; i++) {
-						String cur = receiver + "." + parts[i];
-						if (varMap.containsKey(cur)) {
-							receiver = cur;
-							variable = varMap.get(receiver);
-						} else {
-							Class<?> clazz = classMap.get(receiver);
-							try {
-								Class<?> fieldClazz = lookupFieldAndGetType(clazz, parts[i]);
-								classMap.put(cur, fieldClazz);
-								IType type = typeMap.get(fieldClazz);
-								if (type == null) {
-									type = typeCreator.forClass(fieldClazz);
-									typeMap.put(fieldClazz, type);
-								}
-								ISelectedVariable field = valueGenerator.generate(type, firstVarIdx, true);
-								firstVarIdx += field.getNewVariables().size();
-								sequence.append(field);
-								varMap.put(cur, field);
-								Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-								RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
-										variable.getReturnVarId());
-								int[] varId = new int[] { field.getReturnVarId() };
-								method.setInVarIds(varId);
-								sequence.append(method);
-
-								variable = field;
-								receiver = cur;
-							} catch (Exception e) {
-								// System.err.println("can not find setter for "
-								// + cur);
-								break;
-							}
-						}
-					}
-
-					String last = parts[parts.length - 1];
-
-					int i = parts.length - 2;
-					if (i > 0) {
-						String cur = receiver + "." + parts[i];
-						if (last.equals("isNull") && value.intValue() == 1) {
-							nullVars.add(cur);
-							continue;
-						}
-						if (varMap.containsKey(cur)) {
-							receiver = cur;
-							variable = varMap.get(receiver);
-						} else {
-							Class<?> clazz = classMap.get(receiver);
-							try {
-								Class<?> fieldClazz = lookupFieldAndGetType(clazz, parts[i]);
-								classMap.put(cur, fieldClazz);
-								IType type = typeMap.get(fieldClazz);
-								if (type == null) {
-									type = typeCreator.forClass(fieldClazz);
-									typeMap.put(fieldClazz, type);
-								}
-								ISelectedVariable field = valueGenerator.generate(type, firstVarIdx, true);
-								firstVarIdx += field.getNewVariables().size();
-								sequence.append(field);
-								varMap.put(cur, field);
-								Method setter = findSetMethod(clazz, parts[i], fieldClazz);
-								RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
-										variable.getReturnVarId());
-								int[] varId = new int[] { field.getReturnVarId() };
-								method.setInVarIds(varId);
-								sequence.append(method);
-
-								variable = field;
-								receiver = cur;
-							} catch (Exception e) {
-								// System.err.println("can not find setter for "
-								// + cur);
-								break;
-							}
-						}
-						if (last.equals("isNull")) {
-							continue;
-						}
-					}
-					String cur = receiver + "." + last;
-					if (varMap.containsKey(cur)) {
-						continue;
-					}
-					Class<?> clazz = classMap.get(receiver);
-					try {
-						Class<?> fieldClazz = lookupFieldAndGetType(clazz, last);
-						classMap.put(cur, fieldClazz);
-						IType type = typeMap.get(fieldClazz);
-						if (type == null) {
-							type = typeCreator.forClass(fieldClazz);
-							typeMap.put(fieldClazz, type);
-						}
-						ISelectedVariable field = fixValueGenerator.generate(type, firstVarIdx, value);
-						sequence.append(field);
-						firstVarIdx += field.getNewVariables().size();
-						varMap.put(cur, field);
-						Method setter = findSetMethod(clazz, last, fieldClazz);
-						RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
-								variable.getReturnVarId());
-						int[] varId = new int[] { field.getReturnVarId() };
-						method.setInVarIds(varId);
-						sequence.append(method);
-					} catch (Exception e) {
-						// ignore
-						continue;
-					}
-				}
-			}
-		}
-
-		String[] paramNames = target.getParamNames();
-		int[] paramIds = new int[paramNames.length];
-		for (int i = 0; i < paramIds.length; i++) {
-			ISelectedVariable param = varMap.get(paramNames[i]);
-			if (param == null) {
-				param = valueGenerator.generate(typeMap.get(classMap.get(paramNames[i])), firstVarIdx, false);
-				sequence.append(param);
-				firstVarIdx += param.getNewVariables().size();
-				varMap.put(paramNames[i], param);
-			}
-			paramIds[i] = param.getReturnVarId();
-		}
-
-		RqueryMethod rmethod = null;
-		if (target.requireReceiver()) {
-			ISelectedVariable receiverParam = valueGenerator.generate(receiverType, firstVarIdx, true);
-			/*
-			 * sequence.appendReceiver(receiverParam, target.getReceiverType());
-			 * rmethod = new RqueryMethod(target,
-			 * sequence.getReceiver(target.getReceiverType()).getVarId());
-			 */
-			sequence.append(receiverParam);
-			firstVarIdx += receiverParam.getNewVariables().size();
-			rmethod = new RqueryMethod(target, receiverParam.getReturnVarId());
-		} else {
-			rmethod = new RqueryMethod(target);
-		}
-		rmethod.setInVarIds(paramIds);
-		sequence.append(rmethod);
-
-		return sequence;
 	}
 
 }

@@ -34,6 +34,40 @@ public class PrimitiveValue extends ExecValue {
 		}
 	}
 	
+	public static PrimitiveValue valueOf(ExecVar execVar, Number value) {
+		PrimitiveValue child = null;
+		String id = execVar.getVarId();
+		switch (execVar.getType()) {
+		case BOOLEAN:
+			child = BooleanValue.of(id, value.intValue() > 0 ? true : false);
+			break;
+		case BYTE:
+			child = ByteValue.of(id, value.byteValue());
+			break;
+		case CHAR:
+			child = CharValue.of(id, (char) value.intValue());
+			break;
+		case DOUBLE:
+			child = DoubleValue.of(id, value.doubleValue());
+			break;
+		case FLOAT:
+			child = FloatValue.of(id, value.floatValue());
+			break;
+		case INTEGER:
+			child = IntegerValue.of(id, value.intValue());
+			break;
+		case LONG:
+			child = LongValue.of(id, value.longValue());
+			break;
+		case SHORT:
+			child = LongValue.of(id, value.longValue());
+			break;
+		default:
+			break;
+		}
+		return child;
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("(%s:%s:%s)", varId, getType(), strVal);
@@ -42,5 +76,10 @@ public class PrimitiveValue extends ExecValue {
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.PRIMITIVE;
+	}
+
+	@Override
+	public boolean isPrimitive() {
+		return true;
 	}
 }

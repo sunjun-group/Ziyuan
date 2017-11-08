@@ -84,9 +84,9 @@ public class GentestSettings {
 			params.setInitialTcTotal(sampleSizes.get(i - 1));
 			break;
 		case JDART:
+		case L2T:
 			configureJdart(params);
 			break;
-		case L2T:
 		case RANDOOP:
 			// add details if needed!
 			break;

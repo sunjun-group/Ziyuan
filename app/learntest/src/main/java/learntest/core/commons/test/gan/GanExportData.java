@@ -77,9 +77,9 @@ public class GanExportData {
 		if (cvgs == null) {
 			cvgs = String.valueOf(trial.getCoverage());
 		} else {
-			cvgs = StringUtils.join(", ", initCvgs, trial.getCoverage());
+			cvgs = StringUtils.join(", ", cvgs, trial.getCoverage());
 		}
-		return initCvgs;
+		return cvgs;
 	}
 
 	public void setCvgs(String cvgs) {

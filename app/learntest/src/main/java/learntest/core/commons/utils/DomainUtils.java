@@ -125,6 +125,14 @@ public class DomainUtils {
 		}
 		return value;
 	}
+	
+	public static BreakpointValue toHierachyBreakpointValue(double[] solution, List<ExecVar> vars) {
+		BreakpointValue value = new BreakpointValue(StringUtils.EMPTY);
+		for (int i = 0; i < vars.size(); i++) {
+			value.append(vars.get(i).getVarId(), 0, vars.get(i), solution[i]);
+		}
+		return value;
+	}
 
 	public static Domain toDomain(int val) {
 		return new FloatIntervalDomain(val, val);

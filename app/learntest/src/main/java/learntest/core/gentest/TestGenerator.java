@@ -32,7 +32,7 @@ import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import learntest.core.commons.LearntestExceptionType;
 import learntest.core.commons.utils.DomainUtils;
-import learntest.core.gentest.generator.TestSeqGenerator;
+import learntest.core.gentest.generator.TestSeqGeneratorOld;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
@@ -112,7 +112,8 @@ public class TestGenerator {
 		List<Module> modules = new ArrayList<Module>();
 		modules.add(injectorModule);
 		Injector injector = Guice.createInjector(modules);
-		TestSeqGenerator generator = injector.getInstance(TestSeqGenerator.class);
+		// TODO LLT: TO REPLACE WITH TestSeqGenerator [Waiting for test]
+		TestSeqGeneratorOld generator = injector.getInstance(TestSeqGeneratorOld.class);
 		generator.setTarget(target);
 		
 		GentestResult result = new GentestResult();

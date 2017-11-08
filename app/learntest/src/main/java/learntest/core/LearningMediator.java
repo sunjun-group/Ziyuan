@@ -113,6 +113,7 @@ public class LearningMediator {
 		String methodName = params.getTargetMethod().getMethodFullName()+"."+params.getTargetMethod().getLineNum();
 		long time = System.currentTimeMillis();
 		switch (params.getApproach()) {
+		case JDART:
 		case L2T:
 			PrecondDecisionLearner learner = new PrecondDecisionLearner(this, "./logs/"+methodName+".l2t."+time+".log");
 			learner.setCu(params.getCu());

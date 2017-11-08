@@ -9,6 +9,7 @@
 package sav.strategies.dto.execute.value;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,74 @@ public abstract class ExecValue implements IExecValue {
 		children.add(child);
 	}
 	
+	public void add(ExecValue child, boolean overrideIfExist) {
+		if (children == null) {
+			children = new ArrayList<ExecValue>();
+		}
+		if (overrideIfExist) {
+			Iterator<ExecValue> it = children.iterator();
+			while (it.hasNext()) {
+				ExecValue curChild = it.next();
+				if (curChild.getVarId().endsWith(child.getVarId())) {
+					it.remove();
+					break;
+				}
+			}
+		}
+		children.add(child);
+	}
+	
+	/**
+	 * lookup and append to 
+	 */
+	public void append(String varId, int curIdx, ExecVar primitiveVar, Number value) {
+		int ai = varId.indexOf("[", curIdx);
+		int ri = varId.indexOf(".", curIdx);
+		// primitive
+		if (ai < 0 && ri < 0) {
+			PrimitiveValue priVal = PrimitiveValue.valueOf(primitiveVar, value);
+			add(priVal, true);
+			// array
+		} else if (ai > 0 && (ai < ri || ri < 0)) {
+			String arrVarId = varId.substring(0, ai);
+			ExecValue arrVal = getArrayValue(arrVarId);
+			arrVal.append(arrVarId, ai + 1, primitiveVar, value);
+			// object
+		} else if(ri >= 0 && (ri < ai || ai < 0)) {
+			String refId = varId.substring(0, ri);
+			ExecValue refVal = getReferenceValue(refId);
+			refVal.append(refId, ri + 1, primitiveVar, value);
+		}
+	}
+
+	/**
+	 * findCreateIfNotExist.
+	 */
+	public ExecValue getReferenceValue(String refId) {
+		ExecValue refVal = findVariableById(refId);
+		if (refVal == null) {
+			refVal = new ReferenceValue(refId);
+			add(refVal);
+		}
+		return refVal;
+	}
+
+	/**
+	 * findCreateIfNotExist.
+	 */
+	public ExecValue getArrayValue(String arrVarId) {
+		ExecValue arrVal = findVariableById(arrVarId);
+		if (arrVal == null) {
+			arrVal = new ArrayValue(arrVarId);
+			add(arrVal);
+		} else if (arrVal.getType() != ExecVarType.ARRAY) {
+			ArrayValue newArrVal = ArrayValue.convert(arrVal);
+			add(newArrVal, true);
+			arrVal = newArrVal;
+		}
+		return arrVal;
+	}
+
 	public Double getDoubleVal() {
 		return (double) NOT_NULL_VAL;
 	}
@@ -130,4 +199,6 @@ public abstract class ExecValue implements IExecValue {
 	public abstract String getStrVal();
 	
 	public abstract ExecVarType getType();
+	
+	public abstract boolean isPrimitive();
 }

@@ -138,4 +138,9 @@ public class BreakpointValue extends ExecValue {
 	public String getStrVal() {
 		return null;
 	}
+
+	@Override
+	public boolean isPrimitive() {
+		return false;
+	}
 }

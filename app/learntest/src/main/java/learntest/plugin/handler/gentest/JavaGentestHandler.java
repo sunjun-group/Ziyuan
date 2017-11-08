@@ -358,7 +358,7 @@ public class JavaGentestHandler extends AbstractHandler {
 				bestCoverage = RunTimeInfo.getBestCoverage(bestCoverage, runtimeInfo);
 				averageInfo = RunTimeInfo.average(averageInfo, runtimeInfo);
 			} catch (Exception e) {
-				throw PluginException.wrapEx(e);
+				throw new PluginException(e);
 			}
 		}
 		/* average */

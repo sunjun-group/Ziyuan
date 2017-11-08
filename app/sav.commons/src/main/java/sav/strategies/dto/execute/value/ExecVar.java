@@ -76,10 +76,6 @@ public class ExecVar implements Var {
 		visitor.visit(this);
 	}
 
-	/**
-	 * @param object
-	 * @return
-	 */
 	public double getDoubleValue(Object object) {
 		switch (type) {
 		case INTEGER:
@@ -100,7 +96,6 @@ public class ExecVar implements Var {
 	
 	/**
 	 * a simple solution to judge whether represent array length
-	 * @return
 	 */
 	public boolean isArrayLength(){
 		if (varId.endsWith(".length")) {

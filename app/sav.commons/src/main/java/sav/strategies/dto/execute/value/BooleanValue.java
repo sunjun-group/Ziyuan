@@ -43,6 +43,10 @@ public class BooleanValue extends PrimitiveValue {
 		return new BooleanValue(id, value);
 	}
 	
+	public void setValue(Boolean value) {
+		this.value = value;
+	}
+	
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.BOOLEAN;
