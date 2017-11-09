@@ -11,6 +11,7 @@ package learntest.core;
 import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.gentest.GentestParams;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -23,9 +24,14 @@ public class LearntestParamsUtils {
 	}
 	
 	public static String getTestPackage(LearnTestParams params, GenTestPackage phaseType) {
+		String methodLc = params.getTargetMethod().getMethodName().toLowerCase();
+		/* handle keyword cases */
+		if (CollectionUtils.existIn(methodLc, "instanceof")) {
+			methodLc = methodLc + "ziy";
+		}
 		return String.format(phaseType.format, params.getApproach().getName(),
 				params.getTargetMethod().getTargetClazz().getClassSimpleName().toLowerCase(),
-				params.getTargetMethod().getMethodName().toLowerCase());
+				methodLc);
 	}
 
 	public static GentestParams createGentestParams(AppJavaClassPath appClasspath, LearnTestParams learntestParams,
