@@ -6,7 +6,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,14 +92,24 @@ public class TestSeqGenerator {
 			throws SavException {
 		BreakpointValue breakpointValue = DomainUtils.toHierachyBreakpointValue(solution, vars);
 		Sequence sequence = generateSequence(breakpointValue, failToSetVars);
-		resetFailValues(vars, failToSetVars, solution);
+		resetFailValues(vars, failToSetVars, solution, breakpointValue);
 		return sequence;
 	}
 	
-	private void resetFailValues(List<ExecVar> vars, Set<String> failToSetVars, double[] solution) {
+	/**
+	 * LLT: If solution is still not up-to-date, consider to retrieve values from breakpointValue back to solution[].
+	 * 9NOV2017
+	 */
+	private void resetFailValues(List<ExecVar> vars, Set<String> failToSetVars, double[] solution, BreakpointValue breakpointValue) {
 		for (int i = 0; i < solution.length; i++) {
-			if (failToSetVars.contains(vars.get(i).getVarId())) {
+			String varId = vars.get(i).getVarId();
+			if (failToSetVars.contains(varId)) {
 				solution[i] = 0.0;
+			} else {
+				if (varId.endsWith(ReferenceValue.NULL_CODE)) {
+					ExecValue value = breakpointValue.findVariableById(varId);
+					solution[i] = value.getDoubleVal();
+				}
 			}
 		}
 	}
@@ -108,12 +117,10 @@ public class TestSeqGenerator {
 	public Sequence generateSequence(BreakpointValue breakpointValue, Set<String> failToSetVars)
 			throws SavException {
 		Sequence sequence = new Sequence();
-		System.currentTimeMillis();
 		int firstVarIdx = 0;
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
-		Set<String> nullVars = new HashSet<String>();
 		/* generate variables for method parameters */
-		firstVarIdx = appendVariables(breakpointValue, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
+		firstVarIdx = appendVariables(breakpointValue, sequence, failToSetVars, varMap, firstVarIdx);
 
 		/* generate method parameters */
 		String[] paramNames = target.getParamNames();
@@ -147,22 +154,23 @@ public class TestSeqGenerator {
 	}
 
 	private int appendVariables(BreakpointValue value, Sequence sequence, Set<String> failToSetVars,
-			Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx) throws SavException {
+			Map<String, ISelectedVariable> varMap, int firstVarIdx) throws SavException {
 		for (ExecValue childVal : CollectionUtils.nullToEmpty(value.getChildren())) {
-			firstVarIdx = appendVariables(null, childVal, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
+			firstVarIdx = appendVariables(null, childVal, sequence, failToSetVars, varMap, firstVarIdx);
 		}
 		return firstVarIdx;
 	}
 	
-	private int appendVariables(ExecValue parent, ExecValue value, Sequence sequence, Set<String> failToSetVars,
-			Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx) throws SavException {
+	private int appendVariables(ExecValue parent, ExecValue orgValue, Sequence sequence, Set<String> failToSetVars,
+			Map<String, ISelectedVariable> varMap, int firstVarIdx) throws SavException {
+		ExecValue value = orgValue;
 		String receiver = value.getVarId();
-		/* receiver type doesnot exist */
 		if (!classMap.containsKey(receiver)) {
+			/* receiver type does not exist */
 			addFailToSetVars(value, failToSetVars);
 			return firstVarIdx;
 		}
-		if (classMap.get(receiver).isArray()) {
+		if (classMap.get(receiver).isArray() && (value.getType() != ExecVarType.ARRAY)) {
 			value = ArrayValue.convert(value);
 		}
 
@@ -175,16 +183,22 @@ public class TestSeqGenerator {
 			varMap.put(value.getVarId(), variable);
 			firstVarIdx += variable.getNewVariables().size();
 		} else if (varType == ExecVarType.ARRAY) {
-			firstVarIdx = appendArrayVariables(parent, (ArrayValue) value, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
+			firstVarIdx = appendArrayVariables(parent, (ArrayValue) value, sequence, failToSetVars, varMap, firstVarIdx);
+			/* update back to original value in case arrayValue is updated */
+			if (value != orgValue) {
+				for (ExecValue child : CollectionUtils.nullToEmpty(value.getChildren())) {
+					orgValue.add(child, true);
+				}
+			}
 		} else if (varType == ExecVarType.REFERENCE) {
-			firstVarIdx = appendReferenceVariables(parent, (ReferenceValue) value, sequence, failToSetVars, varMap, nullVars, firstVarIdx);
+			firstVarIdx = appendReferenceVariables(parent, (ReferenceValue) value, sequence, failToSetVars, varMap, firstVarIdx);
 		}
 		
 		return firstVarIdx;
 	}
 
 	private int appendReferenceVariables(ExecValue parent, ReferenceValue value, Sequence sequence,
-			Set<String> failToSetVars, Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx)
+			Set<String> failToSetVars, Map<String, ISelectedVariable> varMap, int firstVarIdx)
 			throws SavException {
 		String receiver = value.getVarId();
 		if (value.isNull()) {
@@ -192,7 +206,6 @@ public class TestSeqGenerator {
 				log.warn("reset isNull to false for variable: {}", value.getVarId());
 				value.setNull(false);
 			} else {
-				nullVars.add(value.getVarId());
 				return firstVarIdx;
 			}
 		}
@@ -219,7 +232,7 @@ public class TestSeqGenerator {
 					fieldClazz = lookupFieldAndGetType(clazz, fieldName);
 					updateClassTypeMap(fieldId, fieldClazz);
 				}
-				firstVarIdx = appendVariables(value, fieldValue, sequence, failToSetVars, varMap, nullVars,
+				firstVarIdx = appendVariables(value, fieldValue, sequence, failToSetVars, varMap,
 						firstVarIdx);
 				ISelectedVariable field = varMap.get(fieldId);
 				if (field != null) {
@@ -248,7 +261,7 @@ public class TestSeqGenerator {
 	}
 
 	private int appendArrayVariables(ExecValue parent, ArrayValue value, Sequence sequence, Set<String> failToSetVars,
-			Map<String, ISelectedVariable> varMap, Set<String> nullVars, int firstVarIdx) throws SavException {
+			Map<String, ISelectedVariable> varMap, int firstVarIdx) throws SavException {
 		String varId = value.getVarId();
 		ISelectedVariable variable = varMap.get(varId);
 		int[] arrayLength = getArrayLength(value);
@@ -258,13 +271,11 @@ public class TestSeqGenerator {
 				log.warn("reset isNull to true for variable: {}", value.getVarId());
 			}
 			value.setNull(true);
-			nullVars.add(varId);
 			return firstVarIdx;
 		}
 		IType type = typeMap.get(classMap.get(varId));
 		if (variable == null) {
 			variable = arrayValueGenerator.generate(type, firstVarIdx, arrayLength);
-			sequence.append(variable);
 			firstVarIdx += variable.getNewVariables().size();
 			varMap.put(varId, variable);
 		}
@@ -276,7 +287,7 @@ public class TestSeqGenerator {
 			if (eleType == null) {
 				typeMap.put(arrContentClazz, arrContentType);
 			}
-			firstVarIdx = appendVariables(value, element, sequence, failToSetVars, varMap, nullVars,
+			firstVarIdx = appendVariables(value, element, sequence, failToSetVars, varMap,
 					firstVarIdx);
 			ISelectedVariable elementVar = varMap.get(element.getVarId());
 			int[] location = value.getLocation(element, dimension);
@@ -284,6 +295,7 @@ public class TestSeqGenerator {
 					variable.getReturnVarId(), location, elementVar.getReturnVarId());
 			((GeneratedVariable)variable).append(arrayAssignment);
 		}
+		sequence.append(variable);
 		return firstVarIdx;
 	}
 
@@ -303,6 +315,11 @@ public class TestSeqGenerator {
 		return contentClazz;
 	}
 
+	/**
+	 * LLT: we might need to determine dimension by the object class itself.
+	 * but let see if we need to change to that. 
+	 * [9NOV2017]
+	 */
 	private int[] getArrayLength(ArrayValue value) {
 		int[] lengths = new int[10];
 		for (int i = 0; i < 10; i++) {

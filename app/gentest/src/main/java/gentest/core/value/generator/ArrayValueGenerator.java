@@ -23,7 +23,6 @@ import sav.common.core.utils.Randomness;
 public class ArrayValueGenerator extends ValueGenerator {
 	private int dimension; // start from 1
 	private IType lastContenType;
-	private int MAX_ARRAY_ELEMENT_SIZE = 1000;
 	
 	public ArrayValueGenerator(IType type) {
 		super(type);
@@ -42,95 +41,6 @@ public class ArrayValueGenerator extends ValueGenerator {
 				type.getRawType(), lastContenType.getRawType());
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
-		System.currentTimeMillis();
-		// Generate the array content
-		int[] location = next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
-		while (location != null) {
-			/* keep level the same for better chance to generate a non-null value for content, this would be make
-			 * more sense in case of an array.
-			 */
-			GeneratedVariable newVar = appendVariable(variable,
-					level, lastContenType);
-			int localVariableID = newVar.getReturnVarId(); // the last ID
-
-			// get the variable
-			RArrayAssignment arrayAssignment = new RArrayAssignment(
-					arrayConstructor.getOutVarId(), location, localVariableID);
-			variable.append(arrayAssignment);
-			location = next(location, arrayConstructor.getSizes());
-		}
-		return true;
-	}
-	
-	public GeneratedVariable generate(IType type, int firstVarId, int size, ValueGeneratorMediator valueGeneratorMediator) {
-
-		GeneratedVariable root = new GeneratedVariable(firstVarId);
-		GeneratedVariable variable = root.newVariable();
-		try {
-			GeneratedVariable newVariable = root.newVariable();
-			setValueGeneratorMediator(valueGeneratorMediator);
-			doAppendVariable(newVariable, 1, size);
-			newVariable.commitReturnVarIdIfNotExist();
-			root.append(newVariable);
-			variable = newVariable;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return variable;
-	}
-	
-	/**
-	 * 
-	 * @param variable
-	 * @param level
-	 * @param size the length of first dimension for multiple-dimension array
-	 * @return
-	 * @throws SavException
-	 */
-	public boolean doAppendVariable(GeneratedVariable variable, int level, int size) throws SavException {
-		// Generate the array
-		int sizes[] = new int[dimension];
-		sizes[0] = size;
-		int arrayNum = size;
-		for (int i = 1; i < dimension; i++) {
-			if (arrayNum*2 > MAX_ARRAY_ELEMENT_SIZE) {
-				sizes[i] = 1;
-			}else {
-				sizes[i] = selectArraySize(i + 1, dimension, lastContenType.getRawType(), level);
-			}
-			arrayNum *= arrayNum;
-		}
-		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
-				type.getRawType(), lastContenType.getRawType());
-		variable.append(arrayConstructor);
-		variable.commitReturnVarIdIfNotExist();
-
-		// Generate the array content
-		int[] location = next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
-		while (location != null) {
-			/* keep level the same for better chance to generate a non-null value for content, this would be make
-			 * more sense in case of an array.
-			 */
-			GeneratedVariable newVar = appendVariable(variable,
-					level, lastContenType);
-			int localVariableID = newVar.getReturnVarId(); // the last ID
-
-			// get the variable
-			RArrayAssignment arrayAssignment = new RArrayAssignment(
-					arrayConstructor.getOutVarId(), location, localVariableID);
-			variable.append(arrayAssignment);
-			location = next(location, arrayConstructor.getSizes());
-		}
-		return true;
-	}
-	
-	public boolean doAppendVariable(GeneratedVariable variable, int level, int sizes[]) throws SavException {
-		final RArrayConstructor arrayConstructor = new RArrayConstructor(sizes,
-				type.getRawType(), lastContenType.getRawType());
-		variable.append(arrayConstructor);
-		variable.commitReturnVarIdIfNotExist();
-		System.currentTimeMillis();
 		// Generate the array content
 		int[] location = next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
 		while (location != null) {

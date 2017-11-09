@@ -75,12 +75,12 @@ public abstract class ExecValue implements IExecValue {
 		} else if (ai > 0 && (ai < ri || ri < 0)) {
 			String arrVarId = varId.substring(0, ai);
 			ExecValue arrVal = getArrayValue(arrVarId);
-			arrVal.append(arrVarId, ai + 1, primitiveVar, value);
+			arrVal.append(varId, ai + 1, primitiveVar, value);
 			// object
 		} else if(ri >= 0 && (ri < ai || ai < 0)) {
 			String refId = varId.substring(0, ri);
 			ExecValue refVal = getReferenceValue(refId);
-			refVal.append(refId, ri + 1, primitiveVar, value);
+			refVal.append(varId, ri + 1, primitiveVar, value);
 		}
 	}
 

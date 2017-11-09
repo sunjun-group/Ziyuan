@@ -15,6 +15,7 @@ import jdart.core.JDartCore;
 import jdart.core.JDartParams;
 import jdart.core.util.TaskManager;
 import jdart.model.TestInput;
+import sav.strategies.vm.VMConfiguration;
 
 public class JDartProcessOnDemand {
 
@@ -70,9 +71,10 @@ public class JDartProcessOnDemand {
 		Socket socket = null;
 		List<TestInput> list = new ArrayList<>();
 		long pid = -1;
+		Process process = null;
 		try {
 			int tryTime = 1;
-			int port = 8989;
+			int port = VMConfiguration.findFreePort();
 			while(tryTime <= 1000){
 				try{
 					s = new ServerSocket(port);
@@ -97,7 +99,8 @@ public class JDartProcessOnDemand {
 					targetClass, methodName, paramString, app, site, node, branch, ""+port);
 
 			builder.directory(new File(JDartCore.getJdartRoot()));
-			Process process = builder.start();
+			process = builder.start();
+			final Process shareProcess = process;
 			pid = TaskManager.getPid(process);
 			log.info("" + pid);
 			log.info(ManagementFactory.getRuntimeMXBean().getName());
@@ -105,7 +108,7 @@ public class JDartProcessOnDemand {
 				@Override
 				public void run() {
 					try {
-						JDartProcess.printerInfo(process);
+						JDartProcess.printerInfo(shareProcess);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -123,6 +126,10 @@ public class JDartProcessOnDemand {
 			e.printStackTrace();
 		} finally {
 			log.info("kill pid : " + pid);
+//			LLT: it is too dangerous to kill process using task manager, we should only destroy process instead.
+//			if (process != null && process.isAlive()) {
+//				process.destroyForcibly();
+//			}
 			TaskManager.kill(pid);
 			log.info("IntraServer Close.....");
 			try {
