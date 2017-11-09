@@ -13,10 +13,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.Assignment;
@@ -39,6 +41,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.jdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -47,6 +52,8 @@ import org.eclipse.text.edits.TextEdit;
 import learntest.plugin.utils.LearnTestUtil;
 
 public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
+	private String delimiter;
+	private IJavaProject project;
 
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) {
@@ -85,7 +92,8 @@ public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 					} else if (javaElement instanceof ICompilationUnit) {
 						ICompilationUnit icu = (ICompilationUnit) javaElement;
 						CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
-
+						delimiter = StubUtility.getLineDelimiterUsed(icu);
+						project = icu.getJavaProject();
 						generateSetterMethod(cu);
 					}
 				}
@@ -154,7 +162,14 @@ public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 		
 		AST ast = type.getAST();
 		ASTRewrite astRewrite = ASTRewrite.create(ast);
-		MethodDeclaration md = createSetterMethod(field, supposedSetterMethodName, fieldName, ast);
+		MethodDeclaration md = null;
+		try {
+			md = createSetterMethod(field, supposedSetterMethodName, fieldName, ast);
+		} catch (Exception ex) {
+			// Let try another simple way to generate code for setting method. 
+			md = (MethodDeclaration) astRewrite.createStringPlaceholder(
+					getSetterMethodCode(field, fieldName, supposedSetterMethodName), ASTNode.METHOD_DECLARATION);
+		} 
 		if(md==null){
 			return;
 		}
@@ -179,6 +194,14 @@ public class SetterMethodGenerationHandler extends AbstractLearntestHandler {
 		} finally {
 			bufferManager.disconnect(path, null); // (4)
 		}
+	}
+
+	private String getSetterMethodCode(FieldDeclaration field, String fieldName, String supposedSetterMethodName) {
+		String codeTemplate = "public void %s(%s %s) {  "
+				+ "		this.%s = %s;"
+				+ "}";
+		String code = String.format(codeTemplate, supposedSetterMethodName, field.getType().toString(), fieldName, fieldName, fieldName);		
+		return CodeFormatterUtil.format(CodeFormatter.K_CLASS_BODY_DECLARATIONS, code, 0, delimiter, project);
 	}
 
 	@SuppressWarnings("unchecked")
