@@ -45,6 +45,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.tools.classfile.Opcode.Set;
+
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
@@ -302,17 +305,15 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		HashMap<CfgNode, Boolean> visited = new HashMap<CfgNode, Boolean>();
 		for (FormulaInfo info : l2tAverageInfo.getLearnedFormulas()){
 			if (!visited.containsKey(info.getNode()) 
-					&& info.getLearnedState() == info.VALID) {
+					&& info.getLearnedState() == info.VALID) { // check those nodes with valid learned formulas
 				Queue<CfgNode> queue = new LinkedList<CfgNode>();
 				queue.add(info.getNode());
-				recordBetterInfo(info.getNode(), domainMap,
-						l2tWorseSb, ranWorseSb, info, ranAverageInfo, l2tAverageInfo);	
+				recordBetterInfo(info.getNode(), l2tWorseSb, ranWorseSb, ranAverageInfo, l2tAverageInfo);
 				while (!queue.isEmpty()) {
 					CfgNode node = queue.poll();
 					for (CfgNode dominatee : domainMap.get(node).getDominatees()){					
 						if (!visited.containsKey(dominatee)) {
-							recordBetterInfo(dominatee, domainMap, 
-									l2tWorseSb, ranWorseSb, info, ranAverageInfo, l2tAverageInfo);		
+							recordBetterInfo(dominatee, l2tWorseSb, ranWorseSb, ranAverageInfo, l2tAverageInfo);
 							queue.add(dominatee);
 						}				
 					}
@@ -324,61 +325,78 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		l2tAverageInfo.randWorseThanl2t += ranWorseSb.toString();
 	}
 
-	private void recordBetterInfo(CfgNode dominatee, HashMap<CfgNode,CfgNodeDomainInfo> domainMap, StringBuffer l2tWorseSb, StringBuffer ranWorseSb, 
-			FormulaInfo info, TestRunTimeInfo ranAverageInfo, TestRunTimeInfo l2tAverageInfo) {
-		StringBuffer sBuffer = new StringBuffer();
-		String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
-		CfgNode ancient = info.getNode();
-		List<CfgNode> dominators = domainMap.get(dominatee).getDominators();
-				
-		sBuffer.append("differen branch data ponits : =========================================\n");
-		sBuffer.append(dominatee + ", ancient node : " + info.getNode()+"\n");
-		Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), 
-				ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
-				l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), 
-				l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
-
-		sBuffer.append("if ran better than l2t in false :"+"\n");
-		if (checkIfBetter(ranF, l2tF, sBuffer)) {
-			l2tWorseSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
-			l2tWorseSb.append(", domainator nodes : " + dominators  +";");
+	private void recordBetterInfo(CfgNode node, StringBuffer l2tWorseSb, StringBuffer ranWorseSb,
+			TestRunTimeInfo ranAverageInfo, TestRunTimeInfo l2tAverageInfo) {
+		java.util.Set<BranchRelationship> relInRan = ranAverageInfo.getRelationships().get(node.toString()),
+				relInL2t = l2tAverageInfo.getRelationships().get(node.toString());
+		for (BranchRelationship branchRelationship : relInL2t) {
+			if (!relInRan.contains(branchRelationship)) {
+				ranWorseSb.append(node.toString() + " : " + branchRelationship +";");
+			}
 		}
 
-
-		sBuffer.append("if ran better than l2t in true :"+"\n");
-		if (checkIfBetter(ranT, l2tT, sBuffer)) {
-			l2tWorseSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
-			l2tWorseSb.append(", domainator nodes : " + dominators  +";");
-		}
-
-
-		sBuffer.append("if l2t better than randoop in false :"+"\n");
-		if (checkIfBetter(l2tF, ranF, sBuffer)) {
-			ranWorseSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
-			ranWorseSb.append(", domainator nodes : " + dominators +";");
-		}
-
-
-		sBuffer.append("if l2t better than randoop in true :"+"\n");
-		if (checkIfBetter(l2tT, ranT, sBuffer)) {
-			ranWorseSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
-			ranWorseSb.append(", domainator nodes : " + dominators +";");
+		for (BranchRelationship branchRelationship : relInRan) {
+			if (!relInL2t.contains(branchRelationship)) {
+				l2tWorseSb.append(node.toString() + " : " + branchRelationship +";");
+			}
 		}
 		
-		FileUtils.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
 	}
 
-	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second, StringBuffer sBuffer) {
-
-		if (null!=first && first.size() > 0 &&  
-				(null == second || second.size()==0)) {
-			log.info("size : "+first.size());
-			sBuffer.append(first+"\n");
-			return true;
-		}
-		return false;
-		
-	}
+//	private void recordBetterInfo(CfgNode dominatee, List<CfgNode> dominators, StringBuffer l2tWorseSb, StringBuffer ranWorseSb, 
+//			FormulaInfo info, TestRunTimeInfo ranAverageInfo, TestRunTimeInfo l2tAverageInfo) {
+//		StringBuffer sBuffer = new StringBuffer();
+//		String formula = info.getTrueFalseFormula().get(info.getTrueFalseFormula().size()-1);
+//		CfgNode ancient = info.getNode();
+//				
+//		sBuffer.append("differen branch data ponits : =========================================\n");
+//		sBuffer.append(dominatee + ", ancient node : " + info.getNode()+"\n");
+//		Collection<BreakpointValue> ranF = ranAverageInfo.getFalseSample().get(dominatee.toString()), 
+//				ranT = ranAverageInfo.getTrueSample().get(dominatee.toString()),
+//				l2tF = l2tAverageInfo.getFalseSample().get(dominatee.toString()), 
+//				l2tT = l2tAverageInfo.getTrueSample().get(dominatee.toString());
+//
+//		sBuffer.append("if ran better than l2t in false :"+"\n");
+//		if (checkIfBetter(ranF, l2tF, sBuffer)) {
+//			l2tWorseSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
+//			l2tWorseSb.append(", domainator nodes : " + dominators  +";");
+//		}
+//
+//
+//		sBuffer.append("if ran better than l2t in true :"+"\n");
+//		if (checkIfBetter(ranT, l2tT, sBuffer)) {
+//			l2tWorseSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
+//			l2tWorseSb.append(", domainator nodes : " + dominators  +";");
+//		}
+//
+//
+//		sBuffer.append("if l2t better than randoop in false :"+"\n");
+//		if (checkIfBetter(l2tF, ranF, sBuffer)) {
+//			ranWorseSb.append("false : "+dominatee+", ancient node : " + ancient +","+ formula);
+//			ranWorseSb.append(", domainator nodes : " + dominators +";");
+//		}
+//
+//
+//		sBuffer.append("if l2t better than randoop in true :"+"\n");
+//		if (checkIfBetter(l2tT, ranT, sBuffer)) {
+//			ranWorseSb.append("true : "+dominatee+", ancient node : " + ancient +","+ formula);
+//			ranWorseSb.append(", domainator nodes : " + dominators +";");
+//		}
+//		
+//		FileUtils.write(l2tAverageInfo.getLogFile(), sBuffer.toString());
+//	}
+//
+//	private boolean checkIfBetter(Collection<BreakpointValue> first, Collection<BreakpointValue> second, StringBuffer sBuffer) {
+//
+//		if (null!=first && first.size() > 0 &&  
+//				(null == second || second.size()==0)) {
+//			log.info("size : "+first.size());
+//			sBuffer.append(first+"\n");
+//			return true;
+//		}
+//		return false;
+//		
+//	}
 
 	private void printLearnedFormulas(List<FormulaInfo> list, String logFile) {
 		StringBuffer sb = new StringBuffer();

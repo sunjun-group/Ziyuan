@@ -124,5 +124,21 @@ public class CoverageUtils {
 		}
 		return nodeCvg.getCoveredBranches(testIdx);
 	}
+
+	public static HashMap<String, Set<BranchRelationship>> getBranchCoverage(CfgCoverage cfgCoverage) {
+		HashMap<String , Set<BranchRelationship>> relationships = new HashMap<>();
+		int testIdx = -1;
+		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
+			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
+			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
+			for (int branchIdx : getCoveredBranches(testIdx, nodeCvg)) {
+				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
+				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
+										BranchRelationship.FALSE);
+			}
+			relationships.put(node.toString(), coveredBranches);
+		}
+		return relationships;
+	}
 	
 }

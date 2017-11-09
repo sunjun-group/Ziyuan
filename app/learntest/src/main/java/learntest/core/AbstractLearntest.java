@@ -9,13 +9,16 @@
 package learntest.core;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import gentest.junit.TestsPrinter.PrintOption;
@@ -139,16 +142,22 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		long executionTime = SAVTimer.getExecutionTime();
 		int testCnt = cfgCoverage.getTotalTcs();
 		
+		HashMap<String , Set<BranchRelationship>> relationships = CoverageUtils.getBranchCoverage(cfgCoverage);
+		
 		List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage, -1);
 		for (String line : lines) {
 			log.debug(line);
 		}
 		String cvgInfo = StringUtils.newLineJoin(lines);
 		if (!test) {
-			return new RunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
+			RunTimeInfo info = new RunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
+			info.setRelationships(relationships);
+			return info;
 		}
-		
-		return new TestRunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
+
+		RunTimeInfo tInfo = new TestRunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
+		tInfo.setRelationships(relationships);
+		return tInfo;
 	}
 	
 	protected BreakpointData executeTestcaseAndGetTestInput(List<String> testcases, BreakPoint methodEntryBkp)

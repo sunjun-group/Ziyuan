@@ -1,5 +1,9 @@
 package learntest.core;
 
+import java.util.HashMap;
+import java.util.Set;
+
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.machinelearning.IInputLearner;
 import sav.common.core.utils.TextFormatUtils;
@@ -9,6 +13,7 @@ public class RunTimeInfo {
 	protected double coverage;
 	protected int testCnt;
 	private String coverageInfo;
+	private HashMap<String , Set<BranchRelationship>> relationships = new HashMap<>();
 	
 	private LineCoverageResult lineCoverageResult;
 	
@@ -140,4 +145,14 @@ public class RunTimeInfo {
 	public double getValidCoverage() {
 		return 0.0;
 	}
+
+	public HashMap<String, Set<BranchRelationship>> getRelationships() {
+		return relationships;
+	}
+
+	public void setRelationships(HashMap<String, Set<BranchRelationship>> relationships) {
+		this.relationships = relationships;
+	}
+
+	
 }
