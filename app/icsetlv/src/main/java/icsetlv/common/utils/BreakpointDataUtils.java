@@ -70,9 +70,6 @@ public class BreakpointDataUtils {
 	 * collect variables by only check one breakpoint value, not all.
 	 * for performance, if you can make sure that all breakpointValue is parallel
 	 * then call this function.
-	 * 
-	 * @param bkpData
-	 * @return
 	 */
 	public static List<ExecVar> collectVars(BreakpointData bkpData) {
 		Set<ExecVar> allVars = new HashSet<ExecVar>();
@@ -90,10 +87,6 @@ public class BreakpointDataUtils {
 		return new ArrayList<ExecVar>(allVars);
 	}
 
-	/**
-	 * @param bkpData
-	 * @return 
-	 */
 	public static BreakpointValue getFirstValue(BreakpointData bkpData) {
 		List<BreakpointValue> values = CollectionUtils.isNotEmpty(bkpData.getPassValues()) ? 
 				bkpData.getPassValues() : bkpData.getFailValues();

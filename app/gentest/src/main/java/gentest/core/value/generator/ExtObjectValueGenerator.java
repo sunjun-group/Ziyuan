@@ -17,7 +17,10 @@ import gentest.core.value.AccesibleObjectVerifier;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
@@ -44,6 +47,20 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 		}
 		methodcalls = new ArrayList<Method>(
 				Randomness.randomSequence(initMethods, OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS));
+		filterDuplicateSetMethod(methodcalls);
+	}
+
+	private void filterDuplicateSetMethod(List<Method> methodcalls) {
+		Set<String> setter = new HashSet<String>();
+		Iterator<Method> it = methodcalls.iterator();
+		for(;it.hasNext();) {
+			Method method = it.next();
+			if (setter.contains(method.getName())) {
+				it.remove();
+			} else if (method.getName().startsWith("set")) {
+				setter.add(method.getName());
+			}
+		}
 	}
 
 	/**

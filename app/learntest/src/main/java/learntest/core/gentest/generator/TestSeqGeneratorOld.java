@@ -23,13 +23,15 @@ import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.type.VarArrayType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
-import gentest.core.value.generator.ArrayValueGenerator;
 import gentest.core.value.generator.ValueGeneratorMediator;
 import net.sf.javailp.Result;
 import sav.common.core.SavException;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import sav.strategies.dto.execute.value.ExecVar;
 
+/**
+ * LLT: TO REMOVE! 9NOV2017
+ */
 public class TestSeqGeneratorOld {
 	private static final Logger log = LoggerFactory.getLogger(TestSeqGeneratorOld.class);
 	@Inject
@@ -84,7 +86,6 @@ public class TestSeqGeneratorOld {
 			throws SavException {
 		Sequence sequence = new Sequence();
 		Set<Integer> failToSetIdxies = new HashSet<Integer>();
-		System.currentTimeMillis();
 		int firstVarIdx = 0;
 		Map<String, ISelectedVariable> varMap = new HashMap<String, ISelectedVariable>();
 		Set<String> nullVars = new HashSet<String>();
@@ -168,8 +169,7 @@ public class TestSeqGeneratorOld {
 							 * dimension > 1
 							 */
 							int newVal = value < 0 ? 0 : (int) value;
-							ArrayValueGenerator generator = new ArrayValueGenerator(type);
-							variable = generator.generate(type, firstVarIdx, newVal, valueGenerator);
+							variable = arrayValueGenerator.generate(type, firstVarIdx, newVal);
 							sequence.append(variable);
 							firstVarIdx += variable.getNewVariables().size();
 							varMap.put(receiver, variable);
@@ -362,7 +362,7 @@ public class TestSeqGeneratorOld {
 						IType type = typeMap.get(classMap.get(receiver));
 						if (type.isArray() && parts.length == 2 && parts[1].equals("length")) {
 							variable = arrayValueGenerator.generate(type, firstVarIdx,
-									value.intValue() < 0 ? 0 : value.intValue(), valueGenerator);
+									value.intValue() < 0 ? 0 : value.intValue());
 							sequence.append(variable);
 							firstVarIdx += variable.getNewVariables().size();
 							varMap.put(receiver, variable);
