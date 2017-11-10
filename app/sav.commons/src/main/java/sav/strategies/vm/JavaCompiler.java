@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import sav.common.core.SavException;
 import sav.common.core.SavExceptionType;
 import sav.common.core.utils.CollectionBuilder;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -55,11 +56,11 @@ public class JavaCompiler {
 		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
 		if (!success ) {
 			String errorMsg = vmRunner.getProccessError();
-			if (errorMsg.startsWith("Note: ")) {
+			throw new SavException("compilation error: " + errorMsg, SavExceptionType.COMPILATION_ERROR);
+		} else {
+			String errorMsg = vmRunner.getProccessError();
+			if (!StringUtils.isEmpty(errorMsg)) {
 				log.warn(errorMsg);
-				return success;
-			} else {
-				throw new SavException("compilation error: " + errorMsg, SavExceptionType.COMPILATION_ERROR);
 			}
 		}
 		return success;

@@ -154,7 +154,7 @@ public class VMRunner {
 					t.cancel();
 				}
 				processError = sb.toString();
-				return processError.trim().isEmpty();
+				return isExecutionSuccessful();
 			}
 			return true;
 		} catch (IOException e) {
@@ -163,6 +163,14 @@ public class VMRunner {
 		}
 	}
 
+	public boolean isExecutionSuccessful() {
+		try {
+			return process.exitValue() == 0;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	protected void stop() {
 		process.destroy();
 	}
