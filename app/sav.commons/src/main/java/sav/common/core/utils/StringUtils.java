@@ -12,6 +12,7 @@ package sav.common.core.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import sav.common.core.Constants;
@@ -44,6 +45,10 @@ public class StringUtils {
 		}
 		return org.apache.commons.lang.StringUtils.join(valStrs, separator);
 	}
+	
+	public static String concatenate(String... params) {
+		return org.apache.commons.lang.StringUtils.join(params);
+	}
 
 	public static String join(String separator, Object... params) {
 		return join(Arrays.asList(params), separator);
@@ -59,6 +64,10 @@ public class StringUtils {
 	
 	public static String dotJoin(Object... params) {
 		return join(Arrays.asList(params), ".");
+	}
+	
+	public static String dotJoin(List<?> params) {
+		return join(params, ".");
 	}
 	
 	public static String lowLineJoin(Object...params) {
@@ -128,4 +137,35 @@ public class StringUtils {
 				new String(simpleTypeName));
 	}
 	
+	/*
+	 * return 
+	 * 0: equal.
+	 * 1: s2 is substring of s1.
+	 * 2: s1 is substring of s2.
+	 * -1: other
+	 */
+	public static int checkSubString(String s1, String s2) {
+		 int n1 = s1.length();
+         int n2 = s2.length();
+         int min = Math.min(n1, n2);
+         for (int i = 0; i < min; i++) {
+             char c1 = s1.charAt(i);
+             char c2 = s2.charAt(i);
+             if (c1 != c2) {
+                 return -1;
+             }
+         }
+         if (n1 == n2) {
+        	 return 0;
+         }
+         if (n1 > n2) {
+        	 return 1;
+         }
+         return 2;
+	}
+	
+	public static List<String> sortAlphanumericStrings(List<String> list) {
+		Collections.sort(list, new AlphanumComparator());
+		return list;
+	}
 }

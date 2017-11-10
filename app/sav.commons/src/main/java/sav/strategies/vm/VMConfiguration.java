@@ -76,6 +76,14 @@ public class VMConfiguration {
 		classpaths.add(path);
 	}
 	
+	public void addClasspath(String path, boolean addFirst) {
+		if (addFirst) {
+			classpaths.add(0, path);
+		} else {
+			addClasspath(path);
+		}
+	}
+	
 	public void addClasspaths(List<String> paths) {
 		classpaths.addAll(paths);
 	}
@@ -113,11 +121,13 @@ public class VMConfiguration {
 			socket= new ServerSocket(0);
 			return socket.getLocalPort();
 		} catch (IOException e) { 
+			// ignore
 		} finally {
 			if (socket != null) {
 				try {
 					socket.close();
 				} catch (IOException e) {
+					// ignore
 				}
 			}
 		}

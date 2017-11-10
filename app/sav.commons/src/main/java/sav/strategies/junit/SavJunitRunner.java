@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.runner.JUnitCore;
@@ -57,7 +59,8 @@ public class SavJunitRunner {
 	public static VMConfiguration createVmConfig(AppJavaClassPath appClasspath) {
 		VMConfiguration vmConfig = new VMConfiguration(appClasspath);
 		String savJunitJar = SystemVariablesUtils.updateSavJunitJarPath(appClasspath);
-		vmConfig.addClasspath(savJunitJar);
+		/* make junit in sav package highest piority */
+		vmConfig.addClasspath(savJunitJar, true);
 		return vmConfig;
 	}
 }

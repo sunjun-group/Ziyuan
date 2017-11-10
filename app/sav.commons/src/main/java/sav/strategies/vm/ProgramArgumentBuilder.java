@@ -55,5 +55,9 @@ public class ProgramArgumentBuilder {
 	public List<String> build() {
 		return arguments;
 	}
+	
+	public String[] getArgArr() {
+		return arguments.toArray(new String[arguments.size()]);
+	}
 
 }

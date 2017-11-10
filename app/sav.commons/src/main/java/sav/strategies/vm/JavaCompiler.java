@@ -11,6 +11,7 @@ package sav.strategies.vm;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class JavaCompiler {
 		return compile(targetFolder, Arrays.asList(javaFiles));
 	}
 
-	public boolean compile(String targetFolder, List<File> javaFiles)
+	public boolean compile(String targetFolder, Collection<File> javaFiles)
 			throws SavException {
 		CollectionBuilder<String, List<String>> builder = new CollectionBuilder<String, List<String>>(
 				new ArrayList<String>())

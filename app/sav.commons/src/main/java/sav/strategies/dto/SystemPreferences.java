@@ -10,6 +10,7 @@ package sav.strategies.dto;
 
 import java.util.HashMap;
 
+import sav.common.core.ISystemVariable;
 import sav.common.core.SystemVariables;
 
 /**
@@ -27,7 +28,7 @@ public class SystemPreferences {
 		return variables.put(key, value); 
 	}
 	
-	public void set(SystemVariables var, Object value) {
+	public void set(ISystemVariable var, Object value) {
 		set(var.getName(), value);
 	}
 
@@ -58,7 +59,7 @@ public class SystemPreferences {
 		return value == null ? null : (T) value; 
 	}
 	
-	public <T> T get(SystemVariables var) {
+	public <T> T get(ISystemVariable var) {
 		return get(var.getName(), var.getDefValue());
 	}
 

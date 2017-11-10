@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -63,11 +64,23 @@ public class FileUtils {
 		}
 	}
 	
+	public static void deleteFilesByName(List<String> fileNames) {
+		for (String fileName : CollectionUtils.nullToEmpty(fileNames)) {
+			File file = new File(fileName);
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+	}
+	
 	public static void copyFiles(List<File> files, String folderPath) throws FileNotFoundException, IOException {
 		File targetFolder = mkDirs(folderPath);
 		for (File file : files) {
 			InputStream inStream = new FileInputStream(file);
 			File copyFile = new File(targetFolder, file.getName());
+			while (copyFile.exists()) {
+				copyFile = new File(targetFolder, copyFile.getName() + "_00");
+			}
 			IOUtils.copy(inStream, new FileOutputStream(copyFile));
 		}
 	}
@@ -88,6 +101,15 @@ public class FileUtils {
 		} catch (Exception e) {
 			// do nothing
 		}
+	}
+	
+	public static List<File> getFiles(List<String> filePaths) {
+		List<File> files = new ArrayList<File>(filePaths.size());
+		for (String path : filePaths) {
+			File file = new File(path);
+			files.add(file);
+		}
+		return files;
 	}
 
 	public static List<String> getFileNames(List<File> files) {
@@ -118,6 +140,29 @@ public class FileUtils {
 		File[] files = folder.listFiles();
 		if (!CollectionUtils.isEmpty(files)) {
 			deleteFiles(Arrays.asList(files));
+		}
+	}
+	
+	public static void write(String file, String log) {
+		if (log == null) {
+			return;
+		}
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(file, true);
+			writer.write(log);
+		} catch (Exception e) {
+			// ignore
+		} finally {
+			IOUtils.closeQuietly(writer);
+		}
+
+	}
+	
+	public static void createFile(String path) {
+		File file = new File(path);
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
 		}
 	}
 }

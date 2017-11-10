@@ -36,6 +36,10 @@ public class ClassUtils {
 		return classPath.replace(Constants.FILE_SEPARATOR, Constants.DOT);
 	}
 	
+	public static String getClassName(String classFilePath, String targetFolder) {
+		return toClassCanonicalName(classFilePath.replace(targetFolder + "/", ""));
+	}
+	
 	/**
 	 * very weak method. only handle very simple case of className.
 	 * TODO LLT: handle for the case of inner class as well.
