@@ -82,7 +82,7 @@ public abstract class ValueGenerator {
 	private static List<Class<?>> ignoreMethodCalls;
 	static {
 		specificObjectMap = new HashMap<String, Pair<Class<?>,List<String>>>();
-		specificObjectMap.put(List.class.getName(), new Pair(ArrayList.class, listOf("add(ILjava/lang/Object;)V")));
+		specificObjectMap.put(List.class.getName(), new Pair(ArrayList.class, listOf("add(Ljava/lang/Object;)Z")));
 		specificObjectMap.put(Set.class.getName(), new Pair(HashSet.class, listOf("add(Ljava/lang/Object;)Z")));
 		specificObjectMap.put(Map.class.getName(),
 									new Pair(HashMap.class,

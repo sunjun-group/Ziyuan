@@ -142,8 +142,13 @@ public class ClassUtils {
 	public static boolean isAupperB(Class<?> a, Class<?> b) {
 		return a.isAssignableFrom(b);
 	}
-
+	
 	public static Method loockupMethod(Class<?> clazz, String methodNameOrSign) {
+		List<Method> matches = loockupMethodByNameOrSign(clazz, methodNameOrSign);
+		return CollectionUtils.getFirstElement(matches);
+	}
+
+	public static List<Method> loockupMethodByNameOrSign(Class<?> clazz, String methodNameOrSign) {
 		String methodName = SignatureUtils.extractMethodName(methodNameOrSign);
 		String methodSign = SignatureUtils.extractSignature(methodNameOrSign);
 		
@@ -164,7 +169,7 @@ public class ClassUtils {
 		/* if only one method is found with given name, just return. 
 		 * otherwise, check for the method with right signature */
 		if (matchingMethods.size() == 1) {
-			return matchingMethods.get(0);
+			return matchingMethods;
 		}
 		
 		/*
@@ -172,12 +177,12 @@ public class ClassUtils {
 		 * provided, and there are more than one method matches. Change the logic if necessary. 
 		 */
 		if (methodSign.isEmpty()) {
-			return matchingMethods.get(0);
+			return matchingMethods;
 		}
 		
 		for (Method method : matchingMethods) {
 			if (SignatureUtils.getSignature(method).equals(methodSign)) {
-				return method;
+				return CollectionUtils.listOf(method, 1);
 			}
 		}
 		

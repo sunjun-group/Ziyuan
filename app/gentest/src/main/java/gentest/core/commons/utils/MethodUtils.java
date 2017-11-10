@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 
 /**
@@ -34,6 +35,17 @@ public class MethodUtils {
 			}
 		}
 		
+		return result;
+	}
+	
+	public static List<Method> lookupMethods(Class<?> clazz, List<String> methodFullSigns) {
+		List<Method> result = new ArrayList<Method>();
+		for (String methodSig : methodFullSigns) {
+			List<Method> matches = ClassUtils.loockupMethodByNameOrSign(clazz, methodSig);
+			if (CollectionUtils.isNotEmpty(matches)) {
+				result.addAll(matches);
+			}
+		}
 		return result;
 	}
 	

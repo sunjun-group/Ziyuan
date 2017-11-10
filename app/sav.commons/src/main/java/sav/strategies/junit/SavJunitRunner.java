@@ -17,8 +17,8 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.runner.JUnitCore;
 
-import sav.common.core.SystemVariablesUtils;
 import sav.common.core.SavRtException;
+import sav.common.core.SystemVariablesUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
@@ -57,7 +57,8 @@ public class SavJunitRunner {
 	public static VMConfiguration createVmConfig(AppJavaClassPath appClasspath) {
 		VMConfiguration vmConfig = new VMConfiguration(appClasspath);
 		String savJunitJar = SystemVariablesUtils.updateSavJunitJarPath(appClasspath);
-		vmConfig.addClasspath(savJunitJar);
+		/* make junit in sav package highest piority */
+		vmConfig.addClasspath(savJunitJar, true);
 		return vmConfig;
 	}
 }

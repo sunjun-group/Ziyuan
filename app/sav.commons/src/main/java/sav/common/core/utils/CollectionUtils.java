@@ -99,6 +99,15 @@ public class CollectionUtils {
 			col.add(val);
 		}
 	}
+	
+	public static <T> void addIfNotNull(Collection<T> col, Collection<T> arr) {
+		if (isEmpty(arr)) {
+			return;
+		}
+		for (T val : arr) {
+			addIfNotNull(col, val);
+		}
+	}
 
 	public static <T> void addIfNotNullNotExist(Collection<T> col, T val) {
 		if (val != null && !col.contains(val)) {
