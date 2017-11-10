@@ -42,7 +42,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
 		// Generate the array content
-		int[] location = next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
+		int[] location = ArrayRandomness.next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
 		while (location != null) {
 			/* keep level the same for better chance to generate a non-null value for content, this would be make
 			 * more sense in case of an array.
@@ -55,7 +55,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 			RArrayAssignment arrayAssignment = new RArrayAssignment(
 					arrayConstructor.getOutVarId(), location, localVariableID);
 			variable.append(arrayAssignment);
-			location = next(location, arrayConstructor.getSizes());
+			location = ArrayRandomness.next(location, arrayConstructor.getSizes());
 		}
 		return true;
 	}
@@ -70,7 +70,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		}
 		
 		String clazzName = contentType.getName();
-		boolean isSimpleType = PrimitiveUtils.isPrimitive(clazzName) || PrimitiveUtils.isPrimitiveTypeOrString(clazzName);
+		boolean isSimpleType = PrimitiveUtils.isSimpleType(clazzName);
 		int maxSize = GentestConstants.VALUE_GENERATION_ARRAY_MAXLENGTH;
 		
 		if (!isSimpleType && maxSize > 5) {
@@ -103,33 +103,6 @@ public class ArrayValueGenerator extends ValueGenerator {
 		return dimension;
 	}
 
-	private static int[] next(int[] array, int[] limit) {
-		if (array == null) {
-			final int[] result = new int[limit.length];
-			for (int i = 0; i < result.length; i++) {
-				if (limit[i] > 0) {
-					result[i] = 0;
-				} else {
-					return null;
-				}
-			}
-			return result;
-		}
-		int i = 0;
-		while (i < array.length && array[i] >= limit[i] - 1) {
-			i++;
-		}
-		if (i >= array.length) {
-			return null;
-		} else {
-			array[i]++;
-			if (i - 1 >= 0 && array[i - 1] == limit[i - 1] - 1) {
-				for (int j = 0; j < i; j++) {
-					array[j] = 0;
-				}
-			}
-			return array;
-		}
-	}
+
 
 }

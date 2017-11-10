@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +26,15 @@ import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.utils.DomainUtils;
+import learntest.core.gentest.generator.FixLengthArrayValueGenerator.LocationHolderExecValue;
 import sav.common.core.SavException;
+import sav.common.core.utils.ArrayTypeUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import sav.strategies.dto.execute.value.ArrayValue;
-import sav.strategies.dto.execute.value.ArrayValue.ArrValueElement;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
-import sav.strategies.dto.execute.value.IntegerValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
 
 public class TestSeqGenerator {
@@ -170,7 +169,8 @@ public class TestSeqGenerator {
 			addFailToSetVars(value, failToSetVars);
 			return firstVarIdx;
 		}
-		if (classMap.get(receiver).isArray() && (value.getType() != ExecVarType.ARRAY)) {
+		Class<?> clazz = classMap.get(receiver);
+		if (clazz.isArray() && (value.getType() != ExecVarType.ARRAY)) {
 			value = ArrayValue.convert(value);
 		}
 
@@ -183,7 +183,8 @@ public class TestSeqGenerator {
 			varMap.put(value.getVarId(), variable);
 			firstVarIdx += variable.getNewVariables().size();
 		} else if (varType == ExecVarType.ARRAY) {
-			firstVarIdx = appendArrayVariables(parent, (ArrayValue) value, sequence, failToSetVars, varMap, firstVarIdx);
+			firstVarIdx = appendArrayVariables(parent, (ArrayValue) value, sequence, failToSetVars, varMap, firstVarIdx,
+					clazz);
 			/* update back to original value in case arrayValue is updated */
 			if (value != orgValue) {
 				for (ExecValue child : CollectionUtils.nullToEmpty(value.getChildren())) {
@@ -261,11 +262,13 @@ public class TestSeqGenerator {
 	}
 
 	private int appendArrayVariables(ExecValue parent, ArrayValue value, Sequence sequence, Set<String> failToSetVars,
-			Map<String, ISelectedVariable> varMap, int firstVarIdx) throws SavException {
+			Map<String, ISelectedVariable> varMap, int firstVarIdx, Class<?> arrayClazz) throws SavException {
 		String varId = value.getVarId();
 		ISelectedVariable variable = varMap.get(varId);
-		int[] arrayLength = getArrayLength(value);
-		int dimension = arrayLength.length;
+		int dimension = ArrayTypeUtils.getArrayDimension(arrayClazz);
+		Class<?> arrContentClazz = ArrayTypeUtils.getContentClass(classMap.get(varId));
+		int[] arrayLength = FixLengthArrayValueGenerator.customizeArrayAndDetermineLength(value, arrContentClazz,
+				dimension);
 		if (dimension == 0) {
 			if (!value.isNull()) {
 				log.warn("reset isNull to true for variable: {}", value.getVarId());
@@ -275,26 +278,38 @@ public class TestSeqGenerator {
 		}
 		IType type = typeMap.get(classMap.get(varId));
 		if (variable == null) {
+			/* TODO NICE TO HAVE-LLT: fix duplicate code */
 			variable = arrayValueGenerator.generate(type, firstVarIdx, arrayLength);
 			firstVarIdx += variable.getNewVariables().size();
 			varMap.put(varId, variable);
 		}
-		Class<?> arrContentClazz = getContentClass(classMap.get(varId));
 		IType arrContentType = getContentType(type);
+		
 		for (ExecValue element : value.collectAllValue(new ArrayList<>())) {
 			classMap.put(element.getVarId(), arrContentClazz);
 			IType eleType = typeMap.get(arrContentClazz);
 			if (eleType == null) {
 				typeMap.put(arrContentClazz, arrContentType);
+				eleType = arrContentType;
 			}
-			firstVarIdx = appendVariables(value, element, sequence, failToSetVars, varMap,
-					firstVarIdx);
+			if (element instanceof LocationHolderExecValue) {
+				/* randomly generating value */
+				GeneratedVariable eVariable = valueGenerator.generate(eleType, firstVarIdx, false);
+				sequence.append(eVariable);
+				firstVarIdx += eVariable.getNewVariables().size();
+				varMap.put(element.getVarId(), eVariable);
+			} else {
+				/* provided value */
+				firstVarIdx = appendVariables(value, element, sequence, failToSetVars, varMap,
+						firstVarIdx);
+			}
 			ISelectedVariable elementVar = varMap.get(element.getVarId());
 			int[] location = value.getLocation(element, dimension);
 			RArrayAssignment arrayAssignment = new RArrayAssignment(
 					variable.getReturnVarId(), location, elementVar.getReturnVarId());
 			((GeneratedVariable)variable).append(arrayAssignment);
 		}
+		
 		sequence.append(variable);
 		return firstVarIdx;
 	}
@@ -305,53 +320,6 @@ public class TestSeqGenerator {
 			contentType = contentType.getComponentType();
 		}
 		return contentType;
-	}
-
-	private Class<?> getContentClass(Class<?> clazz) {
-		Class<?> contentClazz = clazz;
-		while(contentClazz.isArray()) {
-			contentClazz = contentClazz.getComponentType();
-		}
-		return contentClazz;
-	}
-
-	/**
-	 * LLT: we might need to determine dimension by the object class itself.
-	 * but let see if we need to change to that. 
-	 * [9NOV2017]
-	 */
-	private int[] getArrayLength(ArrayValue value) {
-		int[] lengths = new int[10];
-		for (int i = 0; i < 10; i++) {
-			lengths[i] = -1;
-		}
-		getArrayLength(value, lengths, 0);
-		int dimension = 0;
-		for (int i = 0; i < 10; i++) {
-			if (lengths[i] < 0) {
-				dimension = i;
-				break;
-			}
-		}
-		return Arrays.copyOf(lengths, dimension);
-	}
-
-	private void getArrayLength(ArrayValue value, int[] lengths, int idx) {
-		int length = -1;
-		IntegerValue lengthValue = value.getLengthValue();
-		if (lengthValue != null) {
-			length = lengthValue.getIntegerVal();
-		}
-		for (ArrValueElement element : CollectionUtils.nullToEmpty(value.getElements())) {
-			int minLength = element.getIdx() + 1;
-			if (length < minLength) {
-				length = minLength;
-			}
-			if (element.getValue().getType() == ExecVarType.ARRAY) {
-				getArrayLength((ArrayValue) element.getValue(), lengths, idx);
-			}
-		}
-		lengths[idx] = Math.max(lengths[idx], length); 
 	}
 
 	private void addFailToSetVars(ExecValue value, Set<String> failToSetVars) {

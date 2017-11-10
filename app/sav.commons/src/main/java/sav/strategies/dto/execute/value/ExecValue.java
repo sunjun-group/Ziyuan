@@ -38,10 +38,7 @@ public abstract class ExecValue implements IExecValue {
 	}
 	
 	public void add(ExecValue child) {
-		if (children == null) {
-			children = new ArrayList<ExecValue>();
-		}
-		children.add(child);
+		add(child, false);
 	}
 	
 	public void add(ExecValue child, boolean overrideIfExist) {

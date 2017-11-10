@@ -66,6 +66,10 @@ public class PrimitiveUtils {
 	public static boolean isPrimitiveTypeOrString(String clazzName) {
 		return isPrimitiveType(clazzName) || isString(clazzName);
 	}
+	
+	public static boolean isSimpleType(String clazzName) {
+		return PrimitiveUtils.isPrimitive(clazzName) || PrimitiveUtils.isPrimitiveTypeOrString(clazzName);
+	}
 
 	public static boolean isString(String clazzName) {
 		return STRING_TYPE.equals(clazzName);
