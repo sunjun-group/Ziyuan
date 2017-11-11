@@ -192,12 +192,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				// dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
 				// dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
 				RelationShip relationShip = null;
-				if (indexMap.containsKey(node.getLine())) {
-					int index = indexMap.get(node.getLine()).indexOf(node);
-					Visitor visitor = new Visitor(node.getLine(), cu, index);
-					cu.accept(visitor);
-					relationShip = visitor.getRelationShip();
-				}
+//				if (indexMap.containsKey(node.getLine())) {
+//					int index = indexMap.get(node.getLine()).indexOf(node);
+//					Visitor visitor = new Visitor(node.getLine(), cu, index);
+//					cu.accept(visitor);
+//					relationShip = visitor.getRelationShip();
+//				}
 				if (relationShip != null) { // heuristic rules help to get condition directly
 					updatePreconditionWithHerustic(nodeProbe, preconditions, relationShip);
 					
