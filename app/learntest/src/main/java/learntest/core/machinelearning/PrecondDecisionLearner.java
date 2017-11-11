@@ -132,7 +132,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	}
 
 	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes, HashMap<Integer, List<CfgNode>> indexMap) throws SavException {
-		
+
 		Queue<CfgNode> queue = new LinkedList<>();
 		queue.add(node);
 		int loopTimes = 0;
@@ -202,8 +202,8 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					updatePreconditionWithHerustic(nodeProbe, preconditions, relationShip);
 					
 				} else {
-					dataPreprocessor.sampleForMissingBranch(node, this);
 					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+					dataPreprocessor.sampleForMissingBranch(node, this);
 					updatePrecondition(nodeProbe, preconditions, targetVars);
 				}
 
