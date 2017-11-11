@@ -67,6 +67,7 @@ public class PositiveSeparationMachine extends Machine {
 
 	@Override
 	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
+
 		if (canDivideWithOneFormula(dataPoints)) {
 			return this;
 		}
@@ -99,7 +100,11 @@ public class PositiveSeparationMachine extends Machine {
 			for (int i = 0; i < m1.sv_coef.length; i++) {
 				if (m1.sv_coef[i].length == m2.sv_coef[i].length) {
 					for (int j = 0; j < m1.sv_coef[i].length; j++) {
-						if (Math.abs(m1.sv_coef[i][j] - m2.sv_coef[i][j]) > 0.1) {
+						// ? why 0.1
+//						if (Math.abs(m1.sv_coef[i][j] - m2.sv_coef[i][j]) > 0.1) {
+//							return false;
+//						}
+						if (Math.abs(m1.sv_coef[i][j] - m2.sv_coef[i][j]) > 0) {
 							return false;
 						}
 					}
@@ -109,6 +114,9 @@ public class PositiveSeparationMachine extends Machine {
 
 		if (m1.rho.length == m2.rho.length) {
 			for (int i = 0; i < m1.rho.length; i++) {
+//				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0.1) {
+//					return false;
+//				}
 				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0.1) {
 					return false;
 				}
@@ -119,6 +127,7 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	private boolean isContain(List<svm_model> list, svm_model m0) {
+		System.currentTimeMillis();
 		if (list.isEmpty()) {
 			return false;
 		}
@@ -133,6 +142,7 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	private Machine attemptTraining(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
+
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
 
@@ -154,13 +164,15 @@ public class PositiveSeparationMachine extends Machine {
 			learnLoop: while (selectionSize > 0 && selectionData.size() > 0) {
 				int trialSize = 2;
 				for (int k = 0; k < trialSize; k++) {
-					int selectNum = 1;
+					int selectNum = 3;
 					List<DataPoint> selectedPoints = select(selectNum, selectionData, trainingData);
 					trainingData.addAll(selectedPoints);
 
 					super.train(trainingData);
+					System.out.println("selected points to learn : ");
 					for (int i = 0; i < selectedPoints.size(); i++) {
 						DataPoint p = trainingData.remove(trainingData.size() - 1);
+						System.out.println(p);
 //						selectionData.remove(p); // has removed in method select
 					}
 					removeClassifiedNegativePoints(selectionData);
@@ -233,10 +245,12 @@ public class PositiveSeparationMachine extends Machine {
 		}
 		// Remove all negatives which are correctly separated
 		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
+		System.out.println("removeClassifiedNegativePoints : " + roundDivider);
 		for (Iterator<DataPoint> it = selectionData.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
 			if (roundDivider.dataPointBelongTo(dp, Category.NEGATIVE)) {
 				it.remove();
+				System.out.println(dp);
 			}
 		}
 	}
