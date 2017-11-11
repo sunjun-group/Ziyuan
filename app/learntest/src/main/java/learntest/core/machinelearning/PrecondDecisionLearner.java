@@ -202,9 +202,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					updatePreconditionWithHerustic(nodeProbe, preconditions, relationShip);
 					
 				} else {
-					if (!dataPreprocessor.sampleForMissingBranch(node, this)) {
-						dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-					}
+					dataPreprocessor.sampleForMissingBranch(node, this);
+					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+//					if (!dataPreprocessor.sampleForMissingBranch(node, this)) {
+//					}
 
 					updatePrecondition(nodeProbe, preconditions, targetVars);
 				}

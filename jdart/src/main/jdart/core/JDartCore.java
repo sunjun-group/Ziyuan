@@ -352,7 +352,7 @@ public class JDartCore {
 	}
 	
 	public static int socketWaiteTime() {
-		int wait = 3 * 60 * 1000; //ms
+		int wait = 10 * 1000; //ms
 		return wait;
 	}
 }
