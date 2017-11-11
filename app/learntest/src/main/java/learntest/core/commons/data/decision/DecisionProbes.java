@@ -105,6 +105,7 @@ public class DecisionProbes extends CfgCoverage {
 				break;
 			}
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
+			int type = domPrecond.getType();
 			List<Divider> domDividers = domPrecond.getDividers();
 			BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
 			path.putAll(domPrecond.getPath());
@@ -117,7 +118,7 @@ public class DecisionProbes extends CfgCoverage {
 				log.debug("from "+dominator + " to "+node+" : "+branchRel);
 				CategoryCalculator condFromDividers = null;
 				if (branchRel == BranchRelationship.TRUE || branchRel == BranchRelationship.FALSE) {
-					condFromDividers = getCalculator(domDividers, branchRel);
+					condFromDividers = getCalculator(domDividers, branchRel, type);
 					path.put(dominator, branchRel);
 				} else if (branchRel == BranchRelationship.TRUE_FALSE) {
 					bothBranchNode.add(dominator);
@@ -173,7 +174,8 @@ public class DecisionProbes extends CfgCoverage {
 				}
 			}
 			log.debug("from "+dominator + " to "+node+" : "+branchRel);
-			CategoryCalculator condFromDividers = getCalculator(domDividers, branchRel);
+			int type = domPrecond.getType();
+			CategoryCalculator condFromDividers = getCalculator(domDividers, branchRel, type);
 			if (condFromDividers != null) {
 				precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 			}
@@ -230,12 +232,40 @@ public class DecisionProbes extends CfgCoverage {
 		return false;
 	}
 
-	private CategoryCalculator getCalculator(List<Divider> domDividers, BranchRelationship branchRel) {
+	private CategoryCalculator getCalculator(List<Divider> domDividers, BranchRelationship branchRel, int type) {
 		CategoryCalculator condFromDividers = null;
-		if (branchRel == BranchRelationship.TRUE) {
-			condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
-		} else if (branchRel == BranchRelationship.FALSE) {
-			condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+		switch (type) {
+		case Precondition.ISEQUAL:
+			if (branchRel == BranchRelationship.TRUE) {
+				condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+			} else if (branchRel == BranchRelationship.FALSE) {
+				List<Divider> dividers = new LinkedList<>();
+				for (Divider divider : domDividers) {
+					Divider tDivider = new Divider(divider.getThetas(), 0.1);
+					dividers.add(tDivider);
+				}
+				condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+			}
+			break;
+		case Precondition.ISNOTEQUAL:
+			if (branchRel == BranchRelationship.TRUE) {
+				condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+			} else if (branchRel == BranchRelationship.FALSE) {
+				List<Divider> dividers = new LinkedList<>();
+				for (Divider divider : domDividers) {
+					Divider tDivider = new Divider(divider.getThetas(), 0);
+					dividers.add(tDivider);
+				}
+				condFromDividers = new MultiDividerBasedCategoryCalculator(dividers);
+			}
+			break;
+		default:
+			if (branchRel == BranchRelationship.TRUE) {
+				condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+			} else if (branchRel == BranchRelationship.FALSE) {
+				condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+			}
+			break;
 		}
 		return condFromDividers;
 	}

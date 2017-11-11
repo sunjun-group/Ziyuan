@@ -33,6 +33,7 @@ import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
+import learntest.core.commons.data.decision.Precondition;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.utils.CfgUtils;
 import learntest.core.commons.utils.VariableUtils;
@@ -57,6 +58,7 @@ import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.Operator;
+import sav.common.core.formula.OrFormula;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.settings.SAVExecutionTimeOutException;
@@ -121,6 +123,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				list.add(cfgNode);
 				indexMap.put(line, list);
 			}
+//			log.info(cfgNode.toString() + " : relvevant Vars : ");
+//			log.info(relevantVarMap.get(cfgNode.getIdx()).toString());
+//			log.info("relvevant ExecVars :" + this.relevantVars.get(cfgNode.getIdx()));
 		}
 		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()), indexMap);
 		return probes;
@@ -187,12 +192,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				// dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
 				// dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
 				RelationShip relationShip = null;
-//				if (indexMap.containsKey(node.getLine())) {
-//					int index = indexMap.get(node.getLine()).indexOf(node);
-//					Visitor visitor = new Visitor(node.getLine(), cu, index);
-//					cu.accept(visitor);
-//					relationShip = visitor.getRelationShip();
-//				}
+				if (indexMap.containsKey(node.getLine())) {
+					int index = indexMap.get(node.getLine()).indexOf(node);
+					Visitor visitor = new Visitor(node.getLine(), cu, index);
+					cu.accept(visitor);
+					relationShip = visitor.getRelationShip();
+				}
 				if (relationShip != null) { // heuristic rules help to get condition directly
 					updatePreconditionWithHerustic(nodeProbe, preconditions, relationShip);
 					
@@ -295,6 +300,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			CfgNode node = nodeProbe.getNode();
 			learnedFormulas.put(node, new FormulaInfo(node));
 			learnedFormulas.get(node).addTFFormula(truefalseFormula.toString(), 1.1);
+			nodeProbe.getPrecondition().setType(trueFalseResult.type);
 		}
 		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
@@ -438,30 +444,54 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		for (ExecVar var : originalVars) {
 			labels.add(var.getLabel());
 		}
-		List<Divider> dividers = constructDividers(labels, relationShip);
-
+		List<Divider> dividers = null;
+		System.currentTimeMillis();
 		Formula trueFlaseFormula = null;
+		int type = 0;
+		
 		if (relationShip instanceof EqualVarRelationShip) {
-			trueFlaseFormula = new FormulaProcessor<ExecVar>(originalVars).process(dividers.get(0), labels, true, Operator.EQ);
-//			for (Divider divider : dividers) {
-//				Formula current = new FormulaProcessor<ExecVar>(originalVars).process(divider, labels, true);
-//				if (trueFlaseFormula == null) {
-//					trueFlaseFormula = current;
-//				} else {
-//					trueFlaseFormula = new AndFormula(trueFlaseFormula, current);
-//				}
-//			}
+			type = Precondition.ISEQUAL;
+			dividers = constructDividers(labels, relationShip, 0);
+			for (Divider divider : dividers) {
+				Formula current = new FormulaProcessor<ExecVar>(originalVars).process(divider, labels, true);
+				if (trueFlaseFormula == null) {
+					trueFlaseFormula = current;
+				} else {
+					trueFlaseFormula = new AndFormula(trueFlaseFormula, current);
+				}
+			}
+			dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile);
 		}else if (relationShip instanceof NotEqualVarRelationShip) {
-			trueFlaseFormula = new FormulaProcessor<ExecVar>(originalVars).process(dividers.get(0), labels, true, Operator.NE);
+			type = Precondition.ISNOTEQUAL;
+			dividers = constructDividers(labels, relationShip, 0.1);
+
+			for (Divider divider : dividers) {
+				Formula current = new FormulaProcessor<ExecVar>(originalVars).process(divider, labels, true);
+				if (trueFlaseFormula == null) {
+					trueFlaseFormula = current;
+				} else {
+					trueFlaseFormula = new OrFormula(trueFlaseFormula, current);
+				}
+			}
+			for (Divider divider : dividers) {
+				List<Divider> tDividers = new LinkedList<>();
+				int theta0 = (int)((Math.random()>0.5?1:-1) * Math.random() * Settings.getBound());/* sample will take border of divider, thus prefer a random int rather than 0*/
+				Divider tDivider = new Divider(divider.getThetas(), theta0); 
+				tDividers.add(tDivider);
+				dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, tDividers, logFile);
+			}
+		}else {
+			dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile);
 		}
-		dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile);
+
 		TrueFalseLearningResult result = new TrueFalseLearningResult();
 		result.formula = trueFlaseFormula;
 		result.dividers = dividers;
+		result.type = type;
 		return result;
 	}
 
-	private List<Divider> constructDividers(List<String> labels, RelationShip relationShip) {
+	private List<Divider> constructDividers(List<String> labels, RelationShip relationShip, double theta0) {
 		List<Divider> dividers = new LinkedList<>();
 		if (relationShip instanceof EqualVarRelationShip || relationShip instanceof NotEqualVarRelationShip) {
 			double[] result1 = new double[labels.size()], result2 = new double[labels.size()];
@@ -476,9 +506,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			}
 			result1[indexL] = 1;
 			result1[indexR] = -1;
+			result2[indexL] = -1;
+			result2[indexR] = 1;
 			
-			Divider divider1 = new Divider(result1, 0), divider2 = new Divider(result2, 0);
+			Divider divider1 = new Divider(result1, theta0), divider2 = new Divider(result2, theta0);
 			dividers.add(divider1);
+			dividers.add(divider2);
 		}
 		return dividers;
 	}
@@ -615,6 +648,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private static class TrueFalseLearningResult {
 		Formula formula;
 		List<Divider> dividers;
+		int type;
 	}
 
 	public HashMap<String, Collection<BreakpointValue>> getTrueSample() {

@@ -31,7 +31,6 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	
 	@Override
 	protected IStatus execute(IProgressMonitor monitor) throws CoreException {
-		refreshProject();
 		generateTest();
 		refreshProject();
 		log.debug("Finish!");
@@ -59,8 +58,8 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			
 			LearnTestParams l2tParam = initLearntestParamsFromPreference();
 			
-			LearnTestParams evosuiteParam = l2tParam.createNew();
-			new EvosuitorHandler().generateTest(evosuiteParam);
+//			LearnTestParams evosuiteParam = l2tParam.createNew();
+//			new EvosuitorHandler().generateTest(evosuiteParam);
 			
 			l2tParam.setApproach(LearnTestApproach.L2T);
 			l2tParam.setCu(constructCu(l2tParam.getTargetMethod().getClassName()));

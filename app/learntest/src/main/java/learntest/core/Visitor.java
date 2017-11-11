@@ -113,11 +113,15 @@ public class Visitor extends ASTVisitor {
 					if (operator.toString().equals(Operator.EQUALS.toString())) {
 						if (left instanceof QualifiedName && right instanceof QualifiedName) {
 							relationShips.add(new EqualVarRelationShip(left.toString(), right.toString()));
+						}else if (left instanceof SimpleName && right instanceof SimpleName) {
+							relationShips.add(new EqualVarRelationShip(left.toString(), right.toString()));
 						}else {
 							relationShips.add(null);							
 						}
 					} else if (operator.toString().equals(Operator.NOT_EQUALS.toString())) {
 						if (left instanceof QualifiedName && right instanceof QualifiedName) {
+							relationShips.add(new NotEqualVarRelationShip(left.toString(), right.toString()));
+						}else if (left instanceof SimpleName && right instanceof SimpleName) {
 							relationShips.add(new NotEqualVarRelationShip(left.toString(), right.toString()));
 						}else {
 							relationShips.add(null);							

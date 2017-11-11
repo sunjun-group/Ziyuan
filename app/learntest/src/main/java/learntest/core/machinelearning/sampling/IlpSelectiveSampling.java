@@ -64,6 +64,7 @@ public class IlpSelectiveSampling {
 
 	public List<double[]> selectData(List<ExecVar> vars, OrCategoryCalculator precondition, List<Divider> divider,
 			int maxTcs) throws SavException, SAVExecutionTimeOutException {
+		System.currentTimeMillis();
 		List<double[]> samples = new ArrayList<double[]>();
 		List<Problem> problems = ProblemBuilder.buildTrueValueProblems(vars, precondition, divider, true);
 		if (problems.isEmpty()) {
@@ -126,6 +127,7 @@ public class IlpSelectiveSampling {
 
 	public List<double[]> selectDataForModel(IDecisionNode target, List<ExecVar> originVars,
 			OrCategoryCalculator preconditions, List<Divider> learnedFormulas) throws SavException {
+		System.currentTimeMillis();
 		List<double[]> samples = new ArrayList<double[]>();
 
 		/**
@@ -161,6 +163,12 @@ public class IlpSelectiveSampling {
 			}
 		}
 		log.debug("selectiveSamplingData : " + samples.size());
+		samples = sampleEvolution(samples, preconditions,originVars);
+		return samples;
+	}
+
+	public List<double[]> sampleEvolution(List<double[]> samples, OrCategoryCalculator preconditions, List<ExecVar> originVars) {
+
 		List<double[]> heuList = new LinkedList<>(), randomSamples = new LinkedList<>();
 		for (int i = 0; i < 2; i++) {
 			int bound = 10 - (2 * iterationTime--);

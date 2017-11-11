@@ -26,10 +26,13 @@ import sav.common.core.formula.Formula;
 public class Precondition {
 	private Formula trueFalse;
 	private Formula oneMore;
-	private List<Divider> dividers;
+	private List<Divider> dividers;  /* key variables for selective sampling */
 	private List<List<CategoryCalculator>> preconditions = new ArrayList<List<CategoryCalculator>>(); /** each element of list is a path of dominator indeed*/
 	private HashMap<CfgNode, BranchRelationship> path = new HashMap<>(); /** dominator node take which branch to reach it */
 	private boolean visited = false;
+	private int type = 0; /* because solver only support EQ,GE and LE, and dividers are regarded under GE, we could not present NE. 
+											Use this flag to indicate. */
+	public static final int ISNOTEQUAL = 1, ISEQUAL = 2;
 
 	public Formula getTrueFalse() {
 		return trueFalse;
@@ -131,6 +134,16 @@ public class Precondition {
 	public void setVisited(boolean visited) {
 		this.visited = visited;
 	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	
 	
 	
 }
