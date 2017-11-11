@@ -151,16 +151,17 @@ public class PositiveSeparationMachine extends Machine {
 			int selectionSize = (selectionData.size() < limit) ? selectionData.size() : limit;
 			int modelSize = 0, modelLimit = 2;
 
-			learnLoop: while (selectionSize > 0) {
+			learnLoop: while (selectionSize > 0 && selectionData.size() > 0) {
 				int trialSize = 2;
 				for (int k = 0; k < trialSize; k++) {
-					List<DataPoint> selectedPoints = select(10, selectionData, trainingData);
+					int selectNum = 1;
+					List<DataPoint> selectedPoints = select(selectNum, selectionData, trainingData);
 					trainingData.addAll(selectedPoints);
 
 					super.train(trainingData);
-					for (int i = 0; i < selectionSize; i++) {
+					for (int i = 0; i < selectedPoints.size(); i++) {
 						DataPoint p = trainingData.remove(trainingData.size() - 1);
-						selectionData.remove(p);
+//						selectionData.remove(p); // has removed in method select
 					}
 					removeClassifiedNegativePoints(selectionData);
 					
@@ -202,6 +203,7 @@ public class PositiveSeparationMachine extends Machine {
 		for (int i = 0; i < limit; i++) {
 			DataPoint p = negativePointSelection.select(selectionData, trainingData);
 			list.add(p);
+			selectionData.remove(p);
 		}
 		return list;
 	}
