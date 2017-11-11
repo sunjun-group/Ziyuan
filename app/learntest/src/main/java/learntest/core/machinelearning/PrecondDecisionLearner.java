@@ -204,15 +204,13 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				} else {
 					dataPreprocessor.sampleForMissingBranch(node, this);
 					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-//					if (!dataPreprocessor.sampleForMissingBranch(node, this)) {
-//					}
-
 					updatePrecondition(nodeProbe, preconditions, targetVars);
 				}
 
 				nodeProbe.getPrecondition().setVisited(true);
 			} else {
 				nodeProbe.getPrecondition().setVisited(true);
+				log.debug("no need to learn the node in line " + node.getLine() + "(" + node + ")");
 			}
 
 			visitedNodes.add(node.getIdx());
@@ -280,6 +278,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	protected void updatePrecondition(DecisionNodeProbe nodeProbe, OrCategoryCalculator preconditions,
 			List<ExecVar> targetVars) throws SavException {
+
 		/* at this point only 1 branch is missing at most */
 		CoveredBranches coveredType = nodeProbe.getCoveredBranches();
 		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormula(nodeProbe, coveredType, preconditions,
@@ -359,7 +358,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			IlpSelectiveSampling.iterationTime = FORMULAR_LEARN_MAX_ATTEMPT - time;
 			time++;
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
-			System.currentTimeMillis();
+
 			log.debug("selective sampling: ");
 			log.debug("original vars: {}, targetVars : {}", probes.getOriginalVars(), targetVars);
 			/* after running sampling, probes will be updated as well */

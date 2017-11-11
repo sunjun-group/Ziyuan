@@ -43,8 +43,7 @@ public class IlpSelectiveSampling {
 	private List<ExecVar> vars;
 	private List<double[]> initValues;
 	private Set<Integer> samplesHashcodes;
-	private int maxSamplesPerSelect = Settings.getSelectiveNumber(); // by
-																		// default;
+	private int maxSamplesPerSelect = Settings.getSelectiveNumber(); // by default;
 	public static long solveTimeLimit = 60 * 1000;
 
 	/* ilpSolver */
@@ -64,7 +63,7 @@ public class IlpSelectiveSampling {
 
 	public List<double[]> selectData(List<ExecVar> vars, OrCategoryCalculator precondition, List<Divider> divider,
 			int maxTcs) throws SavException, SAVExecutionTimeOutException {
-		System.currentTimeMillis();
+
 		List<double[]> samples = new ArrayList<double[]>();
 		List<Problem> problems = ProblemBuilder.buildTrueValueProblems(vars, precondition, divider, true);
 		if (problems.isEmpty()) {
@@ -178,13 +177,14 @@ public class IlpSelectiveSampling {
 		 * randomly generate more data points on svm model.
 		 */
 		randomSamples.addAll(generateRandomPointsWithPrecondition(preconditions, originVars,
-				Math.max(samples.size(), maxSamplesPerSelect)));
+				Math.max(samples.size() + heuList.size(), maxSamplesPerSelect)));
 
 		int total = heuList.size() + samples.size() + randomSamples.size();
 		if (total > maxSamplesPerSelect) {
-			int heulistNum = heuList.size() * maxSamplesPerSelect / total,
-					randomNum = randomSamples.size() * maxSamplesPerSelect / total,
-					orignalNum = samples.size() * maxSamplesPerSelect / total;
+			int heulistNum = maxSamplesPerSelect / 3,
+					randomNum = maxSamplesPerSelect / 2,
+					orignalNum = maxSamplesPerSelect / 6;
+			
 			log.debug("heulistNum : {}, randomNum : {}, sampleNum : {}", heulistNum, randomNum, orignalNum);
 			samples = limitSamples(samples, orignalNum > 0 ? orignalNum : 1);
 			heuList = limitSamples(heuList, heulistNum > 0 ? heulistNum : 1);

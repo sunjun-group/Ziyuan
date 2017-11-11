@@ -15,6 +15,7 @@ public class Settings {
 	private static int selectiveNumber = 20;
 	public static double formulaAccThreshold = 0.5;
 	public static int getSelectiveNumber() {
+		selectiveNumber = 30;
 		return selectiveNumber;
 	}
 }
