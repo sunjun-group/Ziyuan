@@ -69,28 +69,29 @@ public class PositiveSeparationMachine extends Machine {
 	protected Machine train(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		if (canDivideWithOneFormula(dataPoints)) {
 			return this;
-		}else {
-			return null;
 		}
-
-//		int attemptCount = 0;
-//		double bestAccuracy = 0.0;
-//		List<svm_model> bestLearnedModels = new ArrayList<svm_model>();
-//		while (Double.compare(bestAccuracy, 1.0) < 0
-//				&& (attemptCount == 0 || !this.negativePointSelection.isConsistent())
-//				&& attemptCount < MAXIMUM_ATTEMPT_COUNT) {
-//			attemptCount++;
-//			learnedModels = new ArrayList<svm_model>();
-//			attemptTraining(dataPoints);
-//			double currentAccuracy = getModelAccuracy();
-//			if (bestAccuracy <= currentAccuracy) {
-//				bestAccuracy = currentAccuracy;
-//				bestLearnedModels = learnedModels;
-//			}
+//		else {
+//			return null;
 //		}
-//		learnedModels = bestLearnedModels;
-//
-//		return this;
+
+		int attemptCount = 0;
+		double bestAccuracy = 0.0;
+		List<svm_model> bestLearnedModels = new ArrayList<svm_model>();
+		while (Double.compare(bestAccuracy, 1.0) < 0
+				&& (attemptCount == 0 || !this.negativePointSelection.isConsistent())
+				&& attemptCount < MAXIMUM_ATTEMPT_COUNT) {
+			attemptCount++;
+			learnedModels = new ArrayList<svm_model>();
+			attemptTraining(dataPoints);
+			double currentAccuracy = getModelAccuracy();
+			if (bestAccuracy <= currentAccuracy) {
+				bestAccuracy = currentAccuracy;
+				bestLearnedModels = learnedModels;
+			}
+		}
+		learnedModels = bestLearnedModels;
+
+		return this;
 	}
 
 	private boolean isModelEqual(svm_model m1, svm_model m2) {

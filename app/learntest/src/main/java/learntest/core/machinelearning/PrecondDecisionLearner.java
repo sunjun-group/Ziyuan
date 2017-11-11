@@ -10,7 +10,6 @@ package learntest.core.machinelearning;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.Map;
 import java.util.Queue;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.ui.texteditor.InsertLineAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +25,6 @@ import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;
-import learntest.core.TestRunTimeInfo;
-import learntest.core.Visitor;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
@@ -44,12 +40,10 @@ import learntest.core.rule.EqualVarRelationShip;
 import learntest.core.rule.NotEqualVarRelationShip;
 import learntest.core.rule.RelationShip;
 import learntest.plugin.utils.Settings;
-import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
-import libsvm.core.Model;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
@@ -57,7 +51,6 @@ import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
-import sav.common.core.formula.Operator;
 import sav.common.core.formula.OrFormula;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
@@ -72,7 +65,7 @@ import variable.Variable;
  */
 public class PrecondDecisionLearner extends AbstractLearningComponent implements IInputLearner {
 	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
-	private static int FORMULAR_LEARN_MAX_ATTEMPT = 5;
+	private static int FORMULAR_LEARN_MAX_ATTEMPT = 20;
 	protected LearnedDataProcessor dataPreprocessor;
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
@@ -316,7 +309,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
 			CoveredBranches coveredType, OrCategoryCalculator preconditions, List<ExecVar> targetVars)
 					throws SavException {
-
+		System.currentTimeMillis();
 		if (!orgNodeProbe.needToLearnPrecond()) {
 			log.debug("no need to learn precondition");
 			return null;
@@ -432,6 +425,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		mcm.setDataLabels(labels);
 		mcm.setDefaultParams();
 		addDataPoint(mcm.getDataLabels(), targetVars, nodeProbe.getTrueValues(), nodeProbe.getFalseValues(), mcm);
+//		addDataPointForTest2(mcm);
 		mcm.train();
 		Formula newFormula = mcm.getLearnedMultiFormula(targetVars, labels);
 
@@ -529,10 +523,283 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			addBkp(labels, targetVars, value, Category.NEGATIVE, mcm, sBuffer);
 		}
 		log.info(sBuffer.toString());
-		// log.info("new data true : "+trueV.size()+" , "+trueV.toString());
-		// log.info("new data false : "+falseV.size()+" , "+falseV.toString());
 
 		FileUtils.write(logFile, sBuffer.toString());
+	}
+	
+	private void addDataPointForTest(PositiveSeparationMachine mcm) {
+		List<double[]> trueV = new LinkedList<>(), falseV = new LinkedList<>();
+		for (int i = 0; i < 10; i++) {
+			double a = Math.random() * 100;
+			double b = Math.random() * 100;
+			double[] t = new double[2];
+			t[0] = a+b;
+			t[1] = a;
+			trueV.add(t);
+		}
+		for (int i = 0; i < 10; i++) {
+			double a = Math.random() * 100;
+			double b = Math.random() * 100;
+			double[] f = new double[2];
+			f[0] = a-b;
+			f[1] = a;
+			falseV.add(f);
+		}
+		for (double[] doubles : trueV) {
+			mcm.addDataPoint(Category.POSITIVE, doubles);
+		}
+		for (double[] ds : falseV) {
+			mcm.addDataPoint(Category.NEGATIVE, ds);
+		}
+	}
+	
+	private void addDataPointForTest2(PositiveSeparationMachine mcm) {
+		List<double[]> trueV = new LinkedList<>(), falseV = new LinkedList<>();
+		trueV.add(new double[]{11.41168212890625, -0.009999999776482582});
+		trueV.add(new double[]{1000.0, -0.009999999776482582}); 
+		 trueV.add(new double[]{417.6746520996094, -535.624267578125}); 
+		 trueV.add(new double[]{235.05567932128906, 225.53347778320312}); 
+		 trueV.add(new double[]{362.89715576171875, -875.3241577148438}); 
+		 trueV.add(new double[]{989.5972290039062, -169.92794799804688}); 
+		 trueV.add(new double[]{445.5552062988281, -774.032958984375}); 
+		 trueV.add(new double[]{551.253173828125, -274.4393310546875}); 
+		 trueV.add(new double[]{494.5365295410156, -194.18775939941406}); 
+		 trueV.add(new double[]{706.8424072265625, -193.26675415039062}); 
+		 trueV.add(new double[]{992.8089599609375, -581.1283569335938}); 
+		 trueV.add(new double[]{440.0, 226.0}); 
+		 trueV.add(new double[]{340.0, -561.0}); 
+		 trueV.add(new double[]{499.0, -101.0}); 
+		 trueV.add(new double[]{887.0, -667.0}); 
+		 trueV.add(new double[]{331.0, -76.0}); 
+		 trueV.add(new double[]{120.0, -856.0}); 
+		 trueV.add(new double[]{439.0, -685.0}); 
+		 trueV.add(new double[]{122.0, -133.0}); 
+		 trueV.add(new double[]{363.0, -765.0}); 
+		 trueV.add(new double[]{173.0, 19.0}); 
+		 trueV.add(new double[]{465.0, 410.0}); 
+		 trueV.add(new double[]{776.0, 693.0}); 
+		 trueV.add(new double[]{929.0, 795.0}); 
+		 trueV.add(new double[]{954.0, 182.0}); 
+		 trueV.add(new double[]{522.0, -973.0}); 
+		 trueV.add(new double[]{242.0, -738.0}); 
+		 trueV.add(new double[]{714.0, -302.0}); 
+		 trueV.add(new double[]{993.0, 151.0}); 
+		 trueV.add(new double[]{599.0, 358.0}); 
+		 trueV.add(new double[]{247.0, -108.0}); 
+		 trueV.add(new double[]{567.0, -51.0}); 
+		 trueV.add(new double[]{151.0, -818.0}); 
+		 trueV.add(new double[]{366.0, -50.0}); 
+		 trueV.add(new double[]{287.0, 200.0}); 
+		 trueV.add(new double[]{529.0, 220.0}); 
+		 trueV.add(new double[]{853.0, -270.0}); 
+		 trueV.add(new double[]{564.0, -584.0}); 
+		 falseV.add(new double[]{-1000.0,1000.0});
+		 falseV.add(new double[]{4.975438,412.98987});
+		 falseV.add(new double[]{-747.6848,-554.0581});
+		 falseV.add(new double[]{-916.436,955.3757});
+		 falseV.add(new double[]{-307.281,828.59863});
+		 falseV.add(new double[]{-817.5938,723.9331});
+		 falseV.add(new double[]{-925.1779,897.93634});
+		 falseV.add(new double[]{-610.1471,968.7815});
+		 falseV.add(new double[]{-800.6481,937.58716});
+		 falseV.add(new double[]{-685.79004,744.10095});
+		 falseV.add(new double[]{-982.26514,-353.3182});
+		 falseV.add(new double[]{-756.4198,-583.47894});
+		 falseV.add(new double[]{-767.6957,-140.8242});
+		 falseV.add(new double[]{-34.200073,-547.35675});
+		 falseV.add(new double[]{-180.80199,-486.65643});
+		 falseV.add(new double[]{-130.9638,-855.9438});
+		 falseV.add(new double[]{-275.5102,-177.67763});
+		 falseV.add(new double[]{-341.00723,-307.17944});
+		 falseV.add(new double[]{-790.8075,-443.3944});
+		 falseV.add(new double[]{-522.0854,-1000.0});
+		 falseV.add(new double[]{-965.0,96.0});
+		 falseV.add(new double[]{-230.0,23.0});
+		 falseV.add(new double[]{-864.0,952.0});
+		 falseV.add(new double[]{-31.0,554.0});
+		 falseV.add(new double[]{-1000.0,-720.517});
+		 falseV.add(new double[]{-522.0854,-1000.0});
+		 falseV.add(new double[]{-522.0854,-1000.0});
+		 falseV.add(new double[]{-522.0854,-1000.0});
+		 falseV.add(new double[]{-522.0854,-1000.0});
+		 falseV.add(new double[]{-522.0854,-1000.0});
+		 falseV.add(new double[]{-1000.0,-720.517});
+		 falseV.add(new double[]{-522.0854,-1000.0});
+		 falseV.add(new double[]{-1000.0,-720.517});
+		 falseV.add(new double[]{-523.9754,-1001.89});
+		 falseV.add(new double[]{-523.9754,-1001.89});
+		 falseV.add(new double[]{-523.9754,-1001.89});
+		 falseV.add(new double[]{-998.11,-718.627});
+		 falseV.add(new double[]{-998.11,-718.627});
+		 falseV.add(new double[]{-284.0,-719.0});
+		 falseV.add(new double[]{-253.0,-212.0});
+		 falseV.add(new double[]{-972.0,-491.0});
+		 falseV.add(new double[]{-399.0,-177.0});
+		 falseV.add(new double[]{-97.0,-647.0});
+		 falseV.add(new double[]{-692.0,971.0});
+		 falseV.add(new double[]{-940.0,874.0});
+		 falseV.add(new double[]{122.0,1000.0});
+		 falseV.add(new double[]{561.0,590.0});
+		 falseV.add(new double[]{-379.0,399.0});
+		 falseV.add(new double[]{58.0,544.0});
+		 falseV.add(new double[]{-358.0,601.0});
+		 falseV.add(new double[]{-763.5869,-1000.0});
+		 falseV.add(new double[]{-763.5869,-1000.0});
+		 falseV.add(new double[]{-763.5869,-1000.0});
+		 falseV.add(new double[]{-1000.0,-860.25836});
+		 falseV.add(new double[]{-764.7324,-1001.1455});
+		 falseV.add(new double[]{-764.7324,-1001.1455});
+		 falseV.add(new double[]{-762.4414,-998.8545});
+		 falseV.add(new double[]{-998.8545,-859.11285});
+		 falseV.add(new double[]{-1001.1455,-861.4039});
+		 falseV.add(new double[]{-996.97955,-857.2379});
+		 falseV.add(new double[]{-760.56647,-996.97955});
+		 falseV.add(new double[]{-766.60736,-1003.02045});
+		 falseV.add(new double[]{-996.97955,-857.2379});
+		 falseV.add(new double[]{-760.56647,-996.97955});
+		 falseV.add(new double[]{-232.0,-759.0});
+		 falseV.add(new double[]{-959.0,-175.0});
+		 falseV.add(new double[]{-93.0,-496.0});
+		 falseV.add(new double[]{-676.0,-789.0});
+		 falseV.add(new double[]{-880.0,955.0});
+		 falseV.add(new double[]{-763.5869,-1000.0});
+		 falseV.add(new double[]{-134.0,87.0});
+		 falseV.add(new double[]{-697.0,694.0});
+		 falseV.add(new double[]{-62.0,708.0});
+		 falseV.add(new double[]{-605.0,48.0});
+		 falseV.add(new double[]{-885.8043,-1000.0});
+		 falseV.add(new double[]{-1000.0,-931.04767});
+		 falseV.add(new double[]{-885.8043,-1000.0});
+		 falseV.add(new double[]{-885.8043,-1000.0});
+		 falseV.add(new double[]{-882.7564,-996.9521});
+		 falseV.add(new double[]{-888.85223,-1003.0479});
+		 falseV.add(new double[]{-996.9521,-927.99976});
+		 falseV.add(new double[]{-882.7564,-996.9521});
+		 falseV.add(new double[]{-888.85223,-1003.0479});
+		 falseV.add(new double[]{-996.9521,-927.99976});
+		 falseV.add(new double[]{-882.7564,-996.9521});
+		 falseV.add(new double[]{-1002.17413,-933.2218});
+		 falseV.add(new double[]{-887.97845,-1002.17413});
+		 falseV.add(new double[]{-883.6302,-997.82587});
+		 falseV.add(new double[]{-429.0,-104.0});
+		 falseV.add(new double[]{-324.0,-851.0});
+		 falseV.add(new double[]{-55.0,-986.0});
+		 falseV.add(new double[]{-885.8043,-1000.0});
+		 falseV.add(new double[]{-441.0,271.0});
+		 falseV.add(new double[]{745.0,857.0});
+		 falseV.add(new double[]{-9.0,879.0});
+		 falseV.add(new double[]{-941.0,174.0});
+		 falseV.add(new double[]{-885.0,928.0});
+		 falseV.add(new double[]{-378.0,802.0});
+		 falseV.add(new double[]{-1000.0,-967.28107});
+		 falseV.add(new double[]{-946.90027,-1000.0});
+		 falseV.add(new double[]{-946.90027,-1000.0});
+		 falseV.add(new double[]{-946.90027,-1000.0});
+		 falseV.add(new double[]{-1005.23334,-972.5144});
+		 falseV.add(new double[]{-1005.23334,-972.5144});
+		 falseV.add(new double[]{-994.76666,-962.0477});
+		 falseV.add(new double[]{-950.2712,-1003.3709});
+		 falseV.add(new double[]{-1003.3709,-970.652});
+		 falseV.add(new double[]{-996.6291,-963.91016});
+		 falseV.add(new double[]{-950.2712,-1003.3709});
+		 falseV.add(new double[]{-943.52936,-996.6291});
+		 falseV.add(new double[]{-950.2712,-1003.3709});
+		 falseV.add(new double[]{-996.6291,-963.91016});
+		 falseV.add(new double[]{-986.0,-265.0});
+		 falseV.add(new double[]{-795.0,-8.0});
+		 falseV.add(new double[]{-788.0,-198.0});
+		 falseV.add(new double[]{-1000.0,-967.28107});
+		 falseV.add(new double[]{-949.0,987.0});
+		 falseV.add(new double[]{-286.0,246.0});
+		 falseV.add(new double[]{496.0,894.0});
+		 falseV.add(new double[]{-404.0,615.0});
+		 falseV.add(new double[]{334.0,764.0});
+		 falseV.add(new double[]{17.0,73.0});
+		 falseV.add(new double[]{-978.1402,-1000.0});
+		 falseV.add(new double[]{-978.1402,-1000.0});
+		 falseV.add(new double[]{-978.1402,-1000.0});
+		 falseV.add(new double[]{-1000.0,-987.7258});
+		 falseV.add(new double[]{-983.4117,-1005.2715});
+		 falseV.add(new double[]{-983.4117,-1005.2715});
+		 falseV.add(new double[]{-983.4117,-1005.2715});
+		 falseV.add(new double[]{-994.7285,-982.45435});
+		 falseV.add(new double[]{-1005.2715,-992.9973});
+		 falseV.add(new double[]{-983.4117,-1005.2715});
+		 falseV.add(new double[]{-982.6199,-1004.4797});
+		 falseV.add(new double[]{-982.6199,-1004.4797});
+		 falseV.add(new double[]{-1004.4797,-992.2055});
+		 falseV.add(new double[]{-1004.4797,-992.2055});
+		 falseV.add(new double[]{-234.0,-584.0});
+		 falseV.add(new double[]{-534.0,-318.0});
+		 falseV.add(new double[]{-232.0,-279.0});
+		 falseV.add(new double[]{-224.0,-905.0});
+		 falseV.add(new double[]{-235.0,-509.0});
+		 falseV.add(new double[]{-978.1402,-1000.0});
+		 falseV.add(new double[]{-999.5003,-998.6381});
+		 falseV.add(new double[]{-997.4088,-999.579});
+		 falseV.add(new double[]{-999.2556,-999.6198});
+		 falseV.add(new double[]{-998.22955,-999.6265});
+		 falseV.add(new double[]{-999.6759,-999.3532});
+		 falseV.add(new double[]{-997.16406,-999.9733});
+		 falseV.add(new double[]{-996.9872,-999.98773});
+		 falseV.add(new double[]{-999.82825,-999.8388});
+		 falseV.add(new double[]{-998.5412,-999.77167});
+		 falseV.add(new double[]{-998.5827,-999.47955});
+		 falseV.add(new double[]{-998.8243,-998.806});
+		 falseV.add(new double[]{-999.72186,-998.462});
+		 falseV.add(new double[]{-999.5528,-999.2741});
+		 falseV.add(new double[]{-999.8518,-998.5692});
+		 falseV.add(new double[]{-996.69794,-999.85376});
+		 falseV.add(new double[]{-998.9673,-999.7864});
+		 falseV.add(new double[]{-997.6012,-999.6267});
+		 falseV.add(new double[]{-999.04504,-999.1264});
+		 falseV.add(new double[]{-999.9565,-998.45074});
+		 falseV.add(new double[]{-998.8802,-998.96484});
+		 falseV.add(new double[]{-997.89624,-999.57745});
+		 falseV.add(new double[]{-999.81024,-999.53906});
+		 falseV.add(new double[]{-996.7866,-999.8098});
+		 falseV.add(new double[]{-999.76886,-998.32544});
+		 falseV.add(new double[]{-999.2246,-999.5061});
+		 falseV.add(new double[]{-998.8862,-999.6853});
+		 falseV.add(new double[]{-999.8659,-999.6272});
+		 falseV.add(new double[]{-999.7632,-999.00574});
+		 falseV.add(new double[]{-998.7911,-999.8713});
+		 falseV.add(new double[]{-996.40405,-1000.0});
+		 falseV.add(new double[]{-999.4999,-998.8637});
+		 falseV.add(new double[]{-998.4333,-999.93304});
+		 falseV.add(new double[]{-998.464,-998.9353});
+		 falseV.add(new double[]{-999.34973,-998.5458});
+		 falseV.add(new double[]{-999.13617,-999.3826});
+		 falseV.add(new double[]{-999.5743,-999.0835});
+		 falseV.add(new double[]{-999.8347,-998.18506});
+		 falseV.add(new double[]{-998.06586,-999.57904});
+		 falseV.add(new double[]{-999.9674,-999.5739});
+		 falseV.add(new double[]{-999.23834,-999.5472});
+		 falseV.add(new double[]{-999.1438,-999.5118});
+		 falseV.add(new double[]{-997.3972,-999.99146});
+		 falseV.add(new double[]{-999.4637,-999.75214});
+		 falseV.add(new double[]{-999.918,-999.5622});
+		 falseV.add(new double[]{-999.99304,-998.88074});
+		 falseV.add(new double[]{-999.59894,-998.3527});
+		 falseV.add(new double[]{-998.62897,-999.4692});
+		 falseV.add(new double[]{-998.46875,-998.8905});
+		 falseV.add(new double[]{-997.8518,-999.49335});
+		 falseV.add(new double[]{-997.7784,-999.6709});
+		 falseV.add(new double[]{-998.12524,-999.15845});
+		 falseV.add(new double[]{-999.88257,-998.92505});
+		 falseV.add(new double[]{-997.56683,-999.3583});
+		 falseV.add(new double[]{-999.9081,-999.4274});
+		 falseV.add(new double[]{-997.8408,-999.8036});
+		 falseV.add(new double[]{-998.20667,-999.37024});
+		 falseV.add(new double[]{-998.92975,-999.8721});
+		 falseV.add(new double[]{-999.35443,-999.1948});
+		 falseV.add(new double[]{-998.2707,-999.4698});
+		for (double[] doubles : trueV) {
+			mcm.addDataPoint(Category.POSITIVE, doubles);
+		}
+		for (double[] ds : falseV) {
+			mcm.addDataPoint(Category.NEGATIVE, ds);
+		}
 	}
 
 	private void addBkp(List<String> labels, List<ExecVar> targetVars, BreakpointValue bValue, Category category,
