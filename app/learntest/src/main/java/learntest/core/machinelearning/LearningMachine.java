@@ -115,24 +115,50 @@ public class LearningMachine extends PositiveSeparationMachine {
 		potentialSingleFeatureModels.clear();
 		List<svm_model> models = getLearnedModels();
 		final int numberOfFeatures = getNumberOfFeatures();
+//		if (models != null && numberOfFeatures > 0) {
+//			List<LearnedModel> formulaList = new ArrayList<LearnedModel>();
+//			for (Iterator<svm_model> it = models.iterator(); it.hasNext();) {
+//				svm_model svmModel = it.next();
+//				if (svmModel != null) {
+//					Model model = new Model(svmModel, numberOfFeatures);
+//					final Divider explicitDivider = model.getExplicitDivider();
+//					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, dataLabels, true);
+//					double accuracy = getModelAccuracy(CollectionUtils.listOf(svmModel, 1));
+//					if (accuracyFilter > 0 && accuracy < accuracyFilter) {
+//						log.debug("{}, accuracy: {} [removed]", current, accuracy);
+//						it.remove();
+//						continue;
+//					} else {
+//						log.debug("{}, accuracy: {}", current, accuracy);
+//					}
+//					updatePotentialSingleFeatureModel(current, accuracy, model);
+//					formulaList.add(new LearnedModel(model, current, accuracy));
+//				}
+//			}
+//			if (formulaList.isEmpty()) {
+//				return null;
+//			}
+//			List<Formula> formulas = subsetFilter(formulaList);
+//			return FormulaConjunction.and(formulas);
+//		}
+		System.currentTimeMillis();
 		if (models != null && numberOfFeatures > 0) {
 			List<LearnedModel> formulaList = new ArrayList<LearnedModel>();
+			double accuracy = getModelAccuracy(models);
+			if (accuracyFilter > 0 && accuracy < accuracyFilter) {
+				log.debug("{}, accuracy: {} [< accuracyFilter]", models, accuracy);
+			} else {
+				log.debug("{}, accuracy: {}", models, accuracy);
+			}
 			for (Iterator<svm_model> it = models.iterator(); it.hasNext();) {
 				svm_model svmModel = it.next();
 				if (svmModel != null) {
 					Model model = new Model(svmModel, numberOfFeatures);
 					final Divider explicitDivider = model.getExplicitDivider();
 					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, dataLabels, true);
-					double accuracy = getModelAccuracy(CollectionUtils.listOf(svmModel, 1));
-					if (accuracyFilter > 0 && accuracy < accuracyFilter) {
-						log.debug("{}, accuracy: {} [removed]", current, accuracy);
-						it.remove();
-						continue;
-					} else {
-						log.debug("{}, accuracy: {}", current, accuracy);
-					}
 					updatePotentialSingleFeatureModel(current, accuracy, model);
-					formulaList.add(new LearnedModel(model, current, accuracy));
+					double singleAccuracy = getModelAccuracy(CollectionUtils.listOf(svmModel, 1));
+					formulaList.add(new LearnedModel(model, current, singleAccuracy));
 				}
 			}
 			if (formulaList.isEmpty()) {
