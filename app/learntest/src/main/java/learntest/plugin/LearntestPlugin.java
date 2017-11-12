@@ -39,7 +39,7 @@ public class LearntestPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		LearntestConsole.delegateConsole();
+		//LearntestConsole.delegateConsole();
 		javaGentestManager.start();
 	}
 	
