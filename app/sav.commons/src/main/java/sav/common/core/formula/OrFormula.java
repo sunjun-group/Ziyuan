@@ -8,8 +8,10 @@
 
 package sav.common.core.formula;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import mosek.Env.branchdir;
 import sav.common.core.formula.utils.ExpressionVisitor;
 
 /**
@@ -52,7 +54,8 @@ public class OrFormula extends ConjunctionFormula {
 		}
 		
 		OrFormula formula = (OrFormula) obj;
-		List<Formula> formulas = formula.elements;
+		List<Formula> formulas = new ArrayList<>();
+		formulas.addAll(formula.elements);
 		
 		if (formulas.size() !=  elements.size()) {
 			return false;
@@ -60,7 +63,17 @@ public class OrFormula extends ConjunctionFormula {
 		
 		int size = elements.size();
 		for (int i = 0; i < size; i++) {
-			if (!formulas.get(i).equals(elements.get(i))) {
+			int j =0;
+			boolean found = false;
+			for (; j < formulas.size(); j++) {
+				if (formulas.get(j).equals(elements.get(i))) {
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				formulas.remove(j);
+			}else {
 				return false;
 			}
 		}
