@@ -44,6 +44,7 @@ import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
+import libsvm.core.Machine.DataPoint;
 import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.NegativePointSelection;
 import libsvm.extension.PositiveSeparationMachine;
@@ -367,6 +368,22 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			addDataPoint(mcm.getDataLabels(), targetVars, newData.getTrueValues(), newData.getFalseValues(), mcm);
 			recordSample(probes, sampleResult, logFile);
 
+			System.out.println("the whole data points for this learning:");
+			List<DataPoint> ps = new ArrayList<>();
+			for(DataPoint p: mcm.getDataPoints()){
+				String str = p.toString();
+				String s = str.replace("[", "(");
+				s = s.replace("]", ",)");
+				if(str.contains("POS")){
+					ps.add(p);
+				}
+				System.out.println(s);
+			}
+			
+			if(ps.size()>1){
+				System.currentTimeMillis();
+			}
+			
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(targetVars, mcm.getDataLabels());
 			log.info("improved the formula: " + tmp);
@@ -399,6 +416,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		TrueFalseLearningResult result = new TrueFalseLearningResult();
 		result.formula = trueFlaseFormula;
 		result.dividers = dividers;
+		System.currentTimeMillis();
 		return result;
 	}
 
