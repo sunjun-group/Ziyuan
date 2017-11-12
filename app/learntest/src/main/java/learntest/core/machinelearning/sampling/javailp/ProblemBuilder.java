@@ -302,7 +302,7 @@ public class ProblemBuilder {
 	 * @param random
 	 * @return
 	 */
-	private static Problem buildTrueValueProblemWithConstraints(List<ExecVar> vars, List<Divider> dividers, 
+	public static Problem buildTrueValueProblemWithConstraints(List<ExecVar> vars, List<Divider> dividers, 
 			List<Divider> notDividers, boolean random) {
 		Problem problem = buildVarBoundContraint(vars);
 		if (random) {
@@ -336,6 +336,21 @@ public class ProblemBuilder {
 			}
 		}
 		return problem;
+	}
+	
+	public static void addConstraints(List<ExecVar> vars, List<Divider> dividers, Problem problem) {
+		if (dividers != null) {
+			for (Divider divider : dividers) {
+				double[] thetas = divider.getThetas();
+				Linear linear = new Linear();
+				int num = Math.min(thetas.length, vars.size());
+				for (int i = 0; i < num; i++) {
+					linear.add(thetas[i], vars.get(i).getLabel());
+				}
+				Constraint constraint = new Constraint(linear, Operator.GE, divider.getTheta0());
+				problem.add(constraint);
+			}
+		}
 	}
 	
 	public static Problem buildVarBoundContraint(List<ExecVar> vars) {

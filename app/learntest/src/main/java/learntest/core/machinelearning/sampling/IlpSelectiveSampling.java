@@ -149,16 +149,30 @@ public class IlpSelectiveSampling {
 					if (result != null) {
 						updateSamples(Arrays.asList(result), samples);
 					}
-					if (!solverResult
-							.second()) { /**
-											 * run long time to solve this problem
-											 * ,maybe means that these problems
-											 * are too difficult
-											 */
+					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult */
 						log.debug("run long time to solve this problem");
 					}
 				}
 			}
+
+			/**
+			 * solve result that satisfy the whole model and preconditions
+			 */
+			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+			for (Problem problem : problems) {
+				ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
+				solver.generateRandomObjective(problem, originVars);
+				Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
+				Result result = solverResult.first();
+				if (result != null) {
+					updateSamples(Arrays.asList(result), samples);
+				}
+				if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult */
+					log.debug("run long time to solve this problem");
+				}
+				
+			}
+			
 		}
 		log.debug("selectiveSamplingData : " + samples.size());
 		List<double[]> newSamples = sampleEvolution(samples, preconditions,originVars);
