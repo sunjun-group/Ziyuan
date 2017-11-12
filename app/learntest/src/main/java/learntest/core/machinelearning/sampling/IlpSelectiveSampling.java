@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.sound.midi.VoiceStatus;
+
 import org.junit.experimental.theories.DataPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,8 @@ import learntest.core.machinelearning.sampling.javailp.ProblemBuilder;
 import learntest.core.machinelearning.sampling.javailp.ProblemSolver;
 import learntest.plugin.utils.Settings;
 import libsvm.core.Divider;
+import net.sf.javailp.Constraint;
+import net.sf.javailp.Operator;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
 import sav.common.core.Pair;
@@ -146,14 +150,7 @@ public class IlpSelectiveSampling {
 
 				for (Problem problem : problems) {
 					solver.generateRandomObjective(problem, originVars);
-					Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
-					Result result = solverResult.first();
-					if (result != null) {
-						updateSamples(Arrays.asList(result), samples);
-					}
-					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult */
-						log.debug("run long time to solve this problem");
-					}
+					updateSampleWithProblem(problem, samples);	
 					
 					System.out.print("[LIN YUN] " + learnedFormula + ": ");
 					for(double[] point: samples){
@@ -165,28 +162,32 @@ public class IlpSelectiveSampling {
 						System.out.print("),");
 					}
 					System.out.println();
-					
-					System.currentTimeMillis();
 				}
 			}
 
 			/**
-			 * solve result that satisfy the whole model and preconditions
+			 * solve result that satisfy model intersection and preconditions
 			 */
 			System.out.println("[LIN YUN] Generate data points on models: ");
 			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 			for (Problem problem : problems) {
-				ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
-				solver.generateRandomObjective(problem, originVars);
-				Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
-				Result result = solverResult.first();
-				if (result != null) {
-					updateSamples(Arrays.asList(result), samples);
+				if (learnedFormulas.size() > 1) {
+					for (int j = 0; j < learnedFormulas.size()-1; j++) {
+						List<Divider> dividers = new ArrayList<>(2);
+						dividers.add(learnedFormulas.get(j));
+						dividers.add(learnedFormulas.get(j+1));
+						List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
+						problem.getConstraints().addAll(constraints);
+						problem.getConstraints().removeAll(constraints);
+						solver.generateRandomObjective(problem, originVars);
+						updateSampleWithProblem(problem, samples);		
+						
+					}
+				}else if(learnedFormulas.size() == 1){
+					ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
+					solver.generateRandomObjective(problem, originVars);
+					updateSampleWithProblem(problem, samples);		
 				}
-				if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult */
-					log.debug("run long time to solve this problem");
-				}
-				
 			}
 			
 		}
@@ -195,6 +196,17 @@ public class IlpSelectiveSampling {
 		
 		System.currentTimeMillis();
 		return newSamples;
+	}
+	
+	public void updateSampleWithProblem(Problem problem, List<double[]> samples){
+		Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
+		Result result = solverResult.first();
+		if (result != null) {
+			updateSamples(Arrays.asList(result), samples);
+		}
+		if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult */
+			log.debug("run long time to solve this problem");
+		}
 	}
 
 	public List<double[]> sampleEvolution(List<double[]> samples, OrCategoryCalculator preconditions, List<ExecVar> originVars) {
@@ -449,10 +461,43 @@ public class IlpSelectiveSampling {
 	}
 
 	private void updateSamples(List<Result> results, List<double[]> samples) {
-		List<double[]> solutions = VarSolutionUtils.buildSolutionFromIlpResult(results, vars, initValues);
+		List<double[]> solutions = VarSolutionUtils.buildSolutionFromIlpResult(results, vars, initValues);		
+		solutions = nearDps(solutions);		
 		for (double[] solution : solutions) {
 			updateSamples(samples, solution);
 		}
+	}
+
+	private List<double[]> nearDps(List<double[]> solutions) {
+		List<double[]> nearDps = new ArrayList<>(solutions.size() * 5);
+		for (double[] ds : solutions) {
+			List<double[]> candidates = new ArrayList<>((int)Math.pow(3, ds.length));
+			candidates.add(ds);
+			for (int i = 0; i < ds.length; i++) {
+				List<double[]> tList = new LinkedList<>();
+				for (double[] d : candidates) {
+					tList.add(d);
+					double[] d1 = copyArray(d);
+					d1[i]--;
+					tList.add(d1);
+					double[] d2 = copyArray(d);
+					d2[i]++;
+					tList.add(d2);
+				}
+				candidates.clear();
+				candidates= tList;
+			}
+			nearDps.addAll(candidates);
+		}
+		return nearDps;
+	}
+	
+	private double[] copyArray(double[] ds) {
+		double[] ds2 = new double[ds.length];
+		for (int i = 0; i < ds.length; i++) {
+			ds2[i] = ds[i];
+		}
+		return ds2;
 	}
 
 	private void updateSamples(List<double[]> samples, double[] solution) {
