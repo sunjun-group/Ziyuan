@@ -95,6 +95,8 @@ public class JDartProcessOnDemand {
 			log.info("JDart method : "+targetClass+"."+methodName);
 			log.info("JDart mainEntry : "+mainEntry);
 			log.info("JDart param : "+paramString);
+			log.info("JDart node:"+node);
+			log.info("JDart branch:"+branch);
 			ProcessBuilder builder = new ProcessBuilder(javaBin, "-Xms1024m", "-Xmx9000m", "-cp", classpath, className, classpathStr, mainEntry,
 					targetClass, methodName, paramString, app, site, node, branch, ""+port);
 
