@@ -1,6 +1,7 @@
 package learntest.core.machinelearning.sampling.javailp;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import learntest.core.machinelearning.calculator.MultiNotDividerBasedCategoryCalculator;
@@ -338,6 +339,46 @@ public class ProblemBuilder {
 		return problem;
 	}
 	
+	/**
+	 * 
+	 * @param vars
+	 * @param dividers   serve as constraints
+	 * @param problem
+	 */
+	public static List<Constraint> getIntersetConstraint(List<ExecVar> vars, List<Divider> dividers) {
+		List<Constraint> constraints = new LinkedList<>();
+		boolean isAllVarInteger = IsAllVarInteger(vars);
+		if (dividers.size() > 0) {
+			for (Divider divider : dividers) {
+				double[] thetas = divider.getThetas();
+				Linear linear = new Linear();
+				int num = Math.min(thetas.length, vars.size());
+				for (int i = 0; i < num; i++) {
+					linear.add(thetas[i], vars.get(i).getLabel());
+				}
+
+				if(isAllVarInteger){
+					int threshold = 1;
+					Constraint constraint1 = new Constraint(linear, Operator.LE, divider.getTheta0()+threshold);
+					constraints.add(constraint1);	
+					Constraint constraint2 = new Constraint(linear, Operator.GE, divider.getTheta0()-threshold);
+					constraints.add(constraint2);	
+				}
+				else{
+					Constraint constraint = new Constraint(linear, Operator.EQ, divider.getTheta0());
+					constraints.add(constraint);			
+				}
+			}
+		}
+		return constraints;
+	}
+	
+	/**
+	 * 
+	 * @param vars
+	 * @param dividers   serve as constraints
+	 * @param problem
+	 */
 	public static void addConstraints(List<ExecVar> vars, List<Divider> dividers, Problem problem) {
 		if (dividers != null) {
 			for (Divider divider : dividers) {
