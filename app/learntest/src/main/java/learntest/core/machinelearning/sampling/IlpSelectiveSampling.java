@@ -80,6 +80,7 @@ public class IlpSelectiveSampling {
 		log.debug("solveMultiple: attempt {} times", num);
 		for (Problem problem : problems) {
 			List<Result> results = solver.calculateRanges(problem, vars);
+			results.clear();
 			updateSamples(results, samples);
 			if (problem.getVariablesCount() == 1) {
 				int loopTimes = 1;
