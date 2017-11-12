@@ -27,7 +27,8 @@ public class ByDistanceNegativePointSelection implements NegativePointSelection 
 	public DataPoint select(List<DataPoint> selectionData, List<DataPoint> referenceData){
 		// this one is not deterministic !!!
 //		DataPoint randomPositive = getRandomPositive(positives);
-		DataPoint randomPositive = referenceData.get(0);
+		int index = (int)(Math.random() * referenceData.size());
+		DataPoint randomPositive = referenceData.get(index);
 		
 		double minDistance = Integer.MAX_VALUE;
 		
