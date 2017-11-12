@@ -31,6 +31,7 @@ import learntest.core.machinelearning.sampling.javailp.ProblemSolver;
 import learntest.plugin.utils.Settings;
 import libsvm.core.Divider;
 import net.sf.javailp.Constraint;
+import net.sf.javailp.Linear;
 import net.sf.javailp.Operator;
 import net.sf.javailp.Problem;
 import net.sf.javailp.Result;
@@ -150,7 +151,7 @@ public class IlpSelectiveSampling {
 
 				for (Problem problem : problems) {
 					solver.generateRandomObjective(problem, originVars);
-					updateSampleWithProblem(problem, samples);	
+					updateSampleWithProblem(problem, samples, false);	
 					
 					System.out.print("[LIN YUN] " + learnedFormula + ": ");
 					for(double[] point: samples){
@@ -170,6 +171,7 @@ public class IlpSelectiveSampling {
 			 */
 			System.out.println("[LIN YUN] Generate data points on models: ");
 			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+			System.currentTimeMillis();
 			for (Problem problem : problems) {
 				if (learnedFormulas.size() > 1) {
 					for (int j = 0; j < learnedFormulas.size()-1; j++) {
@@ -178,15 +180,17 @@ public class IlpSelectiveSampling {
 						dividers.add(learnedFormulas.get(j+1));
 						List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
 						problem.getConstraints().addAll(constraints);
-						problem.getConstraints().removeAll(constraints);
 						solver.generateRandomObjective(problem, originVars);
-						updateSampleWithProblem(problem, samples);		
+						updateSampleWithProblem(problem, samples, true);	
 						
+						/* restore problem */
+						problem.getConstraints().removeAll(constraints);	
+						problem.setObjective(new Linear());
 					}
-				}else if(learnedFormulas.size() == 1){
+				}else {
 					ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
 					solver.generateRandomObjective(problem, originVars);
-					updateSampleWithProblem(problem, samples);		
+					updateSampleWithProblem(problem, samples, false);		
 				}
 			}
 			
@@ -194,15 +198,18 @@ public class IlpSelectiveSampling {
 		log.debug("selectiveSamplingData : " + samples.size());
 		List<double[]> newSamples = sampleEvolution(samples, preconditions,originVars);
 		
-		System.currentTimeMillis();
 		return newSamples;
 	}
 	
-	public void updateSampleWithProblem(Problem problem, List<double[]> samples){
+	public void updateSampleWithProblem(Problem problem, List<double[]> samples, boolean addNearDps){
 		Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
 		Result result = solverResult.first();
 		if (result != null) {
-			updateSamples(Arrays.asList(result), samples);
+			if (addNearDps) {
+				updateSamplesWithNearDps(Arrays.asList(result), samples);
+			}else {
+				updateSamples(Arrays.asList(result), samples);
+			}
 		}
 		if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult */
 			log.debug("run long time to solve this problem");
@@ -462,13 +469,22 @@ public class IlpSelectiveSampling {
 
 	private void updateSamples(List<Result> results, List<double[]> samples) {
 		List<double[]> solutions = VarSolutionUtils.buildSolutionFromIlpResult(results, vars, initValues);		
-		solutions = nearDps(solutions);		
+		for (double[] solution : solutions) {
+			updateSamples(samples, solution);
+		}
+	}
+	
+	private void updateSamplesWithNearDps(List<Result> results, List<double[]> samples) {
+
+		List<double[]> solutions = VarSolutionUtils.buildSolutionFromIlpResult(results, vars, initValues);		
+		solutions = nearDps(solutions);
 		for (double[] solution : solutions) {
 			updateSamples(samples, solution);
 		}
 	}
 
 	private List<double[]> nearDps(List<double[]> solutions) {
+
 		List<double[]> nearDps = new ArrayList<>(solutions.size() * 5);
 		for (double[] ds : solutions) {
 			List<double[]> candidates = new ArrayList<>((int)Math.pow(3, ds.length));
@@ -487,6 +503,9 @@ public class IlpSelectiveSampling {
 				candidates.clear();
 				candidates= tList;
 			}
+			candidates.remove(0);
+			candidates = limitSamples(candidates, 5);
+			candidates.add(0, ds);
 			nearDps.addAll(candidates);
 		}
 		return nearDps;
