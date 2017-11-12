@@ -16,6 +16,7 @@ import net.sf.javailp.Operator;
 import net.sf.javailp.Problem;
 import sav.common.core.formula.Eq;
 import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 public class ProblemBuilder {
 	private ProblemBuilder() {}
@@ -47,8 +48,8 @@ public class ProblemBuilder {
 			}
 		}
 		
-		boolean isAllVarInteger = true;
-//		boolean isAllVarInteger = IsAllVarInteger();
+//		boolean isAllVarInteger = true;
+		boolean isAllVarInteger = IsAllVarInteger(vars);
 		if(isAllVarInteger){
 			int threshold = 1;
 			Constraint constraint1 = new Constraint(linear, Operator.LE, object.getTheta0()+threshold);
@@ -62,6 +63,25 @@ public class ProblemBuilder {
 		}
 	}
 	
+	private static boolean IsAllVarInteger(List<ExecVar> vars) {
+		boolean isAllVarInteger = true;
+		outer : for (ExecVar execVar : vars) {
+			ExecVarType type = execVar.getType();
+			switch (type) {
+			case BOOLEAN :
+			case INTEGER :
+			case BYTE :
+			case CHAR :
+			case LONG :
+			case SHORT :
+				break;
+			default:
+				isAllVarInteger = false;
+				break outer;
+			}
+		}
+		return isAllVarInteger;
+	}
 	public static void addOppositeConstraint(Problem problem, Divider divider, List<ExecVar> vars) {
 		double[] thetas = divider.getThetas();
 		Linear linear = new Linear();
