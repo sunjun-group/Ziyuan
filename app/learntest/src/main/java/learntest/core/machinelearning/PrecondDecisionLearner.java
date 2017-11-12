@@ -369,20 +369,25 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 			recordSample(probes, sampleResult, logFile);
 
 			System.out.println("the whole data points for this learning:");
-			List<DataPoint> ps = new ArrayList<>();
-			for(DataPoint p: mcm.getDataPoints()){
-				String str = p.toString();
-				String s = str.replace("[", "(");
-				s = s.replace("]", ",)");
-				if(str.contains("POS")){
-					ps.add(p);
+			if(orgNodeProbe.getCoverage().getCfgNode().getLine()==2345){
+				List<DataPoint> ps = new ArrayList<>();
+				for(DataPoint p: mcm.getDataPoints()){
+					String str = p.toString();
+					String s = str.replace("[", "(");
+					s = s.replace("]", ",)");
+					if(str.contains("POS")){
+						ps.add(p);
+					}
+					System.out.println(s);
 				}
-				System.out.println(s);
+				
+				if(ps.size()>1){
+					System.currentTimeMillis();
+				}
 			}
 			
-			if(ps.size()>1){
-				System.currentTimeMillis();
-			}
+			
+			
 			
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(targetVars, mcm.getDataLabels());

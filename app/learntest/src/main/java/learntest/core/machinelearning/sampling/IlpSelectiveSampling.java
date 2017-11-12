@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.junit.experimental.theories.DataPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,6 +135,7 @@ public class IlpSelectiveSampling {
 		solver.initRangeIfEmpty(originVars);
 		int selectiveSamplingDataSize = 30;
 		for (int i = 0; i < selectiveSamplingDataSize; i++) {
+			System.out.println("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 				if (!problems.isEmpty() && learnedFormula != null) {
@@ -152,12 +154,26 @@ public class IlpSelectiveSampling {
 					if (!solverResult.second()) { /** run long time to solve this problem ,maybe means that these problems are too difficult */
 						log.debug("run long time to solve this problem");
 					}
+					
+					System.out.print("[LIN YUN] " + learnedFormula + ": ");
+					for(double[] point: samples){
+						System.out.print("(");
+						for(double d: point){
+							System.out.print(d + ",");
+							
+						}
+						System.out.print("),");
+					}
+					System.out.println();
+					
+					System.currentTimeMillis();
 				}
 			}
 
 			/**
 			 * solve result that satisfy the whole model and preconditions
 			 */
+			System.out.println("[LIN YUN] Generate data points on models: ");
 			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 			for (Problem problem : problems) {
 				ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
@@ -177,7 +193,7 @@ public class IlpSelectiveSampling {
 		log.debug("selectiveSamplingData : " + samples.size());
 		List<double[]> newSamples = sampleEvolution(samples, preconditions,originVars);
 		
-//		System.currentTimeMillis();
+		System.currentTimeMillis();
 		return newSamples;
 	}
 
