@@ -37,15 +37,29 @@ public class ProblemBuilder {
 	public static void addOnBorderConstaints(ProblemSolver solver, Problem problem, Divider object, List<ExecVar> vars) {
 		double[] thetas = object.getThetas();
 		Linear linear = new Linear();
+		
 		int num = Math.min(thetas.length, vars.size());
+		
 		for (int i = 0; i < num; i++) {
 			linear.add(thetas[i], vars.get(i).getLabel());
 			if (thetas[i] == 0.0 && solver != null) {
 				solver.addRandomConstraint(problem, vars.get(i));
 			}
 		}
-		Constraint constraint = new Constraint(linear, Operator.EQ, object.getTheta0());
-		problem.add(constraint);
+		
+		boolean isAllVarInteger = true;
+//		boolean isAllVarInteger = IsAllVarInteger();
+		if(isAllVarInteger){
+			int threshold = 1;
+			Constraint constraint1 = new Constraint(linear, Operator.LE, object.getTheta0()+threshold);
+			problem.add(constraint1);	
+			Constraint constraint2 = new Constraint(linear, Operator.GE, object.getTheta0()-threshold);
+			problem.add(constraint2);	
+		}
+		else{
+			Constraint constraint = new Constraint(linear, Operator.EQ, object.getTheta0());
+			problem.add(constraint);			
+		}
 	}
 	
 	public static void addOppositeConstraint(Problem problem, Divider divider, List<ExecVar> vars) {

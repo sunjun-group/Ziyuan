@@ -126,7 +126,6 @@ public class IlpSelectiveSampling {
 
 	public List<double[]> selectDataForModel(IDecisionNode target, List<ExecVar> originVars,
 			OrCategoryCalculator preconditions, List<Divider> learnedFormulas) throws SavException {
-		System.currentTimeMillis();
 		List<double[]> samples = new ArrayList<double[]>();
 
 		/**
@@ -162,8 +161,10 @@ public class IlpSelectiveSampling {
 			}
 		}
 		log.debug("selectiveSamplingData : " + samples.size());
-		samples = sampleEvolution(samples, preconditions,originVars);
-		return samples;
+		List<double[]> newSamples = sampleEvolution(samples, preconditions,originVars);
+		
+//		System.currentTimeMillis();
+		return newSamples;
 	}
 
 	public List<double[]> sampleEvolution(List<double[]> samples, OrCategoryCalculator preconditions, List<ExecVar> originVars) {
