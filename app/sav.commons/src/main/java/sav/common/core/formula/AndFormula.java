@@ -42,6 +42,34 @@ public class AndFormula extends ConjunctionFormula {
 	}
 
 	@Override
+//	public boolean equals(Object obj) {
+//		if (obj == this) {
+//			return true;
+//		}
+//		
+//		if (!(obj instanceof AndFormula)) {
+//			return false;
+//		}
+//		
+//		AndFormula formula = (AndFormula) obj;
+//		List<Formula> formulas = formula.elements;
+//		
+//		if (formulas.size() == 0 && elements.size() == 0) {
+//			return true;
+//		}
+//		
+//		if (formulas.size() != 2 || elements.size() != 2) {
+//			return false;
+//		}
+//		boolean x = formulas.get(0).equals(elements.get(0));
+//		x = formulas.get(1).equals(elements.get(1));
+//		x = formulas.get(0).equals(elements.get(1));
+//		x = formulas.get(1).equals(elements.get(0));
+//		
+//		return (formulas.get(0).equals(elements.get(0)) && formulas.get(1).equals(elements.get(1))) ||
+//				(formulas.get(0).equals(elements.get(1)) && formulas.get(1).equals(elements.get(0)));
+//	}
+	
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
@@ -51,22 +79,9 @@ public class AndFormula extends ConjunctionFormula {
 			return false;
 		}
 		
-		AndFormula formula = (AndFormula) obj;
-		List<Formula> formulas = formula.elements;
+		List<Atom> atoms1 = getAtomics();
+		List<Atom> atoms2 = ((AndFormula) obj).getAtomics();		
 		
-		if (formulas.size() == 0 && elements.size() == 0) {
-			return true;
-		}
-		
-		if (formulas.size() != 2 || elements.size() != 2) {
-			return false;
-		}
-		boolean x = formulas.get(0).equals(elements.get(0));
-		x = formulas.get(1).equals(elements.get(1));
-		x = formulas.get(0).equals(elements.get(1));
-		x = formulas.get(1).equals(elements.get(0));
-		
-		return (formulas.get(0).equals(elements.get(0)) && formulas.get(1).equals(elements.get(1))) ||
-				(formulas.get(0).equals(elements.get(1)) && formulas.get(1).equals(elements.get(0)));
+		return Atom.equals(atoms1, atoms2);
 	}
 }

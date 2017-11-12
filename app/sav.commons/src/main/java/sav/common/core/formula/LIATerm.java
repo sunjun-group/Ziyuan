@@ -1,5 +1,9 @@
 package sav.common.core.formula;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import sav.common.core.formula.utils.ExpressionVisitor;
 
 /**
@@ -60,5 +64,31 @@ public class LIATerm {
 		
 		LIATerm term = (LIATerm) obj;
 		return term.toString().equals(this.toString());
+	}
+	
+	public static boolean equals(List<LIATerm> l1, List<LIATerm> l2){
+		if (l1.size() != l2.size()) {
+			return false;
+		}
+		List<LIATerm> l2Temp = new ArrayList<LIATerm>(l2.size());
+		l2Temp.addAll(l2);
+		for (Iterator<LIATerm> iterator = l1.iterator(); iterator.hasNext();) {
+			LIATerm liaTerm1 = iterator.next();
+			boolean found = false;
+			int i = 0;
+			for (; i< l2Temp.size(); i++) {
+				LIATerm liaTerm2 = l2Temp.get(i);
+				if (liaTerm1.equals(liaTerm2)) {
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				l2Temp.remove(i);
+			}else {
+				return false;
+			}
+		}
+		return true;
 	}
 }

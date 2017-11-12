@@ -54,7 +54,7 @@ public class LIAAtom extends Atom {
 
 		LIAAtom obj = (LIAAtom) o;
 
-		return MVFOExpr.equals(obj.MVFOExpr) && operator == obj.operator
+		return LIATerm.equals(MVFOExpr, obj.MVFOExpr) && operator == obj.operator
 				&& obj.constant == constant;
 	}
 
@@ -85,4 +85,5 @@ public class LIAAtom extends Atom {
 		}
 		return null;
 	}
+	
 }
