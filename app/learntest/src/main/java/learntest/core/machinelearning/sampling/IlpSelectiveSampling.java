@@ -176,17 +176,19 @@ public class IlpSelectiveSampling {
 			for (Problem problem : problems) {
 				if (learnedFormulas.size() > 1) {
 					for (int j = 0; j < learnedFormulas.size()-1; j++) {
-						List<Divider> dividers = new ArrayList<>(2);
-						dividers.add(learnedFormulas.get(j));
-						dividers.add(learnedFormulas.get(j+1));
-						List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
-						problem.getConstraints().addAll(constraints);
-						solver.generateRandomObjective(problem, originVars);
-						updateSampleWithProblem(problem, samples, true);	
-						
-						/* restore problem */
-						problem.getConstraints().removeAll(constraints);	
-						problem.setObjective(new Linear());
+						for (int j2 = j+1; j2 < learnedFormulas.size(); j2++) {
+							List<Divider> dividers = new ArrayList<>(2);
+							dividers.add(learnedFormulas.get(j));
+							dividers.add(learnedFormulas.get(j2));
+							List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
+							problem.getConstraints().addAll(constraints);
+							solver.generateRandomObjective(problem, originVars);
+							updateSampleWithProblem(problem, samples, true);	
+							
+							/* restore problem */
+							problem.getConstraints().removeAll(constraints);	
+							problem.setObjective(new Linear());
+						}
 					}
 				}else {
 					ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
