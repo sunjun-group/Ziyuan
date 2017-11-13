@@ -114,6 +114,8 @@ public class PositiveSeparationMachine extends Machine {
 					}
 				}
 			}
+		}else {
+			return false;
 		}
 
 		if (m1.rho.length == m2.rho.length) {
@@ -121,10 +123,12 @@ public class PositiveSeparationMachine extends Machine {
 //				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0.1) {
 //					return false;
 //				}
-				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0.1) {
+				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0) {
 					return false;
 				}
 			}
+		}else {
+			return false;
 		}
 
 		return true;
