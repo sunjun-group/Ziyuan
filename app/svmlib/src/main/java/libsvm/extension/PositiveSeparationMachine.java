@@ -87,6 +87,7 @@ public class PositiveSeparationMachine extends Machine {
 				&& attemptCount < MAXIMUM_ATTEMPT_COUNT) {
 			attemptCount++;
 			learnedModels = new ArrayList<svm_model>();
+			pairList.clear();
 			attemptTraining(dataPoints);
 			double currentAccuracy = getModelAccuracy();
 			if (bestAccuracy <= currentAccuracy) {
@@ -150,7 +151,6 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	private Machine attemptTraining(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
-
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
 
