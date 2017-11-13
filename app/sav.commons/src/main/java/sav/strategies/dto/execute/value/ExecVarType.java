@@ -15,18 +15,7 @@ import static sav.common.core.utils.PrimitiveUtils.*;
  *
  */
 public enum ExecVarType {
-	REFERENCE,
-	BOOLEAN,
-	INTEGER,
-	BYTE,
-	CHAR,
-	DOUBLE,
-	FLOAT,
-	LONG,
-	SHORT,
-	STRING,
-	PRIMITIVE,
-	ARRAY;
+	REFERENCE, BOOLEAN, INTEGER, BYTE, CHAR, DOUBLE, FLOAT, LONG, SHORT, STRING, PRIMITIVE, ARRAY;
 
 	public static ExecVarType primitiveTypeOf(String type) {
 		if (isBoolean(type)) {
@@ -57,5 +46,19 @@ public enum ExecVarType {
 			return ExecVarType.STRING;
 		}
 		return null;
+	}
+
+	public static boolean isIntegerPresentation(ExecVarType type) {
+		switch (type) {
+		case BOOLEAN:
+		case INTEGER:
+		case BYTE:
+		case CHAR:
+		case LONG:
+		case SHORT:
+			return true;
+		default:
+			return false;
+		}
 	}
 }

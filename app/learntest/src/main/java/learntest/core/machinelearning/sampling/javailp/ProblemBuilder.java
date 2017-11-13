@@ -66,19 +66,11 @@ public class ProblemBuilder {
 	
 	private static boolean IsAllVarInteger(List<ExecVar> vars) {
 		boolean isAllVarInteger = true;
-		outer : for (ExecVar execVar : vars) {
+		for (ExecVar execVar : vars) {
 			ExecVarType type = execVar.getType();
-			switch (type) {
-			case BOOLEAN :
-			case INTEGER :
-			case BYTE :
-			case CHAR :
-			case LONG :
-			case SHORT :
-				break;
-			default:
+			if (!ExecVarType.isIntegerPresentation(type)) {
 				isAllVarInteger = false;
-				break outer;
+				break;
 			}
 		}
 		return isAllVarInteger;

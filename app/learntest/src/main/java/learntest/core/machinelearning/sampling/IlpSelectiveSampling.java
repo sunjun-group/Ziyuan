@@ -139,8 +139,9 @@ public class IlpSelectiveSampling {
 		 * generate data point on the border of divider
 		 */
 		solver.initRangeIfEmpty(originVars);
-		//int selectiveSamplingDataSize = 30;
-		//for (int i = 0; i < selectiveSamplingDataSize; i++) {
+		int selectiveSamplingDataSize = 30;
+		for (int i = 0; i < selectiveSamplingDataSize && 
+				(samplesOnLine.size()+samplesOnCorner.size()+samplesOnMedian.size()) < selectiveSamplingDataSize; i++) {
 			System.out.println("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
@@ -154,7 +155,7 @@ public class IlpSelectiveSampling {
 					solver.generateRandomObjective(problem, originVars);
 					updateSampleWithProblem(problem, samplesOnLine, false);	
 					
-					System.out.print("[LIN YUN] " + learnedFormula + ": ");
+					System.out.print("[LIN YUN] samplesOnLine : " + learnedFormula + ": ");
 					for(int h=0; h<samplesOnLine.size(); h++){
 						double[] point = samplesOnLine.get(h);
 						System.out.print("(");
@@ -173,19 +174,17 @@ public class IlpSelectiveSampling {
 			 */
 			System.out.println("[LIN YUN] Generate data points on models: ");
 			addSamplesOnModels(originVars, preconditions, learnedFormulas, samplesOnCorner);
-			addSamplesInMedians(learnedFormulas, samplesOnMedian);
-			
-			
-		//}
+			addSamplesOnMedians(originVars, learnedFormulas, samplesOnMedian);
+					
+		}
+		
 		log.debug("selectiveSamplingData : " + (samplesOnLine.size()+samplesOnCorner.size()+samplesOnMedian.size()));
 		List<double[]> newSamples = sampleEvolution(samplesOnLine, samplesOnCorner, samplesOnMedian, preconditions,originVars);
-		
-//		System.currentTimeMillis();
 		
 		return newSamples;
 	}
 	
-	private void addSamplesInMedians(List<Divider> learnedFormulas, List<double[]> samples) {
+	private void addSamplesOnMedians(List<ExecVar> originVars, List<Divider> learnedFormulas, List<double[]> samples) {
 		for (Divider formula : learnedFormulas) {
 			System.out.println("[LIN YUN] learned formula: " + formula);
 			if (formula.getDataPair() != null) {
@@ -195,7 +194,13 @@ public class IlpSelectiveSampling {
 				System.out.println("[LIN YUN] used data points: (" + d1[0] + ", " + d1[1] + "), ("+ d2[0] + ", " + d2[1] + ")");
 				double[] median = new double[d1.length];
 				for (int i = 0; i < median.length; i++) {
-					median[i] = ( d1[i] + d2[i])/2;
+					ExecVar var = originVars.get(i);
+					ExecVarType type = var.getType();
+					if (ExecVarType.isIntegerPresentation(type)) {
+						median[i] =  (int)((d1[i] + d2[i])/2);
+					}else {
+						median[i] = ( d1[i] + d2[i])/2;
+					}
 				}
 				samples.add(median);
 			}
