@@ -155,23 +155,25 @@ public class LearningMachine extends PositiveSeparationMachine {
 			List<svm_model> bestModels = learnedModels;
 			for (List<svm_model> preModels : previousModels ) {
 				double preAcc = getModelAccuracy(preModels);				
-				if (preAcc < maxAcc) {
-					log.debug("previous model: {}, acc:{} < new acc:{}", getLearnedLogic(true, preModels),
+				if (preAcc <= maxAcc) {
+					log.debug("previous model: \n{}, \nacc:{} <= new acc:{}", getLearnedLogic(true, preModels),
 							preAcc, maxAcc);
 				} else {
 					bestModels = preModels;
 					maxAcc = preAcc;
-					log.debug("previous model: {}, acc:{} >= new acc:{}, update", preModels,
+					log.debug("previous model: \n{}, \nacc:{} >= new acc:{}, update", preModels,
 							preAcc, maxAcc);
 				}
 			}
 			learnedModels = bestModels;
-			log.debug("best model : {}, acc:{}", getLearnedLogic(true, bestModels), maxAcc);
+			log.debug("best model : \n{}, \nacc:{}", getLearnedLogic(true, bestModels), maxAcc);
 		}
 		if (keepPotentialModel) {
 			if (!isContain(previousModels, curModels)) {
 				if (curModels != null) {
-					previousModels.add(curModels);
+					List<svm_model> models = new LinkedList<>();
+					models.addAll(curModels);
+					previousModels.add(models);
 				}
 			}
 		}
