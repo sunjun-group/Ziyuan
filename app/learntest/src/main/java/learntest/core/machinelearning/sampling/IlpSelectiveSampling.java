@@ -139,8 +139,8 @@ public class IlpSelectiveSampling {
 		 * generate data point on the border of divider
 		 */
 		solver.initRangeIfEmpty(originVars);
-		int selectiveSamplingDataSize = 30;
-		for (int i = 0; i < selectiveSamplingDataSize; i++) {
+		//int selectiveSamplingDataSize = 30;
+		//for (int i = 0; i < selectiveSamplingDataSize; i++) {
 			System.out.println("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
@@ -152,10 +152,12 @@ public class IlpSelectiveSampling {
 
 				for (Problem problem : problems) {
 					solver.generateRandomObjective(problem, originVars);
+					int size = samples.size();
 					updateSampleWithProblem(problem, samples, false);	
 					
 					System.out.print("[LIN YUN] " + learnedFormula + ": ");
-					for(double[] point: samples){
+					for(int h=size; h<samples.size(); h++){
+						double[] point = samples.get(h);
 						System.out.print("(");
 						for(double d: point){
 							System.out.print(d + ",");
@@ -183,23 +185,38 @@ public class IlpSelectiveSampling {
 							List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
 							problem.getConstraints().addAll(constraints);
 							solver.generateRandomObjective(problem, originVars);
+							int size = samples.size();
 							updateSampleWithProblem(problem, samples, true);	
+							
+							System.out.print("[LIN YUN] : ");
+							for(int h=size; h<samples.size(); h++){
+								double[] point = samples.get(h);
+								System.out.print("(");
+								for(double d: point){
+									System.out.print(d + ",");
+									
+								}
+								System.out.print("),");
+							}
+							System.out.println();
 							
 							/* restore problem */
 							problem.getConstraints().removeAll(constraints);	
 							problem.setObjective(new Linear());
 						}
 					}
-				}else {
+				} else {
 					ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
 					solver.generateRandomObjective(problem, originVars);
 					updateSampleWithProblem(problem, samples, false);		
 				}
 			}
 			
-		}
+		//}
 		log.debug("selectiveSamplingData : " + samples.size());
 		List<double[]> newSamples = sampleEvolution(samples, preconditions,originVars);
+		
+//		System.currentTimeMillis();
 		
 		return newSamples;
 	}
