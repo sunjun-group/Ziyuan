@@ -358,7 +358,7 @@ public class ProblemBuilder {
 				}
 
 				if(isAllVarInteger){
-					int threshold = 1;
+					int threshold = 5;
 					Constraint constraint1 = new Constraint(linear, Operator.LE, divider.getTheta0()+threshold);
 					constraints.add(constraint1);	
 					Constraint constraint2 = new Constraint(linear, Operator.GE, divider.getTheta0()-threshold);
