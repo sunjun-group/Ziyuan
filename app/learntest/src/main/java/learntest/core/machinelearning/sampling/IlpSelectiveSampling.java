@@ -130,7 +130,10 @@ public class IlpSelectiveSampling {
 
 	public List<double[]> selectDataForModel(IDecisionNode target, List<ExecVar> originVars,
 			OrCategoryCalculator preconditions, List<Divider> learnedFormulas) throws SavException {
-		List<double[]> samples = new ArrayList<double[]>();
+//		List<double[]> samples = new ArrayList<double[]>();
+		List<double[]> samplesOnLine = new ArrayList<>();
+		List<double[]> samplesOnCorner = new ArrayList<>();
+		List<double[]> samplesOnMedian = new ArrayList<>();
 
 		/**
 		 * generate data point on the border of divider
@@ -149,12 +152,11 @@ public class IlpSelectiveSampling {
 
 				for (Problem problem : problems) {
 					solver.generateRandomObjective(problem, originVars);
-					int size = samples.size();
-					updateSampleWithProblem(problem, samples, false);	
+					updateSampleWithProblem(problem, samplesOnLine, false);	
 					
 					System.out.print("[LIN YUN] " + learnedFormula + ": ");
-					for(int h=size; h<samples.size(); h++){
-						double[] point = samples.get(h);
+					for(int h=0; h<samplesOnLine.size(); h++){
+						double[] point = samplesOnLine.get(h);
 						System.out.print("(");
 						for(double d: point){
 							System.out.print(d + ",");
@@ -170,13 +172,13 @@ public class IlpSelectiveSampling {
 			 * solve result that satisfy model intersection and preconditions
 			 */
 			System.out.println("[LIN YUN] Generate data points on models: ");
-//			addSamplesOnModels(originVars, preconditions, learnedFormulas, samples);
-			addSamplesInMedians(learnedFormulas, samples);
+			addSamplesOnModels(originVars, preconditions, learnedFormulas, samplesOnCorner);
+			addSamplesInMedians(learnedFormulas, samplesOnMedian);
 			
 			
 		//}
-		log.debug("selectiveSamplingData : " + samples.size());
-		List<double[]> newSamples = sampleEvolution(samples, preconditions,originVars);
+		log.debug("selectiveSamplingData : " + (samplesOnLine.size()+samplesOnCorner.size()+samplesOnMedian.size()));
+		List<double[]> newSamples = sampleEvolution(samplesOnLine, samplesOnCorner, samplesOnMedian, preconditions,originVars);
 		
 //		System.currentTimeMillis();
 		
@@ -184,11 +186,13 @@ public class IlpSelectiveSampling {
 	}
 	
 	private void addSamplesInMedians(List<Divider> learnedFormulas, List<double[]> samples) {
-		for (Divider formulas : learnedFormulas) {
-			if (formulas.getDataPair() != null) {
-				Pair<DataPoint, DataPoint> pair = formulas.getDataPair();
+		for (Divider formula : learnedFormulas) {
+			System.out.println("[LIN YUN] learned formula: " + formula);
+			if (formula.getDataPair() != null) {
+				Pair<DataPoint, DataPoint> pair = formula.getDataPair();
 				double[] d1 = pair.a.getValues();
 				double[] d2 = pair.b.getValues();
+				System.out.println("[LIN YUN] used data points: (" + d1[0] + ", " + d1[1] + "), ("+ d2[0] + ", " + d2[1] + ")");
 				double[] median = new double[d1.length];
 				for (int i = 0; i < median.length; i++) {
 					median[i] = ( d1[i] + d2[i])/2;
@@ -263,35 +267,65 @@ public class IlpSelectiveSampling {
 		}
 	}
 
-	public List<double[]> sampleEvolution(List<double[]> samples, OrCategoryCalculator preconditions, List<ExecVar> originVars) {
+	public List<double[]> sampleEvolution(List<double[]> samplesOnLine, List<double[]> samplesOnCorner, List<double[]> samplesOnMedian, OrCategoryCalculator preconditions, List<ExecVar> originVars) {
 
-		List<double[]> heuList = new LinkedList<>(), randomSamples = new LinkedList<>();
+		List<double[]> newSamplesOnLine = new ArrayList<>();
+//		newSamplesOnLine.addAll(samplesOnLine);
+		List<double[]> newSampleOnCorner = new ArrayList<>();
+//		newSampleOnCorner.addAll(newSampleOnCorner);
+		List<double[]> newSampleOnMedian = new ArrayList<>();
+//		newSampleOnMedian.addAll(newSampleOnMedian);
+		
+//		List<double[]> heuList = new ArrayList<>(); 
+		List<double[]> randomSamples = new ArrayList<>();
 		for (int i = 0; i < 2; i++) {
-			int bound = 10 - (2 * iterationTime--);
-			heuList.addAll(selectHeuristicsSamples(samples, originVars, maxSamplesPerSelect * 2, bound));
+			int bound = 5;
+			newSamplesOnLine = selectHeuristicsSamples(samplesOnLine, originVars, maxSamplesPerSelect * 2, bound);
+			newSampleOnCorner = selectHeuristicsSamples(samplesOnCorner, originVars, maxSamplesPerSelect * 2, bound);
+			newSampleOnMedian = selectHeuristicsSamples(samplesOnMedian, originVars, maxSamplesPerSelect * 2, bound);
 		}
+		
+		int originalSize = samplesOnCorner.size() + samplesOnMedian.size();
+		int newSampleSize = newSamplesOnLine.size() + newSampleOnCorner.size() + newSampleOnMedian.size();
+		
 		/**
 		 * randomly generate more data points on svm model.
 		 */
 		randomSamples.addAll(generateRandomPointsWithPrecondition(preconditions, originVars,
-				Math.max(samples.size() + heuList.size(), maxSamplesPerSelect)));
+				Math.max(originalSize + newSampleSize, maxSamplesPerSelect)));
 
-		int total = heuList.size() + samples.size() + randomSamples.size();
+		List<double[]> samples = new ArrayList<>();
+		int total = originalSize + newSampleSize + randomSamples.size();
 		if (total > maxSamplesPerSelect) {
-			int heulistNum = maxSamplesPerSelect / 3,
-					randomNum = maxSamplesPerSelect / 2,
-					orignalNum = maxSamplesPerSelect / 6;
+			int sampleOnCornerNum = maxSamplesPerSelect/10;
+			int sampleOnMedianNum = maxSamplesPerSelect/10;
+			int newSampleOnLineNum = maxSamplesPerSelect/10;
+			int newSampleOnCornerNum = maxSamplesPerSelect/10;
+			int newSampleOnMedianNum = maxSamplesPerSelect/10;
+			int randomNum = maxSamplesPerSelect / 2;
 			
-			log.debug("heulistNum : {}, randomNum : {}, sampleNum : {}", heulistNum, randomNum, orignalNum);
-			samples = limitSamples(samples, orignalNum > 0 ? orignalNum : 1);
-			heuList = limitSamples(heuList, heulistNum > 0 ? heulistNum : 1);
+//			log.debug("heulistNum : {}, randomNum : {}, sampleNum : {}", heulistNum, randomNum, orignalNum);
+			samplesOnCorner = limitSamples(samplesOnCorner, sampleOnCornerNum > 0 ? sampleOnCornerNum : 1);
+			samplesOnMedian = limitSamples(samplesOnMedian, sampleOnMedianNum > 0 ? sampleOnMedianNum : 1);
+			newSamplesOnLine = limitSamples(newSamplesOnLine, newSampleOnLineNum > 0 ? newSampleOnLineNum : 1);
+			newSampleOnCorner = limitSamples(newSampleOnCorner, newSampleOnCornerNum > 0 ? newSampleOnCornerNum : 1);
+			newSampleOnMedian = limitSamples(newSampleOnMedian, newSampleOnMedianNum > 0 ? newSampleOnMedianNum : 1);
 			randomSamples = limitSamples(randomSamples, randomNum > 0 ? randomNum : 1);
 		}
-		log.debug("helist : {}", array2Str(heuList));
+		log.debug("samplesOnLine : {}", array2Str(samplesOnLine));
+		log.debug("samplesOnCorner : {}", array2Str(samplesOnCorner));
+		log.debug("samplesOnMedian : {}", array2Str(samplesOnMedian));
+		log.debug("newSamplesOnLine : {}", array2Str(newSamplesOnLine));
+		log.debug("newSampleOnCorner : {}", array2Str(newSampleOnCorner));
+		log.debug("newSampleOnMedian : {}", array2Str(newSampleOnMedian));
 		log.debug("randomPointsWithPrecondition : {}", array2Str(randomSamples));
-		log.debug("original sample : {}", array2Str(samples));
 
-		samples.addAll(heuList);
+		samples.addAll(samplesOnLine);
+		samples.addAll(samplesOnCorner);
+		samples.addAll(samplesOnMedian);
+		samples.addAll(newSamplesOnLine);
+		samples.addAll(newSampleOnCorner);
+		samples.addAll(newSampleOnMedian);
 		samples.addAll(randomSamples);
 		return samples;
 	}
