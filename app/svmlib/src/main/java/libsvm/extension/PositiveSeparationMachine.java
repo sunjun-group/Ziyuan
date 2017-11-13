@@ -164,7 +164,7 @@ public class PositiveSeparationMachine extends Machine {
 			learnLoop: while (selectionSize > 0 && selectionData.size() > 0) {
 				int trialSize = 2;
 				for (int k = 0; k < trialSize; k++) {
-					int selectNum = 3;
+					int selectNum = 1;
 					List<DataPoint> selectedPoints = select(selectNum, selectionData, trainingData);
 					trainingData.addAll(selectedPoints);
 
