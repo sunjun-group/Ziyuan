@@ -114,6 +114,8 @@ public class PositiveSeparationMachine extends Machine {
 					}
 				}
 			}
+		}else {
+			return false;
 		}
 
 		if (m1.rho.length == m2.rho.length) {
@@ -121,10 +123,12 @@ public class PositiveSeparationMachine extends Machine {
 //				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0.1) {
 //					return false;
 //				}
-				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0.1) {
+				if (Math.abs(m1.rho[i] - m2.rho[i]) > 0) {
 					return false;
 				}
 			}
+		}else {
+			return false;
 		}
 
 		return true;
@@ -179,7 +183,7 @@ public class PositiveSeparationMachine extends Machine {
 					referenceDatas.add(randomPositive);
 					DataPoint nearestDp = negativePointSelection.select(selectionData, referenceDatas);
 					list.add(nearestDp);
-					selectionData.remove(nearestDp);
+					selectionData.remove(nearestDp); // when selectNum > 1, selectionData should remove those selected, otherwise always get that one
 					List<DataPoint> selectedPoints = list;
 					
 					trainingData.addAll(selectedPoints);
@@ -189,8 +193,8 @@ public class PositiveSeparationMachine extends Machine {
 					System.out.println("selected points to learn : ");
 					for (int i = 0; i < selectedPoints.size(); i++) {
 						DataPoint p = trainingData.remove(trainingData.size() - 1);
+						selectionData.add(p); // restore removed 
 						System.out.println(p);
-//						selectionData.remove(p); // has removed in method select
 					}
 					removeClassifiedNegativePoints(selectionData);
 					
