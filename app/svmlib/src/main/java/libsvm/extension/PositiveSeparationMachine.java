@@ -185,6 +185,7 @@ public class PositiveSeparationMachine extends Machine {
 					trainingData.addAll(selectedPoints);
 
 					super.train(trainingData);
+					
 					System.out.println("selected points to learn : ");
 					for (int i = 0; i < selectedPoints.size(); i++) {
 						DataPoint p = trainingData.remove(trainingData.size() - 1);
@@ -193,10 +194,16 @@ public class PositiveSeparationMachine extends Machine {
 					}
 					removeClassifiedNegativePoints(selectionData);
 					
+//					System.currentTimeMillis();
+//					learnedModels.clear();
+					
 					/** record model and loop until the number of models is greater than modelLimit */
 					if (isValidModel(model)) { 
 						if (!isContain(learnedModels, model)) {
 							learnedModels.add(model);
+							String str = getLearnedLogic(true);
+							System.out.println("Lin Yun: use" + str);
+							
 							pairList.add(new Pair<DataPoint, DataPoint>(referenceDatas.get(0), nearestDp));
 							modelSize++;
 							if (modelSize > modelLimit) {
