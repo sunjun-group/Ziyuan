@@ -37,7 +37,7 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class PositiveSeparationMachine extends Machine {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PositiveSeparationMachine.class);
 
-	private List<svm_model> learnedModels = new ArrayList<svm_model>();
+	protected List<svm_model> learnedModels = new ArrayList<svm_model>();
 
 	private static final int MAXIMUM_ATTEMPT_COUNT = 10;
 	private static final int MAXIMUM_DIVIDER_COUNT = 20;
@@ -126,7 +126,7 @@ public class PositiveSeparationMachine extends Machine {
 		return true;
 	}
 
-	private boolean isContain(List<svm_model> list, svm_model m0) {
+	protected boolean isContain(List<svm_model> list, svm_model m0) {
 		System.currentTimeMillis();
 		if (list.isEmpty()) {
 			return false;
@@ -285,8 +285,11 @@ public class PositiveSeparationMachine extends Machine {
 	
 	@Override
 	public String getLearnedLogic(boolean round) {
+		return getLearnedLogic(round, learnedModels);
+	}
+	
+	public String getLearnedLogic(boolean round, List<svm_model> learnedModels){
 		StringBuilder str = new StringBuilder();
-
 		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
 		if (numberOfFeatures > 0) {
 			for (svm_model svmModel : learnedModels) {
@@ -299,8 +302,8 @@ public class PositiveSeparationMachine extends Machine {
 				}
 			}
 		}
-
-		return str.toString();
+		
+		return str.toString();		
 	}
 
 	@Deprecated
@@ -314,7 +317,7 @@ public class PositiveSeparationMachine extends Machine {
 		return roundDividers;
 	}
 
-	public Formula getLearnedMultiFormula(List<ExecVar> vars, List<String> dataLabels) {
+	public Formula getLearnedMultiFormula(List<ExecVar> vars, List<String> dataLabels){		
 		Formula formula = null;
 		List<svm_model> models = getLearnedModels();
 		final int numberOfFeatures = getNumberOfFeatures();

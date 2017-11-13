@@ -11,7 +11,6 @@ package learntest.core.machinelearning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,15 +40,16 @@ import sav.strategies.dto.execute.value.ExecVar;
  * temporary class for some extend functions from PositiveSeparationMachine.
  * just temporary to workaround. The best way I think is merging FeatureSelectionMachine to PositiveSeparationMachine.
  */
-public class LearningMachine extends PositiveSeparationMachine {
-	private static final Logger log = LoggerFactory.getLogger(LearningMachine.class);
+public class LearningMachineOld extends PositiveSeparationMachine {
+	private static final Logger log = LoggerFactory.getLogger(LearningMachineOld.class);
 	private boolean keepPotentialModel;
-	private List<List<svm_model>> previousModels;
+	private Map<String, SingleFeatureVarModel> potentialSingleFeatureModels;
+	private double singleFeatureAccMin = 0.8;
 	
-	public LearningMachine(NegativePointSelection pointSelection) {
+	public LearningMachineOld(NegativePointSelection pointSelection) {
 		super(pointSelection);
 		keepPotentialModel = true;
-		previousModels = new LinkedList<>();
+		potentialSingleFeatureModels = new HashMap<String, SingleFeatureVarModel>();
 	}
 	
 	@Override
@@ -59,8 +59,50 @@ public class LearningMachine extends PositiveSeparationMachine {
 
 	@Override
 	protected Machine train(List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
+		if (!potentialSingleFeatureModels.isEmpty()) {
+			for (Iterator<Entry<String, SingleFeatureVarModel>> it = potentialSingleFeatureModels.entrySet().iterator();
+					it.hasNext(); ) {
+				Entry<String, SingleFeatureVarModel> entry = it.next();
+				LearnedModel learnedModel = entry.getValue().learnedModel;
+				
+				/* try to learn new classifier for selected single feature on new datapoints, 
+				 * if new classifier with higher acc is returned, we update potential model with the new one, otherwise,
+				 * we do check the acc of the old classifier on new datapoints to see if the new acc is still greater than the baseline
+				 * to be able to keep or not.
+				 *  */
+				Machine machine = createNewMachine(CollectionUtils.listOf(entry.getKey(), 1));
+				try {
+					machine.addDataPoints(dataPoints);
+					machine.train();
+					double acc = machine.getModelAccuracy();
+					
+					if (acc < singleFeatureAccMin) {
+						double newAcc = getModelAccuracy(CollectionUtils.listOf(learnedModel.model.getModel(), 1));
+						if (newAcc > singleFeatureAccMin) {
+							log.debug("potentialSingleFeatureModel: {}, acc:{}, new acc:{}", learnedModel.formula,
+									learnedModel.accuracy, newAcc);
+							learnedModel.accuracy = acc;
+							// the potential model still valid
+						} else {
+							it.remove();
+							log.debug("potentialSingleFeatureModel: {}, acc:{}, new acc:{} [removed!]",
+									learnedModel.formula, learnedModel.accuracy, newAcc);
+						}
+					} else {
+						// update
+						learnedModel.accuracy = acc;
+						learnedModel.model = machine.getModel();
+						log.debug("potentialSingleFeatureModel: {}, acc:{}", learnedModel.formula, learnedModel.accuracy);
+					}
+				} catch (SAVExecutionTimeOutException e) {
+					it.remove();
+				}
+			}
+		}
 		super.train(dataPoints);
-		updatePreviousModel();
+		for (SingleFeatureVarModel model : potentialSingleFeatureModels.values()) {
+			getLearnedModels().add(model.learnedModel.model.getModel());
+		}
 		return this;
 	}
 	
@@ -70,6 +112,7 @@ public class LearningMachine extends PositiveSeparationMachine {
 	}
 	
 	public Formula getLearnedMultiFormula(List<ExecVar> vars, List<String> dataLabels, double accuracyFilter) {
+		potentialSingleFeatureModels.clear();
 		List<svm_model> models = getLearnedModels();
 		final int numberOfFeatures = getNumberOfFeatures();
 //		if (models != null && numberOfFeatures > 0) {
@@ -98,6 +141,7 @@ public class LearningMachine extends PositiveSeparationMachine {
 //			List<Formula> formulas = subsetFilter(formulaList);
 //			return FormulaConjunction.and(formulas);
 //		}
+		System.currentTimeMillis();
 		if (models != null && numberOfFeatures > 0) {
 			List<LearnedModel> formulaList = new ArrayList<LearnedModel>();
 			double accuracy = getModelAccuracy(models);
@@ -112,6 +156,7 @@ public class LearningMachine extends PositiveSeparationMachine {
 					Model model = new Model(svmModel, numberOfFeatures);
 					final Divider explicitDivider = model.getExplicitDivider();
 					Formula current = new FormulaProcessor<ExecVar>(vars).process(explicitDivider, dataLabels, true);
+					updatePotentialSingleFeatureModel(current, accuracy, model);
 					double singleAccuracy = getModelAccuracy(CollectionUtils.listOf(svmModel, 1));
 					formulaList.add(new LearnedModel(model, current, singleAccuracy));
 				}
@@ -148,55 +193,23 @@ public class LearningMachine extends PositiveSeparationMachine {
 		return getWrongClassifiedDataPoints(dataPoints, new MultiDividerBasedCategoryCalculator(roundDividers));
 	}
 
-	private void updatePreviousModel() {
-		List<svm_model> curModels = learnedModels;
-		if (!previousModels.isEmpty()) {
-			double maxAcc = getModelAccuracy();
-			List<svm_model> bestModels = learnedModels;
-			for (List<svm_model> preModels : previousModels ) {
-				double preAcc = getModelAccuracy(preModels);				
-				if (preAcc < maxAcc) {
-					log.debug("previous model: {}, acc:{} < new acc:{}", getLearnedLogic(true, preModels),
-							preAcc, maxAcc);
-				} else {
-					bestModels = preModels;
-					maxAcc = preAcc;
-					log.debug("previous model: {}, acc:{} >= new acc:{}, update", preModels,
-							preAcc, maxAcc);
-				}
-			}
-			learnedModels = bestModels;
-			log.debug("best model : {}, acc:{}", getLearnedLogic(true, bestModels), maxAcc);
-		}
+	private void updatePotentialSingleFeatureModel(Formula current, double accuracy, Model model) {
 		if (keepPotentialModel) {
-			if (!isContain(previousModels, curModels)) {
-				if (curModels != null) {
-					previousModels.add(curModels);
+			ExecVar singleFeatureVar = getSingleFeatureVar(current);
+			if (singleFeatureVar != null && accuracy >= singleFeatureAccMin) {
+				SingleFeatureVarModel singleFeatureModel = potentialSingleFeatureModels.get(singleFeatureVar.getLabel());
+				if (singleFeatureModel == null) {
+					singleFeatureModel = new SingleFeatureVarModel();
+					singleFeatureModel.var = singleFeatureVar;
+					potentialSingleFeatureModels.put(singleFeatureVar.getLabel(), singleFeatureModel);
+				} 
+				if (singleFeatureModel.learnedModel.accuracy <= accuracy) {
+					singleFeatureModel.learnedModel.accuracy = accuracy;
+					singleFeatureModel.learnedModel.model = model;
+					singleFeatureModel.learnedModel.formula = current;
 				}
 			}
 		}
-	}
-
-	private boolean isContain(List<List<svm_model>> previousModels, List<svm_model> models) {
-		boolean contain = false;
-		for (List<svm_model> pModels : previousModels) {
-			if (modelEqual(pModels,models)) {
-				return true;
-			}
-		}
-		return contain;
-	}
-
-	private boolean modelEqual(List<svm_model> pModels, List<svm_model> models) {
-		if (pModels.size() != models.size()) {
-			return false;
-		}
-		for (svm_model m0 : models) {
-			if (!isContain(pModels, m0)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private List<Formula> subsetFilter(List<LearnedModel> formulaList) {
