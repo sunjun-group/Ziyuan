@@ -181,6 +181,11 @@ public class PositiveSeparationMachine extends Machine {
 					DataPoint randomPositive = trainingData.get(index);
 					List<DataPoint> referenceDatas = new LinkedList<>();
 					referenceDatas.add(randomPositive);
+					
+					if(selectionData.isEmpty()){
+						break learnLoop;
+					}
+					
 					DataPoint nearestDp = negativePointSelection.select(selectionData, referenceDatas);
 					list.add(nearestDp);
 					selectionData.remove(nearestDp); // when selectNum > 1, selectionData should remove those selected, otherwise always get that one
@@ -334,14 +339,16 @@ public class PositiveSeparationMachine extends Machine {
 		return str.toString();		
 	}
 
-	@Deprecated
+//	@Deprecated
 	public List<Divider> getLearnedDividers() {
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (int i = 0; i < this.learnedModels.size(); i++) {
 			svm_model learnModel = learnedModels.get(i);
 			if (learnModel != null) {
 				Divider divider = new Model(learnModel, getNumberOfFeatures()).getExplicitDivider().round();
-				divider.setDataPair(pairList.get(i));
+				if(pairList.size()>i){
+					divider.setDataPair(pairList.get(i));					
+				}
 				roundDividers.add(divider);
 			}
 		}
