@@ -428,7 +428,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	 * To test new version of learntest which uses another cfg and jacoco for
 	 * code coverage.
 	 */
-	public RunTimeInfo runLearntest(LearnTestParams params) throws PluginException {
+	public RunTimeInfo runLearntest(LearnTestParams params){
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 50000000;
@@ -447,8 +447,10 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			}
 			return runtimeInfo;
 		} catch (Exception e) {
-			throw PluginException.wrapEx(e);
+			//throw PluginException.wrapEx(e);
+			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	protected boolean ifInXlsx(MethodInfo targetMethod) {
