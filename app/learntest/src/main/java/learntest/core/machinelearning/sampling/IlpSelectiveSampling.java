@@ -16,10 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import javax.sound.midi.VoiceStatus;
-
-import org.junit.experimental.theories.DataPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +26,7 @@ import learntest.core.machinelearning.sampling.javailp.ProblemBuilder;
 import learntest.core.machinelearning.sampling.javailp.ProblemSolver;
 import learntest.plugin.utils.Settings;
 import libsvm.core.Divider;
+import libsvm.core.Machine.DataPoint;
 import net.sf.javailp.Constraint;
 import net.sf.javailp.Linear;
 import net.sf.javailp.Operator;
@@ -173,44 +170,9 @@ public class IlpSelectiveSampling {
 			 * solve result that satisfy model intersection and preconditions
 			 */
 			System.out.println("[LIN YUN] Generate data points on models: ");
-			List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
-			System.currentTimeMillis();
-			for (Problem problem : problems) {
-				if (learnedFormulas.size() > 1) {
-					for (int j = 0; j < learnedFormulas.size()-1; j++) {
-						for (int j2 = j+1; j2 < learnedFormulas.size(); j2++) {
-							List<Divider> dividers = new ArrayList<>(2);
-							dividers.add(learnedFormulas.get(j));
-							dividers.add(learnedFormulas.get(j2));
-							List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
-							problem.getConstraints().addAll(constraints);
-							solver.generateRandomObjective(problem, originVars);
-							int size = samples.size();
-							updateSampleWithProblem(problem, samples, true);	
-							
-							System.out.print("[LIN YUN] : ");
-							for(int h=size; h<samples.size(); h++){
-								double[] point = samples.get(h);
-								System.out.print("(");
-								for(double d: point){
-									System.out.print(d + ",");
-									
-								}
-								System.out.print("),");
-							}
-							System.out.println();
-							
-							/* restore problem */
-							problem.getConstraints().removeAll(constraints);	
-							problem.setObjective(new Linear());
-						}
-					}
-				} else {
-					ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
-					solver.generateRandomObjective(problem, originVars);
-					updateSampleWithProblem(problem, samples, false);		
-				}
-			}
+//			addSamplesOnModels(originVars, preconditions, learnedFormulas, samples);
+			addSamplesInMedians(learnedFormulas, samples);
+			
 			
 		//}
 		log.debug("selectiveSamplingData : " + samples.size());
@@ -221,6 +183,71 @@ public class IlpSelectiveSampling {
 		return newSamples;
 	}
 	
+	private void addSamplesInMedians(List<Divider> learnedFormulas, List<double[]> samples) {
+		for (Divider formulas : learnedFormulas) {
+			if (formulas.getDataPair() != null) {
+				Pair<DataPoint, DataPoint> pair = formulas.getDataPair();
+				double[] d1 = pair.a.getValues();
+				double[] d2 = pair.b.getValues();
+				double[] median = new double[d1.length];
+				for (int i = 0; i < median.length; i++) {
+					median[i] = ( d1[i] + d2[i])/2;
+				}
+				samples.add(median);
+			}
+		}
+		
+	}
+
+	/**
+	 * Generate data points on models
+	 * @param originVars
+	 * @param preconditions
+	 * @param learnedFormulas
+	 * @param samples
+	 */
+	private void addSamplesOnModels(List<ExecVar> originVars, OrCategoryCalculator preconditions, List<Divider> learnedFormulas, List<double[]> samples) {
+		List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
+		System.currentTimeMillis();
+		for (Problem problem : problems) {
+			if (learnedFormulas.size() > 1) {
+				for (int j = 0; j < learnedFormulas.size()-1; j++) {
+					for (int j2 = j+1; j2 < learnedFormulas.size(); j2++) {
+						List<Divider> dividers = new ArrayList<>(2);
+						dividers.add(learnedFormulas.get(j));
+						dividers.add(learnedFormulas.get(j2));
+						List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
+						problem.getConstraints().addAll(constraints);
+						solver.generateRandomObjective(problem, originVars);
+						int size = samples.size();
+						updateSampleWithProblem(problem, samples, true);	
+						
+						System.out.print("[LIN YUN] : ");
+						for(int h=size; h<samples.size(); h++){
+							double[] point = samples.get(h);
+							System.out.print("(");
+							for(double d: point){
+								System.out.print(d + ",");
+								
+							}
+							System.out.print("),");
+						}
+						System.out.println();
+						
+						/* restore problem */
+						problem.getConstraints().removeAll(constraints);	
+						problem.setObjective(new Linear());
+					}
+				}
+			} else {
+				ProblemBuilder.addConstraints(originVars, learnedFormulas, problem);
+				solver.generateRandomObjective(problem, originVars);
+				updateSampleWithProblem(problem, samples, false);		
+			}
+		}
+		
+	}
+
 	public void updateSampleWithProblem(Problem problem, List<double[]> samples, boolean addNearDps){
 		Pair<Result, Boolean> solverResult = solver.solve(problem, solveTimeLimit);
 		Result result = solverResult.first();

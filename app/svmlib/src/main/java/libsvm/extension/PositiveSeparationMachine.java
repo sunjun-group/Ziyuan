@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import libsvm.svm_model;
 import libsvm.core.Category;
@@ -15,6 +16,8 @@ import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import libsvm.core.Machine.DataPoint;
+import sav.common.core.Pair;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.CollectionUtils;
@@ -38,6 +41,7 @@ public class PositiveSeparationMachine extends Machine {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PositiveSeparationMachine.class);
 
 	protected List<svm_model> learnedModels = new ArrayList<svm_model>();
+	protected List<Pair<DataPoint, DataPoint>> pairList = new ArrayList<>();
 
 	private static final int MAXIMUM_ATTEMPT_COUNT = 10;
 	private static final int MAXIMUM_DIVIDER_COUNT = 20;
@@ -164,8 +168,20 @@ public class PositiveSeparationMachine extends Machine {
 			learnLoop: while (selectionSize > 0 && selectionData.size() > 0) {
 				int trialSize = 2;
 				for (int k = 0; k < trialSize; k++) {
-					int selectNum = 1;
-					List<DataPoint> selectedPoints = select(selectNum, selectionData, trainingData);
+//					int selectNum = 1;
+					
+//					List<DataPoint> selectedPoints = select(selectNum, selectionData, trainingData);					
+					List<DataPoint> list = new ArrayList<DataPoint>();
+
+					int index = (int)(Math.random() * trainingData.size());
+					DataPoint randomPositive = trainingData.get(index);
+					List<DataPoint> referenceDatas = new LinkedList<>();
+					referenceDatas.add(randomPositive);
+					DataPoint nearestDp = negativePointSelection.select(selectionData, referenceDatas);
+					list.add(nearestDp);
+					selectionData.remove(nearestDp);
+					List<DataPoint> selectedPoints = list;
+					
 					trainingData.addAll(selectedPoints);
 
 					super.train(trainingData);
@@ -181,6 +197,7 @@ public class PositiveSeparationMachine extends Machine {
 					if (isValidModel(model)) { 
 						if (!isContain(learnedModels, model)) {
 							learnedModels.add(model);
+							pairList.add(new Pair<DataPoint, DataPoint>(referenceDatas.get(0), nearestDp));
 							modelSize++;
 							if (modelSize > modelLimit) {
 								break learnLoop;
@@ -309,9 +326,12 @@ public class PositiveSeparationMachine extends Machine {
 	@Deprecated
 	public List<Divider> getLearnedDividers() {
 		List<Divider> roundDividers = new ArrayList<Divider>();
-		for (svm_model learnModel : this.learnedModels) {
+		for (int i = 0; i < this.learnedModels.size(); i++) {
+			svm_model learnModel = learnedModels.get(i);
 			if (learnModel != null) {
-				roundDividers.add(new Model(learnModel, getNumberOfFeatures()).getExplicitDivider().round());
+				Divider divider = new Model(learnModel, getNumberOfFeatures()).getExplicitDivider().round();
+				divider.setDataPair(pairList.get(i));
+				roundDividers.add(divider);
 			}
 		}
 		return roundDividers;
@@ -372,6 +392,7 @@ public class PositiveSeparationMachine extends Machine {
 				}
 			}
 			Divider divider2 = new Divider(thetas, divider.getTheta0(), divider.isRounded());
+			divider2.setDataPair(divider.getDataPair());
 			completeDividers.add(divider2);
 		}
 		return completeDividers;

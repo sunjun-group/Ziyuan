@@ -3,6 +3,7 @@ package libsvm.core;
 import java.util.Arrays;
 
 import libsvm.core.Machine.DataPoint;
+import sav.common.core.Pair;
 
 /**
  * Represents a way to divide a set of {@link DataPoint} into two separated sets
@@ -17,6 +18,7 @@ public class Divider {
 	private final double theta0;
 	// prevent rounding algorithm to be called multiple times
 	private final boolean isRounded;
+	private Pair<DataPoint, DataPoint> dataPair;
 
 	public Divider(double[] thetas, double theta0) {
 		this(thetas, theta0, false);
@@ -107,6 +109,14 @@ public class Divider {
 
 	public boolean isRounded() {
 		return isRounded;
+	}
+
+	public Pair<DataPoint, DataPoint> getDataPair() {
+		return dataPair;
+	}
+
+	public void setDataPair(Pair<DataPoint, DataPoint> dataPair) {
+		this.dataPair = dataPair;
 	}
 	
 	
