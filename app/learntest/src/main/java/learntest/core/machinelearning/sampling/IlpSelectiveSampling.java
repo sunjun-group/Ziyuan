@@ -142,7 +142,7 @@ public class IlpSelectiveSampling {
 		int selectiveSamplingDataSize = 3;
 		int formulasSize = learnedFormulas== null ? 0 : learnedFormulas.size();
 		for (int i = 0; i < selectiveSamplingDataSize && 
-				samplesOnLine.size() < formulasSize && samplesOnCorner.size() == 0; i++) {
+				((formulasSize > 0 && samplesOnLine.size() < formulasSize) || formulasSize == 0 ) ; i++) {
 			log.info("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
@@ -158,7 +158,10 @@ public class IlpSelectiveSampling {
 					log.info("[LIN YUN] samplesOnLine : " + learnedFormula + ": " + array2Str(samplesOnLine));
 				}
 			}
-
+			
+		}
+		
+		for (int i = 0; i < selectiveSamplingDataSize && samplesOnCorner.size() == 0 ;i++){
 			/**
 			 * solve result that satisfy model intersection and preconditions
 			 */
@@ -218,20 +221,9 @@ public class IlpSelectiveSampling {
 						List<Constraint> constraints = ProblemBuilder.getIntersetConstraint(originVars, dividers);
 						problem.getConstraints().addAll(constraints);
 						solver.generateRandomObjective(problem, originVars);
-						int size = samples.size();
 						updateSampleWithProblem(problem, samples, true);	
 						
-						System.out.print("[LIN YUN] : ");
-						for(int h=size; h<samples.size(); h++){
-							double[] point = samples.get(h);
-							System.out.print("(");
-							for(double d: point){
-								System.out.print(d + ",");
-								
-							}
-							System.out.print("),");
-						}
-						System.out.println();
+						log.info("[LIN YUN] : intersections " + array2Str(samples));
 						
 						/* restore problem */
 						problem.getConstraints().removeAll(constraints);	
