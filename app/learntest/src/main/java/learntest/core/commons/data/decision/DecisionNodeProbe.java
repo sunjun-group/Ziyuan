@@ -123,6 +123,9 @@ public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 		return coveredData.getTrueValues();
 	}
 
+	/**
+	 * TODO -LLT: check!
+	 */
 	public List<BreakpointValue> getFalseValues() {
 		List<BreakpointValue> trueV = getTrueValues(), falseV = coveredData.getFalseValues();
 		for (BreakpointValue bpv : trueV) {
