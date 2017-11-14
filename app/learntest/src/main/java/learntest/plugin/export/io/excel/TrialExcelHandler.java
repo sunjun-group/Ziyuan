@@ -26,7 +26,7 @@ import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
  */
 public class TrialExcelHandler extends SimpleExcelHandler<Trial>{
 	private Logger log = LoggerFactory.getLogger(TrialExcelHandler.class);
-	private TrialExcelReader trialReader = new TrialExcelReader();
+	private TrialExcelReader trialReader;
 	
 	public TrialExcelHandler(ExcelSettings settings) throws Exception {
 		super(settings);
@@ -37,6 +37,7 @@ public class TrialExcelHandler extends SimpleExcelHandler<Trial>{
 	}
 
 	protected SimpleExcelReader initExcelReader() {
+		trialReader = new TrialExcelReader();
 		return trialReader;
 	}
 	

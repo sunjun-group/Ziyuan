@@ -16,15 +16,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import sav.common.core.ModuleEnum;
-import sav.common.core.SavException;
-import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.dto.BreakPoint;
-import sav.strategies.junit.JunitResult;
-import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
-import sav.strategies.junit.SavJunitRunner;
-import sav.strategies.vm.VMConfiguration;
-
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
@@ -32,6 +23,16 @@ import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.BreakpointEvent;
 import com.sun.jdi.event.ClassPrepareEvent;
 import com.sun.jdi.request.EventRequestManager;
+
+import sav.common.core.ModuleEnum;
+import sav.common.core.SavException;
+import sav.common.core.utils.FileUtils;
+import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.BreakPoint;
+import sav.strategies.junit.JunitResult;
+import sav.strategies.junit.JunitRunner.JunitRunnerProgramArgBuilder;
+import sav.strategies.junit.SavJunitRunner;
+import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -45,7 +46,7 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	private int testIdx = 0;
 	private Location junitLoc;
 	private String jResultFile;
-	private boolean jResultFileDeleteOnExit = false;
+	private boolean jResultFileDeleteOnExit = true;
 	
 	public void setup(AppJavaClassPath appClassPath, List<String> allTests) {
 		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClassPath);
@@ -124,6 +125,10 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		try {
 			JunitResult jResult = JunitResult.readFrom(jResultFile);
 			onFinish(jResult);
+			if (jResultFileDeleteOnExit) {
+				FileUtils.deleteFileByName(jResultFile);
+				jResultFile = null;
+			}
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.JVM, "cannot read junitResult in temp file");
 		}

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/json-20170516.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.11-20141221.jar"/>
