@@ -161,12 +161,13 @@ public class LearningMachine extends PositiveSeparationMachine {
 				} else {
 					bestModels = preModels;
 					maxAcc = preAcc;
-					log.debug("previous model: \n{}, \nacc:{} >= new acc:{}, update !!! ",  getLearnedLogic(true, preModels),
+					log.debug("previous model: \n{}, \nacc:{} > new acc:{}, mark!!! ",  getLearnedLogic(true, preModels),
 							preAcc, maxAcc);
 				}
 			}
-			learnedModels = bestModels;
+//			learnedModels = bestModels;
 			log.debug("best model : \n{}, \nacc:{}", getLearnedLogic(true, bestModels), maxAcc);
+			log.debug("learned model : \n{}, \nacc:{}", getLearnedLogic(true, learnedModels), maxAcc);
 		}
 		if (keepPotentialModel) {
 			if (!isContain(previousModels, curModels)) {
