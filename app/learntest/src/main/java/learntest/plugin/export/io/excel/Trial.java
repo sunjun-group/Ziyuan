@@ -15,6 +15,8 @@ public class Trial {
 	protected RunTimeInfo ranRtInfo;
 	protected RunTimeInfo jdartRtInfo;
 	protected String l2tWorseThanRand, randWorseThanl2t;
+	private int l2tSymbolicTimes = 0;
+	private int jdartSymbolicTimes = 0;
 
 	public Trial(){
 		
@@ -31,7 +33,9 @@ public class Trial {
 		if (l2tAverageInfo instanceof TestRunTimeInfo) {
 			this.l2tWorseThanRand = ((TestRunTimeInfo)l2tAverageInfo).l2tWorseThanRand;
 			this.randWorseThanl2t = ((TestRunTimeInfo)l2tAverageInfo).randWorseThanl2t;
+			this.l2tSymbolicTimes = ((TestRunTimeInfo)l2tAverageInfo).getSymbolicTimes();
 		}
+		this.jdartSymbolicTimes = jdartInfo.getSymbolicTimes();
 	}
 
 	public String getMethodName() {
@@ -125,4 +129,14 @@ public class Trial {
 	public String getRandWorseThanl2t() {
 		return randWorseThanl2t;
 	}
+
+	public int getSymbolicTimes() {
+		return l2tSymbolicTimes;
+	}
+
+	public int getJdartSymbolicTimes() {
+		return jdartSymbolicTimes;
+	}
+	
+	
 }

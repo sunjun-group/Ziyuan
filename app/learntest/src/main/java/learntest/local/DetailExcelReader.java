@@ -94,7 +94,6 @@ public class DetailExcelReader extends ExcelReader {
 		MethodTrial trial = new MethodTrial();
 		trial.setMethodName(getStringCellValue(row, TrialHeader.METHOD_NAME));
 		trial.setLine(getIntCellValue(row, TrialHeader.METHOD_START_LINE));
-		trial.setValidAveCoverageAdv(getDoubleCellValue(row, TrialHeader.VALID_COVERAGE_ADV));
 		trial.setJdartCnt(getIntCellValue(row, TrialHeader.JDART_TEST_CNT));
 		trial.setJdartTime(getIntCellValue(row, TrialHeader.JDART_TIME));
 		trial.setJdartCov(getDoubleCellValue(row, TrialHeader.JDART_COVERAGE));
@@ -204,10 +203,29 @@ public class DetailExcelReader extends ExcelReader {
 				break;
 			}
 		}
+		setValidAveCoverageAdv(trial);
 		trial.setL2tMaxCov(l2tMaxCov);
 		trial.setRandoopMaxCov(randoopMaxCov);
 		data.add(trial);
 
+	}
+
+	private void setValidAveCoverageAdv(MethodTrial trial) {
+
+		double valid_cov_l = 0;
+		double valid_cov_r = 0;
+		int validNum = 0;
+		List<DetailTrial> trials = trial.getTrials();
+		for (DetailTrial detailTrial : trials) {
+			if (detailTrial.getLearnedState() > 0) {
+				validNum++;
+				valid_cov_l += detailTrial.getL2t();
+				valid_cov_r += detailTrial.getRandoop();
+			}
+		}
+		double valid_adv_cov = validNum > 0 ? (valid_cov_l-valid_cov_r)/validNum : 0;
+		trial.setValidAveCoverageAdv(valid_adv_cov);
+		
 	}
 
 	private boolean isDataSheetHeader(Row header) {

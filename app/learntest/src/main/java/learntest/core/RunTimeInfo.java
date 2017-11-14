@@ -16,6 +16,7 @@ public class RunTimeInfo {
 	private HashMap<String , Set<BranchRelationship>> relationships = new HashMap<>();
 	
 	private LineCoverageResult lineCoverageResult;
+	private int symbolicTimes = 0;
 	
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
@@ -152,6 +153,14 @@ public class RunTimeInfo {
 
 	public void setRelationships(HashMap<String, Set<BranchRelationship>> relationships) {
 		this.relationships = relationships;
+	}
+
+	public int getSymbolicTimes() {
+		return symbolicTimes;
+	}
+
+	public void setSymbolicTimes(int symbolicTimes) {
+		this.symbolicTimes = symbolicTimes;
 	}
 
 	
