@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jacoco.core.internal.analysis.AbstractMethodAnalyzer;
 import org.jacoco.core.internal.flow.IFrame;
@@ -25,6 +26,8 @@ import org.objectweb.asm.tree.MethodNode;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
+import cfgcoverage.jacoco.utils.OpcodeUtils;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -134,8 +137,8 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		for (ExtInstruction insn : multitargetJumpSources) {
 			insn.updateTrueBranchCvgInCaseMultitargetJumpSources();
 		}
-		createBranchFromJumps(jumps, false);
-		createBranchFromJumps(multitargetJumps, true);
+		createBranchFromJumps(jumps);
+		createBranchFromMultiTargetJumps(multitargetJumps);
 		/* update false branch coverage for multitaget jump source */
 		for (ExtInstruction insn : multitargetJumpSources) {
 			insn.updateFalseBranchCvgInCaseMultitargetJumpSources();
@@ -143,9 +146,6 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		coverageBuilder.endMethod();
 	}
 
-	/**
-	 * @return
-	 */
 	private List<ExtInstruction> getMultitargetJumpSources() {
 		List<ExtInstruction> insns = new ArrayList<ExtInstruction>(multitargetJumps.size());
 		for (Jump jump : multitargetJumps) {
@@ -153,17 +153,50 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		}
 		return insns;
 	}
-
-	/**
-	 * @param jumps
-	 */
-	private void createBranchFromJumps(List<Jump> jumps, boolean multitarget) {
+	
+	private void createBranchFromJumps(List<Jump> jumps) {
 		/* update predecessor and branches for nodes */
 		for (Jump j : jumps) {
 			ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
 			ExtInstruction source = (ExtInstruction) j.getSource();
-			target.setNodePredecessorForJump(source, multitarget);
+			target.setNodePredecessorForJump(source, false);
 		}
+	}
+
+	private void createBranchFromMultiTargetJumps(List<Jump> jumps) {
+		Map<Label, Set<ExtInstruction>> sourceMapForMultitargetJumps = getCondSourceMapForMultitargetJumps(jumps);
+		/* update predecessor and branches for nodes */
+		for (Jump j : jumps) {
+			ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
+			ExtInstruction source = (ExtInstruction) j.getSource();
+			boolean multitargetForSource = determinMultitargetForSource(source, sourceMapForMultitargetJumps.get(j.getTarget()));
+			target.setNodePredecessorForJump(source, multitargetForSource);
+		}
+	}
+	
+	private boolean determinMultitargetForSource(ExtInstruction source, Set<ExtInstruction> condSources) {
+		if (CollectionUtils.getSize(condSources) < 2) {
+			return true;
+		}
+		/* handle nested condition: while (isMinim ? fC < fB : fC > fB) */
+		boolean multiTarget = false;
+		for (ExtInstruction s : condSources) {
+			if (s != source && source.getCfgNode().getBranchRelationship(s.getCfgNode().getIdx()) != null) {
+				multiTarget = true;
+			}
+		}
+		return multiTarget;
+	}
+
+	private Map<Label, Set<ExtInstruction>> getCondSourceMapForMultitargetJumps(List<Jump> jumps) {
+		Map<Label, Set<ExtInstruction>> map = new HashMap<Label, Set<ExtInstruction>>();
+		for (Jump j : jumps) {
+			ExtInstruction source = (ExtInstruction) j.getSource();
+			if (OpcodeUtils.isCondition(source.getNode().getOpcode())) {
+				CollectionUtils.getSetInitIfEmpty(map, j.getTarget()).add(source);
+			}
+		}
+		return map;
 	}
 
 	@Override

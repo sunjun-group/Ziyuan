@@ -28,6 +28,8 @@ import cfgcoverage.jacoco.testdata.LoopSample;
 import cfgcoverage.jacoco.testdata.LoopSampleTest;
 import cfgcoverage.jacoco.testdata.MultiLevelLoopSample;
 import cfgcoverage.jacoco.testdata.MultiLevelLoopSampleTest;
+import cfgcoverage.jacoco.testdata.NestedLoopConditionSample;
+import cfgcoverage.jacoco.testdata.NestedLoopConditionSampleTest;
 import cfgcoverage.jacoco.testdata.SwitchSample;
 import cfgcoverage.jacoco.testdata.SwitchSampleTest;
 import sav.common.core.SystemVariables;
@@ -135,5 +137,9 @@ public class CfgJaCoCoTest extends AbstractTest {
 		runTest(MultiLevelLoopSample.class, MultiLevelLoopSampleTest.class, "run");
 	}
 	
-	
+	@Test
+	public void testNestedLoopCondition() throws Exception {
+		runSimpleRunner = true;
+		runTest(NestedLoopConditionSample.class, NestedLoopConditionSampleTest.class, "run");
+	}
 }
