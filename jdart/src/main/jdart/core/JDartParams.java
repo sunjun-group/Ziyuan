@@ -151,8 +151,7 @@ public class JDartParams {
 	}
 	
 	public static JDartParams defaultOnDemandJDartParams() {
-		String  classpathStr = "E:\\git\\data/apache-common-math-2.2/bin", 
-				app = "libs/jdart/jpf.properties",
+		String  app = "libs/jdart/jpf.properties",
 				site = "libs/jpf_on_demand.properties",
 				
 				mainEntry = "testdata.l2t.main.example.foo.Example2",
@@ -170,6 +169,13 @@ public class JDartParams {
 		node = 41;
 		branch = 1;	
 		
+		mainEntry = "testdata.L2T.main.mathutils.mulandchecki.MathUtils10";
+		className = "org.apache.commons.math.util.MathUtils";
+		methodName = "mulAndCheckI";
+		paramString = "(a:int, b:int)";
+		node = 2;
+		branch = 1;	
+		
 //		mainEntry = "testdata.L2T.main.betadistributionimpl.inversecumulativeprobability.BetaDistributionImpl2";
 //		className = "org.apache.commons.math.distribution.BetaDistributionImpl";
 //		methodName = "inverseCumulativeProbability";
@@ -177,12 +183,20 @@ public class JDartParams {
 //		node = 9;
 //		branch = 1;	
 		
-		return constructOnDemandJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
+		mainEntry = "testdata.Jdart.init.xyz.getordinate.XYZMain";
+		className = "org.jscience.geography.coordinates.XYZ";
+		methodName = "getOrdinate";
+		paramString = "(dimension:int)";
+		node = 31;
+		branch = 1;	
+		
+		
+		return constructOnDemandJDartParams(localClasspathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
 	
+	static String  localClasspathStr ="E:\\git\\test-projects\\jscience\\jscience-master\\target\\classes;D:\\eclipse\\eclipse-java-mars-clean\\eclipse\\plugins\\org.junit_4.12.0.v201504281640\\junit.jar;E:\\git\\test-projects\\jscience\\jscience-master\\lib\\javolution.jar;E:\\git\\test-projects\\jscience\\jscience-master\\lib\\geoapi.jar;E:\\git\\test-projects\\jscience\\jscience-master\\colapi.jar;D:\\eclipse\\eclipse-java-mars-clean\\eclipse\\plugins\\org.hamcrest.core_1.3.0.v201303031735.jar";
 	public static JDartParams defaultJDartParams() {
-		String  classpathStr = "E:\\git\\data/apache-common-math-2.2/bin", 
-				app = "libs/jdart/jpf.properties",
+		String 	app = "libs/jdart/jpf.properties",
 				site = "libs/jpf.properties", //if only want to solve once, change to libs/jpf_once.properties
 				
 				mainEntry = "com.Test",
@@ -216,7 +230,17 @@ public class JDartParams {
 		methodName = "scalb1";
 		paramString = "(d:double, n:int)";
 		
-		return constructJDartParams(classpathStr, mainEntry, className, methodName, paramString, app, site);
+		mainEntry = "testdata.L2T.main.mathutils.mulandchecki.MathUtils10";
+		className = "org.apache.commons.math.util.MathUtils";
+		methodName = "mulAndCheckI";
+		paramString = "(a:int, b:int)";		
+
+		mainEntry = "testdata.Jdart.init.xyz.getordinate.XYZMain";
+		className = "org.jscience.geography.coordinates.XYZ";
+		methodName = "getOrdinate";
+		paramString = "(dimension:int)";
+		
+		return constructJDartParams(localClasspathStr, mainEntry, className, methodName, paramString, app, site);
 	}
 	
 	public static JDartParams constructJDartParams(String classpathStr, String mainEntry, String className, String methodName, String paramString,

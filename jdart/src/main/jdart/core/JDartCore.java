@@ -36,17 +36,24 @@ public class JDartCore {
 		timeLimit = jdartParams.getTimeLimit() > 0 ? jdartParams.getTimeLimit() : timeLimit;
 		String[] config = constructConfig(jdartParams);
 		RunJPF jpf = new RunJPF();
-		List<TestInput> init_value = jpf.run(config);
-		String result = null;
-        for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
-        	result = entry.getValue()[1];
-        }
-        LinkedList<TestVar> paramList = init_value.get(0).getParamList();
+		List<TestInput> init_value = null;
+		LinkedList<TestVar> paramList = new LinkedList<>();
+			String result = null;
+		try {
+			init_value = jpf.run(config);
+	        for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
+	        	result = entry.getValue()[1];
+	        }
+	        paramList = init_value.get(0).getParamList();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
         
         if(result == null) {
         	jdartParams.setSiteProperties("libs/jpf.properties");
         	config = constructConfig(jdartParams);
-        	jpf.run(config);
+        	init_value = jpf.run(config);
         	for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
             	List<int[]> tempPath = entry.getKey();
             	for(int i = 0; i < tempPath.size(); i++) {
@@ -59,6 +66,7 @@ public class JDartCore {
             	if(result != null)
             		break;
             }
+	        paramList = init_value.get(0).getParamList();
         }
 
         if(result != null) {
@@ -82,7 +90,11 @@ public class JDartCore {
     				}
         		}
         	}
-        	return init_value;
+        	List<TestInput> value = new LinkedList<>();
+        	TestInput input = new TestInput();
+        	input.setParamList(paramList);
+        	value.add(input);
+        	return value;
         }
 		return null;
 	}

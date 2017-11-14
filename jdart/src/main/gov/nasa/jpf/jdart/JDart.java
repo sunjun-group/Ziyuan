@@ -198,7 +198,7 @@ private void setAnalyses(Set<Map.Entry<String, List<CompletedAnalysis>>> analyse
     logger.finest("============ JPF Config     ============");
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
-    jpfConf.list(pw);
+//    jpfConf.list(pw);
     pw.close();
     logger.finest(sw.toString());
     logger.finest("============ End JPF Config ============");
