@@ -99,6 +99,7 @@ public class LearnTest extends AbstractLearntest {
 				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod, params.isTestMode());
 				if (learner instanceof PrecondDecisionLearner) { 
 					setLearnState((PrecondDecisionLearner)learner, info);
+					info.setSymbolicTimes(((PrecondDecisionLearner)learner).getSymoblicTimes());
 				}
 				info.setSample(learner);
 				info.setLogFile(learner.getLogFile());
@@ -116,6 +117,7 @@ public class LearnTest extends AbstractLearntest {
 		} 
 		return null;
 	}
+
 
 	private RunTimeInfo reconcileGeneratedTestsAndGetRuntimeInfo(CfgCoverage cfgCoverage, TargetMethod targetMethod, boolean testMode) {
 		/* clean up testcases */

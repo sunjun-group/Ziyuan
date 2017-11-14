@@ -37,6 +37,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  */
 public class JDartLearntest extends LearnTest {
 	private static Logger log = LoggerFactory.getLogger(JDartLearntest.class);
+	private int symbolicTimes = 0;
 	
 	public JDartLearntest(AppJavaClassPath appClasspath) {
 		super(appClasspath);
@@ -69,7 +70,9 @@ public class JDartLearntest extends LearnTest {
 			init(params);
 			prepareInitTestcase(params);
 			CfgCoverage cfgCoverage = runCfgCoverage(params.getTargetMethod(), params.getInitialTests().getJunitClasses());
-			return getRuntimeInfo(cfgCoverage, params.isLearnByPrecond());
+			RunTimeInfo info =  getRuntimeInfo(cfgCoverage, params.isLearnByPrecond());
+			info.setSymbolicTimes(symbolicTimes);
+			return info;
 		} catch (Exception e) {
 			log.debug(e.getMessage());
 			return null;

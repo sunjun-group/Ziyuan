@@ -153,6 +153,12 @@ public class LearnedDataProcessor {
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
 	}
 
+	/**
+	 * 
+	 * @param node
+	 * @param precondDecisionLearner
+	 * @return  if invoke symbolic solver
+	 */
 	public boolean sampleForMissingBranch(CfgNode node, PrecondDecisionLearner precondDecisionLearner) {
 
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
@@ -187,10 +193,8 @@ public class LearnedDataProcessor {
 							mediator.getLearntestParams().getTargetMethod().getMethodFullName());
 					List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
 					selectiveSampling.runData(solutions, vars);
-					return true;
-				}else {
-					return false;
 				}
+				return true;
 			} catch (SavException e) {
 				e.printStackTrace();
 			}

@@ -77,6 +77,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private String logFile;
 
 	private CompilationUnit cu;
+	private int symoblicTime = 0;
 
 	public PrecondDecisionLearner(LearningMediator mediator, String logFile) {
 		super(mediator);
@@ -197,7 +198,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					
 				} else {
 					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-					dataPreprocessor.sampleForMissingBranch(node, this);
+					boolean ifInvokeSolver = dataPreprocessor.sampleForMissingBranch(node, this);
+					if (ifInvokeSolver) {
+						symoblicTime++;
+					}
 					updatePrecondition(nodeProbe, preconditions, targetVars);
 				}
 
@@ -970,6 +974,10 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	public void setCu(CompilationUnit cu) {
 		this.cu = cu;
+	}
+
+	public int getSymoblicTimes() {
+		return symoblicTime;
 	}
 
 }
