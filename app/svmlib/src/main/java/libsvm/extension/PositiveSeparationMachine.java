@@ -8,15 +8,12 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.stylesheets.LinkStyle;
-
 import libsvm.svm_model;
 import libsvm.core.Category;
 import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
-import libsvm.core.Machine.DataPoint;
 import sav.common.core.Pair;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
@@ -395,22 +392,40 @@ public class PositiveSeparationMachine extends Machine {
 			return dividers;
 		}
 		
+		// get full dividers
 		List<Divider> completeDividers = new ArrayList<Divider>(dividers.size());
 		for (Divider divider : dividers) {
 			double[] thetas = new double[learningVars.size()];
 			double[] targetThetas = divider.getThetas();
-			int j = 0;
+			Pair<DataPoint, DataPoint> pairOld = divider.getDataPair();
+			double[] aValueOld = pairOld.a.getValues();
+			double[] aValue = new double[learningVars.size()];
+			double[] bValueOld = pairOld.b.getValues();
+			double[] bValue = new double[learningVars.size()];
 			
+			int j = 0;
 			for (int i = 0; i < thetas.length; i++) {
 				if (j<targetLabels.size() && learningVars.get(i).getLabel().equals(targetLabels.get(j))) {
 					thetas[i] = targetThetas[j];
+					aValue[i] = aValueOld[i];
+					bValue[i] = bValueOld[i];
 					j++;
 				}else {
 					thetas[i] = 0;
+					aValue[i] = 0;
+					bValue[i] = 0;
 				}
 			}
+			DataPoint a = new DataPoint(learningVars.size());
+			a.setCategory(pairOld.a.getCategory());
+			a.setValues(aValue);
+			DataPoint b = new DataPoint(learningVars.size());
+			b.setCategory(pairOld.b.getCategory());
+			b.setValues(bValue);
+			
+			Pair<DataPoint, DataPoint> pair = new Pair<Machine.DataPoint, Machine.DataPoint>(a, b);
 			Divider divider2 = new Divider(thetas, divider.getTheta0(), divider.isRounded());
-			divider2.setDataPair(divider.getDataPair());
+			divider2.setDataPair(pair);
 			completeDividers.add(divider2);
 		}
 		return completeDividers;
