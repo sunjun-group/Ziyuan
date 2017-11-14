@@ -8,6 +8,7 @@
 
 package codecoverage.jacoco.agent;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,11 +27,28 @@ import sav.strategies.vm.AgentVmRunner;
  *
  */
 public class JaCoCoVmRunner extends AgentVmRunner {
+	private static String agentJarPath;
 	private Collection<String> analyzedClassNames;
 	
 	public JaCoCoVmRunner() throws IOException {
-		super(AgentJar.extractToTempLocation().getAbsolutePath());
+		super(getAgentJar());
 		analyzedClassNames = new ArrayList<String>();
+	}
+
+	private static String getAgentJar() throws IOException {
+		boolean needToExtract = false;
+		if (agentJarPath == null) {
+			needToExtract = true;
+		} else {
+			File agentJar = new File(agentJarPath);
+			if (!agentJar.exists()) {
+				needToExtract = true;
+			}
+		}
+		if (needToExtract) {
+			agentJarPath = AgentJar.extractToTempLocation().getAbsolutePath();
+		}
+		return agentJarPath;
 	}
 	
 	@Override

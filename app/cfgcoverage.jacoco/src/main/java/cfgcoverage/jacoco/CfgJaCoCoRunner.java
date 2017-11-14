@@ -28,6 +28,7 @@ import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.strategies.dto.AppJavaClassPath;
@@ -123,12 +124,20 @@ public class CfgJaCoCoRunner {
 			vmRunner.startAndWaitUntilStop(vmConfig);
 			timer.logResults(log);
 			/* report */
-			return report();
+			Map<String, CfgCoverage> result = report();
+			onFinish();
+			return result;
 		} catch (Exception e) {
 			throw new SavException(e, ModuleEnum.UNSPECIFIED, e.getMessage());
 		}
 	}
 	
+	private void onFinish() {
+		// clean up
+		FileUtils.deleteFileByName(destfile);
+		destfile = null;
+	}
+
 	public Map<String, CfgCoverage> report() throws SavException {
 		try {
 			ensureReporter();
