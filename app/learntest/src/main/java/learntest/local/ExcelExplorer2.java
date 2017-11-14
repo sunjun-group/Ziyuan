@@ -15,13 +15,13 @@ import java.util.List;
 public class ExcelExplorer2 {
 	HashMap<String, HashSet<MethodTrial>> map = new HashMap<>();
 	public static void main(String[] args) throws Exception {
-		String root = "D:\\git\\apache-common-math-2.2\\apache-common-math-2.2\\learntest\\", project = "apache-common-math-2.2" ;
+		String root = "E:\\git\\data\\apache-common-math-2.2\\learntest\\", project = "apache-common-math-2.2" ;
 		String jdartP = "apache-common-math-2.2-jdart.xlsx",
 				l2tP = "apache-common-math-2.2-l2t-l2tAdv.xlsx";
 		String output = root + project + ".l2tAdv.merge.xlsx";
 //		ExcelExplorer2.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
 		
-		output = root + "apache-common-math-2.2.xlsx";
+		output = root + "jscience_0.xlsx";
 		ExcelExplorer2 explorer = new ExcelExplorer2();
 		explorer.calculateBranchD(root, output);
 		if (explorer.map != null) {
@@ -113,8 +113,8 @@ public class ExcelExplorer2 {
 				PrintWriter writer = new PrintWriter(output);
 				writer.println("methods : " + methodTrials.size());
 				writer.println(branchInfo(methodTrials, l2tBetter, randBetter));
-				writer.println(evosuiteInfo(methodTrials));
-//				writer.println(jdartInfo(methodTrials));
+//				writer.println(evosuiteInfo(methodTrials));
+				writer.println(jdartInfo(methodTrials));
 				writer.println();
 				writer.println("l2tBetter : " + l2tBetter.size());
 				for (DetailTrial detailTrial : l2tBetter) {
@@ -186,12 +186,12 @@ public class ExcelExplorer2 {
 		StringBuilder sBuilder = new StringBuilder();
 		sBuilder.append("total trial : " + trialsNum + "\n");
 		sBuilder.append("get valid trials : " + validNum + "\n");
-		sBuilder.append("learn and average advantage methods: " + mlearnAndAdvNum + "\n");
-		sBuilder.append("learn and average negative methods: " + mlearnAndNegNum + "\n");
-		sBuilder.append("average same methods: " + mlearnAndSame + "\n");
-		sBuilder.append("learn and average advantage trials: " + tlearnAndAdvNum + "\n");
-		sBuilder.append("learn and average negative trials: " + tlearnAndNegNum + "\n");
-		sBuilder.append("learn and average same trials: " + tlearnAndSame + "\n");
+		sBuilder.append("learn and coverage advantage methods: " + mlearnAndAdvNum + "\n");
+		sBuilder.append("learn and coverage negative methods: " + mlearnAndNegNum + "\n");
+		sBuilder.append("coverage same methods: " + mlearnAndSame + "\n");
+		sBuilder.append("learn and coverage advantage trials: " + tlearnAndAdvNum + "\n");
+		sBuilder.append("learn and coverage negative trials: " + tlearnAndNegNum + "\n");
+		sBuilder.append("learn and coverage same trials: " + tlearnAndSame + "\n");
 		sBuilder.append("trials with l2t better branches : " + l2tBetter.size() + "\n");
 		sBuilder.append("trials with rand better branches : " + randBetter.size() + "\n");
 		return sBuilder.toString();
@@ -251,7 +251,9 @@ public class ExcelExplorer2 {
 		StringBuilder sBuilder = new StringBuilder(), methodRecorder = new StringBuilder();
 		methodRecorder.append("jdart better methods : \n");
 		List<String> jdartE ,jdartB ,jdartW;
-		jdartE = jdartB = jdartW = new LinkedList<>();
+		jdartE = new LinkedList<>();
+		jdartB = new LinkedList<>();
+		jdartW = new LinkedList<>();
 		for (MethodTrial trial : methodTrials) {	
 			boolean jdartBetter = false;
 			for (DetailTrial detailTrial : trial.getTrials()) {
