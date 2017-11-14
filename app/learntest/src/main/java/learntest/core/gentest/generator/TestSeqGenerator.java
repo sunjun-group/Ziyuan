@@ -233,11 +233,11 @@ public class TestSeqGenerator {
 					fieldClazz = lookupFieldAndGetType(clazz, fieldName);
 					updateClassTypeMap(fieldId, fieldClazz);
 				}
+				Method setter = findSetMethod(clazz, fieldName, fieldClazz);
 				firstVarIdx = appendVariables(value, fieldValue, sequence, failToSetVars, varMap,
 						firstVarIdx);
 				ISelectedVariable field = varMap.get(fieldId);
 				if (field != null) {
-					Method setter = findSetMethod(clazz, fieldName, fieldClazz);
 					RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
 							variable.getReturnVarId());
 					int[] varId = new int[] { field.getReturnVarId() };
@@ -328,7 +328,11 @@ public class TestSeqGenerator {
 
 	private Method findSetMethod(Class<?> clazz, String fieldName, Class<?> fieldType) throws Exception {
 		String methodName = new StringBuilder("set").append(StringUtils.capitalize(fieldName)).toString();
-		return clazz.getMethod(methodName, fieldType);
+		Method setter = clazz.getMethod(methodName, fieldType);
+		if (!Modifier.isPublic(setter.getModifiers())) {
+			throw new SavException("Setter method [%s] is invisible!", methodName);
+		}
+		return setter;
 	}
 
 	private Class<?> lookupFieldAndGetType(Class<?> clazz, String fieldName) {

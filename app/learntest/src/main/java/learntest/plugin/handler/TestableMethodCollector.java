@@ -17,6 +17,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
@@ -26,6 +28,7 @@ import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
  * [extracted from EvaluationHandler]
  */
 public class TestableMethodCollector extends ASTVisitor {
+	private Logger log = LoggerFactory.getLogger(TestableMethodCollector.class);
 	private CompilationUnit cu;
 	private Collection<IMethodFilter> methodFilters;
 	private int totalMethodNum = 0;
@@ -61,8 +64,12 @@ public class TestableMethodCollector extends ASTVisitor {
 			}
 		}
 		if (testable) {
-			validMethods.add(TargetMethodConverter.toTargetMethod(cu, md));
-			md.parameters();
+			try {
+				validMethods.add(TargetMethodConverter.toTargetMethod(cu, md));
+				md.parameters();
+			} catch (Exception e) {
+				log.debug(e.getMessage());
+			}
 		}
 		return false;
 	}

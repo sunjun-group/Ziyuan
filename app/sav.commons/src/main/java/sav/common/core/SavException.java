@@ -8,7 +8,7 @@
 
 package sav.common.core;
 
-
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -27,6 +27,25 @@ public class SavException extends Exception {
 	public SavException(String msg, Enum<?> type) {
 		super(msg);
 		this.type = type;
+	}
+	
+	public SavException(String textFormat, Object... params) {
+		this(getText(textFormat, params));
+	}
+	
+	public static String getText(String textFormat, Object... params) {
+		if (CollectionUtils.isEmpty(params)) {
+			return textFormat;
+		}
+		return String.format(textFormat, (Object[])params);
+	}
+	
+	public SavException(String msg) {
+		this(msg, ModuleEnum.UNSPECIFIED);
+	}
+	
+	public SavException(Exception ex) {
+		this(ex, ModuleEnum.UNSPECIFIED);
 	}
 	
 	public SavException(Exception ex, Enum<?> type, Object... params) {

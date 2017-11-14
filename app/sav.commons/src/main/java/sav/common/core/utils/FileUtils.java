@@ -73,6 +73,15 @@ public class FileUtils {
 		}
 	}
 	
+	public static void deleteFileByName(String fileName) {
+		if (fileName != null) {
+			File file = new File(fileName);
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+	}
+	
 	public static void copyFiles(List<File> files, String folderPath) throws FileNotFoundException, IOException {
 		File targetFolder = mkDirs(folderPath);
 		for (File file : files) {

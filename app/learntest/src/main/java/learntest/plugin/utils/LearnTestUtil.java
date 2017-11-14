@@ -1,10 +1,6 @@
 package learntest.plugin.utils;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -12,10 +8,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -31,10 +24,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
-import org.eclipse.jdt.launching.JavaRuntime;
 
 import learntest.plugin.LearnTestConfig;
-import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 
@@ -136,8 +127,8 @@ public class LearnTestUtil {
 	public static String getMethodSignature(IMethod method) throws SavException {
 		try {
 			return SignatureParser.getMethodSignature(method);
-		} catch (JavaModelException e) {
-			throw new SavException(e ,ModuleEnum.UNSPECIFIED, e.getMessage());
+		} catch (Exception e) {
+			throw new SavException(e);
 		}
 	}
 

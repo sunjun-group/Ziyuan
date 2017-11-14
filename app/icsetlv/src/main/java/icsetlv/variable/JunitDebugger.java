@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavException;
+import sav.common.core.utils.FileUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.junit.JunitResult;
@@ -45,7 +46,7 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 	private int testIdx = 0;
 	private Location junitLoc;
 	private String jResultFile;
-	private boolean jResultFileDeleteOnExit = false;
+	private boolean jResultFileDeleteOnExit = true;
 	
 	public void setup(AppJavaClassPath appClassPath, List<String> allTests) {
 		VMConfiguration vmConfig = SavJunitRunner.createVmConfig(appClassPath);
@@ -124,6 +125,10 @@ public abstract class JunitDebugger extends BreakpointDebugger {
 		try {
 			JunitResult jResult = JunitResult.readFrom(jResultFile);
 			onFinish(jResult);
+			if (jResultFileDeleteOnExit) {
+				FileUtils.deleteFileByName(jResultFile);
+				jResultFile = null;
+			}
 		} catch (IOException e) {
 			throw new SavException(ModuleEnum.JVM, "cannot read junitResult in temp file");
 		}
