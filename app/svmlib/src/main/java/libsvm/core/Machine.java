@@ -272,7 +272,7 @@ public class Machine {
 			}
 		}
 
-		parameter.C = 1.7976931348623157E308;
+		parameter.C = 1.7976931348623157E38;
 		model = performTrainingTask(problem, parameter);
 		
 		return this;
