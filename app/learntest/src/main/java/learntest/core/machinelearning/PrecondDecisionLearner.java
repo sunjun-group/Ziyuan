@@ -66,7 +66,7 @@ import variable.Variable;
  */
 public class PrecondDecisionLearner extends AbstractLearningComponent implements IInputLearner {
 	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
-	private static int FORMULAR_LEARN_MAX_ATTEMPT = 20;
+	private static int FORMULAR_LEARN_MAX_ATTEMPT = 10;
 	protected LearnedDataProcessor dataPreprocessor;
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
 	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
@@ -310,7 +310,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
 			CoveredBranches coveredType, OrCategoryCalculator preconditions, List<ExecVar> targetVars)
 					throws SavException {
-		System.currentTimeMillis();
+
 		if (!orgNodeProbe.needToLearnPrecond()) {
 			log.debug("no need to learn precondition");
 			return null;
