@@ -397,21 +397,39 @@ public class PositiveSeparationMachine extends Machine {
 		for (Divider divider : dividers) {
 			double[] thetas = new double[learningVars.size()];
 			double[] targetThetas = divider.getThetas();
+
 			Pair<DataPoint, DataPoint> pairOld = divider.getDataPair();
+			int indexOld = 0;
+			for (int i = 0; i < thetas.length; i++) {
+				if (indexOld<targetLabels.size() && learningVars.get(i).getLabel().equals(targetLabels.get(indexOld))) {
+					thetas[i] = targetThetas[indexOld];
+					indexOld++;
+				}else {
+					thetas[i] = 0;
+				}
+			}
+			
+			Divider divider2 = new Divider(thetas, divider.getTheta0(), divider.isRounded());
+			setFullDataPair(pairOld, divider2, learningVars, targetLabels);
+			completeDividers.add(divider2);
+		}
+		return completeDividers;
+	}
+
+	private void setFullDataPair(Pair<DataPoint, DataPoint> pairOld, Divider divider2, List<ExecVar> learningVars, List<String> targetLabels) {
+		if (pairOld != null) {
 			double[] aValueOld = pairOld.a.getValues();
 			double[] aValue = new double[learningVars.size()];
 			double[] bValueOld = pairOld.b.getValues();
 			double[] bValue = new double[learningVars.size()];
-			
-			int j = 0;
-			for (int i = 0; i < thetas.length; i++) {
-				if (j<targetLabels.size() && learningVars.get(i).getLabel().equals(targetLabels.get(j))) {
-					thetas[i] = targetThetas[j];
-					aValue[i] = aValueOld[i];
-					bValue[i] = bValueOld[i];
-					j++;
+
+			int indexOld = 0;
+			for (int i = 0; i < learningVars.size(); i++) {
+				if (indexOld<targetLabels.size() && learningVars.get(i).getLabel().equals(targetLabels.get(indexOld))) {
+					aValue[i] = aValueOld[indexOld];
+					bValue[i] = bValueOld[indexOld];
+					indexOld++;
 				}else {
-					thetas[i] = 0;
 					aValue[i] = 0;
 					bValue[i] = 0;
 				}
@@ -422,13 +440,10 @@ public class PositiveSeparationMachine extends Machine {
 			DataPoint b = new DataPoint(learningVars.size());
 			b.setCategory(pairOld.b.getCategory());
 			b.setValues(bValue);
-			
 			Pair<DataPoint, DataPoint> pair = new Pair<Machine.DataPoint, Machine.DataPoint>(a, b);
-			Divider divider2 = new Divider(thetas, divider.getTheta0(), divider.isRounded());
 			divider2.setDataPair(pair);
-			completeDividers.add(divider2);
 		}
-		return completeDividers;
+		
 	}
 
 	private Collection<? extends ExecVar> createPolyClassifierVars(List<ExecVar> orgVars) {
