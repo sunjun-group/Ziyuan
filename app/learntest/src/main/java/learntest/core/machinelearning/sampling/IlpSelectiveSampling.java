@@ -555,7 +555,7 @@ public class IlpSelectiveSampling {
 		int MAX_NEAR_DPS = 300;
 		List<double[]> nearDps = new ArrayList<>(solutions.size() * 5);
 		for (double[] ds : solutions) {
-			List<double[]> candidates = new ArrayList<>((int)Math.pow(3, ds.length));
+			List<double[]> candidates = new ArrayList<>(MAX_NEAR_DPS);
 			candidates.add(ds);
 			for (int i = 0; i < ds.length; i++) {
 				List<double[]> tList = new LinkedList<>();
