@@ -35,6 +35,7 @@ import sav.strategies.vm.VMRunner;
 public class JDartVmRunner extends VMRunner {
 	private static final Logger log = LoggerFactory.getLogger(JDartVmRunner.class);
 	private static final String JDART_JAR = "/jdart.rt.jar";
+	private static File JDART_FILE;
 
 	public static List<TestInput> run(JDartParams jdartParams, String javaHome) throws SavException {
 		try {
@@ -74,15 +75,18 @@ public class JDartVmRunner extends VMRunner {
 	}
 
 	public static File extractToTemp() throws SavRtException {
-		File jar;
 		try {
-			jar = File.createTempFile("jdart.rt", ".jar");
-			jar.deleteOnExit();
-			extractTo(jar);
+			if (JDART_FILE == null) {
+				File jar;
+				jar = File.createTempFile("jdart.rt", ".jar");
+				jar.deleteOnExit();
+				extractTo(jar);
+				JDART_FILE = jar;
+			}
 		} catch (Exception e) {
 			throw new SavRtException(e);
 		}
-		return jar;
+		return JDART_FILE;
 	}
 
 	public static void extractTo(File destFile) throws FileNotFoundException, IOException {
