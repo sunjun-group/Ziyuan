@@ -552,7 +552,7 @@ public class IlpSelectiveSampling {
 	}
 
 	private List<double[]> nearDps(List<double[]> solutions) {
-
+		int MAX_NEAR_DPS = 300;
 		List<double[]> nearDps = new ArrayList<>(solutions.size() * 5);
 		for (double[] ds : solutions) {
 			List<double[]> candidates = new ArrayList<>((int)Math.pow(3, ds.length));
@@ -570,6 +570,9 @@ public class IlpSelectiveSampling {
 				}
 				candidates.clear();
 				candidates= tList;
+				if (candidates.size() >= MAX_NEAR_DPS) {
+					break;
+				}
 			}
 			candidates.remove(0);
 			candidates = limitSamples(candidates, 5);
