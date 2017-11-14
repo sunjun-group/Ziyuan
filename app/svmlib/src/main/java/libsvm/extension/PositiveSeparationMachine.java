@@ -38,7 +38,7 @@ import sav.strategies.dto.execute.value.ExecVarType;
  * 
  */
 public class PositiveSeparationMachine extends Machine {
-	private static final Logger LOGGER = LoggerFactory.getLogger(PositiveSeparationMachine.class);
+	private static final Logger log = LoggerFactory.getLogger(PositiveSeparationMachine.class);
 
 	protected List<svm_model> learnedModels = new ArrayList<svm_model>();
 	protected List<Pair<DataPoint, DataPoint>> pairList = new ArrayList<>();
@@ -195,11 +195,11 @@ public class PositiveSeparationMachine extends Machine {
 
 					super.train(trainingData);
 					
-					System.out.println("selected points to learn : ");
+					log.info("selected points to learn : ");
 					for (int i = 0; i < selectedPoints.size(); i++) {
 						DataPoint p = trainingData.remove(trainingData.size() - 1);
 						selectionData.add(p); // restore removed 
-						System.out.println(p);
+						log.info(p.toString());
 					}
 					removeClassifiedNegativePoints(selectionData);
 					
@@ -211,7 +211,7 @@ public class PositiveSeparationMachine extends Machine {
 						if (!isContain(learnedModels, model)) {
 							learnedModels.add(model);
 							String str = getLearnedLogic(true);
-							System.out.println("Lin Yun: use" + str);
+							log.info("Lin Yun: learn " + str);
 							
 							pairList.add(new Pair<DataPoint, DataPoint>(referenceDatas.get(0), nearestDp));
 							modelSize++;
@@ -278,12 +278,12 @@ public class PositiveSeparationMachine extends Machine {
 		}
 		// Remove all negatives which are correctly separated
 		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
-		System.out.println("removeClassifiedNegativePoints : " + roundDivider);
+		log.info("removeClassifiedNegativePoints : " + roundDivider);
 		for (Iterator<DataPoint> it = selectionData.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
 			if (roundDivider.dataPointBelongTo(dp, Category.NEGATIVE)) {
 				it.remove();
-				System.out.println(dp);
+				log.info(dp.toString());
 			}
 		}
 	}

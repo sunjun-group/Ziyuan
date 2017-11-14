@@ -139,10 +139,11 @@ public class IlpSelectiveSampling {
 		 * generate data point on the border of divider
 		 */
 		solver.initRangeIfEmpty(originVars);
-		int selectiveSamplingDataSize = 30;
+		int selectiveSamplingDataSize = 3;
+		int formulasSize = learnedFormulas== null ? 0 : learnedFormulas.size();
 		for (int i = 0; i < selectiveSamplingDataSize && 
-				(samplesOnLine.size()+samplesOnCorner.size()+samplesOnMedian.size()) < selectiveSamplingDataSize; i++) {
-			System.out.println("[LIN YUN] Generate data points on lines: ");
+				samplesOnLine.size() < formulasSize && samplesOnCorner.size() == 0; i++) {
+			log.info("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 				if (!problems.isEmpty() && learnedFormula != null) {
@@ -153,30 +154,19 @@ public class IlpSelectiveSampling {
 
 				for (Problem problem : problems) {
 					solver.generateRandomObjective(problem, originVars);
-					updateSampleWithProblem(problem, samplesOnLine, false);	
-					
-					System.out.print("[LIN YUN] samplesOnLine : " + learnedFormula + ": ");
-					for(int h=0; h<samplesOnLine.size(); h++){
-						double[] point = samplesOnLine.get(h);
-						System.out.print("(");
-						for(double d: point){
-							System.out.print(d + ",");
-							
-						}
-						System.out.print("),");
-					}
-					System.out.println();
+					updateSampleWithProblem(problem, samplesOnLine, false);						
+					log.info("[LIN YUN] samplesOnLine : " + learnedFormula + ": " + array2Str(samplesOnLine));
 				}
 			}
 
 			/**
 			 * solve result that satisfy model intersection and preconditions
 			 */
-			System.out.println("[LIN YUN] Generate data points on models: ");
+			log.info("[LIN YUN] Generate data points on models: ");
 			addSamplesOnModels(originVars, preconditions, learnedFormulas, samplesOnCorner);
-			addSamplesOnMedians(originVars, learnedFormulas, samplesOnMedian);
-					
 		}
+		
+		addSamplesOnMedians(originVars, learnedFormulas, samplesOnMedian);
 		
 		log.debug("selectiveSamplingData : " + (samplesOnLine.size()+samplesOnCorner.size()+samplesOnMedian.size()));
 		List<double[]> newSamples = sampleEvolution(samplesOnLine, samplesOnCorner, samplesOnMedian, preconditions,originVars);
@@ -186,12 +176,12 @@ public class IlpSelectiveSampling {
 	
 	private void addSamplesOnMedians(List<ExecVar> originVars, List<Divider> learnedFormulas, List<double[]> samples) {
 		for (Divider formula : learnedFormulas) {
-			System.out.println("[LIN YUN] learned formula: " + formula);
+			log.info("[LIN YUN] learned formula: " + formula);
 			if (formula.getDataPair() != null) {
 				Pair<DataPoint, DataPoint> pair = formula.getDataPair();
 				double[] d1 = pair.a.getValues();
 				double[] d2 = pair.b.getValues();
-				System.out.println("[LIN YUN] used data points: (" + d1[0] + ", " + d1[1] + "), ("+ d2[0] + ", " + d2[1] + ")");
+				log.info("[LIN YUN] used data points: (" + d1[0] + ", " + d1[1] + "), ("+ d2[0] + ", " + d2[1] + ")");
 				double[] median = new double[d1.length];
 				for (int i = 0; i < median.length; i++) {
 					ExecVar var = originVars.get(i);

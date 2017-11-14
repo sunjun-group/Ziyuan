@@ -161,7 +161,7 @@ public class LearningMachine extends PositiveSeparationMachine {
 				} else {
 					bestModels = preModels;
 					maxAcc = preAcc;
-					log.debug("previous model: \n{}, \nacc:{} >= new acc:{}, update", preModels,
+					log.debug("previous model: \n{}, \nacc:{} >= new acc:{}, update !!! ", preModels,
 							preAcc, maxAcc);
 				}
 			}
