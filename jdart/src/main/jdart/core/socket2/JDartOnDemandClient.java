@@ -18,11 +18,11 @@ public class JDartOnDemandClient {
 	int javaPathLimit = 500; /*** to constraint the number of returned result, which may cause java error : The filename or extension is too long*/
 	int solveCount = 1;
 	
-	public void run(JDartParams jdartParams, int port) {
+	public void run(JDartParams jdartParams, int port, String jdartInitTc) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
 		List<TestInput> result = null;
 		try {
-			result = new JDartCore().run_on_demand(jdartParams);
+			result = new JDartCore().run_on_demand(jdartParams, jdartInitTc);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("Jdart error");
@@ -72,7 +72,7 @@ public class JDartOnDemandClient {
 	}
 
 	public static void main(String[] args) throws IOException {
-		if (args.length == 10) {
+		if (args.length == 11) {
 			String classpathStr, mainEntry, className, methodName, paramString, app, site;
 			classpathStr = args[0];
 			mainEntry = args[1];
@@ -83,11 +83,12 @@ public class JDartOnDemandClient {
 			site = args[6];
 			int node = Integer.parseInt(args[7]);
 			int branch = Integer.parseInt(args[8]);
-			int port = Integer.parseInt(args[9]);
+			String jdartInitTc = args[9];
+			int port = Integer.parseInt(args[10]);
 			new JDartOnDemandClient().run(JDartParams.constructOnDemandJDartParams(classpathStr, mainEntry, className,
-					methodName, paramString, app, site, node, branch), port);
+					methodName, paramString, app, site, node, branch), port, jdartInitTc);
 		} else {
-			new JDartOnDemandClient().run(JDartParams.defaultOnDemandJDartParams(), 8989);
+			new JDartOnDemandClient().run(JDartParams.defaultOnDemandJDartParams(), 8989, "");
 		}
 	}
 

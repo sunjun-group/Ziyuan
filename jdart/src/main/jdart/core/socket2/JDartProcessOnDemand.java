@@ -24,16 +24,17 @@ public class JDartProcessOnDemand {
 
 	public static void main(String[] args) {
 		JDartProcessOnDemand process = new JDartProcessOnDemand();
-		List<TestInput> result = process.run(JDartParams.defaultOnDemandJDartParams());		
+		List<TestInput> result = process.run(JDartParams.defaultOnDemandJDartParams(), "");		
 		System.out.println(result);
 	}
 
-	public List<TestInput> run(JDartParams jdartParams) {
+	public List<TestInput> run(JDartParams jdartParams,String jdartInitTc) {
 		TaskManager.printCurrentJVM();
 		String[] args = new String[] { jdartParams.getClasspathStr(), jdartParams.getMainEntry(),
 				jdartParams.getClassName(), jdartParams.getMethodName(), jdartParams.getParamString(),
 				jdartParams.getAppProperties(), jdartParams.getSiteProperties(),
-				""+jdartParams.getExploreNode(), ""+jdartParams.getExploreBranch()};
+				""+jdartParams.getExploreNode(), ""+jdartParams.getExploreBranch(),
+				jdartInitTc};
 		List<TestInput> list = null;
 		try {
 			list = JDartProcessOnDemand.exec(JDartOnDemandClient.class, args);
@@ -51,7 +52,7 @@ public class JDartProcessOnDemand {
 	}
 
 	public static List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {
-		String classpathStr, mainEntry, targetClass, methodName, paramString, app, site, node, branch;
+		String classpathStr, mainEntry, targetClass, methodName, paramString, app, site, node, branch, jdartInitTc;
 		classpathStr = args[0];
 		mainEntry = args[1];
 		targetClass = args[2];
@@ -61,6 +62,7 @@ public class JDartProcessOnDemand {
 		site = args[6];
 		node = args[7];
 		branch = args[8];
+		jdartInitTc= args[9];
 
 		String javaHome = System.getProperty("java.home");
 		String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
@@ -100,7 +102,7 @@ public class JDartProcessOnDemand {
 			log.info("JDart node:"+node);
 			log.info("JDart branch:"+branch);
 			ProcessBuilder builder = new ProcessBuilder(javaBin, "-Xms1024m", "-Xmx9000m", "-cp", classpath, className, classpathStr, mainEntry,
-					targetClass, methodName, paramString, app, site, node, branch, ""+port);
+					targetClass, methodName, paramString, app, site, node, branch, jdartInitTc, ""+port);
 
 			builder.directory(new File(JDartCore.getJdartRoot()));
 			process = builder.start();

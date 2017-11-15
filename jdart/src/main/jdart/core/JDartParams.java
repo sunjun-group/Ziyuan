@@ -188,8 +188,14 @@ public class JDartParams {
 		methodName = "getOrdinate";
 		paramString = "(dimension:int)";
 		node = 31;
-		branch = 1;	
-		
+		branch = 1;			
+
+		mainEntry = "testdata.Jdart.init.largeinteger.valueof.LargeIntegerMain";
+		className = "org.jscience.mathematics.number.LargeInteger";
+		methodName = "valueOf";
+		paramString = "(bytes:byte[], offset:int, length:int)";
+		node = 103;
+		branch = 0;
 		
 		return constructOnDemandJDartParams(localClasspathStr, mainEntry, className, methodName, paramString, app, site, node, branch);
 	}
@@ -239,6 +245,11 @@ public class JDartParams {
 		className = "org.jscience.geography.coordinates.XYZ";
 		methodName = "getOrdinate";
 		paramString = "(dimension:int)";
+		
+		mainEntry = "testdata.Jdart.init.largeinteger.valueof.LargeIntegerMain";
+		className = "org.jscience.mathematics.number.LargeInteger";
+		methodName = "valueOf";
+		paramString = "(bytes:byte[], offset:int, length:int)";
 		
 		return constructJDartParams(localClasspathStr, mainEntry, className, methodName, paramString, app, site);
 	}

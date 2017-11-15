@@ -117,6 +117,8 @@ public class LearningMediator {
 		case L2T:
 			PrecondDecisionLearner learner = new PrecondDecisionLearner(this, "./logs/"+methodName+".l2t."+time+".log");
 			learner.setCu(params.getCu());
+			String initialTc = params.getInitialTests().getMainClass();
+			learner.setInitialTc(initialTc);
 			return learner;
 		case RANDOOP:
 			return new RandomLearner(this, params.getMaxTcs(), "./logs/"+methodName+".randoop."+time+".log");

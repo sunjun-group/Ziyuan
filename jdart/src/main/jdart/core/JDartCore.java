@@ -28,12 +28,15 @@ import sav.common.core.Pair;
  */
 public class JDartCore {
 	public static long timeLimit = 30 * 1000;
-	/**
-	 * 
-	 * @param jdartParams
-	 * @return perhaps NULL
-	 */
-	public List<TestInput> run_on_demand(JDartParams jdartParams) {
+
+/**
+ * 
+ * @param jdartParams
+ * @param jdartInitTc another main entry to run jdart
+ * @return
+ */
+	public List<TestInput> run_on_demand(JDartParams jdartParams, String jdartInitTc) {
+
 		timeLimit = jdartParams.getTimeLimit() > 0 ? jdartParams.getTimeLimit() : timeLimit;
 		String[] config = constructConfig(jdartParams);
 		RunJPF jpf = new RunJPF();
@@ -53,6 +56,9 @@ public class JDartCore {
         
         if(result == null) {
         	jdartParams.setSiteProperties("libs/jpf.properties");
+        	if (jdartInitTc != null && jdartInitTc.length() > 0) {
+            	jdartParams.setMainEntry(jdartInitTc);
+			}
         	config = constructConfig(jdartParams);
         	init_value = jpf.run(config);
         	for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
@@ -369,7 +375,7 @@ public class JDartCore {
 	}
 	
 	public static int socketWaiteTime() {
-		int wait = 10 * 1000; //ms
+		int wait = 15 * 1000; //ms
 		return wait;
 	}
 }

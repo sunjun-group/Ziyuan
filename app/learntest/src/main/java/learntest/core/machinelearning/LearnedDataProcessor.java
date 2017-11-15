@@ -157,10 +157,10 @@ public class LearnedDataProcessor {
 	 * 
 	 * @param node
 	 * @param precondDecisionLearner
+	 * @param initialTc 
 	 * @return  if invoke symbolic solver
 	 */
-	public boolean sampleForMissingBranch(CfgNode node, PrecondDecisionLearner precondDecisionLearner) {
-
+	public boolean sampleForMissingBranch(CfgNode node, PrecondDecisionLearner precondDecisionLearner, String initialTc) {
 		DecisionNodeProbe nodeProbe = decisionProbes.getNodeProbe(node);
 		/*
 		 * if all branches are missing, nothing we can do, and if all branches
@@ -185,8 +185,8 @@ public class LearnedDataProcessor {
 				String generatedClassName = mainResult.getJunitClassNames().get(0);
 				log.info("generated class names : " + generatedClasse.getAbsolutePath());
 				JDartRunner jdartRunner = new JDartRunner(mediator.getAppClassPath());
-				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClassName, node.getIdx(), 
-						missingBranch == BranchType.FALSE ? 0 : 1);
+				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClassName, initialTc,
+						node.getIdx(), 	missingBranch == BranchType.FALSE ? 0 : 1);
 								
 				if (result != null && result.size() > 0) {
 					List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(result,

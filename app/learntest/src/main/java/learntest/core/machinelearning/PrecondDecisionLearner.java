@@ -78,6 +78,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	private CompilationUnit cu;
 	private int symoblicTime = 0;
+	private String initialTc;
 
 	public PrecondDecisionLearner(LearningMediator mediator, String logFile) {
 		super(mediator);
@@ -190,7 +191,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					
 				} else {
 					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-					boolean ifInvokeSolver = dataPreprocessor.sampleForMissingBranch(node, this);
+					boolean ifInvokeSolver = dataPreprocessor.sampleForMissingBranch(node, this, initialTc);
 					if (ifInvokeSolver) {
 						symoblicTime++;
 					}
@@ -257,9 +258,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		// nodeProbe.needToLearnPrecond();
 
 		if (!nodeProbe.areAllbranchesUncovered()) {
-			log.debug("All branches are uncovered!");
 			return true;
 		} else {
+			log.debug("All branches are uncovered!");
 			DecisionProbes probes = nodeProbe.getDecisionProbes();
 			for (CfgNode dependentee : dominationMap.get(nodeProbe.getNode()).getDominatees()) {
 				DecisionNodeProbe dependenteeProbe = probes.getNodeProbe(dependentee);
@@ -385,10 +386,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 				if(ps.size()>1){
 					System.currentTimeMillis();
 				}
-			}
-			
-			
-			
+			}			
 			
 			mcm.train();
 			Formula tmp = mcm.getLearnedMultiFormula(targetVars, mcm.getDataLabels());
@@ -975,6 +973,14 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 
 	public int getSymoblicTimes() {
 		return symoblicTime;
+	}
+
+	public String getInitialTc() {
+		return initialTc;
+	}
+
+	public void setInitialTc(String initialTc) {
+		this.initialTc = initialTc;
 	}
 
 }

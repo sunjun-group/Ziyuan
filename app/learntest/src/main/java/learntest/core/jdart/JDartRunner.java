@@ -65,7 +65,7 @@ public class JDartRunner {
 	
 
 	@SuppressWarnings("unchecked")
-	public List<TestInput> runJDartOnDemand(LearnTestParams learntestParams, String mainClass,int node, int branch){
+	public List<TestInput> runJDartOnDemand(LearnTestParams learntestParams, String mainClass,String jdartInitTc, int node, int branch){
 		try {
 			JDartParams jdartParams = initJDartParams(learntestParams);
 			/* run jdart */
@@ -78,7 +78,7 @@ public class JDartRunner {
 			jdartParams.setSiteProperties(IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID,
 					"libs/jpf_on_demand.properties"));
 			JDartProcessOnDemand jdartCore = new JDartProcessOnDemand();
-			List<TestInput> inputs = jdartCore.run(jdartParams);
+			List<TestInput> inputs = jdartCore.run(jdartParams, jdartInitTc);
 			return inputs;
 		} catch (Exception e) {
 			log.debug("Fail running JDart", e.getMessage());
