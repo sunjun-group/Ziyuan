@@ -21,7 +21,7 @@ public class ExcelExplorer2 {
 		String output = root + project + ".l2tAdv.merge.xlsx";
 //		ExcelExplorer2.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
 		
-		output = root + "jscience_eve.xlsx";
+		output = root + "jscience_1.xlsx";
 		ExcelExplorer2 explorer = new ExcelExplorer2();
 		explorer.calculateBranchD(root, output);
 		if (explorer.map != null) {
@@ -162,23 +162,29 @@ public class ExcelExplorer2 {
 					validNum++;
 					if (detailTrial.getAdvantage() > 0) {
 						tlearnAndAdvNum++;
+						System.out.println("adv > 0 : " + detailTrial.getMethodName() + "." + detailTrial.getLine());
 					} else if (detailTrial.getAdvantage() == 0) {
 						tlearnAndSame++;
 					} else {
 						tlearnAndNegNum++;
 					}
-				}
-				if (detailTrial.getL2tBetter() != null && detailTrial.getL2tBetter().length() > 1) {
-					if (detailTrial.getRandoop() != 1) {
+					if (detailTrial.getL2tBetter() != null && detailTrial.getL2tBetter().length() > 1) {
+//						if (detailTrial.getRandoop() != 1) {
+//							l2tBetter.add(detailTrial);
+//							set.add(trial);
+//						}
 						l2tBetter.add(detailTrial);
 						set.add(trial);
+						System.out.println("l2tBetter > 0 : " + detailTrial.getMethodName() + "." + detailTrial.getLine());
+					}
+					if (detailTrial.getRanBetter() != null && detailTrial.getRanBetter().length() > 1) {
+//						if (detailTrial.getL2t() != 1) {
+//							randBetter.add(detailTrial);
+//						} 					
+						randBetter.add(detailTrial);		
 					}
 				}
-				if (detailTrial.getRanBetter() != null && detailTrial.getRanBetter().length() > 1) {
-					if (detailTrial.getL2t() != 1) {
-						randBetter.add(detailTrial);
-					} 							
-				}
+				
 			}
 		}
 

@@ -83,7 +83,8 @@ public class DecisionProbes extends CfgCoverage {
 	 * set the preconditions of node, and return it
 	 */
 	public Pair<OrCategoryCalculator, Boolean> getPrecondition(CfgNode node, HashMap<CfgNode, CfgNodeDomainInfo> dominationMap, boolean isLoopHeader) {
-		List<CfgNode> dominators = dominationMap.get(node).getDominators();
+		CfgNodeDomainInfo info = dominationMap.get(node);
+		List<CfgNode> dominators = info == null ? new LinkedList<CfgNode>() : info.getDominators();
 		if (!isLoopHeader) {
 			if (!precondFinished(dominators)) {
 				return new Pair<OrCategoryCalculator, Boolean>(null, false);			
