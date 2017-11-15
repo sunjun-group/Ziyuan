@@ -147,6 +147,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	protected void prepareData() throws CoreException {
+		appClasspath = null;  // force reset
 		getAppClasspath();
 	}
 
