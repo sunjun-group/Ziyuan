@@ -89,6 +89,11 @@ public class RunJPF extends Run {
   public static Map<List<int[]>, String[]> getPathMap() {
 	return pathMap;
   }
+  
+  public static int solveCount = 0;
+  public static int getSolveCount() {
+	  return solveCount;
+  }
 
   static void delay (String msg) {
     System.out.println(msg);
@@ -157,6 +162,7 @@ public class RunJPF extends Run {
         		entry.getValue()[1] = String.valueOf(val); 
         }
         pathMap = ict.getPathMap();
+        solveCount = ict.getSolveCount();
 
         return(constructPath((JDart) shell));
       } else {

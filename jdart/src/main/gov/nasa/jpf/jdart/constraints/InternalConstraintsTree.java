@@ -44,6 +44,12 @@ public class InternalConstraintsTree {
 	public Map<List<int[]>, String[]> getPathMap() {
 		return pathMap;
 	}
+	
+	public int solveCount = 0;
+	
+	public int getSolveCount() {
+		return solveCount;
+	}
 
 	Valuation lastVal = null;
 
@@ -595,6 +601,7 @@ public class InternalConstraintsTree {
 				Valuation val = new Valuation();
 				logger.finer("Finding new valuation");
 				Result res = solverCtx.solve(val);
+				solveCount++;
 				logger.finer("Found: " + res + " : " + val);
 				// FIXME: prevent generation of valuation that has been used
 				// before.
