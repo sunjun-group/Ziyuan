@@ -94,7 +94,7 @@ public class GanTestTool extends TestTool {
 				&& CollectionUtils.isNotEmpty(dataSet.getDataset().get(Category.FALSE))) {
 			fullCoveredNodes.add(nodeIdx);
 		}
-		log("Generated datapoints: ");
+		log("Training datapoints: ");
 		logFormat("NodeIdx={}", dataSet.getNodeId());
 		for (Category cat : Category.values()) {
 			logFormat("{}: ", cat.name());

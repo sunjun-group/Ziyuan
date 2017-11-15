@@ -41,6 +41,7 @@ import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.SampleExecutor;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
 
@@ -101,10 +102,10 @@ public class GanDecisionLearner implements IInputLearner {
 		
 		/* update coveredbranches */
 		coveredBranches = nodeProbe.getCoveredBranches();
-		if ((coveredBranches != CoveredBranches.TRUE_AND_FALSE) && (coveredBranches != CoveredBranches.NONE)) {
-			expandAtNode(nodeProbe, trainingVars, getCategory(coveredBranches.getOnlyOneMissingBranch()));
-			coveredBranches = nodeProbe.getCoveredBranches();
-		}
+//		if ((coveredBranches != CoveredBranches.TRUE_AND_FALSE) && (coveredBranches != CoveredBranches.NONE)) {
+//			expandAtNode(nodeProbe, trainingVars, getCategory(coveredBranches.getOnlyOneMissingBranch()));
+//			coveredBranches = nodeProbe.getCoveredBranches();
+//		}
 		if (coveredBranches != CoveredBranches.TRUE_AND_FALSE) {
 			/*
 			 * generate more datapoint for its parent node for a try to get this
@@ -130,6 +131,11 @@ public class GanDecisionLearner implements IInputLearner {
 		train(node, nodeProbe, trainingVars);
 		NodeDataSet generatedDataSet = machine.requestData(nodeIdx, trainingVars.getLabel(node.getIdx()), category);
 		ganLog.log("Generated datapoints: ");
+		ganLog.logFormat("NodeIdx={}", generatedDataSet.getNodeId());
+		for (Category cat : Category.values()) {
+			ganLog.logFormat("{}: ", cat.name());
+			ganLog.log(TextFormatUtils.printCol(generatedDataSet.getDataset().get(cat), "\n"));
+		}
 		
 		SamplingResult samplingResult = null;
 		if (generatedDataSet != null) {
@@ -157,6 +163,7 @@ public class GanDecisionLearner implements IInputLearner {
 				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getTrueValues()));
 		trainingData.setDatapoints(Category.FALSE,
 				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getFalseValues()));
+		trainingData.setNodeId(String.valueOf(node.getIdx()));
 		ganLog.logDatapoints(node.getIdx(), trainingData);
 		machine.train(node.getIdx(), trainingData);
 		trainedNodes.add(node.getIdx());
