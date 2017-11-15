@@ -21,7 +21,14 @@ public class CfgDomain {
 	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
 	HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
 
-	public HashMap<CfgNode, CfgNodeDomainInfo> constructDominationMap(CfgNode startNode) {
+	/**
+	 * start node should cover all nodes ,but there may be a bug? 
+	 * todo : check org.apache.commons.math.linear.BigMatrixImpl.getSubMatrix.643
+	 * @param startNode
+	 * @param decisionNodes
+	 * @return
+	 */
+	public HashMap<CfgNode, CfgNodeDomainInfo> constructDominationMap(CfgNode startNode, List<CfgNode> decisionNodes) {
 		/** get post domain relationship */
 		initDominationMap(dominationMap, startNode);
 		while (travelAndChange(dominationMap)) {
@@ -57,6 +64,11 @@ public class CfgDomain {
 			}
 		}
 		
+		for (CfgNode cfgNode : decisionNodes) {
+			if (dominationMap.get(cfgNode) == null) {
+				dominationMap.put(cfgNode, new CfgNodeDomainInfo(cfgNode));
+			}
+		}
 		return dominationMap;
 	}
 

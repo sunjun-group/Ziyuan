@@ -71,7 +71,7 @@ public class GanDecisionLearner implements IInputLearner {
 		this.sampleExecutor = new SampleExecutor(mediator, inputProbes);
 		trainedNodes.clear();
 		machine.start();
-		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(inputProbes.getCfg()));
+		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(inputProbes.getCfg()), inputProbes.getCfg().getDecisionNodes());
 		machine.startTrainingMethod(inputProbes.getTargetMethod().getMethodFullName());
 		TrainingVariables trainingVars = new TrainingVariables() {
 			private List<String> labels;

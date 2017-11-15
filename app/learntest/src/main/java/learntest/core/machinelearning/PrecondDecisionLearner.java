@@ -91,7 +91,7 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
-		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()));
+		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), inputProbes.getCfg().getDecisionNodes());
 
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("dominationMap : \n");
