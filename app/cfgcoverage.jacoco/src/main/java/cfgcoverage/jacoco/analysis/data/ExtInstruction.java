@@ -49,10 +49,14 @@ public class ExtInstruction extends Instruction {
 	
 	public void updateTrueBranchCvgInCaseMultitargetJumpSources() {
 		if (nextNode != null) {
-			Set<Integer> coverTcs = nextNode.nodeCoverage.getUndupCoveredTcs().keySet();
-			for (Integer coverTc : coverTcs) {
-				nodeCoverage.updateCoveredBranchesForTc(nextNode.cfgNode, coverTc);
-			}
+			updateBranchCvg(nextNode);
+		}
+	}
+
+	public void updateBranchCvg(ExtInstruction branchInsn) {
+		Set<Integer> coverTcs = branchInsn.nodeCoverage.getUndupCoveredTcs().keySet();
+		for (Integer coverTc : coverTcs) {
+			nodeCoverage.updateCoveredBranchesForTc(branchInsn.cfgNode, coverTc);
 		}
 	}
 

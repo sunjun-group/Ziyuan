@@ -80,6 +80,13 @@ public class CfgNode {
 		BranchRelationship curRelationship = branchTypes.get(nodeIdx);
 		branchTypes.put(nodeIdx, BranchRelationship.merge(curRelationship, branchRelationship));
 	}
+	
+	/**
+	 * force change to new relationship
+	 * */
+	public void updateBranchRelationship(int nodeIdx, BranchRelationship branchRelationship) {
+		branchTypes.put(nodeIdx, branchRelationship);
+	}
 
 	public void setPredecessor(CfgNode predecessor, BranchRelationship branchRelationship) {
 		predecessor.addBranch(this, branchRelationship);
