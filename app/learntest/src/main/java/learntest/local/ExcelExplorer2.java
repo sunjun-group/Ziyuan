@@ -15,13 +15,13 @@ import java.util.List;
 public class ExcelExplorer2 {
 	HashMap<String, HashSet<MethodTrial>> map = new HashMap<>();
 	public static void main(String[] args) throws Exception {
-		String root = "E:\\git\\data\\apache-common-math-2.2\\learntest\\", project = "apache-common-math-2.2" ;
+		String root = "E:\\git\\test-projects\\jscience\\jscience-master\\learntest\\", project = "apache-common-math-2.2" ;
 		String jdartP = "apache-common-math-2.2-jdart.xlsx",
 				l2tP = "apache-common-math-2.2-l2t-l2tAdv.xlsx";
 		String output = root + project + ".l2tAdv.merge.xlsx";
 //		ExcelExplorer2.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
 		
-		output = root + "jscience_0.xlsx";
+		output = root + "jscience_eve.xlsx";
 		ExcelExplorer2 explorer = new ExcelExplorer2();
 		explorer.calculateBranchD(root, output);
 		if (explorer.map != null) {
@@ -186,8 +186,8 @@ public class ExcelExplorer2 {
 		StringBuilder sBuilder = new StringBuilder();
 		sBuilder.append("total trial : " + trialsNum + "\n");
 		sBuilder.append("get valid trials : " + validNum + "\n");
-		sBuilder.append("learn and coverage advantage methods: " + mlearnAndAdvNum + "\n");
-		sBuilder.append("learn and coverage negative methods: " + mlearnAndNegNum + "\n");
+		sBuilder.append("learn and avg coverage advantage methods: " + mlearnAndAdvNum + "\n");
+		sBuilder.append("learn and avg coverage negative methods: " + mlearnAndNegNum + "\n");
 		sBuilder.append("coverage same methods: " + mlearnAndSame + "\n");
 		sBuilder.append("learn and coverage advantage trials: " + tlearnAndAdvNum + "\n");
 		sBuilder.append("learn and coverage negative trials: " + tlearnAndNegNum + "\n");
@@ -275,6 +275,10 @@ public class ExcelExplorer2 {
 			}
 		}
 		
+		methodRecorder.append("statistics data : \n");
+		methodRecorder.append("jdart better than l2t trials : " + jdartB.size() +"\n");
+		methodRecorder.append("jdart equal to l2t trials : " + jdartE.size() +"\n");
+		methodRecorder.append("jdart worse than l2t trials : " + jdartW.size() +"\n");
 		sBuilder.append("jdart better than l2t trials : " + jdartB.size() + "======================================================\n");
 		for (String string : jdartB) {
 			sBuilder.append(string+"\n");

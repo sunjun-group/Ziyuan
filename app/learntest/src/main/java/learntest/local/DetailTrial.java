@@ -8,6 +8,7 @@ public class DetailTrial {
 	private double randoop, l2t, advantage, jdart;
 	private String l2tBetter, ranBetter;
 	private int learnedState;
+	private int index; //ith trial
 	public String getMethodName() {
 		return methodName;
 	}
@@ -61,6 +62,12 @@ public class DetailTrial {
 	}
 	public void setJdart(double jdart) {
 		this.jdart = jdart;
+	}
+	public int getIndex() {
+		return index;
+	}
+	public void setIndex(int index) {
+		this.index = index;
 	}
 	
 }
