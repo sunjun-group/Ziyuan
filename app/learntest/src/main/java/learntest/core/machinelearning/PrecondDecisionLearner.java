@@ -154,14 +154,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					targetVars = probes.getOriginalVars();
 				}
 
-				if (targetVars.size() > 50) { /**
-												 * discard those method with too
-												 * many variables
-												 */
-					log.debug("targetVars size is " + targetVars.size() + " > 50, return directly!!!");
-					return;
-				}
-
 				Pair<OrCategoryCalculator, Boolean> pair = null;
 				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
 				if (loopTimes < 100 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
@@ -202,7 +194,12 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 					if (ifInvokeSolver) {
 						symoblicTime++;
 					}
-					updatePrecondition(nodeProbe, preconditions, targetVars);
+
+					if (targetVars.size() > 50) { 
+						log.debug("targetVars size is " + targetVars.size() + " > 50, skip learn!!!");
+					}else {
+						updatePrecondition(nodeProbe, preconditions, targetVars);
+					}
 				}
 
 				nodeProbe.getPrecondition().setVisited(true);
