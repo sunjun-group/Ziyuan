@@ -12,6 +12,7 @@ import jdart.core.JDartCore;
 import jdart.core.JDartParams;
 import jdart.core.util.ByteConverter;
 import jdart.model.TestInput;
+import sav.common.core.Pair;
 
 public class JDartClient {
 	private static Logger log = LoggerFactory.getLogger(JDartClient.class);
@@ -24,28 +25,17 @@ public class JDartClient {
 
 	public void run(JDartParams jdartParams, int port) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
+		Pair<List<TestInput>, Integer> pair = null;
 		List<TestInput> result = null;
+		int solveCount = 0;
 		try {
-			result = new JDartCore().run(jdartParams);
+			pair = new JDartCore().run(jdartParams);
+			result = pair.a;
+			solveCount = pair.b == null ? 0 :pair.b;
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("Jdart error");
 		}
-
-//		for (int i = 0; i < result.size(); i++) {
-//			try {
-//				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
-//				StringBuffer stringBuffer = new StringBuffer();
-//				for (byte b : bytes) {
-//					stringBuffer.append(b + "\t");
-//				}
-//				log.info(stringBuffer.toString());
-//				TestInput testInput = (TestInput) ByteConverter.convertFromBytes(bytes);
-//			} catch (IOException | ClassNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 
 		log.info("JDart over");
 		Socket socket = null;
@@ -54,6 +44,7 @@ public class JDartClient {
 			socket = new Socket("127.0.0.1", port);
 			log.info("Connect InterSocket=" + socket);
 			pw = new DataOutputStream(socket.getOutputStream());
+			pw.writeInt(solveCount);
 			if (result != null) {
 				for (int i = 0; i < result.size() && i < javaPathLimit; i++) {
 					log.info("JDart result : " + result.get(i));
@@ -95,6 +86,23 @@ public class JDartClient {
 					paramString, app, site), port);
 		} else {
 			new JDartClient().run(JDartParams.defaultJDartParams(), 8989);
+		}
+	}
+	
+	private void printByte(List<TestInput> result){
+		for (int i = 0; i < result.size(); i++) {
+			try {
+				byte[] bytes = ByteConverter.convertToBytes(result.get(i));
+				StringBuffer stringBuffer = new StringBuffer();
+				for (byte b : bytes) {
+					stringBuffer.append(b + "\t");
+				}
+				log.info(stringBuffer.toString());
+				TestInput testInput = (TestInput) ByteConverter.convertFromBytes(bytes);
+			} catch (IOException | ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

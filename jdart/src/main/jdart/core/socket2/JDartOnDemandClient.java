@@ -16,6 +16,7 @@ import jdart.model.TestInput;
 public class JDartOnDemandClient {
 	private static Logger log = LoggerFactory.getLogger(JDartOnDemandClient.class);
 	int javaPathLimit = 500; /*** to constraint the number of returned result, which may cause java error : The filename or extension is too long*/
+	int solveCount = 1;
 	
 	public void run(JDartParams jdartParams, int port) {
 		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
@@ -43,6 +44,7 @@ public class JDartOnDemandClient {
 			socket = new Socket("127.0.0.1", port);
 			log.info("Connect InterSocket=" + socket);
 			pw = new DataOutputStream(socket.getOutputStream());
+			pw.writeInt(solveCount);
 			if (result != null) {
 				for (int i = 0; i < result.size() && i < javaPathLimit; i++) {
 					log.info("JDart result : " + result.get(i));

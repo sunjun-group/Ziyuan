@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.tools.internal.xjc.generator.bean.ImplStructureStrategy.Result;
+
 import jdart.core.JDartCore;
 import jdart.core.JDartParams;
 import jdart.core.util.ByteConverter;
@@ -23,9 +26,13 @@ import sav.strategies.vm.VMConfiguration;
 public class JDartProcess {
 
 	private static Logger log = LoggerFactory.getLogger(JDartProcess.class);
-
+	private int solveCount = 0;
+	
 	public static void main(String[] args) {
-		new JDartProcess().run(JDartParams.defaultJDartParams());		
+		JDartProcess process = new JDartProcess();
+		List<TestInput> result = process.run(JDartParams.defaultJDartParams());		
+		System.out.println(result);
+		System.out.println("solve count : " + process.getSolveCount());
 	}
 
 	public List<TestInput> run(JDartParams jdartParams) {
@@ -35,7 +42,7 @@ public class JDartProcess {
 				jdartParams.getAppProperties(), jdartParams.getSiteProperties() };
 		List<TestInput> list = null;
 		try {
-			list = JDartProcess.exec(JDartClient.class, args);
+			list = exec(JDartClient.class, args);
 			if (list != null) {
 				log.info("JDart return " + list.size() + " test cases");
 				for (TestInput testInput : list) {
@@ -50,7 +57,7 @@ public class JDartProcess {
 		return list;
 	}
 
-	public static List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {	
+	public List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {	
 		String targetClassCP, mainEntry, targetClass, methodName, paramString, app, site;
 		targetClassCP = args[0];
 		mainEntry = args[1];
@@ -122,7 +129,7 @@ public class JDartProcess {
 			// InputStreamReader(socket.getInputStream()));
 			// parseList(list, br);
 			DataInputStream dIn = new DataInputStream(socket.getInputStream());
-			parseList(list, dIn);
+			solveCount = parseList(list, dIn);
 			log.info("receive lines size :" + list.size());
 		} catch (Exception e) {
 			log.info(e.toString());
@@ -179,6 +186,7 @@ public class JDartProcess {
 
 	}
 
+	
 //	public static void parseList(List<TestInput> list, BufferedReader br) throws IOException, ClassNotFoundException {
 //		StringBuffer sb = new StringBuffer();
 //		while (true) {
@@ -199,8 +207,21 @@ public class JDartProcess {
 //
 //	}
 
-	public static void parseList(List<TestInput> list, DataInputStream dIn)
+	public int getSolveCount() {
+		return solveCount;
+	}
+
+	/**
+	 * parse result into list and return solve count
+	 * @param list
+	 * @param dIn
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public static int parseList(List<TestInput> list, DataInputStream dIn)
 			throws IOException, ClassNotFoundException {
+		int solveCount = dIn.readInt();
 		while (true) {
 			int length = dIn.readInt(); // read length of incoming message
 			if (length > 0) {
@@ -212,6 +233,7 @@ public class JDartProcess {
 				break;
 			}
 		}
+	return solveCount;
 
 	}
 }

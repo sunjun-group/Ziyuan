@@ -24,6 +24,7 @@ import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.JdartConstants;
+import sav.common.core.Pair;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -40,24 +41,26 @@ public class JDartRunner {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TestInput> runJDart(LearnTestParams learntestParams, String mainClass){
+	public Pair<List<TestInput>, Integer> runJDart(LearnTestParams learntestParams, String mainClass){
 		try {
 			JDartParams jdartParams = initJDartParams(learntestParams);
 			/* run jdart */
 			if (mainClass == null) {
-				return Collections.EMPTY_LIST;
+				return new Pair<List<TestInput>, Integer>(Collections.EMPTY_LIST, 0);
 			}
 			jdartParams.setMainEntry(mainClass);
 //			JDartCore jdartCore = new JDartCore();
 //			JDartServer jdartCore = new JDartServer();
 			JDartProcess jdartCore = new JDartProcess();
 			List<TestInput> inputs = jdartCore.run(jdartParams);
-			return inputs;
+			int solveCount = jdartCore.getSolveCount();
+			Pair<List<TestInput>, Integer> pair = new Pair<List<TestInput>, Integer>(inputs, solveCount);
+			return pair;
 		} catch (Exception e) {
 			log.debug("Fail running JDart", e.getMessage());
 		}
 		
-		return Collections.EMPTY_LIST;
+		return new Pair<List<TestInput>, Integer>(Collections.EMPTY_LIST, 0);
 	}
 	
 

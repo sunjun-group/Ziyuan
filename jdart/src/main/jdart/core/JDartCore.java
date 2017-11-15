@@ -20,6 +20,7 @@ import config.PathConfiguration;
 import jdart.model.TestInput;
 import jdart.model.TestVar;
 import main.RunJPF;
+import sav.common.core.Pair;
 
 /**
  * @author ??
@@ -38,7 +39,7 @@ public class JDartCore {
 		RunJPF jpf = new RunJPF();
 		List<TestInput> init_value = null;
 		LinkedList<TestVar> paramList = new LinkedList<>();
-			String result = null;
+		String result = null;
 		try {
 			init_value = jpf.run(config);
 	        for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
@@ -104,11 +105,15 @@ public class JDartCore {
 	 * @param jdartParams
 	 * @return perhaps NULL
 	 */
-	public List<TestInput> run(JDartParams jdartParams) {
+	public Pair<List<TestInput>, Integer> run(JDartParams jdartParams) {
 		timeLimit = jdartParams.getTimeLimit() > 0 ? jdartParams.getTimeLimit() : timeLimit;
 		String[] config = constructConfig(jdartParams);
-		List<TestInput> inputList = RunJPF.run(config);
-		return inputList;
+		RunJPF jpf = new RunJPF();
+		List<TestInput> inputList = jpf.run(config);
+		int solveCount = jpf.getSolveCount();
+		System.out.println("solve count : " + solveCount);
+		Pair<List<TestInput>, Integer> pair = new Pair<List<TestInput>, Integer>(inputList, solveCount);
+		return pair;
 	}
 	
 	private static String[] constructConfig(JDartParams params) {

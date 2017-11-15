@@ -23,7 +23,9 @@ public class JDartProcessOnDemand {
 
 
 	public static void main(String[] args) {
-		new JDartProcessOnDemand().run(JDartParams.defaultOnDemandJDartParams());
+		JDartProcessOnDemand process = new JDartProcessOnDemand();
+		List<TestInput> result = process.run(JDartParams.defaultOnDemandJDartParams());		
+		System.out.println(result);
 	}
 
 	public List<TestInput> run(JDartParams jdartParams) {

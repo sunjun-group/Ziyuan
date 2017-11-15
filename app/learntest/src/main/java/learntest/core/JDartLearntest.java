@@ -8,6 +8,7 @@
 
 package learntest.core;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.jdart.JDartRunner;
 import learntest.core.jdart.JdartTestInputUtils;
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
@@ -91,6 +93,10 @@ public class JDartLearntest extends LearnTest {
 		gentestParams.setGenerateMainClass(true);
 		randomGenerateInitTestWithBestEffort(params, gentestParams);
 		JDartRunner jdartRunner = new JDartRunner(appClasspath);
-		return jdartRunner.runJDart(params, params.getInitialTests().getMainClass());
+		Pair<List<TestInput>, Integer> result =jdartRunner.runJDart(params, params.getInitialTests().getMainClass());
+		List<TestInput> testInputs = result.a;
+		symbolicTimes = result.b;
+		return testInputs;
 	}
+	
 }

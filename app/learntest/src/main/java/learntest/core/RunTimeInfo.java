@@ -87,7 +87,8 @@ public class RunTimeInfo {
 
 	@Override
 	public String toString() {
-		return "[time=" + TextFormatUtils.printTimeString(time) + ", coverage=" + coverage + ", testCnt=" + testCnt + "]";
+		return "[time=" + TextFormatUtils.printTimeString(time) + ", coverage=" + coverage + ", testCnt=" + testCnt +
+				", solveTimes=" + symbolicTimes + "]";
 	}
 
 	public static RunTimeInfo average(RunTimeInfo info1, RunTimeInfo info2) {

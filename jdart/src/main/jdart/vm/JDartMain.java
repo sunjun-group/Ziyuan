@@ -29,7 +29,7 @@ public class JDartMain {
 	}
 
 	public static void runAndSaveResultToFile(JDartParams jdartParams, String filepath) throws IOException {
-		List<TestInput> result = new JDartCore().run(jdartParams);
+		List<TestInput> result = new JDartCore().run(jdartParams).a;
 		File file = new File(filepath);
 		if (!file.exists()) {
 			file.createNewFile();
