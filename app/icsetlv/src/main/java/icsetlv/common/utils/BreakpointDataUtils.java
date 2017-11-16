@@ -10,6 +10,7 @@ package icsetlv.common.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,5 +120,37 @@ public class BreakpointDataUtils {
 			result.add(datapoint);
 		}
 		return result;
+	}
+	
+	public static List<ExecVar> collectAllVarsInturn(List<BreakpointValue> bkpVals) {
+		return collectAllVarsForMultiValListInturn(Arrays.asList(bkpVals));
+	}
+	
+	public static List<ExecVar> collectAllVarsForMultiValListInturn(List<List<BreakpointValue>> bkpValsList) {
+		HashMap<Integer, ExecVar> allVars = new HashMap<Integer, ExecVar>();
+		for (List<BreakpointValue> bkpVals : bkpValsList) {
+			for (ExecValue bkpVal : bkpVals) {
+				collectExecVarInturn(bkpVal.getChildren(), allVars);
+			}
+		}
+		ArrayList<ExecVar> list = new ArrayList<>(allVars.size());
+		for (int i = 0; i < allVars.size(); i++) {
+			list.add(allVars.get((Integer)i));
+		}
+		return list;
+	}
+		
+	public static void collectExecVarInturn(List<ExecValue> vals, HashMap<Integer, ExecVar> allVars) {
+		if (CollectionUtils.isEmpty(vals)) {
+			return;
+		}
+		for (ExecValue val : vals) {
+			if (CollectionUtils.isEmpty(val.getChildren())) {
+				String varId = val.getVarId();
+				int size = allVars.size();
+				allVars.put(size, new ExecVar(varId, val.getType()));
+			}
+			collectExecVarInturn(val.getChildren(), allVars);
+		}
 	}
 }

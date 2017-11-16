@@ -192,7 +192,7 @@ public class LearnedDataProcessor {
 				if (result != null && result.size() > 0) {
 					List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(result,
 							mediator.getLearntestParams().getTargetMethod().getMethodFullName());
-					List<ExecVar> bkpVars = BreakpointDataUtils.collectAllVars(bkpVals); //todo : bkpVars may be different from vars 
+					List<ExecVar> bkpVars = BreakpointDataUtils.collectAllVarsInturn(bkpVals); //todo : bkpVars may be different from vars 
 					List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, bkpVars);
 					selectiveSampling.runData(solutions, bkpVars);
 					System.currentTimeMillis();

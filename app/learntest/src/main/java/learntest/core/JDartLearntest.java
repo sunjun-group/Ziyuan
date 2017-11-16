@@ -60,7 +60,7 @@ public class JDartLearntest extends LearnTest {
 		init(params);
 		List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(inputs,
 				params.getTargetMethod().getMethodFullName());
-		List<ExecVar> vars = BreakpointDataUtils.collectAllVars(bkpVals);
+		List<ExecVar> vars = BreakpointDataUtils.collectAllVarsInturn(bkpVals);
 		List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
 		GentestResult testResult = mediator.genTestAndCompile(solutions, vars, PrintOption.APPEND);
 		params.getInitialTests().addJunitClass(testResult, appClasspath.getClassLoader());
@@ -95,8 +95,20 @@ public class JDartLearntest extends LearnTest {
 		JDartRunner jdartRunner = new JDartRunner(appClasspath);
 		Pair<List<TestInput>, Integer> result =jdartRunner.runJDart(params, params.getInitialTests().getMainClass());
 		List<TestInput> testInputs = result.a;
-		symbolicTimes = result.b;
+		symbolicTimes = result.b;	
 		return testInputs;
+	}
+
+	private void checkGenerate(LearnTestParams params, List<TestInput> testInputs) throws SavException {
+		System.currentTimeMillis();
+		init(params);
+		List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(testInputs,
+				params.getTargetMethod().getMethodFullName());
+		List<ExecVar> vars = BreakpointDataUtils.collectAllVarsInturn(bkpVals);
+		List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
+		GentestResult testResult = mediator.genTestAndCompile(solutions, vars, PrintOption.APPEND);
+		params.getInitialTests().addJunitClass(testResult, appClasspath.getClassLoader());
+		
 	}
 	
 }
