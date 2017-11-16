@@ -184,7 +184,7 @@ public class IlpSelectiveSampling {
 				Pair<DataPoint, DataPoint> pair = formula.getDataPair();
 				double[] d1 = pair.a.getValues();
 				double[] d2 = pair.b.getValues();
-				log.info("[LIN YUN] used data points: (" + d1[0] + ", " + d1[1] + "), ("+ d2[0] + ", " + d2[1] + ")");
+				log.info("[LIN YUN] used data points: (" + array2Str(d1) + ", " + d1[1] + "), ("+ array2Str(d2)+ ")");
 				double[] median = new double[d1.length];
 				for (int i = 0; i < median.length; i++) {
 					ExecVar var = originVars.get(i);
@@ -330,6 +330,20 @@ public class IlpSelectiveSampling {
 		return sBuffer.toString();
 
 	}
+	
+	private String array2Str(double[] ds) {
+
+		StringBuffer sBuffer = new StringBuffer();
+		sBuffer.append("[");
+		for (double d : ds) {
+			sBuffer.append(d + ",");
+		}
+		sBuffer.append("]");
+		return sBuffer.toString();
+
+	}
+	
+	
 
 	private List<double[]> generateRandomPointsWithPrecondition(OrCategoryCalculator preconditions,
 			List<ExecVar> originVars, int toBeGeneratedDataNum) {
