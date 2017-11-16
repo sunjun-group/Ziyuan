@@ -106,7 +106,7 @@ public class IProjectUtils {
 			for (IPackageFragmentRoot packageFragmentRoot : project.getPackageFragmentRoots()) {
 				if (packageFragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE
 						&& !startWith(packageFragmentRoot.getResource().getProjectRelativePath().toString(), "src/test",
-								"test")) {
+								"test", "l2t_test")) {
 					roots.add(packageFragmentRoot);
 				}
 			}
