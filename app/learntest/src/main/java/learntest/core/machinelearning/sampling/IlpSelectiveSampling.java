@@ -184,7 +184,7 @@ public class IlpSelectiveSampling {
 				Pair<DataPoint, DataPoint> pair = formula.getDataPair();
 				double[] d1 = pair.a.getValues();
 				double[] d2 = pair.b.getValues();
-				log.info("[LIN YUN] used data points: (" + array2Str(d1) + ", " + d1[1] + "), ("+ array2Str(d2)+ ")");
+				log.info("[LIN YUN] used data points: (" + array2Str(d1)+ "), ("+ array2Str(d2)+ ")");
 				double[] median = new double[d1.length];
 				for (int i = 0; i < median.length; i++) {
 					ExecVar var = originVars.get(i);
