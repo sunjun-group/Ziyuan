@@ -75,14 +75,15 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			log.info("run randoop..");
 			RunTimeInfo ranInfo = runLearntest(randoopParam);		
 			
-			print(l2tRuntimeInfo, l2tParam);
+			printRuntimeInfo(jdartInfo, jdartParam);
+			printRuntimeInfo(l2tRuntimeInfo, l2tParam);
 			StringBuffer sb = new StringBuffer();
 			sb.append("learned formulas : =====================================");
 			for (FormulaInfo formulaInfo : ((TestRunTimeInfo)l2tRuntimeInfo).getLearnedFormulas()) {
 				sb.append(formulaInfo + "\n");
 			}
 			log.info(sb.toString());
-			print(ranInfo, randoopParam);
+			printRuntimeInfo(ranInfo, randoopParam);
 			
 			return l2tRuntimeInfo;
 		} catch (Exception e) {
@@ -119,17 +120,4 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 		return null;
 	}
 
-	public void print(RunTimeInfo runtimeInfo, LearnTestParams params){
-		if (runtimeInfo != null) {
-			log.info(params.getApproach().getName());
-			if (runtimeInfo.getLineCoverageResult() != null) {
-				log.info("Line coverage result:");
-				log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
-			}
-			log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
-			log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
-					runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
-			log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
-		}
-	}
 }

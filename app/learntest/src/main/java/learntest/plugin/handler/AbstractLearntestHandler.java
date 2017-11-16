@@ -446,7 +446,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private void printRuntimeInfo(RunTimeInfo runtimeInfo, LearnTestParams params){
+	protected void printRuntimeInfo(RunTimeInfo runtimeInfo, LearnTestParams params){
 		if (runtimeInfo != null) {
 			if (runtimeInfo.getLineCoverageResult() != null) {
 				log.info("Line coverage result:");
