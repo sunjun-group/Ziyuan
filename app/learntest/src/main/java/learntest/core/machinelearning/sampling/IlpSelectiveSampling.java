@@ -332,7 +332,9 @@ public class IlpSelectiveSampling {
 	}
 	
 	private String array2Str(double[] ds) {
-
+		if (ds == null) {
+			return "";
+		}
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("[");
 		for (double d : ds) {
