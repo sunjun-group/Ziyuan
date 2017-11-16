@@ -15,13 +15,16 @@ import java.util.List;
 public class ExcelExplorer2 {
 	HashMap<String, HashSet<MethodTrial>> map = new HashMap<>();
 	public static void main(String[] args) throws Exception {
-		String root = "E:\\git\\test-projects\\jscience\\jscience-master\\learntest\\", project = "apache-common-math-2.2" ;
+		String root = "E:\\172\\experiment\\statistic\\", project = "apache-common-math-2.2" ;
 		String jdartP = "apache-common-math-2.2-jdart.xlsx",
 				l2tP = "apache-common-math-2.2-l2t-l2tAdv.xlsx";
 		String output = root + project + ".l2tAdv.merge.xlsx";
 //		ExcelExplorer2.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
 		
-		output = root + "jscience_1.xlsx";
+		output = root + "apache-common-math-2.2_2.xlsx";
+//		output = root + "colt_0.xlsx";
+		output = root + "jblas_0.xlsx";
+//		output = root + "jscience_1.xlsx";
 		ExcelExplorer2 explorer = new ExcelExplorer2();
 		explorer.calculateBranchD(root, output);
 		if (explorer.map != null) {
@@ -162,26 +165,27 @@ public class ExcelExplorer2 {
 					validNum++;
 					if (detailTrial.getAdvantage() > 0) {
 						tlearnAndAdvNum++;
-						System.out.println("adv > 0 : " + detailTrial.getMethodName() + "." + detailTrial.getLine());
-					} else if (detailTrial.getAdvantage() == 0) {
-						tlearnAndSame++;
-					} else {
-						tlearnAndNegNum++;
-					}
-					if (detailTrial.getL2tBetter() != null && detailTrial.getL2tBetter().length() > 1) {
-//						if (detailTrial.getRandoop() != 1) {
-//							l2tBetter.add(detailTrial);
-//							set.add(trial);
-//						}
 						l2tBetter.add(detailTrial);
 						set.add(trial);
-						System.out.println("l2tBetter > 0 : " + detailTrial.getMethodName() + "." + detailTrial.getLine());
-					}
-					if (detailTrial.getRanBetter() != null && detailTrial.getRanBetter().length() > 1) {
-//						if (detailTrial.getL2t() != 1) {
-//							randBetter.add(detailTrial);
-//						} 					
-						randBetter.add(detailTrial);		
+						if (detailTrial.getRanBetter() != null && detailTrial.getRanBetter().length() > 1) {
+							randBetter.add(detailTrial);		
+						}
+					} else if (detailTrial.getAdvantage() == 0) {
+						tlearnAndSame++;
+						if (detailTrial.getL2tBetter() != null && detailTrial.getL2tBetter().length() > 1) {
+							l2tBetter.add(detailTrial);
+							set.add(trial);
+						}
+						if (detailTrial.getRanBetter() != null && detailTrial.getRanBetter().length() > 1) {
+							randBetter.add(detailTrial);		
+						}
+					} else {
+						tlearnAndNegNum++;
+						randBetter.add(detailTrial);	
+						if (detailTrial.getL2tBetter() != null && detailTrial.getL2tBetter().length() > 1) {
+							l2tBetter.add(detailTrial);
+							set.add(trial);
+						}	
 					}
 				}
 				
@@ -191,7 +195,7 @@ public class ExcelExplorer2 {
 		map.put("randoop", set);
 		StringBuilder sBuilder = new StringBuilder();
 		sBuilder.append("total trial : " + trialsNum + "\n");
-		sBuilder.append("get valid trials : " + validNum + "\n");
+		sBuilder.append("learned trials : " + validNum + "\n");
 		sBuilder.append("learn and avg coverage advantage methods: " + mlearnAndAdvNum + "\n");
 		sBuilder.append("learn and avg coverage negative methods: " + mlearnAndNegNum + "\n");
 		sBuilder.append("coverage same methods: " + mlearnAndSame + "\n");
@@ -254,8 +258,9 @@ public class ExcelExplorer2 {
 
 		HashSet<MethodTrial> set = new HashSet<>();
 		
-		StringBuilder sBuilder = new StringBuilder(), methodRecorder = new StringBuilder();
-		methodRecorder.append("jdart better methods : \n");
+		StringBuilder sBuilder = new StringBuilder(), methodRecorder = new StringBuilder(),
+				tempRecord = new StringBuilder();
+		tempRecord.append("jdart better methods : \n");
 		List<String> jdartE ,jdartB ,jdartW;
 		jdartE = new LinkedList<>();
 		jdartB = new LinkedList<>();
@@ -277,7 +282,7 @@ public class ExcelExplorer2 {
 				
 			}
 			if (jdartBetter) {
-				methodRecorder.append(trial.getMethodName() + "." + trial.getLine()+"\n");
+				tempRecord.append(trial.getMethodName() + "." + trial.getLine()+"\n");
 			}
 		}
 		
@@ -285,6 +290,7 @@ public class ExcelExplorer2 {
 		methodRecorder.append("jdart better than l2t trials : " + jdartB.size() +"\n");
 		methodRecorder.append("jdart equal to l2t trials : " + jdartE.size() +"\n");
 		methodRecorder.append("jdart worse than l2t trials : " + jdartW.size() +"\n");
+		methodRecorder.append(tempRecord.toString());
 		sBuilder.append("jdart better than l2t trials : " + jdartB.size() + "======================================================\n");
 		for (String string : jdartB) {
 			sBuilder.append(string+"\n");
