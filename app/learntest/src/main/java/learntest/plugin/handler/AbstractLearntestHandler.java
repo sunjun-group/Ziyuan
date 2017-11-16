@@ -255,8 +255,9 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 			TargetMethod method = params.getTargetMethod();
 			log.info("Result: ");
-			log.info("lt2: {}", l2tAverageInfo);
-			log.info("randoop: {}", ranAverageInfo);
+			printRuntimeInfo(jdartInfo, jdartParam);
+			printRuntimeInfo(l2tAverageInfo, l2tParams);
+			printRuntimeInfo(ranAverageInfo, randoopParam);
 			printInforForTest(l2tAverageInfo, ranAverageInfo, params.isTestMode());
 			return new Trial(method.getMethodFullName(), method.getMethodLength(), method.getLineNum(), l2tAverageInfo,
 					ranAverageInfo, jdartInfo);
@@ -410,6 +411,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	protected RunTimeInfo runJdart(LearnTestParams params) throws Exception {
+		System.currentTimeMillis();
 		JDartLearntest learntest = new JDartLearntest(getAppClasspath());
 		return learntest.jdart(params);
 	}
@@ -435,23 +437,26 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			SAVTimer.exeuctionTimeout = 50000000;
 			learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
-
-			if (runtimeInfo != null) {
-				if (runtimeInfo.getLineCoverageResult() != null) {
-					log.info("Line coverage result:");
-					log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
-				}
-				log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
-				log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
-						runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
-				log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
-			}
+			printRuntimeInfo(runtimeInfo, params);
 			return runtimeInfo;
 		} catch (Exception e) {
 			//throw PluginException.wrapEx(e);
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	private void printRuntimeInfo(RunTimeInfo runtimeInfo, LearnTestParams params){
+		if (runtimeInfo != null) {
+			if (runtimeInfo.getLineCoverageResult() != null) {
+				log.info("Line coverage result:");
+				log.info(runtimeInfo.getLineCoverageResult().getDisplayText());
+			}
+			log.info("{} RESULT:", StringUtils.upperCase(params.getApproach().getName()));
+			log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
+					runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
+			log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
+		}
 	}
 	
 	protected boolean ifInXlsx(MethodInfo targetMethod) {
