@@ -21,7 +21,6 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import jdart.model.TestInput;
 import learntest.core.LearningMediator;
-import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -179,6 +178,9 @@ public class LearnedDataProcessor {
 			 */
 			List<ExecVar> vars = decisionProbes.getOriginalVars();
 			List<double[]> solution = getNeighborTc(missingBranch, nodeProbe, vars);
+			if (solution == null) {
+				return false;
+			}
 			try {
 				GentestResult mainResult = mediator.genMainAndCompile(solution, vars, PrintOption.APPEND);
 				List<File> generatedClasses = mainResult.getAllFiles();
@@ -212,6 +214,10 @@ public class LearnedDataProcessor {
 		BreakpointValue dataPoint = dataPoints.get(0);
 		double[] values = new double[vars.size()];
 		int i =0;
+		// TODO LLT: WORKAROUND NPE for TRUE_FALSE cases
+		if(dataPoint == null) {
+			return null;
+		}
 		for (ExecVar var : vars) {
 			values[i] = dataPoint.getValue(var.getVarId(), (double)0);
 			i++;
