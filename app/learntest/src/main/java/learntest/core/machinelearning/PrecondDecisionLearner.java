@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.CoveredBranches;
@@ -31,7 +29,6 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.decision.Precondition;
 import learntest.core.commons.data.sampling.SamplingResult;
-import learntest.core.commons.utils.CfgUtils;
 import learntest.core.commons.utils.VariableUtils;
 import learntest.core.commons.utils.VariableUtils.VarInfo;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
@@ -53,23 +50,20 @@ import sav.common.core.SavException;
 import sav.common.core.formula.AndFormula;
 import sav.common.core.formula.Formula;
 import sav.common.core.formula.OrFormula;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
 
 /**
- * @author LLT different from DecisionLearner which does sampling randomly, this
- *         learner using precondition (which is built based on classifier of
- *         node's dominatees) for sampling.
+ * @author LLT
+ *
  */
-public class PrecondDecisionLearner extends AbstractLearningComponent implements IInputLearner {
+public class PrecondDecisionLearner extends AbstractDecisionLearner {
 	private static Logger log = LoggerFactory.getLogger(PrecondDecisionLearner.class);
 	private static int FORMULAR_LEARN_MAX_ATTEMPT = 10;
 	protected LearnedDataProcessor dataPreprocessor;
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
-	private HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<>();
 
 	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(),
 			branchFalseRecord = new HashMap<>();
@@ -79,20 +73,17 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	private CompilationUnit cu;
 	private int symoblicTime = 0;
 	private String initialTc;
-
+	
 	public PrecondDecisionLearner(LearningMediator mediator, String logFile) {
 		super(mediator);
 		this.logFile = logFile;
 		RunTimeInfo.createFile(logFile);
 	}
 
-	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap)
+	@Override
+	protected void prepareDataBeforeLearn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap)
 			throws SavException {
-		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
-		DecisionProbes probes = inputProbes;
 		dataPreprocessor = new LearnedDataProcessor(mediator, inputProbes);
-		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), inputProbes.getCfg().getDecisionNodes());
-
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("dominationMap : \n");
 		for (CfgNodeDomainInfo info : dominationMap.values()) {
@@ -102,174 +93,80 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		}
 		FileUtils.write(logFile, sBuffer.toString());
 		log.info(sBuffer.toString());
-		if (relevantVarMap == null || probes.getCfg().getNodeList().size() != relevantVarMap.size()) {
+		
+		if (relevantVarMap == null || inputProbes.getCfg().getNodeList().size() != relevantVarMap.size()) {
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
 			this.relevantVars = null;
 		} else {
 			this.relevantVars = VariableUtils.varsTransform(relevantVarMap, inputProbes.getOriginalVars());
 		}
-		
-		HashMap<Integer, List<CfgNode>> indexMap = new HashMap<>();
-		for (CfgNode cfgNode : decisionNodes) {
-			int line = cfgNode.getLine();
-			if (indexMap.containsKey(line)) {
-				indexMap.get(line).add(cfgNode);
-			}else {
-				List<CfgNode> list = new LinkedList<>();
-				list.add(cfgNode);
-				indexMap.put(line, list);
-			}
-//			log.info(cfgNode.toString() + " : relvevant Vars : ");
-//			log.info(relevantVarMap.get(cfgNode.getIdx()).toString());
-//			log.info("relvevant ExecVars :" + this.relevantVars.get(cfgNode.getIdx()));
-		}
-		learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()), indexMap);
-		return probes;
 	}
-
-	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes, HashMap<Integer, List<CfgNode>> indexMap) throws SavException {
-
-		Queue<CfgNode> queue = new LinkedList<>();
-		queue.add(node);
-		int loopTimes = 0;
-		while (!queue.isEmpty()) {
-			loopTimes++;
-			node = queue.poll();
-			log.debug("parsing the node in line " + node.getLine() + "(" + node + ")");
-			
-			// for (CfgNode dominator :
-			// CfgUtils.getPrecondInherentDominatee(node))
-			// { /** update dominator node's condition*/
-			// if (!visitedNodes.contains(dominator.getIdx())) {
-			// learn(dominator, probes, visitedNodes);
-			// }
-			// }
-			DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
-			if (needToLearn(nodeProbe)) {
-
-				List<ExecVar> targetVars;
-//				relevantVars = null;
-				if (relevantVars != null) {
-					targetVars = relevantVars.get(node.getIdx()).getExecVars();
-				} else {
-					targetVars = probes.getOriginalVars();
-				}
-
-				Pair<OrCategoryCalculator, Boolean> pair = null;
-				log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
-				if (loopTimes < 100 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
-					/**
-					 * todo : handle the loop loop header dominate and is
-					 * dominated by nodes in loop, thus in order to break the
-					 * wait lock, loop header should be learned first without
-					 * learing nodes in loop
-					 */
-					pair = getPreconditions(probes, node, true);
-				} else {
-					pair = getPreconditions(probes, node, false);
-				}
-
-				if (!pair.second()) {
-					log.debug("to learn the node in line " + node.getLine() + "(" + node
-							+ "), its dominator has to be learned before");
-					queue.add(node);
-					continue;
-				}
-				log.debug("relevant vars : " + targetVars);
-				OrCategoryCalculator preconditions = pair.first();
-				// dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-				// dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
-				RelationShip relationShip = null;
-//				if (indexMap.containsKey(node.getLine())) {
-//					int index = indexMap.get(node.getLine()).indexOf(node);
-//					Visitor visitor = new Visitor(node.getLine(), cu, index);
-//					cu.accept(visitor);
-//					relationShip = visitor.getRelationShip();
-//				}
-				if (relationShip != null) { // heuristic rules help to get condition directly
-					updatePreconditionWithHerustic(nodeProbe, preconditions, relationShip);
-					
-				} else {
-					dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-					boolean ifInvokeSolver = dataPreprocessor.sampleForMissingBranch(node, this, initialTc);
-					if (ifInvokeSolver) {
-						symoblicTime++;
-					}
-
-					if (targetVars.size() > 50) { 
-						log.debug("targetVars size is " + targetVars.size() + " > 50, skip learn!!!");
-					}else {
-						updatePrecondition(nodeProbe, preconditions, targetVars);
-					}
-				}
-
-				nodeProbe.getPrecondition().setVisited(true);
+	
+	protected CfgNode learn(DecisionNodeProbe nodeProbe, List<Integer> visitedNodes, int loopTimes)
+			throws SavException {
+		DecisionProbes probes = nodeProbe.getDecisionProbes();
+		CfgNode node = nodeProbe.getNode();
+		if (needToLearn(nodeProbe)) {
+			List<ExecVar> targetVars;
+//			relevantVars = null;
+			if (relevantVars != null) {
+				targetVars = relevantVars.get(node.getIdx()).getExecVars();
 			} else {
-				nodeProbe.getPrecondition().setVisited(true);
-				log.debug("no need to learn the node in line " + node.getLine() + "(" + node + ")");
+				targetVars = probes.getOriginalVars();
 			}
 
-			visitedNodes.add(node.getIdx());
-			List<CfgNode> childDecisonNodes = dominationMap.get(node).getDominatees();
+			Pair<OrCategoryCalculator, Boolean> pair = null;
+			log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
+			if (loopTimes < 100 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
+				/**
+				 * todo : handle the loop loop header dominate and is
+				 * dominated by nodes in loop, thus in order to break the
+				 * wait lock, loop header should be learned first without
+				 * learing nodes in loop
+				 */
+				pair = getPreconditions(probes, node, true);
+			} else {
+				pair = getPreconditions(probes, node, false);
+			}
 
-			/**
-			 * handle the situation that first branch node does not dominate
-			 * fellow branch node
-			 */
-			for (CfgNode cfgNode : DecisionProbes.getChildDecision(node)) {
-				if (!childDecisonNodes.contains(cfgNode) && !visitedNodes.contains(cfgNode.getIdx())) {
-					childDecisonNodes.add(cfgNode);
+			if (!pair.second()) {
+				log.debug("to learn the node in line " + node.getLine() + "(" + node
+						+ "), its dominator has to be learned before");
+				return node;
+			}
+			log.debug("relevant vars : " + targetVars);
+			OrCategoryCalculator preconditions = pair.first();
+			// dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+			// dataPreprocessor.sampleForLoopCvg(node, preconditions, this);
+			RelationShip relationShip = null;
+//			if (indexMap.containsKey(node.getLine())) {
+//				int index = indexMap.get(node.getLine()).indexOf(node);
+//				Visitor visitor = new Visitor(node.getLine(), cu, index);
+//				cu.accept(visitor);
+//				relationShip = visitor.getRelationShip();
+//			}
+			if (relationShip != null) { // heuristic rules help to get condition directly
+				updatePreconditionWithHerustic(nodeProbe, preconditions, relationShip);
+				
+			} else {
+				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
+				boolean ifInvokeSolver = dataPreprocessor.sampleForMissingBranch(node, this, initialTc);
+				if (ifInvokeSolver) {
+					symoblicTime++;
+				}
+				log.debug("vars.size = {}", targetVars.size());
+				if (targetVars.size() > 50) { 
+					log.debug("targetVars size is " + targetVars.size() + " > 50, skip learn!!!");
+				}else {
+					updatePrecondition(nodeProbe, preconditions, targetVars);
 				}
 			}
-
-			childDecisonNodes.sort(new DomainationComparator(dominationMap));
-			for (CfgNode dependentee : CollectionUtils.nullToEmpty(childDecisonNodes)) {
-				if (null != dependentee && !visitedNodes.contains(dependentee.getIdx())
-						&& !queue.contains(dependentee)) {
-					queue.add(dependentee);
-				}
-			}
-
-			if (queue.isEmpty()) {
-				checkLearnedComplete(visitedNodes, probes.getCfg().getDecisionNodes(), queue);
-			}
-		}
-	}
-
-	/**
-	 * check if all decision nodes are learned, otherwise poll all
-	 * 
-	 * @param visitedNodes
-	 * @param decisionNodes
-	 * @param queue
-	 */
-	private void checkLearnedComplete(List<Integer> visitedNodes, List<CfgNode> decisionNodes, Queue<CfgNode> queue) {
-		for (CfgNode cfgNode : decisionNodes) {
-			if (!visitedNodes.contains(cfgNode.getIdx())) {
-				queue.add(cfgNode);
-				log.debug("this node is missed : " + cfgNode);
-			}
-		}
-
-	}
-
-	private boolean needToLearn(DecisionNodeProbe nodeProbe) {
-		// return !nodeProbe.areAllbranchesUncovered() ||
-		// nodeProbe.needToLearnPrecond();
-
-		if (!nodeProbe.areAllbranchesUncovered()) {
-			return true;
+			nodeProbe.getPrecondition().setVisited(true);
 		} else {
-			log.debug("All branches are uncovered!");
-			DecisionProbes probes = nodeProbe.getDecisionProbes();
-			for (CfgNode dependentee : dominationMap.get(nodeProbe.getNode()).getDominatees()) {
-				DecisionNodeProbe dependenteeProbe = probes.getNodeProbe(dependentee);
-				if (dependenteeProbe.hasUncoveredBranch()) {
-					return true;
-				}
-			}
-			return false;
+			nodeProbe.getPrecondition().setVisited(true);
+			log.debug("no need to learn the node in line " + node.getLine() + "(" + node + ")");
 		}
+		return null;
 	}
 
 	protected void updatePrecondition(DecisionNodeProbe nodeProbe, OrCategoryCalculator preconditions,
@@ -289,7 +186,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	}
 	
 	protected void updatePreconditionWithHerustic(DecisionNodeProbe nodeProbe,	OrCategoryCalculator preconditions, RelationShip relationShip) throws SavException {
-		
 		TrueFalseLearningResult trueFalseResult = generateTrueFalseFormulaByHerustic(nodeProbe, preconditions, relationShip);
 		Formula truefalseFormula = trueFalseResult == null ? null : trueFalseResult.formula;
 		if (truefalseFormula != null) {
@@ -342,7 +238,6 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 		int time = 0;
 		DecisionNodeProbe nodeProbe = orgNodeProbe;
 		CfgNode node = nodeProbe.getNode();
-
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
 
 			/** record learned formulas */
@@ -930,16 +825,17 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	// return formula;
 	// }
 
-	public boolean isUsingPrecondApproache() {
-		return true;
-	}
-
 	private static class TrueFalseLearningResult {
 		Formula formula;
 		List<Divider> dividers;
 		int type;
 	}
-
+	
+	@Override
+	public String getLogFile() {
+		return logFile;
+	}
+	
 	public HashMap<String, Collection<BreakpointValue>> getTrueSample() {
 		return branchTrueRecord;
 	}
@@ -947,24 +843,9 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	public HashMap<String, Collection<BreakpointValue>> getFalseSample() {
 		return branchFalseRecord;
 	}
-
-	public HashMap<CfgNode, CfgNodeDomainInfo> getDominationMap() {
-		return dominationMap;
-	}
-
-	@Override
-	public String getLogFile() {
-		return logFile;
-	}
-
+	
 	public int nodeIdx2Offset(CfgNode node) {
 		return this.relevantVars.get(node.getIdx()).getOffset();
-	}
-
-	@Override
-	public void cleanup() {
-		getTrueSample().clear();
-		getFalseSample().clear();
 	}
 
 	public void setCu(CompilationUnit cu) {
@@ -982,5 +863,4 @@ public class PrecondDecisionLearner extends AbstractLearningComponent implements
 	public void setInitialTc(String initialTc) {
 		this.initialTc = initialTc;
 	}
-
 }

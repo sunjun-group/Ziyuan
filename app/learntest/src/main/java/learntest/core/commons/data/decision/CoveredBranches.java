@@ -9,6 +9,7 @@
 package learntest.core.commons.data.decision;
 
 import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
+import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import sav.common.core.utils.Assert;
 
 /**
@@ -73,5 +74,19 @@ public enum CoveredBranches {
 	
 	public BranchCoveredType getType() {
 		return type;
+	}
+
+	public BranchRelationship getMissingBranches() {
+		switch (this) {
+		case FALSE:
+			return BranchRelationship.TRUE;
+		case TRUE:
+			return BranchRelationship.FALSE;
+		case TRUE_AND_FALSE:
+			return null;
+		case NONE:
+			return BranchRelationship.TRUE_FALSE;
+		}
+		return null;
 	}
 }

@@ -343,7 +343,7 @@ public class JavaGentestHandler extends AbstractHandler {
 		RunTimeInfo averageInfo = null;
 		double bestCoverage = 0;
 		TestTools.getCurTestTool().startMethod(params.getTargetMethod().getMethodFullName());
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= 10; i++) {
 			try {
 				log.info("\n\n------------- Round {} ------------------------", i);
 				SAVTimer.enableExecutionTimeout = true;

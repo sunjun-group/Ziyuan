@@ -35,45 +35,39 @@ import learntest.core.commons.utils.CfgUtils;
 import learntest.core.gan.vm.GanMachine;
 import learntest.core.gan.vm.NodeDataSet;
 import learntest.core.gan.vm.NodeDataSet.Category;
-import learntest.core.machinelearning.CfgDomain;
-import learntest.core.machinelearning.CfgNodeDomainInfo;
+import learntest.core.machinelearning.AbstractDecisionLearner;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.SampleExecutor;
 import sav.common.core.SavException;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
 
 /**
  * @author LLT
- *
  */
-public class GanDecisionLearner implements IInputLearner {
+public class GanDecisionLearner extends AbstractDecisionLearner implements IInputLearner {
 	private Logger log = LoggerFactory.getLogger(GanDecisionLearner.class);
 	private GanTestTool ganLog = TestTools.getInstance().gan;
-	private LearningMediator mediator;
+	
 	private GanMachine machine;
 	private SampleExecutor sampleExecutor;
-	protected HashMap<CfgNode, CfgNodeDomainInfo> dominationMap = new HashMap<CfgNode, CfgNodeDomainInfo>();
-	private Set<Integer> trainedNodes;
-
+	private TrainingVariables trainingVars;
+	private Set<Integer> ganTrainedNodes;
+	
 	public GanDecisionLearner(LearningMediator mediator) {
-		this.mediator = mediator;
+		super(mediator);
 		machine = new GanMachine();
-//		machine.setVmTimeout(600000);
-		trainedNodes = new HashSet<Integer>();
+		machine.setVmTimeout(5000000);
 	}
-
+	
 	@Override
-	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap)
-			throws SavException {
+	protected void prepareDataBeforeLearn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
 		this.sampleExecutor = new SampleExecutor(mediator, inputProbes);
-		trainedNodes.clear();
+		ganTrainedNodes = new HashSet<Integer>();
 		machine.start();
-		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(inputProbes.getCfg()), inputProbes.getCfg().getDecisionNodes());
 		machine.startTrainingMethod(inputProbes.getTargetMethod().getMethodFullName());
-		TrainingVariables trainingVars = new TrainingVariables() {
+		trainingVars = new TrainingVariables() {
 			private List<String> labels;
 			@Override
 			public List<String> getLabel(int idx) {
@@ -87,58 +81,74 @@ public class GanDecisionLearner implements IInputLearner {
 			public List<ExecVar> getExecVars(int idx) {
 				return inputProbes.getOriginalVars();
 			}
-			
 		};
-		for (CfgNode node : inputProbes.getCfg().getDecisionNodes()) {
-			refineNode(node, inputProbes, trainingVars);
-		}
+	}
+	
+	@Override
+	protected void onFinishLearning() {
 		machine.stop();
-		return inputProbes;
 	}
 
-	private void refineNode(CfgNode node, DecisionProbes probes, TrainingVariables trainingVars) {
-		DecisionNodeProbe nodeProbe = probes.getNodeProbe(node);
-		CoveredBranches coveredBranches = nodeProbe.getCoveredBranches();
-		
-		/* update coveredbranches */
-		coveredBranches = nodeProbe.getCoveredBranches();
-//		if ((coveredBranches != CoveredBranches.TRUE_AND_FALSE) && (coveredBranches != CoveredBranches.NONE)) {
-//			expandAtNode(nodeProbe, trainingVars, getCategory(coveredBranches.getOnlyOneMissingBranch()));
-//			coveredBranches = nodeProbe.getCoveredBranches();
-//		}
-		if (coveredBranches != CoveredBranches.TRUE_AND_FALSE) {
-			/*
-			 * generate more datapoint for its parent node for a try to get this
-			 * node covered
-			 */
-			ambitionParentNode(nodeProbe, trainingVars);
-		}
-	}
-
-	private void ambitionParentNode(DecisionNodeProbe nodeProbe, TrainingVariables trainingVars) {
+	@Override
+	protected CfgNode learn(DecisionNodeProbe nodeProbe, List<Integer> visitedNodes, int loopTimes) throws SavException {
 		CfgNode node = nodeProbe.getNode();
-		CfgNode parentNode = getParentNode(node);
-		if (parentNode == null) {
-			return;
-		}
-		expandAtNode(nodeProbe.getDecisionProbes().getNodeProbe(parentNode), trainingVars,
-				getCategory(parentNode.getBranchRelationship(node.getIdx())));
+		/* TODO LLT: not sure about loop times here, 
+		 * there is a case in which one of dominators of loopheader is itself,
+		 * so we need to prevent the infinitive loop here
+		 */
+		if (needToLearn(nodeProbe) && loopTimes < 10) {
+			List<CfgNode> dominators = getDominators(node);
+			for (CfgNode dominator : dominators) {
+				if (!visitedNodes.contains(dominator.getIdx())) {
+					return node;
+				}
+			}
+			/* valid to be learned */
+			train(node, nodeProbe, trainingVars);
+			// sampling
+			BranchRelationship type = getSamplingBranches(nodeProbe);
+			if (CfgUtils.implyTrueBranch(type)) {
+				sampling(nodeProbe, trainingVars, Category.TRUE);
+			}
+			if (CfgUtils.implyFalseBranch(type)) {
+				sampling(nodeProbe, trainingVars, Category.FALSE);
+			}
+		} 
+		return null;
 	}
 
-	private SamplingResult expandAtNode(DecisionNodeProbe nodeProbe, TrainingVariables trainingVars, Category category) {
+	private BranchRelationship getSamplingBranches(DecisionNodeProbe nodeProbe) {
+		BranchRelationship type = null;
+		CoveredBranches coveredBranches = nodeProbe.getCoveredBranches();
+		BranchType missingBranch = coveredBranches.getOnlyOneMissingBranch();
+		if (missingBranch != null) {
+			type = missingBranch.toBranchRelationship();
+		}
+		/* check its dependentees */
+		DecisionProbes probes = nodeProbe.getDecisionProbes();
+		for (CfgNode dependentee : dominationMap.get(nodeProbe.getNode()).getDominatees()) {
+			DecisionNodeProbe dependenteeProbe = probes.getNodeProbe(dependentee);
+			if (dependenteeProbe.hasUncoveredBranch()) {
+				type = BranchRelationship.merge(type, nodeProbe.getNode().getBranchRelationship(dependentee.getIdx()));
+			}
+		}
+		return type;
+	}
+	
+	private SamplingResult sampling(DecisionNodeProbe nodeProbe, TrainingVariables trainingVars, Category category) {
 		CfgNode node = nodeProbe.getNode();
 		int nodeIdx = node.getIdx();
-		train(node, nodeProbe, trainingVars);
 		NodeDataSet generatedDataSet = machine.requestData(nodeIdx, trainingVars.getLabel(node.getIdx()), category);
 		ganLog.log("Generated datapoints: ");
-		ganLog.logFormat("NodeIdx={}", generatedDataSet.getNodeId());
-		for (Category cat : Category.values()) {
-			ganLog.logFormat("{}: ", cat.name());
-			ganLog.log(TextFormatUtils.printCol(generatedDataSet.getDataset().get(cat), "\n"));
-		}
-		
 		SamplingResult samplingResult = null;
-		if (generatedDataSet != null) {
+		if (generatedDataSet == null) {
+			ganLog.log("empty generatedDataSet!");
+		} else {
+			ganLog.logFormat("NodeIdx={}", generatedDataSet.getNodeId());
+			for (Category cat : Category.values()) {
+				ganLog.logFormat("{}: ", cat.name());
+				ganLog.log(TextFormatUtils.printCol(generatedDataSet.getDataset().get(cat), "\n"));
+			}
 			try {
 				samplingResult = sampleExecutor.runSamples(generatedDataSet.getAllDatapoints(), trainingVars.getExecVars(node.getIdx()));
 				// log new coverage
@@ -153,7 +163,7 @@ public class GanDecisionLearner implements IInputLearner {
 	}
 
 	private void train(CfgNode node, INodeCoveredData nodeProbe, TrainingVariables trainingVars) {
-		if (trainedNodes.contains(node.getIdx())) {
+		if (ganTrainedNodes.contains(node.getIdx())) {
 			return;
 		}
 		NodeDataSet trainingData = new NodeDataSet();
@@ -166,18 +176,7 @@ public class GanDecisionLearner implements IInputLearner {
 		trainingData.setNodeId(String.valueOf(node.getIdx()));
 		ganLog.logDatapoints(node.getIdx(), trainingData);
 		machine.train(node.getIdx(), trainingData);
-		trainedNodes.add(node.getIdx());
-	}
-
-	private Category getCategory(BranchRelationship branchRelationship) {
-		switch (branchRelationship) {
-		case TRUE:
-			return Category.TRUE;
-		case FALSE:
-			return Category.FALSE;
-		default:
-			return null;
-		}
+		ganTrainedNodes.add(node.getIdx());
 	}
 
 	private Category getCategory(BranchType branch) {
@@ -189,17 +188,6 @@ public class GanDecisionLearner implements IInputLearner {
 		default:
 			return null;
 		}
-	}
-
-	/**
-	 * TODO-LLT: to handle for multi level, or more than 1 parent node.
-	 */
-	private CfgNode getParentNode(CfgNode nodeProbe) {
-		List<CfgNode> dominators = dominationMap.get(nodeProbe).getDominators(); 
-		if (CollectionUtils.isEmpty(dominators)) {
-			return null;
-		}
-		return dominators.get(0); 
 	}
 
 	@Override
@@ -228,4 +216,5 @@ public class GanDecisionLearner implements IInputLearner {
 	@Override
 	public void cleanup() {
 	}
+
 }

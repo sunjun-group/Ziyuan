@@ -44,4 +44,12 @@ public class CfgUtils {
 		}
 		return result;
 	}
+	
+	public static boolean implyTrueBranch(BranchRelationship type) {
+		return type == BranchRelationship.TRUE || type == BranchRelationship.TRUE_FALSE;
+	}
+	
+	public static boolean implyFalseBranch(BranchRelationship type) {
+		return type == BranchRelationship.FALSE || type == BranchRelationship.TRUE_FALSE;
+	}
 }
