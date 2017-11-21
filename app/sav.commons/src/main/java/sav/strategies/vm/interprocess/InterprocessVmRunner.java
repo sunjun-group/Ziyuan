@@ -67,6 +67,7 @@ public class InterprocessVmRunner extends VMRunner {
 			inputWriter.close();
 			outputReader.close();
 		}
+		cancelTimer();
 	}
 	
 	@Override

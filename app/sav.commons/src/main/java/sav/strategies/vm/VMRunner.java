@@ -50,6 +50,7 @@ public class VMRunner {
 	/* timeout in millisecond */
 	private long timeout = NO_TIME_OUT;
 	private boolean isLog = true;
+	protected Timer timer = null;
 	
 	protected Process process;
 	private String processError;
@@ -135,10 +136,10 @@ public class VMRunner {
 			 * the printStream is not set */
 			setupInputStream(process.getInputStream(), new StringBuffer(), false);
 			setupOutputStream(process.getOutputStream());
-			Timer t = null;
+			timer = null;
 			if (timeout != NO_TIME_OUT) {
-				t = new Timer();
-			    t.schedule(new TimerTask() {
+				timer = new Timer();
+			    timer.schedule(new TimerTask() {
 
 			        @Override
 			        public void run() {
@@ -150,8 +151,9 @@ public class VMRunner {
 			}
 			if (waitUntilStop) {
 				waitUntilStop(process);
-				if (t != null) {
-					t.cancel();
+				if (timer != null) {
+					timer.cancel();
+					timer = null;
 				}
 				processError = sb.toString();
 				return isExecutionSuccessful();
@@ -240,6 +242,12 @@ public class VMRunner {
 	    } catch (Exception e) {
 	        return true;
 	    }
+	}
+	
+	public void cancelTimer() {
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 	
 	public static VMRunner getDefault() {

@@ -150,11 +150,12 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 				ganLog.log(TextFormatUtils.printCol(generatedDataSet.getDataset().get(cat), "\n"));
 			}
 			try {
-				samplingResult = sampleExecutor.runSamples(generatedDataSet.getAllDatapoints(), trainingVars.getExecVars(node.getIdx()));
+				List<double[]> allDatapoints = generatedDataSet.getAllDatapoints();
+				samplingResult = sampleExecutor.runSamples(allDatapoints, trainingVars.getExecVars(node.getIdx()));
 				// log new coverage
 				ganLog.logFormat("new coverage: ");
 				ganLog.logCoverage(nodeProbe.getDecisionProbes());
-				ganLog.logAccuracy(node, samplingResult, category);
+				ganLog.logSamplingResult(node, allDatapoints, samplingResult, category);
 			} catch (SavException e) {
 				log.debug("Error when generating new testcases: {}", e.getMessage());
 			}
@@ -174,20 +175,9 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 		trainingData.setDatapoints(Category.FALSE,
 				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getFalseValues()));
 		trainingData.setNodeId(String.valueOf(node.getIdx()));
-		ganLog.logDatapoints(node.getIdx(), trainingData);
+		ganLog.logTrainDatapoints(node, trainingData);
 		machine.train(node.getIdx(), trainingData);
 		ganTrainedNodes.add(node.getIdx());
-	}
-
-	private Category getCategory(BranchType branch) {
-		switch (branch) {
-		case TRUE:
-			return Category.TRUE;
-		case FALSE:
-			return Category.FALSE;
-		default:
-			return null;
-		}
 	}
 
 	@Override
@@ -206,11 +196,8 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 	}
 
 	private static interface TrainingVariables {
-
 		List<String> getLabel(int idx);
-
 		List<ExecVar> getExecVars(int idx);
-		
 	}
 
 	@Override

@@ -119,8 +119,9 @@ public class TestGenerator {
 		List<Sequence> sequences = new ArrayList<Sequence>();
 		//int index = 0;
 		Set<String> failToSetVars = new HashSet<String>();
-		for (double[] solution : solutions) {
-			result.addInputData(DomainUtils.toBreakpointValue(solution, vars));
+		for (int i = 0; i < solutions.size(); i++) {
+			double[] solution = solutions.get(i);
+			result.addInputData(DomainUtils.toBreakpointValue(solution, vars, i));
 			sequences.add(generator.generateSequence(solution, vars, failToSetVars));
 		}
 		if (!failToSetVars.isEmpty()) {

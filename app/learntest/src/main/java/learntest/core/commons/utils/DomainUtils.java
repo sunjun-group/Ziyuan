@@ -22,8 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
+import learntest.core.commons.data.SolutionBreakpointValue;
 import sav.common.core.Constants;
 import sav.common.core.formula.Eq;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -118,8 +120,8 @@ public class DomainUtils {
 		return ((FloatDomain)domain).min();
 	}
 
-	public static BreakpointValue toBreakpointValue(double[] solution, List<ExecVar> vars) {
-		BreakpointValue value = new BreakpointValue(StringUtils.EMPTY);
+	public static BreakpointValue toBreakpointValue(double[] solution, List<ExecVar> vars, int solutionIdx) {
+		BreakpointValue value = new SolutionBreakpointValue(solutionIdx);
 		for (int i = 0; i < vars.size(); i++) {
 			BreakpointDataUtils.addToBreakpointValue(value, vars.get(i), solution[i]);
 		}
@@ -136,6 +138,20 @@ public class DomainUtils {
 
 	public static Domain toDomain(int val) {
 		return new FloatIntervalDomain(val, val);
+	}
+
+	public static List<double[]> getCorrespondingSolution(List<double[]> allDatapoints,
+			List<BreakpointValue> vals) {
+		List<double[]> result = new ArrayList<double[]>(CollectionUtils.getSize(vals));
+		for (BreakpointValue val : CollectionUtils.nullToEmpty(vals)) {
+			if (val instanceof SolutionBreakpointValue) {
+				SolutionBreakpointValue sBkVal = (SolutionBreakpointValue) val;
+				result.add(allDatapoints.get(sBkVal.getSolutionIdx()));
+			} else {
+				log.warn("Breakpoint value is not SolutionBreakpointValue type!");
+			}
+		}
+		return result;
 	}
 
 }

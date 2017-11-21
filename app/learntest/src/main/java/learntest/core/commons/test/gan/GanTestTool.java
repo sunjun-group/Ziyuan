@@ -9,11 +9,10 @@
 package learntest.core.commons.test.gan;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
@@ -24,6 +23,7 @@ import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.test.TestSettings;
 import learntest.core.commons.test.TestTool;
+import learntest.core.commons.test.gan.evaltrial.GanTrialReport;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gan.vm.NodeDataSet;
 import learntest.core.gan.vm.NodeDataSet.Category;
@@ -35,15 +35,12 @@ import sav.common.core.utils.TextFormatUtils;
  *
  */
 public class GanTestTool extends TestTool {
-	private Logger log = LoggerFactory.getLogger(GanTestTool.class);
 	private GanTestReport report;
-	private GanTrial trial;
 	private Set<Integer> fullCoveredNodes;
 	
 	public GanTestTool() {
 		try {
 			fullCoveredNodes = new HashSet<>();
-			trial = new GanTrial();
 		} catch (Exception e) {
 			log("cannot init test report: ", e.getMessage());
 		}
@@ -52,7 +49,7 @@ public class GanTestTool extends TestTool {
 	@Override
 	public void startMethod(String methodFullName) {
 		try {
-			report = new GanTestReport(TestSettings.GAN_EXCEL_PATH);
+			report = new GanTrialReport(TestSettings.GAN_EXCEL_PATH);
 			fullCoveredNodes.clear();
 		} catch (Exception e) {
 			log("cannot init test report: ", e.getMessage());
@@ -62,9 +59,7 @@ public class GanTestTool extends TestTool {
 	@Override
 	public void startRound(int i, LearnTestParams params) {
 		super.startRound(i, params);
-		trial = new GanTrial();
-		trial.setMethodId(params.getTargetMethod().getMethodId());
-		trial.setSampleSize(params.getInitialTcTotal());
+		report.startRound(i, params);
 	}
 	
 	@Override
@@ -74,7 +69,7 @@ public class GanTestTool extends TestTool {
 		}
 		logFormat("First covearge: {}", firstCoverage);
 		log(CoverageUtils.getBranchCoverageDisplayText(cfgCoverage));
-		trial.setInitCoverage(firstCoverage);
+		report.initCoverage(firstCoverage);
 		flush();
 	}
 	
@@ -86,13 +81,13 @@ public class GanTestTool extends TestTool {
 		flush();
 	}
 	
-	public void logDatapoints(int nodeIdx, NodeDataSet dataSet) {
+	public void logTrainDatapoints(CfgNode node, NodeDataSet dataSet) {
 		if (!isEnable()) {
 			return;
 		}
 		if (CollectionUtils.isNotEmpty(dataSet.getDataset().get(Category.TRUE))
 				&& CollectionUtils.isNotEmpty(dataSet.getDataset().get(Category.FALSE))) {
-			fullCoveredNodes.add(nodeIdx);
+			fullCoveredNodes.add(node.getIdx());
 		}
 		log("Training datapoints: ");
 		logFormat("NodeIdx={}", dataSet.getNodeId());
@@ -101,6 +96,13 @@ public class GanTestTool extends TestTool {
 			log(TextFormatUtils.printCol(dataSet.getDataset().get(cat), "\n"));
 		}
 		flush();
+		report.trainingDatapoints(node, dataSet);
+	}
+	
+	public void logSamplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult,
+			Category category) {
+		logAccuracy(node, samplingResult, category);
+		report.samplingResult(node, allDatapoints, samplingResult, category);
 	}
 	
 	public void logAccuracy(CfgNode node, SamplingResult samplingResult, Category category) {
@@ -109,7 +111,7 @@ public class GanTestTool extends TestTool {
 		int trueSize = CollectionUtils.getSize(newData.getTrueValues());
 		int total = falseSize + trueSize;
 		int accSize = (category == Category.TRUE ? trueSize : falseSize);
-		trial.updateAcc(node.getIdx(), accSize / ((double) total));
+		report.accuracy(node.getIdx(), accSize / ((double) total), category);
 	}
 	
 	public void logRoundResult(RunTimeInfo runtimeInfo, int i) {
@@ -118,13 +120,7 @@ public class GanTestTool extends TestTool {
 		}
 		log("\n\nResult Round ", i);
 		logRuntimeInfo(runtimeInfo, true);
-		trial.setDecsNodeCvgInfo(runtimeInfo.getCoverageInfo());
-		trial.setCoverage(runtimeInfo.getCoverage());
-		try {
-			report.export(trial);
-		} catch (Exception e) {
-			log.debug(e.getMessage());
-		}
+		report.onRoundResult(runtimeInfo);
 	}
 	
 	private void logRuntimeInfo(RunTimeInfo runtimeInfo, boolean flush) {
@@ -160,5 +156,6 @@ public class GanTestTool extends TestTool {
 		log("bestcoverage: {}", bestCoverage);
 		flush();
 	}
+
 
 }

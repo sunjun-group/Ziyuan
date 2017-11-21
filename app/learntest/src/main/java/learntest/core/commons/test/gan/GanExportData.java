@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import learntest.core.commons.test.gan.GanTrial.GanAccuracy;
+import learntest.core.commons.test.gan.evaltrial.GanTrial;
+import learntest.core.commons.test.gan.evaltrial.GanTrial.GanAccuracy;
 import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
  *
  */
-public class GanExportData {
+public class GanExportData extends AbstractRowData {
 	private String methodId;
-	private int rowNum = -1;
 	private int lastColNum = -1;
 	private GanTrial trial;
 	private String initCvgs;
@@ -34,14 +34,7 @@ public class GanExportData {
 
 	public void setMethodId(String methodId) {
 		this.methodId = methodId;
-	}
-
-	public int getRowNum() {
-		return rowNum;
-	}
-
-	public void setRowNum(int rowNum) {
-		this.rowNum = rowNum;
+		setId(methodId);
 	}
 
 	public GanTrial getTrial() {

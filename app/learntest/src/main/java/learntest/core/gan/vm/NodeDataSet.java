@@ -49,6 +49,10 @@ public class NodeDataSet {
 		return dataset;
 	}
 	
+	public List<double[]> getDatapoints(Category category) {
+		return getDataset().get(category);
+	}
+	
 	public void setDataset(Map<Category, List<double[]>> dataset) {
 		this.dataset = dataset;
 	}
