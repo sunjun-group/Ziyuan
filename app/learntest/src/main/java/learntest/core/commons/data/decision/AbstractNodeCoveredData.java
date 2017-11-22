@@ -14,6 +14,7 @@ import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.CollectionUtils;
@@ -70,8 +71,8 @@ public abstract class AbstractNodeCoveredData implements INodeCoveredData {
 	 * @return
 	 */
 	protected static List<BreakpointValue> getBranchCoveredValue(NodeCoverage nodeCoverage,
-			List<BreakpointValue> testInputs, BranchRelationship branchType, int testOffset) {
-		CfgNode branch = nodeCoverage.getCfgNode().getBranch(branchType);
+			List<BreakpointValue> testInputs, DecisionBranchType branchType, int testOffset) {
+		CfgNode branch = nodeCoverage.getCfgNode().getDecisionBranch(branchType);
 		if (branch == null) {
 			return new ArrayList<BreakpointValue>(0);
 		}

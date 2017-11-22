@@ -19,11 +19,10 @@ import cfgcoverage.jacoco.analysis.data.CfgNode;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
-import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.test.TestSettings;
 import learntest.core.commons.test.TestTool;
-import learntest.core.commons.test.gan.evaltrial.GanTrialReport;
+import learntest.core.commons.test.gan.eval102.GanTestReport102;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gan.vm.NodeDataSet;
 import learntest.core.gan.vm.NodeDataSet.Category;
@@ -49,7 +48,7 @@ public class GanTestTool extends TestTool {
 	@Override
 	public void startMethod(String methodFullName) {
 		try {
-			report = new GanTrialReport(TestSettings.GAN_EXCEL_PATH);
+			report = new GanTestReport102(TestSettings.GAN_EXCEL_PATH_102);
 			fullCoveredNodes.clear();
 		} catch (Exception e) {
 			log("cannot init test report: ", e.getMessage());
@@ -68,8 +67,9 @@ public class GanTestTool extends TestTool {
 			return;
 		}
 		logFormat("First covearge: {}", firstCoverage);
-		log(CoverageUtils.getBranchCoverageDisplayText(cfgCoverage));
-		report.initCoverage(firstCoverage);
+		String cvgInfo = CoverageUtils.getBranchCoverageDisplayText(cfgCoverage);
+		log(cvgInfo);
+		report.initCoverage(firstCoverage, cvgInfo);
 		flush();
 	}
 	
@@ -77,7 +77,10 @@ public class GanTestTool extends TestTool {
 		if (!isEnable()) {
 			return;
 		}
-		log(CoverageUtils.getBranchCoverageDisplayText(cfgCoverage));
+		String cvgInfo = CoverageUtils.getBranchCoverageDisplayText(cfgCoverage);
+		double cvg = CoverageUtils.calculateCoverageByBranch(cfgCoverage);
+		log(cvgInfo);
+		report.coverage(cvgInfo, cvg);
 		flush();
 	}
 	
@@ -101,17 +104,7 @@ public class GanTestTool extends TestTool {
 	
 	public void logSamplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult,
 			Category category) {
-		logAccuracy(node, samplingResult, category);
 		report.samplingResult(node, allDatapoints, samplingResult, category);
-	}
-	
-	public void logAccuracy(CfgNode node, SamplingResult samplingResult, Category category) {
-		INodeCoveredData newData = samplingResult.getNewData(node);
-		int falseSize = CollectionUtils.getSize(newData.getFalseValues());
-		int trueSize = CollectionUtils.getSize(newData.getTrueValues());
-		int total = falseSize + trueSize;
-		int accSize = (category == Category.TRUE ? trueSize : falseSize);
-		report.accuracy(node.getIdx(), accSize / ((double) total), category);
 	}
 	
 	public void logRoundResult(RunTimeInfo runtimeInfo, int i) {
@@ -121,6 +114,9 @@ public class GanTestTool extends TestTool {
 		log("\n\nResult Round ", i);
 		logRuntimeInfo(runtimeInfo, true);
 		report.onRoundResult(runtimeInfo);
+		if (runtimeInfo != null) {
+			report.coverage(runtimeInfo.getCoverageInfo(), runtimeInfo.getCoverage());
+		}
 	}
 	
 	private void logRuntimeInfo(RunTimeInfo runtimeInfo, boolean flush) {

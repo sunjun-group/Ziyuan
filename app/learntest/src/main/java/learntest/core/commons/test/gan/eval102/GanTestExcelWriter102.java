@@ -16,6 +16,7 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.Row;
 
 import learntest.core.commons.test.gan.eval102.NodeExportData102.BranchTraningData;
+import learntest.core.commons.test.gan.eval102.RowData102.UpdateType;
 import learntest.plugin.export.io.excel.common.ExcelHeader;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 
@@ -44,8 +45,15 @@ public class GanTestExcelWriter102 extends SimpleExcelWriter<RowData102> {
 		addCell(row, METHOD_NAME, data.getMethodId());
 		addCell(row, NODE_ID, data.getNodeIdx());
 		addCell(row, LINE_NUMBER, data.getLineNum());
-		addBranchTrainingData(data.getTrueTrainData(), row, 0);
-		addBranchTrainingData(data.getTrueTrainData(), row, 1);
+		if (rowData.getUpdateType() != UpdateType.COVERAGE) {
+			addBranchTrainingData(data.getTrueTrainData(), row, 0);
+			addBranchTrainingData(data.getFalseTrainData(), row, 1);
+		} else {
+			addCell(row, COVERAGE, data.getCvg());
+			addCell(row, COVERAGE_INFO, data.getCoverageInfo());
+			addCell(row, INIT_COVERAGE_INFO, data.getInitCoverageInfo());
+		}
+		rowData.setRowNum(row.getRowNum());
 	}
 
 	private void addBranchTrainingData(BranchTraningData data, Row row, int offset) {
@@ -78,7 +86,11 @@ public class GanTestExcelWriter102 extends SimpleExcelWriter<RowData102> {
 		FALSE_BRANCH_CORRECT_GEN_DPS("correctly generated data points for FALSE branch"),
 		
 		TRUE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for TRUE branch"),
-		FALSE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for FALSE branch");
+		FALSE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for FALSE branch"),
+		
+		COVERAGE("coverage"),
+		INIT_COVERAGE_INFO("init coverage info"),
+		COVERAGE_INFO("coverage info");
 
 		private String title;
 		private Header(String title) {

@@ -58,7 +58,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 	public GanDecisionLearner(LearningMediator mediator) {
 		super(mediator);
 		machine = new GanMachine();
-		machine.setVmTimeout(5000000);
+		machine.setVmTimeout(3600000);
 	}
 	
 	@Override
@@ -92,14 +92,14 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 	@Override
 	protected CfgNode learn(DecisionNodeProbe nodeProbe, List<Integer> visitedNodes, int loopTimes) throws SavException {
 		CfgNode node = nodeProbe.getNode();
-		/* TODO LLT: not sure about loop times here, 
-		 * there is a case in which one of dominators of loopheader is itself,
-		 * so we need to prevent the infinitive loop here
-		 */
-		if (needToLearn(nodeProbe) && loopTimes < 10) {
+		if (needToLearn(nodeProbe)) {
 			List<CfgNode> dominators = getDominators(node);
 			for (CfgNode dominator : dominators) {
-				if (!visitedNodes.contains(dominator.getIdx())) {
+				/* 
+				 * TODO LLT: this is workaround for infinitive loop in the case of loop header.
+				 */
+				if (!visitedNodes.contains(dominator.getIdx()) && (!node.isLoopHeaderOf(dominator)
+						&& (!node.isLoopHeader() || (node.getIdx() > dominator.getIdx())))) {
 					return node;
 				}
 			}
@@ -119,6 +119,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 
 	private BranchRelationship getSamplingBranches(DecisionNodeProbe nodeProbe) {
 		BranchRelationship type = null;
+		System.out.println();
 		CoveredBranches coveredBranches = nodeProbe.getCoveredBranches();
 		BranchType missingBranch = coveredBranches.getOnlyOneMissingBranch();
 		if (missingBranch != null) {
@@ -126,10 +127,14 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 		}
 		/* check its dependentees */
 		DecisionProbes probes = nodeProbe.getDecisionProbes();
-		for (CfgNode dependentee : dominationMap.get(nodeProbe.getNode()).getDominatees()) {
+		CfgNode node = nodeProbe.getNode();
+		for (CfgNode dependentee : dominationMap.get(node).getDominatees()) {
 			DecisionNodeProbe dependenteeProbe = probes.getNodeProbe(dependentee);
+			if (dependentee.isLoopHeader() && (dependentee.getIdx() > node.getIdx())) {
+				continue;
+			}
 			if (dependenteeProbe.hasUncoveredBranch()) {
-				type = BranchRelationship.merge(type, nodeProbe.getNode().getBranchRelationship(dependentee.getIdx()));
+				type = BranchRelationship.merge(type, node.getBranchRelationship(dependentee.getIdx()));
 			}
 		}
 		return type;

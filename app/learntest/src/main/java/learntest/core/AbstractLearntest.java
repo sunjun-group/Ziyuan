@@ -18,8 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.DefaultValues;
@@ -142,7 +142,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		long executionTime = SAVTimer.getExecutionTime();
 		int testCnt = cfgCoverage.getTotalTcs();
 		
-		HashMap<String , Set<BranchRelationship>> relationships = CoverageUtils.getBranchCoverage(cfgCoverage);
+		HashMap<String , Set<DecisionBranchType>> relationships = CoverageUtils.getBranchCoverage(cfgCoverage);
 		
 		List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage, -1);
 		for (String line : lines) {

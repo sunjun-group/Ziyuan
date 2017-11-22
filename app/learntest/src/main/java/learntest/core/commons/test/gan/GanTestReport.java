@@ -31,7 +31,7 @@ public abstract class GanTestReport {
 		// do nothing by default
 	}
 	
-	public void initCoverage(double firstCoverage) {
+	public void initCoverage(double firstCoverage, String cvgInfo) {
 		// do nothing by default
 	}
 	
@@ -44,6 +44,10 @@ public abstract class GanTestReport {
 	}
 
 	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult, Category category) {
+		// do nothing by default
+	}
+
+	public void coverage(String cvgInfo, double cvg) {
 		// do nothing by default
 	}
 }

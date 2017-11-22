@@ -20,6 +20,7 @@ public class SolutionBreakpointValue extends BreakpointValue {
 	
 	public SolutionBreakpointValue(int solutionIdx) {
 		super(StringUtils.lowLineJoin("solution", solutionIdx));
+		this.solutionIdx = solutionIdx;
 	}
 
 	public int getSolutionIdx() {

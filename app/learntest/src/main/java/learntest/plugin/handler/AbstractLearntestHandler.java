@@ -45,10 +45,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.tools.classfile.Opcode.Set;
-
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
@@ -56,8 +54,8 @@ import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.RunTimeInfo;
 import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
-import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.ClassInfo;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
@@ -329,15 +327,15 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	private void recordBetterInfo(CfgNode node, StringBuffer l2tWorseSb, StringBuffer ranWorseSb,
 			TestRunTimeInfo ranAverageInfo, TestRunTimeInfo l2tAverageInfo) {
-		java.util.Set<BranchRelationship> relInRan = ranAverageInfo.getRelationships().get(node.toString()),
+		java.util.Set<DecisionBranchType> relInRan = ranAverageInfo.getRelationships().get(node.toString()),
 				relInL2t = l2tAverageInfo.getRelationships().get(node.toString());
-		for (BranchRelationship branchRelationship : relInL2t) {
+		for (DecisionBranchType branchRelationship : relInL2t) {
 			if (!relInRan.contains(branchRelationship)) {
 				ranWorseSb.append(node.toString() + " : " + branchRelationship +";");
 			}
 		}
 
-		for (BranchRelationship branchRelationship : relInRan) {
+		for (DecisionBranchType branchRelationship : relInRan) {
 			if (!relInL2t.contains(branchRelationship)) {
 				l2tWorseSb.append(node.toString() + " : " + branchRelationship +";");
 			}

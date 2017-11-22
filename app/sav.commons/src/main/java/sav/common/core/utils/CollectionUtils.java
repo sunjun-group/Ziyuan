@@ -192,6 +192,13 @@ public class CollectionUtils {
 		}
 		return val;
 	}
+	
+	public static <T> List<T> initIfEmpty(List<T> val, int size) {
+		if (val == null) {
+			return new ArrayList<T>(size);
+		}
+		return val;
+	}
 
 	public static <K, E> List<E> getListInitIfEmpty(Map<K, List<E>> map, K key) {
 		List<E> value = map.get(key);

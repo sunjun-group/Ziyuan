@@ -19,6 +19,7 @@ import java.util.Set;
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
@@ -97,18 +98,33 @@ public class CoverageUtils {
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
-			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
-			for (int branchIdx : getCoveredBranches(testIdx, nodeCvg)) {
-				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
-				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
-										BranchRelationship.FALSE);
-			}
+			Set<DecisionBranchType> coveredBranches = getBranchCoverage(testIdx, node, nodeCvg);
 			sb.append("NodeCoverage [").append(node).append(", covered=").append(isCovered(testIdx, nodeCvg))
 						.append(", coveredBranches=").append(coveredBranches.size()).append(", ")
 						.append(coveredBranches).append("]");
 			lines.add(sb.toString());
 		}
 		return lines;
+	}
+
+	private static Set<DecisionBranchType> getBranchCoverage(int testIdx, CfgNode node, NodeCoverage nodeCvg) {
+		Set<DecisionBranchType> coveredBranches = new HashSet<DecisionBranchType>(2);
+		for (int branchIdx : getCoveredBranches(testIdx, nodeCvg)) {
+			DecisionBranchType branchType = node.getDecisionBranchType(branchIdx);
+			CollectionUtils.addIfNotNull(coveredBranches, branchType);
+		}
+		return coveredBranches;
+	}
+	
+	public static HashMap<String, Set<DecisionBranchType>> getBranchCoverage(CfgCoverage cfgCoverage) {
+		HashMap<String , Set<DecisionBranchType>> relationships = new HashMap<>();
+		int testIdx = -1;
+		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
+			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
+			Set<DecisionBranchType> coveredBranches = getBranchCoverage(testIdx, node, nodeCvg);
+			relationships.put(node.toString(), coveredBranches);
+		}
+		return relationships;
 	}
 
 	private static boolean isCovered(int testIdx, NodeCoverage nodeCvg) {
@@ -123,22 +139,6 @@ public class CoverageUtils {
 			return nodeCvg.getCoveredBranches();
 		}
 		return nodeCvg.getCoveredBranches(testIdx);
-	}
-
-	public static HashMap<String, Set<BranchRelationship>> getBranchCoverage(CfgCoverage cfgCoverage) {
-		HashMap<String , Set<BranchRelationship>> relationships = new HashMap<>();
-		int testIdx = -1;
-		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
-			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
-			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
-			for (int branchIdx : getCoveredBranches(testIdx, nodeCvg)) {
-				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
-				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
-										BranchRelationship.FALSE);
-			}
-			relationships.put(node.toString(), coveredBranches);
-		}
-		return relationships;
 	}
 	
 }

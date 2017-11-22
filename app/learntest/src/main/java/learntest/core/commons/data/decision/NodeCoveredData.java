@@ -11,6 +11,7 @@ package learntest.core.commons.data.decision;
 import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 
@@ -26,18 +27,18 @@ public class NodeCoveredData extends AbstractNodeCoveredData implements INodeCov
 	
 	private NodeCoveredData(NodeCoverage coverage, List<BreakpointValue> newTestInputs, int newTcsFirstIdx) {
 		/* collect input values of true branch */
-		trueValues = getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.TRUE,
+		trueValues = getBranchCoveredValue(coverage, newTestInputs, DecisionBranchType.TRUE,
 				newTcsFirstIdx);
 		/* collect input values of false branch */
-		falseValues = getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.FALSE,
+		falseValues = getBranchCoveredValue(coverage, newTestInputs, DecisionBranchType.FALSE,
 				newTcsFirstIdx);
 		oneTimeValues = getFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx, false);
 		moreTimesValues = getFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx, true);
 	}
 	
 	public void update(NodeCoverage coverage, int newTcsFirstIdx, List<BreakpointValue> newTestInputs) {
-		trueValues.addAll(getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.TRUE, newTcsFirstIdx));
-		falseValues.addAll(getBranchCoveredValue(coverage, newTestInputs, BranchRelationship.FALSE, newTcsFirstIdx));
+		trueValues.addAll(getBranchCoveredValue(coverage, newTestInputs, DecisionBranchType.TRUE, newTcsFirstIdx));
+		falseValues.addAll(getBranchCoveredValue(coverage, newTestInputs, DecisionBranchType.FALSE, newTcsFirstIdx));
 		oneTimeValues.addAll(getFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx, false));
 		moreTimesValues.addAll(getFreqCoveredValue(coverage, newTestInputs, newTcsFirstIdx, true));
 	}

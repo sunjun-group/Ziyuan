@@ -91,7 +91,7 @@ public class ExcelWriter {
 	}
 	
 	public void addCell(Row row, ExcelHeader title, double value) {
-		row.createCell(title.getCellIdx()).setCellValue(value);
+		addCell(row, title.getCellIdx(), value);
 	}
 
 	public void addCell(Row row, ExcelHeader title, String value) {
@@ -99,7 +99,11 @@ public class ExcelWriter {
 	}
 	
 	public void addCell(Row row, int cellIdx, double value) {
-		row.createCell(cellIdx).setCellValue(value);
+		if (!Double.isNaN(value)) {
+			row.createCell(cellIdx).setCellValue(value);
+		} else {
+			row.createCell(cellIdx).setCellValue("NaN");
+		}
 	}
 
 	public void addCell(Row row, int cellIdx, String value) {

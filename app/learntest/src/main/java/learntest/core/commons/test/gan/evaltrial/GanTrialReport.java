@@ -11,19 +11,24 @@ package learntest.core.commons.test.gan.evaltrial;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cfgcoverage.jacoco.analysis.data.CfgNode;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
+import learntest.core.commons.data.decision.INodeCoveredData;
+import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.test.gan.GanExportData;
 import learntest.core.commons.test.gan.GanTestReport;
 import learntest.core.gan.vm.NodeDataSet.Category;
 import learntest.plugin.export.io.excel.common.ExcelHeader;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -50,12 +55,20 @@ public class GanTrialReport extends GanTestReport {
 		trial.setSampleSize(params.getInitialTcTotal());
 	}
 	
-	public void initCoverage(double firstCoverage) {
+	@Override
+	public void initCoverage(double firstCoverage, String cvgInfo) {
 		trial.setInitCoverage(firstCoverage);
 	}
 	
-	public void accuracy(int nodeIdx, double acc, Category category) {
-		trial.updateAcc(nodeIdx, acc);
+	@Override
+	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult,
+			Category category) {
+		INodeCoveredData newData = samplingResult.getNewData(node);
+		int falseSize = CollectionUtils.getSize(newData.getFalseValues());
+		int trueSize = CollectionUtils.getSize(newData.getTrueValues());
+		int total = falseSize + trueSize;
+		int accSize = (category == Category.TRUE ? trueSize : falseSize);
+		trial.updateAcc(node.getIdx(), accSize / ((double) total));
 	}
 	
 	@Override

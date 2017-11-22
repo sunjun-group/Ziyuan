@@ -11,7 +11,7 @@ package learntest.core.commons.data.decision;
 import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.CollectionUtils;
@@ -51,7 +51,7 @@ public class SampleNodeCoveredData extends AbstractNodeCoveredData implements IN
 	@Override
 	public List<BreakpointValue> getFalseValues() {
 		if (falseValues == null) {
-			falseValues = getBranchCoveredValue(nodeCoverage, sampleTestInputs, BranchRelationship.FALSE,
+			falseValues = getBranchCoveredValue(nodeCoverage, sampleTestInputs, DecisionBranchType.FALSE,
 					samplesFirstIdx);
 			for (BreakpointValue bkp : getTrueValues()) {
 				falseValues.remove(bkp);
@@ -63,7 +63,7 @@ public class SampleNodeCoveredData extends AbstractNodeCoveredData implements IN
 	@Override
 	public List<BreakpointValue> getTrueValues() {
 		if (trueValues == null) {
-			trueValues = getBranchCoveredValue(nodeCoverage, sampleTestInputs, BranchRelationship.TRUE,
+			trueValues = getBranchCoveredValue(nodeCoverage, sampleTestInputs, DecisionBranchType.TRUE,
 					samplesFirstIdx);
 		}
 		return trueValues;

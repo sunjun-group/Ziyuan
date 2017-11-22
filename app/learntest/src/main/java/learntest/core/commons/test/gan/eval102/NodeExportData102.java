@@ -25,6 +25,9 @@ public class NodeExportData102 {
 	private List<String> vars;
 	private BranchTraningData trueTrainData = new BranchTraningData();
 	private BranchTraningData falseTrainData = new BranchTraningData();
+	private String coverageInfo;
+	private double cvg;
+	private String initCoverageInfo;
 
 	public String getMethodId() {
 		return methodId;
@@ -82,6 +85,32 @@ public class NodeExportData102 {
 		return StringUtils.dotJoin(methodId, nodeIdx);
 	}
 	
+	public String getCoverageInfo() {
+		return coverageInfo;
+	}
+
+	public void setCoverageInfo(String coverageInfo) {
+		this.coverageInfo = coverageInfo;
+	}
+
+	public double getCvg() {
+		return cvg;
+	}
+
+	public void setCvg(double cvg) {
+		this.cvg = cvg;
+	}
+	
+	public String getInitCoverageInfo() {
+		return initCoverageInfo;
+	}
+
+	public void setInitCoverageInfo(String initCoverageInfo) {
+		this.initCoverageInfo = initCoverageInfo;
+	}
+
+
+
 	public class BranchTraningData {
 		private List<double[]> trainingDps = new ArrayList<double[]>();
 		private List<double[]> correctGenDps = new ArrayList<double[]>();
@@ -95,44 +124,41 @@ public class NodeExportData102 {
 			this.trainingDps = trainingDps;
 		}
 
-		public List<double[]> getCorrectGenDps() {
-			return correctGenDps;
-		}
-
-		public void setCorrectGenDps(List<double[]> correctGenDps) {
-			this.correctGenDps = correctGenDps;
-		}
-
 		public List<double[]> getWrongGenDps() {
 			return wrongGenDps;
 		}
 
-		public void setWrongGenDps(List<double[]> wrongGenDps) {
-			this.wrongGenDps = wrongGenDps;
-		}
-
-		/**
-		 * @return
-		 */
 		public String getTrainDpsStr() {
-			// TODO Auto-generated method stub
-			return null;
+			return getDpsStr(trainingDps);
+		}
+		
+		private String getDpsStr(List<double[]> dps) {
+			StringBuilder sb = new StringBuilder();
+			int dpsLastIdx = CollectionUtils.getSize(dps) - 1;
+			for (int dpIdx = 0; dpIdx <= dpsLastIdx; dpIdx++) {
+				double[] dp = dps.get(dpIdx);
+				sb.append("[");
+				int varLastIdx = vars.size() - 1;
+				for (int varIdx = 0; varIdx <= varLastIdx; varIdx++) {
+					sb.append(vars.get(varIdx)).append("=").append(dp[varIdx]);
+					if (varIdx != varLastIdx) {
+						sb.append(",");
+					}
+				}
+				sb.append("]");
+				if (dpIdx != dpsLastIdx) {
+					sb.append("\n");
+				}
+			}
+			return sb.toString();
 		}
 
-		/**
-		 * @return
-		 */
 		public String getCorrectGenDpsStr() {
-			// TODO Auto-generated method stub
-			return null;
+			return getDpsStr(correctGenDps);
 		}
 
-		/**
-		 * @return
-		 */
 		public String getWrongGenDpsStr() {
-			// TODO Auto-generated method stub
-			return null;
+			return getDpsStr(wrongGenDps);
 		}
 
 		public void updateTrainDps(List<double[]> datapoints) {
@@ -149,7 +175,7 @@ public class NodeExportData102 {
 
 		public void updateWrongGenDps(List<double[]> dps) {
 			if (CollectionUtils.isNotEmpty(dps)) {
-				correctGenDps.addAll(dps);
+				wrongGenDps.addAll(dps);
 			}
 		}
 		

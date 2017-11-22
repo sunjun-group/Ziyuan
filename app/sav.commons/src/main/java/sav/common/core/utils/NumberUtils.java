@@ -24,4 +24,8 @@ public class NumberUtils {
 			return false;
 		}
 	}
+	
+	public static double round(double val, int fraction) {
+		return Math.round(val * fraction) / fraction;
+	}
 }
