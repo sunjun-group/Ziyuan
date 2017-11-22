@@ -18,11 +18,31 @@ public class NestedLoopConditionSample {
 		boolean cond = true;
 		int x = 1;
 		int y = 3;
-		while (cond ? x < 3 : y < 5) {
+		while (cond == true ? x < 3 : y < 5) {
 			x += y;
 			x++;
 			y++;
 		}
+		if (x > y) {
+			System.out.println("x > y");
+		}
+		if (x == y) {
+			System.out.println("x == y");
+		}
 		System.out.println();
+	}
+	
+	public void run1() {
+		boolean cond = true;
+		int x = 1;
+		int y = 3;
+		while (cond == true) {
+			x += y;
+			x++;
+			y++;
+			if (x > y) {
+				System.out.println("x > y");
+			}
+		}
 	}
 }

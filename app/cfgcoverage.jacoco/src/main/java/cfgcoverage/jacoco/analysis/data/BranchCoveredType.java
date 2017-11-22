@@ -18,8 +18,8 @@ public enum BranchCoveredType {
 	TRUE_AND_FALSE,
 	NONE;
 
-	public static BranchCoveredType append(BranchCoveredType type, BranchRelationship branchRelationship) {
-		BranchCoveredType newCoveredType = valueOf(branchRelationship);
+	public static BranchCoveredType append(BranchCoveredType type, DecisionBranchType branchType) {
+		BranchCoveredType newCoveredType = valueOf(branchType);
 		return append(type, newCoveredType);
 	}
 
@@ -36,12 +36,11 @@ public enum BranchCoveredType {
 		return type;
 	}
 
-	public static BranchCoveredType valueOf(BranchRelationship branchRelationship) {
-		switch (branchRelationship) {
+	public static BranchCoveredType valueOf(DecisionBranchType branchType) {
+		switch (branchType) {
 		case TRUE:
 			return TRUE;
 		case FALSE:
-		case TRUE_FALSE:
 			return BranchCoveredType.FALSE;
 		}
 		return NONE;

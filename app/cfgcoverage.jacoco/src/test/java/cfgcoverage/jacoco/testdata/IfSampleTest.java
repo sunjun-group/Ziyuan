@@ -17,27 +17,65 @@ import org.junit.Test;
 public class IfSampleTest {
 
 	@Test
-	public void test1() {
+	public void test0() {
 		IfSample sample = new IfSample();
-		sample.run(1);
-	}
-	
-	
-	@Test
-	public void test2() {
-		IfSample sample = new IfSample();
-		sample.run(-1);
+		sample.multiCondOr(1, 3);
 	}
 	
 	@Test
 	public void test3() {
 		IfSample sample = new IfSample();
-		sample.multiCond(1, 3);
+		sample.multiCondOr(2, 2);
 	}
 	
 	@Test
 	public void test4() {
 		IfSample sample = new IfSample();
-		sample.multiCond(3, 1);
+		sample.multiCondOr(4, -1);
 	}
+	
+	@Test
+	public void test1() {
+		IfSample sample = new IfSample();
+		sample.multiCondAnd(3, 1);
+	}
+	
+	@Test
+	public void test5() {
+		IfSample sample = new IfSample();
+		sample.multiCondAnd(1, 1);
+	}
+	
+	@Test
+	public void test6() {
+		IfSample sample = new IfSample();
+		sample.multiCondAnd(2, -1);
+	}
+	
+	@Test
+	public void test7() {
+		IfSample sample = new IfSample();
+		sample.multiCondAnd(2, 6);
+	}
+	
+	@Test
+	public void test2() {
+		IfSample sample = new IfSample();
+		sample.multiCondAndOr(1, -1);
+	}
+	
+	@Test
+	public void test8() {
+		IfSample sample = new IfSample();
+		sample.multiCondAndOr(2, 1);
+	}
+	
+	@Test
+	public void test9() {
+		IfSample sample = new IfSample();
+		sample.multiCondAndOr(4, 10);
+	}
+	
+
+	
 }

@@ -49,8 +49,12 @@ public class CfgCoverage {
 	}
 
 	public NodeCoverage getCoverage(CfgNode node) {
-		Assert.assertTrue(node.getIdx() < nodeCoverages.size(), "node doesnot have corresponding coverage!");
-		return nodeCoverages.get(node.getIdx());
+		return getCoverage(node.getIdx());
+	}
+	
+	public NodeCoverage getCoverage(int nodeIdx) {
+		Assert.assertTrue(nodeIdx < nodeCoverages.size(), "node doesnot have corresponding coverage!");
+		return nodeCoverages.get(nodeIdx);
 	}
 	
 	public NodeCoverage addCoverage(CfgNode node) {

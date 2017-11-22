@@ -22,11 +22,7 @@ import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
- * NOTE for BranchRelationship: for a decision node in which instruction is reverted in byte code, 
- * we still handle it as in the normal flow of source code.
- * So the logic will be as in the source code instead of the byte code.
- * Meanwhile, decision instruction of a loop condition keep the same logic in byte code, the branch relationship would have 
- * no different compare to source code.
+ * BranchRelationship, and DecisionBranchType are all about byte code level, not source code as previous design.
  */
 public class CfgNode {
 	public static int INVALID_IDX = -1;
@@ -35,12 +31,17 @@ public class CfgNode {
 	private int idx = INVALID_IDX;
 	private int line;
 	
+	private boolean isDecisionNode;
+	// TODO-NICE TO HAVE: implement for convenient if necessary
+	private boolean isNegated; // flag which indicates whether the logic of condition is negated by compiler.
+
 	/* if node is inside a loop, keep that loop header (should be a decision node) */
 	private List<CfgNode> loopHeaders;
-	private boolean isDecisionNode;
 
 	/* branches are all children of node */
 	private List<CfgNode> branches;
+	private Map<DecisionBranchType, CfgNode> decisionBranches;
+	
 	/* parent nodes */
 	private List<CfgNode> predecessors;
 	
@@ -64,7 +65,7 @@ public class CfgNode {
 	}
 
 	public void addBranch(CfgNode node, BranchRelationship branchRelationship) {
-		branches = CollectionUtils.initIfEmpty(branches);
+		branches = CollectionUtils.initIfEmpty(branches, 2);
 		branches.add(node);
 		addBranchRelationship(node, branchRelationship);
 	}
@@ -145,6 +146,19 @@ public class CfgNode {
 		sb.append(String.format("node[%d,%s,line %d]", idx, OpcodeUtils.getCode(insnNode.getOpcode()), line));
 		if (isDecisionNode) {
 			sb.append(", decis");
+			if (isNegated) {
+				sb.append("(neg)");
+			}
+			if (decisionBranches != null) {
+				int trueBranchId = decisionBranches.get(DecisionBranchType.TRUE).idx;
+				int falseBranchId = decisionBranches.get(DecisionBranchType.FALSE).idx;
+				sb.append("{T=").append(trueBranchId)
+					.append(",F=").append(falseBranchId)
+					.append("}");
+				sb.append("(").append(trueBranchId).append("=").append(getBranchRelationship(trueBranchId))
+					.append(",").append(falseBranchId).append("=").append(getBranchRelationship(falseBranchId))
+					.append(")");
+			}
 		}
 		if (isLoopHeader()) {
 			sb.append(", loopHeader");
@@ -168,7 +182,7 @@ public class CfgNode {
 			return INVALID_IDX;
 		}
 		for (CfgNode child : branches) {
-			/* if the node try to jump backward, it must be a loop header */
+			/* if the node try to jump backward, it might be a loop header */
 			if (child.idx < idx) {
 				return child.idx;
 			}
@@ -279,6 +293,43 @@ public class CfgNode {
 		for (CfgNode branch : CollectionUtils.nullToEmpty(branches)) {
 			if (getBranchRelationship(branch.getIdx()) == relationship) {
 				return branch;
+			}
+		}
+		return null;
+	}
+	
+	public List<CfgNode> findBranches(BranchRelationship relationship) {
+		List<CfgNode> result = new ArrayList<CfgNode>(2);
+		for (CfgNode branch : CollectionUtils.nullToEmpty(branches)) {
+			if (getBranchRelationship(branch.getIdx()) == relationship) {
+				result.add(branch);
+			}
+		}
+		return result;
+	}
+	
+	public void setDecisionBranch(CfgNode branch, DecisionBranchType type) {
+		if (decisionBranches == null) {
+			decisionBranches = new HashMap<DecisionBranchType, CfgNode>();
+		}
+		decisionBranches.put(type, branch);
+	}
+	
+	public CfgNode getDecisionBranch(DecisionBranchType type) {
+		if (decisionBranches == null) {
+			return null;
+		}
+		return decisionBranches.get(type);
+	}
+	
+	public DecisionBranchType getDecisionBranchType(int nodeIdx) {
+		if (decisionBranches == null) {
+			return null;
+		}
+		for (DecisionBranchType type : DecisionBranchType.values()) {
+			CfgNode branch = getDecisionBranch(type);
+			if (branch != null && (branch.getIdx() == nodeIdx)) {
+				return type;
 			}
 		}
 		return null;

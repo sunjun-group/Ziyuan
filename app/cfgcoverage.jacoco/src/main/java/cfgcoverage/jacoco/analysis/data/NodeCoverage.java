@@ -176,7 +176,7 @@ public class NodeCoverage {
 	public BranchCoveredType getBranchCoveredType() {
 		BranchCoveredType type = BranchCoveredType.NONE;
 		for (int branchIdx : getCoveredBranches()) {
-			type = BranchCoveredType.append(type, cfgNode.getBranchRelationship(branchIdx));
+			type = BranchCoveredType.append(type, cfgNode.getDecisionBranchType(branchIdx));
 		}
 		return type;
 	}

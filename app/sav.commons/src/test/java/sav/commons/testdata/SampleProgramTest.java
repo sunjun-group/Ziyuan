@@ -9,7 +9,7 @@ public class SampleProgramTest {
 	
 	
 	@Test
-	public void test1() {
+	public void test0() {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(1, 1, 1);
 		
@@ -18,7 +18,7 @@ public class SampleProgramTest {
 	}
 	
 	@Test
-	public void test2() {
+	public void test1() {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(1, 2, 3);
 		
@@ -27,7 +27,7 @@ public class SampleProgramTest {
 	}
 	
 	@Test
-	public void test3() {
+	public void test2() {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(3, 2, 1);
 		
@@ -36,7 +36,7 @@ public class SampleProgramTest {
 	}
 	
 	@Test
-	public void test4() {
+	public void test3() {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(3, 1, 2);
 		
@@ -45,7 +45,7 @@ public class SampleProgramTest {
 	}
 	
 	@Test
-	public void test5() {
+	public void test4() {
 		SamplePrograms sampleProgram = new SamplePrograms();
 		int max = sampleProgram.Max(1, 3, 2);
 		

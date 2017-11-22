@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CFG;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
@@ -87,7 +88,7 @@ public class CfgConstructorUtils {
 	/**
 	 * in a simple case which only contain one loop condition, the 
 	 * the node which has backward jump is also a loop header,
-	 * but in case there are more than loop condition, we should consider the first condition
+	 * but in case there are more than one loop condition, we should consider the first condition
 	 * as the loop header.
 	 * @param list 
 	 * */
@@ -98,9 +99,9 @@ public class CfgConstructorUtils {
 			 * this must be the correct loop header. 
 			 * */
 			if (inLoopNode.isDecisionNode()) {
-				/* in case of a loop condition, the false branch will be out of the loop */
-				CfgNode falseBranch = inLoopNode.getBranch(BranchRelationship.FALSE);
-				if (falseBranch != null && falseBranch.getIdx() > hasBackwardJumpNode.getIdx()) {
+				/* in case of a loop condition, the true branch will be out of the loop */
+				CfgNode trueBranch = inLoopNode.getDecisionBranch(DecisionBranchType.TRUE);
+				if (trueBranch != null && trueBranch.getIdx() > hasBackwardJumpNode.getIdx()) {
 					return inLoopNode;
 				}
 			}
@@ -111,11 +112,11 @@ public class CfgConstructorUtils {
 	public static void updateDecisionNodes(CFG cfg) {
 		for (CfgNode node : cfg.getNodeList()) {
 			if (CollectionUtils.getSize(node.getBranches()) > 1) {
-				node.setDecisionNode(true);
+				node.setDecisionNode(true);	
 			}
 		}
 	}
-
+	
 	/**
 	 * build up cfgNode dominatees and dependentees
 	 * @param cfg

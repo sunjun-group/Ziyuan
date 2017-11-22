@@ -8,11 +8,13 @@
 
 package cfgcoverage.jacoco.analysis.data;
 
+import java.util.List;
 import java.util.Set;
 
 import org.jacoco.core.internal.flow.Instruction;
 
 import cfgcoverage.jacoco.utils.OpcodeUtils;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -47,7 +49,7 @@ public class ExtInstruction extends Instruction {
 		setCovered(null, count);
 	}
 	
-	public void updateTrueBranchCvgInCaseMultitargetJumpSources() {
+	public void updateNextBranchCvgInCaseMultitargetJumpSources() {
 		if (nextNode != null) {
 			updateBranchCvg(nextNode);
 		}
@@ -56,20 +58,33 @@ public class ExtInstruction extends Instruction {
 	public void updateBranchCvg(ExtInstruction branchInsn) {
 		Set<Integer> coverTcs = branchInsn.nodeCoverage.getUndupCoveredTcs().keySet();
 		for (Integer coverTc : coverTcs) {
-			nodeCoverage.updateCoveredBranchesForTc(branchInsn.cfgNode, coverTc);
+			if (nodeCoverage.isCovered(coverTc)) {
+				nodeCoverage.updateCoveredBranchesForTc(branchInsn.cfgNode, coverTc);
+			}
 		}
 	}
 
-	public void updateFalseBranchCvgInCaseMultitargetJumpSources() {
-		CfgNode trueFalseBranch = cfgNode.findBranch(BranchRelationship.TRUE_FALSE);
-		if (!nodeCoverage.isCovered(testIdx) || trueFalseBranch == null) {
+	/**
+	 * in normal cases which only have atmost one of branches of a node point to a multitarget node,
+	 * we can count exactly coverage of TRUE_FALSE branch by extracting coverage of TRUE node.
+	 * but in special cases where both branches of a node point to multitarget node,
+	 * there is no way we can distinguish coverage count for each branch, 
+	 * so we will leave the max count for such cases which is of course lead to a potential bug in cases we don't know. 
+	 * [sadly, we only can do as best as we can here]
+	 */
+	public void updateTargetBranchCvgInCaseMultitargetJumpSources() {
+		List<CfgNode> trueFalseBranches = cfgNode.findBranches(BranchRelationship.TRUE_FALSE);
+		if (!nodeCoverage.isCovered(testIdx) || CollectionUtils.isEmpty(trueFalseBranches)) {
 			return;
 		}
-		CfgNode trueBranch = cfgNode.findBranch(BranchRelationship.TRUE);
-		int trueCoveredFreq = getCoveredFreq(nodeCoverage.getCfgCoverage(), trueBranch, testIdx);
+		CfgNode falseBranch = cfgNode.findBranch(BranchRelationship.FALSE);
+		int falseCoveredFreq = getCoveredFreq(nodeCoverage.getCfgCoverage(), falseBranch, testIdx);
 		int nodeCoveredFreq = nodeCoverage.getCoveredFreq(testIdx);
-		if (nodeCoveredFreq - trueCoveredFreq > 0) {
-			nodeCoverage.updateCoveredBranchesForTc(trueFalseBranch, testIdx);
+		for (CfgNode trueFalseBranch : trueFalseBranches) {
+			int trueFalseBranchCvg = getCoveredFreq(nodeCoverage.getCfgCoverage(), trueFalseBranch, testIdx);
+			if (nodeCoveredFreq - falseCoveredFreq > 0 && trueFalseBranchCvg > 0) {
+				nodeCoverage.updateCoveredBranchesForTc(trueFalseBranch, testIdx);
+			}
 		}
 	}
 	
@@ -117,16 +132,15 @@ public class ExtInstruction extends Instruction {
 		if (!newCfg) {
 			return;
 		}
+		if (OpcodeUtils.isCondition(source.cfgNode.getInsnNode().getOpcode())) {
+			source.cfgNode.setDecisionBranch(cfgNode, DecisionBranchType.TRUE);
+		}
 		/* jump to a multitarget label */
 		if (multiTarget) {
 			cfgNode.setPredecessor(source.cfgNode, BranchRelationship.TRUE_FALSE);
 			return;
 		}
 		BranchRelationship branchRelationship = BranchRelationship.TRUE;
-		boolean jumpForward = source.cfgNode.getIdx() < this.cfgNode.getIdx();
-		if (jumpForward && OpcodeUtils.isCondition(source.cfgNode.getInsnNode().getOpcode())) {
-			branchRelationship = BranchRelationship.FALSE;
-		}
 		
 		cfgNode.setPredecessor(source.cfgNode, branchRelationship);
 	}

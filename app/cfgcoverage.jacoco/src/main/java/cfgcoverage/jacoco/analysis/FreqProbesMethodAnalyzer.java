@@ -24,8 +24,9 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
+import cfgcoverage.jacoco.utils.OpcodeUtils;
 
 /**
  * @author LLT
@@ -71,25 +72,16 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 	protected void visitInsn() {
 		super.visitInsn();
 		if (thisLastInsn != null) {
+			ExtInstruction lastExtInsn = (ExtInstruction) lastInsn;
+			ExtInstruction thisLastExtInsn = (ExtInstruction) thisLastInsn;
 			BranchRelationship branchRelationship = BranchRelationship.TRUE;
-			if (isLastLoopConditionNode((ExtInstruction)thisLastInsn)) {
+			if (OpcodeUtils.isCondition(thisLastInsn.getNode().getOpcode())) {
 				branchRelationship = BranchRelationship.FALSE;
+				thisLastExtInsn.getCfgNode().setDecisionBranch(lastExtInsn.getCfgNode(), DecisionBranchType.FALSE);
 			}
-			((ExtInstruction) lastInsn).setNodePredecessor((ExtInstruction) thisLastInsn, branchRelationship);
+			lastExtInsn.setNodePredecessor((ExtInstruction) thisLastInsn, branchRelationship);
 		}
 		this.thisLastInsn = lastInsn;
-	}
-	
-	private boolean isLastLoopConditionNode(ExtInstruction insn) {
-		for (Jump j : jumps) {
-			if (j.getSource().equals(insn)) {
-				ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
-				if (target != null && target.getCfgNode().getIdx() < insn.getCfgNode().getIdx()) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 	
 	@Override
@@ -133,67 +125,19 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		}
 		/* update true branch coverage for multitaget jump source */
 		for (ExtInstruction insn : multitargetJumpSources) {
-			insn.updateTrueBranchCvgInCaseMultitargetJumpSources();
+			insn.updateNextBranchCvgInCaseMultitargetJumpSources();
 		}
 		createBranchFromJumps(jumps, false);
 		createBranchFromJumps(multitargetJumps, true);
-//		reconcileMultitargetJumpOfTrueBranch(multitargetJumpSources);
 		/* update false branch coverage for multitaget jump source */
 		for (ExtInstruction insn : multitargetJumpSources) {
-			insn.updateFalseBranchCvgInCaseMultitargetJumpSources();
+			insn.updateTargetBranchCvgInCaseMultitargetJumpSources();
 		}
 		coverageBuilder.endMethod();
 	}
 
 	/**
-	 * TODO LLT: fix the case CfgJaCoCoTest.testNestedLoopCondition()
-	 * @param multitargetJumpSources
-	 */
-	private void reconcileMultitargetJumpOfTrueBranch(List<ExtInstruction> multitargetJumpSources) {
-		for (ExtInstruction insn : multitargetJumpSources) {
-			CfgNode cfgNode = insn.getCfgNode();
-			CfgNode trueBranch = cfgNode.findBranch(BranchRelationship.TRUE);
-			if (trueBranch != null) {
-				continue;
-			}
-			List<CfgNode> trueFalseBranches = new ArrayList<CfgNode>(2);
-			for (CfgNode branch : cfgNode.getBranches()) {
-				if (cfgNode.getBranchRelationship(branch.getIdx()) == BranchRelationship.TRUE_FALSE) {
-					trueFalseBranches.add(branch);
-				}
-			}
-			if (trueFalseBranches.size() == 2) {
-				trueBranch = getTrueBranch(trueFalseBranches);
-				cfgNode.updateBranchRelationship(trueBranch.getIdx(), BranchRelationship.TRUE);
-				ExtInstruction coveredBranchInsn = lookupBranchInsn(trueBranch);
-				if (coveredBranchInsn != null) {
-					insn.updateBranchCvg(coveredBranchInsn);
-				}
-			}
-		}
-	}
-	
-	private ExtInstruction lookupBranchInsn(CfgNode trueBranch) {
-		for (Instruction insn : coveredProbes.keySet()) {
-			if (((ExtInstruction) insn).getCfgNode() == trueBranch) {
-				return (ExtInstruction) insn;
-			}
-		}
-		return null;
-	}
-
-	private static CfgNode getTrueBranch(List<CfgNode> trueFalseBranches) {
-		CfgNode trueBranch = null;
-		for (CfgNode branch : trueFalseBranches) {
-			if (trueBranch == null || (branch.getIdx() < trueBranch.getIdx())) {
-				trueBranch = branch;
-			} 
-		}
-		return trueBranch;
-	}
-
-	/**
-	 * @return
+	 * @return source nodes of multitarget jumps
 	 */
 	private List<ExtInstruction> getMultitargetJumpSources() {
 		List<ExtInstruction> insns = new ArrayList<ExtInstruction>(multitargetJumps.size());

@@ -16,8 +16,12 @@ public class LoopSample {
 	
 	public void run() {
 		int i = 0;
+		long start = System.currentTimeMillis();
 		while(true) {
 			System.out.println(i);
+			if ((System.currentTimeMillis() - start) >= 100) {
+				break;
+			}
 		}
 	}
 }

@@ -13,22 +13,46 @@ package cfgcoverage.jacoco.testdata;
  *
  */
 public class IfSample {
-
-	public void run(int a) {
-		if (a < 0) {
-			System.out.println(a);
+	
+	public void cond(int a, int b) {
+		if ((a == 1)) {
+			if (b > 0) {
+				System.out.println();
+				if (b < 3) {
+					System.out.println();
+				}
+			}
 		}
-		
-		System.out.println("c");
+		System.out.println();
 	}
 	
-	public void multiCond(int a, int b) {
-		if ((a == 1) || (b > 0)) {
+	public void multiCondOr(int a, int b) {
+		if ((a == 1) || (b > 0) || (a > b)) {
 			System.out.println();
 			if (b < 3) {
 				System.out.println();
 			}
 		}
-		
+		System.out.println();
+	}
+	
+	public void multiCondAnd(int a, int b) {
+		if ((a != 1) && (b > 0) && (a > b)) {
+			System.out.println();
+			if (b < 3) {
+				System.out.println();
+			}
+		}
+		System.out.println();
+	}
+	
+	public void multiCondAndOr(int a, int b) {
+		if (((a == 1) || (b > 0)) && (a > b)) {
+			System.out.println();
+			if (b < 3) {
+				System.out.println();
+			}
+		}
+		System.out.println();
 	}
 }

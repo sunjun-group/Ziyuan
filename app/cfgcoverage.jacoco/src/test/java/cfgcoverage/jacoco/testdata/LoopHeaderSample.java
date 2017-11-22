@@ -13,6 +13,15 @@ package cfgcoverage.jacoco.testdata;
  *
  */
 public class LoopHeaderSample {
+	
+	public void multiLoopCond1() {
+		int x = 1;
+		int y = 3;
+		while (x < 4 
+				|| (y < 5 && y > 1)) {
+			x += y;
+		}
+	}
 
 	public void multiLoopCond() {
 		int x = 1;
