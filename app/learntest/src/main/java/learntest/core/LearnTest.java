@@ -14,6 +14,7 @@ import cfgextractor.CFGBuilder;
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
+import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.exception.LearnTestException;
@@ -170,6 +171,9 @@ public class LearnTest extends AbstractLearntest {
 		}
 		/* init test */
 		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params, GenTestPackage.INIT);
+		if (CollectionUtils.existIn(params.getApproach(), LearnTestApproach.JDART, LearnTestApproach.L2T)) {
+			gentestParams.setGenerateMainClass(true);
+		}
 		randomGenerateInitTestWithBestEffort(params, gentestParams);
 		logInitTests(params.getInitialTests().getJunitClasses());
 	}

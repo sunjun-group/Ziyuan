@@ -22,21 +22,12 @@ public class FixLengthArrayValueGenerator {
 		while (contentType.isArray()) {
 			contentType = contentType.getComponentType();
 		}
-
 		GeneratedVariable variable = new GeneratedVariable(firstVarId);
 		RArrayConstructor arrayConstructor = new RArrayConstructor(arrayLength, type.getRawType(),
 				contentType.getRawType());
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
 		return variable;
-	}
-	
-	@Deprecated
-	/**
-	 * LLT: TO REMOVE! 9NOV2017
-	 */
-	public GeneratedVariable generate(IType type, int firstVarId, int size) {
-		return generate(type, firstVarId, new int[] { size });
 	}
 	
 	public static int[] customizeArrayAndDetermineLength(ArrayValue value, Class<?> contentType, int dimension) {

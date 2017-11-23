@@ -178,9 +178,6 @@ public class LearnedDataProcessor {
 			 */
 			List<ExecVar> vars = decisionProbes.getOriginalVars();
 			List<double[]> solution = getNeighborTc(missingBranch, nodeProbe, vars);
-			if (solution == null) {
-				return false;
-			}
 			try {
 				GentestResult mainResult = mediator.genMainAndCompile(solution, vars, PrintOption.APPEND);
 				List<File> generatedClasses = mainResult.getAllFiles();
@@ -214,10 +211,6 @@ public class LearnedDataProcessor {
 		BreakpointValue dataPoint = dataPoints.get(0);
 		double[] values = new double[vars.size()];
 		int i =0;
-		// TODO LLT: WORKAROUND NPE for TRUE_FALSE cases
-		if(dataPoint == null) {
-			return null;
-		}
 		for (ExecVar var : vars) {
 			values[i] = dataPoint.getValue(var.getVarId(), (double)0);
 			i++;

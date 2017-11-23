@@ -27,6 +27,7 @@ import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CfgUtils;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.TextFormatUtils;
 import variable.Variable;
 
 /**
@@ -65,6 +66,7 @@ public abstract class AbstractDecisionLearner extends AbstractLearningComponent 
 					indexMap);
 		} catch(Exception e) {
 			e.printStackTrace();
+			log.debug(TextFormatUtils.printObj(e.getStackTrace()));
 			throw e;
 		} finally {
 			onFinishLearning();

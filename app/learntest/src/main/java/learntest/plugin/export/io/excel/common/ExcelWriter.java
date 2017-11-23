@@ -101,9 +101,7 @@ public class ExcelWriter {
 	public void addCell(Row row, int cellIdx, double value) {
 		if (!Double.isNaN(value)) {
 			row.createCell(cellIdx).setCellValue(value);
-		} else {
-			row.createCell(cellIdx).setCellValue("NaN");
-		}
+		} 
 	}
 
 	public void addCell(Row row, int cellIdx, String value) {
