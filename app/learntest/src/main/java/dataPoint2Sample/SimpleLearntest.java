@@ -2,22 +2,21 @@ package dataPoint2Sample;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearntest;
 import learntest.core.BreakpointCreator;
 import learntest.core.LearnTestParams;
 import learntest.core.LearningMediator;
 import learntest.core.LearntestParamsUtils;
-import learntest.core.RunTimeInfo;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
-import learntest.core.commons.exception.LearnTestException;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
 import sav.common.core.SavException;
@@ -64,7 +63,7 @@ public class SimpleLearntest extends AbstractLearntest {
 		/**
 		 * run testcases
 		 */
-		BreakpointData result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
+		List<BreakpointValue> result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
 		if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage)) {
 			log.info("no decision node is covered!");
 		} else {
@@ -81,17 +80,6 @@ public class SimpleLearntest extends AbstractLearntest {
 		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params,
 				GenTestPackage.INIT);
 		randomGenerateInitTestWithBestEffort(params, gentestParams);
-	}
-
-	private DecisionProbes initProbes(TargetMethod targetMethod, CfgCoverage cfgcoverage, BreakpointData result)
-			throws LearnTestException {
-		DecisionProbes probes = new DecisionProbes(targetMethod, cfgcoverage);
-		List<BreakpointValue> entryValues = result.getAllValues();
-		if (CollectionUtils.isEmpty(entryValues)) {
-			throw new LearnTestException("cannot get entry value when coverage is still not empty");
-		}
-		probes.setRunningResult(entryValues);
-		return probes;
 	}
 
 	protected void init(LearnTestParams params) {

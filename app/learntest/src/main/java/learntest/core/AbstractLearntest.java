@@ -8,6 +8,7 @@
 
 package learntest.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,10 +24,12 @@ import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.DefaultValues;
-import icsetlv.common.dto.BreakpointData;
+import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.TestcasesExecutor;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
+import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.core.commons.exception.LearnTestException;
 import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
@@ -160,12 +163,26 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		return tInfo;
 	}
 	
-	protected BreakpointData executeTestcaseAndGetTestInput(List<String> testcases, BreakPoint methodEntryBkp)
+	protected DecisionProbes initProbes(TargetMethod targetMethod, CfgCoverage cfgcoverage, List<BreakpointValue> entryValues)
+			throws LearnTestException {
+		DecisionProbes probes = new DecisionProbes(targetMethod, cfgcoverage);
+		if (CollectionUtils.isEmpty(entryValues)) {
+			throw new LearnTestException("cannot get entry value when coverage is still not empty");
+		}
+		probes.setRunningResult(entryValues);
+		return probes;
+	}
+	
+	protected List<BreakpointValue> executeTestcaseAndGetTestInput(List<String> testcases, BreakPoint methodEntryBkp)
 			throws SavException, SAVExecutionTimeOutException {
 		ensureTestcaseExecutor();
 		testcaseExecutor.setup(appClasspath, testcases);
 		testcaseExecutor.run(CollectionUtils.listOf(methodEntryBkp, 1));
-		BreakpointData result = CollectionUtils.getFirstElement(testcaseExecutor.getResult());
+		List<BreakpointValue> result = new ArrayList<BreakpointValue>(testcases.size());
+		Map<Integer, List<BreakpointValue>> bkpValsMap = testcaseExecutor.getBkpValsByTestIdx();
+		for (int i = 0; i < testcases.size(); i++) {
+			result.add(bkpValsMap.get(i).get(0));
+		}
 		return result;
 	}
 	

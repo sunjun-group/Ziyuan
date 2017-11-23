@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgextractor.CFGBuilder;
-import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
@@ -74,7 +73,7 @@ public class LearnTest extends AbstractLearntest {
 			/**
 			 * run testcases
 			 */
-			BreakpointData result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
+			List<BreakpointValue> result = executeTestcaseAndGetTestInput(params.getInitialTestcases(), methodEntryBkp);
 			if (CoverageUtils.noDecisionNodeIsCovered(cfgCoverage) || (firstCoverage == 1.0)) {
 				if (firstCoverage != 1.0) {
 					log.info("No decision node is covered!");
@@ -189,15 +188,6 @@ public class LearnTest extends AbstractLearntest {
 		mediator = new LearningMediator(appClasspath, params);
 	}
 
-	private DecisionProbes initProbes(TargetMethod targetMethod, CfgCoverage cfgcoverage, BreakpointData result)
-			throws LearnTestException {
-		DecisionProbes probes = new DecisionProbes(targetMethod, cfgcoverage);
-		List<BreakpointValue> entryValues = result.getAllValues();
-		if (CollectionUtils.isEmpty(entryValues)) {
-			throw new LearnTestException("cannot get entry value when coverage is still not empty");
-		}
-		probes.setRunningResult(entryValues);
-		return probes;
-	}
+
 
 }

@@ -181,6 +181,10 @@ public class TestcasesExecutor extends JunitDebugger {
 		return CollectionUtils.initIfEmpty(result);
 	}
 	
+	public Map<Integer, List<BreakpointValue>> getBkpValsByTestIdx() {
+		return bkpValsByTestIdx;
+	}
+	
 	public JunitResult getjResult() {
 		return jResult;
 	}
