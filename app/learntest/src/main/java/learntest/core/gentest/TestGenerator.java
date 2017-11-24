@@ -27,7 +27,6 @@ import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
 import gentest.injection.TestcaseGenerationScope;
 import gentest.junit.FileCompilationUnitPrinter;
-import gentest.junit.ICompilationUnitWriter;
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import learntest.core.commons.LearntestExceptionType;
@@ -66,9 +65,10 @@ public class TestGenerator {
 		} 
 		/* if main class is required to be generated, we need to do a little more */
 		MainClassJWriter cuWriter = new MainClassJWriter(printerParams.getPkg(),
-				printerParams.getClassPrefix());
+				printerParams.getClassPrefix(), params.extractTestcaseSequenceMap());
 		printer.setCuWriter(cuWriter);
 		GentestResult result = gentest(params, printer);
+		result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
 		/* add main class */
 		result.setMainClassName(TestsPrinter.getJunitClassName(cuWriter.getMainClass()));
 		FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(printerParams.getSrcPath());
@@ -96,12 +96,15 @@ public class TestGenerator {
 		log.debug(timer.getResult());
 		return result;
 	}
+	
+	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars)
+			throws SavException {
+		return genTestAccordingToSolutions(params, solutions, vars,
+				new LearntestJWriter(params.extractTestcaseSequenceMap()));
+	}
 
-	/**
-	 * @param printOption whether to append existing test file or create a new one.
-	 */
 	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars,
-			ICompilationUnitWriter cuWriter) throws SavException {
+			LearntestJWriter cuWriter) throws SavException {
 		MethodCall target = createMethodCall(params);
 		if (target == null) {
 			return null;
@@ -132,6 +135,7 @@ public class TestGenerator {
 		printer.setCuWriter(cuWriter);
 		result.setJunitClassNames(printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0))));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
+		result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
 		return result;
 	}
 

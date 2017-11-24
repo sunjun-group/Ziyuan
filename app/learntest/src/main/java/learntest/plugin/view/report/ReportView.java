@@ -130,7 +130,7 @@ public class ReportView extends ViewPart implements IJavaGentestCompleteListener
 		} catch (InterruptedException e) {
 			// do nothing
 		}
-		getSite().getPage().bringToTop(this);
+//		getSite().getPage().bringToTop(this);
 	}
 
 }

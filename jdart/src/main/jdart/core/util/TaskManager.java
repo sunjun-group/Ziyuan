@@ -29,8 +29,8 @@ public class TaskManager {
 			    handle.setPointer(Pointer.createConstant(handl));
 			    pid = kernel.GetProcessId(handle);
 			  } catch (Throwable e) {
-				  log.info(e.toString());
-				  e.printStackTrace();
+				  log.debug(e.toString());
+//					e.printStackTrace();
 			  }
 		}else if(process.getClass().getName().equals("java.lang.UNIXProcess")) {
 			  /* get the PID on unix/linux systems */
@@ -39,8 +39,8 @@ public class TaskManager {
 			    f.setAccessible(true);
 			    pid = f.getInt(process);
 			  } catch (Throwable e) {
-				  log.info(e.toString());
-				  e.printStackTrace();
+				  log.debug(e.toString());
+//					e.printStackTrace();
 			  }
 		}
 		return pid;
@@ -58,12 +58,12 @@ public class TaskManager {
 	public static void printCurrentJVM() {
 		Map<Integer, LocalVirtualMachine> virtualMachines = LocalVirtualMachine.getAllVirtualMachines();
 		for (final Entry<Integer, LocalVirtualMachine> entry : virtualMachines.entrySet()) {
-	        System.out.println(entry.getKey() + " : " + entry.getValue().displayName());
+			log.debug(entry.getKey() + " : " + entry.getValue().displayName());
 	    }
 		if (virtualMachines.size()>=3) {
-			log.info("The number of JVM is larger than 2");
+			log.debug("The number of JVM is larger than 2");
 			for (final Entry<Integer, LocalVirtualMachine> entry : virtualMachines.entrySet()) {
-				log.info(entry.getKey() + " : " + entry.getValue().displayName());
+				log.debug(entry.getKey() + " : " + entry.getValue().displayName());
 		    }
 		}
 	}
@@ -72,7 +72,7 @@ public class TaskManager {
 			TaskManager.kill(20192);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 }

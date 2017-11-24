@@ -8,9 +8,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import config.IJDartSettings;
 import jdart.core.JDartCore;
 import jdart.core.JDartParams;
 import jdart.core.util.TaskManager;
@@ -18,56 +20,57 @@ import jdart.model.TestInput;
 import sav.strategies.vm.VMConfiguration;
 
 public class JDartProcessOnDemand {
-
+	private IJDartSettings settings;
 	private static Logger log = LoggerFactory.getLogger(JDartProcessOnDemand.class);
 
-
-	public static void main(String[] args) {
-		JDartProcessOnDemand process = new JDartProcessOnDemand();
-		List<TestInput> result = process.run(JDartParams.defaultOnDemandJDartParams(), "");		
-		System.out.println(result);
+	public JDartProcessOnDemand(IJDartSettings settings) {
+		this.settings = settings;
 	}
 
 	public List<TestInput> run(JDartParams jdartParams,String jdartInitTc) {
 		TaskManager.printCurrentJVM();
-		String[] args = new String[] { jdartParams.getClasspathStr(), jdartParams.getMainEntry(),
+		String[] args = new String[] { 
+				jdartParams.getClasspathStr(), jdartParams.getMainEntry(),
 				jdartParams.getClassName(), jdartParams.getMethodName(), jdartParams.getParamString(),
 				jdartParams.getAppProperties(), jdartParams.getSiteProperties(),
+				jdartParams.getOnDemandSiteProperties(),
 				""+jdartParams.getExploreNode(), ""+jdartParams.getExploreBranch(),
 				jdartInitTc};
 		List<TestInput> list = null;
 		try {
-			list = JDartProcessOnDemand.exec(JDartOnDemandClient.class, args);
+			list = exec(JDartOnDemandClient.class, args);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			log.info("JDart return 0 test case");
+//			e.printStackTrace();
+			log.debug("JDart return 0 test case");
 		}
 		if (list != null) {
-			log.info("JDart return " + list.size() +" test cases");
+			log.debug("JDart return " + list.size() +" test cases");
 		}else {
-			log.info("JDart return null");
+			log.debug("JDart return null");
 		}
 		return list;
 	}
 
-	public static List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {
-		String classpathStr, mainEntry, targetClass, methodName, paramString, app, site, node, branch, jdartInitTc;
-		classpathStr = args[0];
-		mainEntry = args[1];
-		targetClass = args[2];
-		methodName = args[3];
-		paramString = args[4];
-		app = args[5];
-		site = args[6];
-		node = args[7];
-		branch = args[8];
-		jdartInitTc= args[9];
+	public List<TestInput> exec(Class klass, String[] args) throws IOException, InterruptedException {
+		String classpathStr, mainEntry, targetClass, methodName, paramString, app, site, onDemandSite, node, branch, jdartInitTc;
+		int idx = 0;
+		classpathStr = args[idx++];
+		mainEntry = args[idx++];
+		targetClass = args[idx++];
+		methodName = args[idx++];
+		paramString = args[idx++];
+		app = args[idx++];
+		site = args[idx++];
+		onDemandSite = args[idx++];
+		node = args[idx++];
+		branch = args[idx++];
+		jdartInitTc= args[idx++];
 
 		String javaHome = System.getProperty("java.home");
 		String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
 		
-		String classpath = JDartCore.getRuntimeCP();
+		String classpath = settings.getRuntimeCP();
 					// System.getProperty("java.class.path"); // only valid when running in single project, invalid when invoked by eclipse plug-in 
 
 		String className = klass.getCanonicalName();
@@ -89,27 +92,28 @@ public class JDartProcessOnDemand {
 					if (tryTime++ <= 1000) {
 						continue;
 					}else{
-						log.info("fail to find avaiable port");
+						log.debug("fail to find avaiable port");
 						throw exception;
 					}
 				}
 			}
 			s.setSoTimeout(JDartCore.socketWaiteTime());
-			log.info("IntraSocket Start:" + s);
-			log.info("JDart method : "+targetClass+"."+methodName);
-			log.info("JDart mainEntry : "+mainEntry);
-			log.info("JDart param : "+paramString);
-			log.info("JDart node:"+node);
-			log.info("JDart branch:"+branch);
+			log.debug("IntraSocket Start:" + s);
+			log.debug("JDart method : "+targetClass+"."+methodName);
+			log.debug("JDart mainEntry : "+mainEntry);
+			log.debug("JDart param : "+paramString);
+			log.debug("JDart node:"+node);
+			log.debug("JDart branch:"+branch);
 			ProcessBuilder builder = new ProcessBuilder(javaBin, "-Xms1024m", "-Xmx9000m", "-cp", classpath, className, classpathStr, mainEntry,
-					targetClass, methodName, paramString, app, site, node, branch, jdartInitTc, ""+port);
-
-			builder.directory(new File(JDartCore.getJdartRoot()));
+					targetClass, methodName, paramString, app, site, onDemandSite, node, branch, jdartInitTc, ""+port);
+			if (settings.getProcessDirectory() != null) {
+				builder.directory(new File(settings.getProcessDirectory()));
+			}
 			process = builder.start();
 			final Process shareProcess = process;
-			pid = TaskManager.getPid(process);
-			log.info("" + pid);
-			log.info(ManagementFactory.getRuntimeMXBean().getName());
+//			pid = TaskManager.getPid(process);
+			log.debug("" + pid);
+			log.debug(ManagementFactory.getRuntimeMXBean().getName());
 			Thread ioThread = new Thread() {
 				@Override
 				public void run() {
@@ -117,27 +121,26 @@ public class JDartProcessOnDemand {
 						JDartProcess.printerInfo(shareProcess);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+//						e.printStackTrace();
 					}
 				}
 			};
 			ioThread.start();
 			socket = s.accept();
-			log.info("IntraConnection accept socket:" + socket);
+			log.debug("IntraConnection accept socket:" + socket);
 			DataInputStream dIn = new DataInputStream(socket.getInputStream());
 			JDartProcess.parseList(list, dIn);
-			log.info("receive lines size :" + list.size());
+			log.debug("receive lines size :" + list.size());
 		} catch (Exception e) {
-			log.info(e.toString());
-			e.printStackTrace();
+			log.debug(e.toString());
 		} finally {
-			log.info("kill pid : " + pid);
+			log.debug("kill pid : " + pid);
 //			LLT: it is too dangerous to kill process using task manager, we should only destroy process instead.
-//			if (process != null && process.isAlive()) {
-//				process.destroyForcibly();
-//			}
-			TaskManager.kill(pid);
-			log.info("IntraServer Close.....");
+			if (process != null && process.isAlive()) {
+				process.destroyForcibly();
+			}
+//			TaskManager.kill(pid);
+			log.debug("IntraServer Close.....");
 			try {
 				if (socket != null) {
 					socket.close();
@@ -146,7 +149,7 @@ public class JDartProcessOnDemand {
 					s.close();
 				}
 			} catch (Exception e2) {
-				e2.printStackTrace();
+				log.debug(e2.getStackTrace().toString());
 			}
 		}
 		return list.size() == 0 ? null : list;

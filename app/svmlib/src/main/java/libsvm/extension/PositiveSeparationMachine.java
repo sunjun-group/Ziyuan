@@ -192,11 +192,11 @@ public class PositiveSeparationMachine extends Machine {
 
 					super.train(trainingData);
 					
-					log.info("selected points to learn : ");
+					log.debug("selected points to learn : ");
 					for (int i = 0; i < selectedPoints.size(); i++) {
 						DataPoint p = trainingData.remove(trainingData.size() - 1);
 						selectionData.add(p); // restore removed 
-						log.info(p.toString());
+						log.debug(p.toString());
 					}
 					removeClassifiedNegativePoints(selectionData);
 					
@@ -208,7 +208,7 @@ public class PositiveSeparationMachine extends Machine {
 						if (!isContain(learnedModels, model)) {
 							learnedModels.add(model);
 							String str = getLearnedLogic(true);
-							log.info("Lin Yun: learn " + str);
+							log.debug("Lin Yun: learn " + str);
 							
 							pairList.add(new Pair<DataPoint, DataPoint>(referenceDatas.get(0), nearestDp));
 							modelSize++;
@@ -275,12 +275,12 @@ public class PositiveSeparationMachine extends Machine {
 		}
 		// Remove all negatives which are correctly separated
 		Divider roundDivider = new Model(model, getNumberOfFeatures()).getExplicitDivider().round();
-		log.info("removeClassifiedNegativePoints : " + roundDivider);
+		log.debug("removeClassifiedNegativePoints : " + roundDivider);
 		for (Iterator<DataPoint> it = selectionData.iterator(); it.hasNext();) {
 			DataPoint dp = it.next();
 			if (roundDivider.dataPointBelongTo(dp, Category.NEGATIVE)) {
 				it.remove();
-				log.info(dp.toString());
+				log.debug(dp.toString());
 			}
 		}
 	}

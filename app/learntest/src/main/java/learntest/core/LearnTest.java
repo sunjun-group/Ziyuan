@@ -14,6 +14,7 @@ import cfgextractor.CFGBuilder;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
+import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.exception.LearnTestException;
@@ -121,9 +122,9 @@ public class LearnTest extends AbstractLearntest {
 
 	private RunTimeInfo reconcileGeneratedTestsAndGetRuntimeInfo(CfgCoverage cfgCoverage, TargetMethod targetMethod, boolean testMode) {
 		/* clean up testcases */
-//		LineCoverageResult lineCoverageResult = mediator.commitFinalTests(cfgCoverage, targetMethod);
+		LineCoverageResult lineCoverageResult = mediator.commitFinalTests(cfgCoverage, targetMethod);
 		RunTimeInfo runtimeInfo = getRuntimeInfo(cfgCoverage, testMode);
-//		runtimeInfo.setLineCoverageResult(lineCoverageResult);
+		runtimeInfo.setLineCoverageResult(lineCoverageResult);
 		return runtimeInfo;
 	}
 

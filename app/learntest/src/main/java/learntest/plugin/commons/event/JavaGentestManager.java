@@ -10,15 +10,14 @@ package learntest.plugin.commons.event;
 
 import org.eclipse.core.commands.common.EventManager;
 
-import learntest.plugin.LearntestPlugin;
+import learntest.plugin.product.ProductPlugin;
 import learntest.plugin.view.report.ReportView;
-import sav.common.core.pattern.IDataProvider;
 
 /**
  * @author LLT
  *
  */
-public class JavaGentestManager extends EventManager implements IJavaGentestEventManager, IDataProvider<IJavaModelRuntimeInfo> {
+public class JavaGentestManager extends EventManager implements IGentestManager {
 	private IJavaModelRuntimeInfo javaModelRuntimeInfo;
 	private IJavaGentestStartListener defaultListener;
 	
@@ -26,7 +25,7 @@ public class JavaGentestManager extends EventManager implements IJavaGentestEven
 		defaultListener = new IJavaGentestStartListener() {
 			@Override
 			public void onStart() {
-				LearntestPlugin.displayView(ReportView.ID);
+				ProductPlugin.displayView(ReportView.ID);
 			}
 		};
 	}

@@ -18,13 +18,27 @@ public class JDartClient {
 	private static Logger log = LoggerFactory.getLogger(JDartClient.class);
 	int javaPathLimit = 500;
 
+	public static void main(String[] args) throws IOException {
+		String classpathStr, mainEntry, className, methodName, paramString, app, site;
+		classpathStr = args[0];
+		mainEntry = args[1];
+		className = args[2];
+		methodName = args[3];
+		paramString = args[4];
+		app = args[5];
+		site = args[6];
+		int port = Integer.parseInt(args[7]);
+		new JDartClient().run(JDartParams.constructJDartParams(classpathStr, mainEntry, className, methodName,
+				paramString, app, site), port);
+	}
+	
 	/***
 	 * to constraint the number of returned result, which may cause java error :
 	 * The filename or extension is too long
 	 */
 
 	public void run(JDartParams jdartParams, int port) {
-		log.info("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
+		log.debug("JDart begin : " + jdartParams.getClassName() + "." + jdartParams.getMethodName());
 		Pair<List<TestInput>, Integer> pair = null;
 		List<TestInput> result = null;
 		int solveCount = 0;
@@ -33,23 +47,23 @@ public class JDartClient {
 			result = pair.a;
 			solveCount = pair.b == null ? 0 :pair.b;
 		} catch (Exception e) {
-			e.printStackTrace();
-			log.info("Jdart error");
+//			e.printStackTrace();
+			log.debug("Jdart error");
 		}
 
-		log.info("JDart over");
+		log.debug("JDart over");
 		Socket socket = null;
 		DataOutputStream pw = null;
 		try {
 			socket = new Socket("127.0.0.1", port);
-			log.info("Connect InterSocket=" + socket);
+			log.debug("Connect InterSocket=" + socket);
 			pw = new DataOutputStream(socket.getOutputStream());
 			pw.writeInt(solveCount);
 			if (result != null) {
 				for (int i = 0; i < result.size() && i < javaPathLimit; i++) {
-					log.info("JDart result : " + result.get(i));
+					log.debug("JDart result : " + result.get(i));
 					byte[] bytes = ByteConverter.convertToBytes(result.get(i));
-					log.info("send byte[] :" + bytes.length);
+					log.debug("send byte[] :" + bytes.length);
 					pw.writeInt(bytes.length);
 					pw.write(bytes);
 					pw.flush();
@@ -58,37 +72,19 @@ public class JDartClient {
 			pw.writeInt(-1);
 			pw.flush();
 		} catch (Exception e) {
-			log.info(e.toString());
-			e.printStackTrace();
+			log.debug(e.toString());
+//			e.printStackTrace();
 		} finally {
 			try {
-				log.info("Disconnect InterSocket......");
+				log.debug("Disconnect InterSocket......");
 				pw.close();
 				socket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.debug(e.getStackTrace().toString());
 			}
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		if (args.length == 8) {
-			String classpathStr, mainEntry, className, methodName, paramString, app, site;
-			classpathStr = args[0];
-			mainEntry = args[1];
-			className = args[2];
-			methodName = args[3];
-			paramString = args[4];
-			app = args[5];
-			site = args[6];
-			int port = Integer.parseInt(args[7]);
-			new JDartClient().run(JDartParams.constructJDartParams(classpathStr, mainEntry, className, methodName,
-					paramString, app, site), port);
-		} else {
-			new JDartClient().run(JDartParams.defaultJDartParams(), 8989);
-		}
-	}
-	
 	private void printByte(List<TestInput> result){
 		for (int i = 0; i < result.size(); i++) {
 			try {
@@ -97,11 +93,11 @@ public class JDartClient {
 				for (byte b : bytes) {
 					stringBuffer.append(b + "\t");
 				}
-				log.info(stringBuffer.toString());
+				log.debug(stringBuffer.toString());
 				TestInput testInput = (TestInput) ByteConverter.convertFromBytes(bytes);
 			} catch (IOException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 	}

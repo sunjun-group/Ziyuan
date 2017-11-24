@@ -25,9 +25,9 @@ import learntest.plugin.utils.IStatusUtils;
  */
 public class LearntestLogger {
 
-	public static void initLog4j(String projectName) throws PluginException {
+	public static void initLog4j(String projectName, String propertiesFile) throws PluginException {
 		try {
-			ResourceBundle log4j = ResourceBundle.getBundle("learntest_log4j");
+			ResourceBundle log4j = ResourceBundle.getBundle(propertiesFile);
 			Properties props = new Properties();
 			for (String key : log4j.keySet()) {
 				props.setProperty(key, log4j.getString(key));

@@ -126,10 +126,10 @@ public class ExcelExplorer {
 					}
 					if (detailTrial.getL2t() > 0 && jdartCov > detailTrial.getL2t()) {
 						jdartB++;
-//						System.out.println("jdart better : " + trial.getMethodName() + "_" + trial.getLine() + " , " + jdartCov);
+//						log.debug("jdart better : " + trial.getMethodName() + "_" + trial.getLine() + " , " + jdartCov);
 					}else if (jdartCov == detailTrial.getL2t()) {
 						jdartE++;
-//						System.out.println("jdart equal : " + trial.getMethodName() + "_" + trial.getLine() + " , " + jdartCov);						
+//						log.debug("jdart equal : " + trial.getMethodName() + "_" + trial.getLine() + " , " + jdartCov);						
 					}
 					
 					if (detailTrial.getL2t() > 0 && detailTrial.getL2t() < evosuiteCov) {

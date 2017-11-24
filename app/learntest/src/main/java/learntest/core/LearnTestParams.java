@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
@@ -151,9 +152,14 @@ public class LearnTestParams {
 		return systemConfig;
 	}
 	
+	public String getSystemConfig(LearntestSystemVariable var) {
+		return getSystemConfig().get(var.name());
+	}
+	
 	public static enum LearntestSystemVariable implements ISystemVariable {
 		JDART_APP_PROPRETIES,
-		JDART_SITE_PROPRETIES;
+		JDART_SITE_PROPRETIES,
+		JDART_ON_DEMAND_SITE_PROPERTIES;
 
 		public String getName() {
 			return name();

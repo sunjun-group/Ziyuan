@@ -18,14 +18,14 @@ import java.util.Set;
  *
  */
 public class JWriter implements ICompilationUnitWriter {
-	private static final String JUNIT_TEST_ANNOTATION = "Test";
-	private static final String DEPRECATION_SUPPRESS_WARNING = "SuppressWarnings(\"deprecation\")";
-	private static final String JUNIT_TEST_ANNOTATION_IMPORT = "org.junit.Test";
-	private static final String JUNIT_ASSERT_CLAZZ = "org.junit.Assert";
+	protected static final String JUNIT_TEST_ANNOTATION = "Test";
+	protected static final String DEPRECATION_SUPPRESS_WARNING = "SuppressWarnings(\"deprecation\")";
+	protected static final String JUNIT_TEST_ANNOTATION_IMPORT = "org.junit.Test";
+	protected static final String JUNIT_ASSERT_CLAZZ = "org.junit.Assert";
 	private String clazzSimpleName;
 	private String packageName;
 	private String methodPrefix;
-	private Set<String> duplicateImports;
+	protected Set<String> duplicateImports;
 	
 	public JWriter() {
 		duplicateImports = new HashSet<String>();

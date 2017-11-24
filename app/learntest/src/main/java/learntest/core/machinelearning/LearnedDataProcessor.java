@@ -147,7 +147,7 @@ public class LearnedDataProcessor {
 				sBuffer.append(d + ",");
 			}
 		}
-		log.info(sBuffer.toString());
+		log.debug(sBuffer.toString());
 		sBuffer.append("\n");
 		FileUtils.write(logFile, sBuffer.toString());
 		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
@@ -183,7 +183,7 @@ public class LearnedDataProcessor {
 				List<File> generatedClasses = mainResult.getAllFiles();
 				File generatedClasse = generatedClasses.get(0);
 				String generatedClassName = mainResult.getJunitClassNames().get(0);
-				log.info("generated class names : " + generatedClasse.getAbsolutePath());
+				log.debug("generated class names : " + generatedClasse.getAbsolutePath());
 				JDartRunner jdartRunner = new JDartRunner(mediator.getAppClassPath());
 				List<TestInput> result = jdartRunner.runJDartOnDemand(mediator.getLearntestParams(), generatedClassName, initialTc,
 						node.getIdx(), 	missingBranch == BranchType.FALSE ? 0 : 1);
@@ -198,7 +198,7 @@ public class LearnedDataProcessor {
 				}
 				return true;
 			} catch (SavException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 		return false;

@@ -119,7 +119,6 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 
 	private BranchRelationship getSamplingBranches(DecisionNodeProbe nodeProbe) {
 		BranchRelationship type = null;
-		System.out.println();
 		CoveredBranches coveredBranches = nodeProbe.getCoveredBranches();
 		BranchType missingBranch = coveredBranches.getOnlyOneMissingBranch();
 		if (missingBranch != null) {

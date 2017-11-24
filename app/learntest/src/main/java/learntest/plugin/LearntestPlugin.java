@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.commons.event.EmptyGentestManager;
+import learntest.plugin.commons.event.IGentestManager;
 import learntest.plugin.commons.event.IJavaGentestEventManager;
 import learntest.plugin.commons.event.IJavaModelRuntimeInfo;
-import learntest.plugin.console.LearntestConsole;
 import sav.common.core.pattern.IDataProvider;
 
 /**
@@ -30,10 +30,14 @@ public class LearntestPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static LearntestPlugin plugin;
-	private EmptyGentestManager javaGentestManager;
+	private IGentestManager javaGentestManager;
 	
 	public LearntestPlugin() {
-		javaGentestManager = new EmptyGentestManager();
+		javaGentestManager = initJavaGentestManager();
+	}
+
+	protected IGentestManager initJavaGentestManager() {
+		return new EmptyGentestManager();
 	}
 
 	public void start(BundleContext context) throws Exception {
@@ -75,7 +79,11 @@ public class LearntestPlugin extends AbstractUIPlugin {
 	}
 
 	public static void initLogger(String projectName) throws PluginException {
-		LearntestLogger.initLog4j(projectName);
+		getDefault().internalInitLogger(projectName);
+	}
+
+	protected void internalInitLogger(String projectName) throws PluginException {
+		LearntestLogger.initLog4j(projectName, "learntest_log4j");
 	}
 	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -119,7 +127,7 @@ public class LearntestPlugin extends AbstractUIPlugin {
 		}
 	}
 	
-	private EmptyGentestManager getJavaGentestManager() {
+	private IGentestManager getJavaGentestManager() {
 		return javaGentestManager;
 	}
 	

@@ -41,7 +41,7 @@ public interface IInputLearner {
 	default void recordSample(DecisionProbes inputProbes, SamplingResult sampleResult, String logFile) {
 		StringBuffer sBuffer = new StringBuffer();
 		if (sampleResult == null) {
-			log.info("sample result is null!!!");
+			log.debug("sample result is null!!!");
 			return;
 		}
 		sBuffer.append("record sample :=============================\n");

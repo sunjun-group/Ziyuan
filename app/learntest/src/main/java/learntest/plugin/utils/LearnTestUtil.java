@@ -40,7 +40,7 @@ public class LearnTestUtil {
 			return cu;
 		}
 		catch(IllegalStateException e){
-			e.printStackTrace();
+//			e.printStackTrace();
 		} 
 		
 		return null;
@@ -60,7 +60,7 @@ public class LearnTestUtil {
 			}
 			
 		} catch (JavaModelException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		}
 		
 		return null;
@@ -161,7 +161,7 @@ public class LearnTestUtil {
 			}
 			
 		} catch (JavaModelException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		}
 		
 		return rootList;

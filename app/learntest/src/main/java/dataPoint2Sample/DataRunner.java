@@ -38,14 +38,14 @@ public class DataRunner {
 
 			for (DecisionNodeProbe nodeProbe : inputProbes.getNodeProbes()) {
 				INodeCoveredData newData = result.getNewData(nodeProbe);
-				log.info(nodeProbe.getNode().toString());
+				log.debug(nodeProbe.getNode().toString());
 				Collection<BreakpointValue> trueV = newData.getTrueValues(), falseV = newData.getFalseValues();
-				log.info("	true data after selective sampling " + trueV.size());
-				log.info("	false data after selective sampling " + falseV.size());
+				log.debug("	true data after selective sampling " + trueV.size());
+				log.debug("	false data after selective sampling " + falseV.size());
 			}
 		} catch (SavException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 }

@@ -49,12 +49,12 @@ public class JDartLearntest extends LearnTest {
 	protected void prepareInitTestcase(LearnTestParams params) throws SavException {
 		List<TestInput> inputs = generateTestAndRunJDart(params);
 		if (CollectionUtils.isEmpty(inputs)) {
-			log.info("jdart result: {}", TextFormatUtils.printListSeparateWithNewLine(inputs));
+			log.debug("jdart result: {}", TextFormatUtils.printListSeparateWithNewLine(inputs));
 			return;
 		} else{
-			log.info("jdart result (print 100 result at most):");
+			log.debug("jdart result (print 100 result at most):");
 			for (int i = 0; i < inputs.size() && i < 100; i++) {
-				log.info("input: {}", inputs.get(i).toString());
+				log.debug("input: {}", inputs.get(i).toString());
 			}
 		}
 		init(params);
@@ -84,7 +84,7 @@ public class JDartLearntest extends LearnTest {
 	@Override
 	protected void init(LearnTestParams params) {
 		super.init(params);
-		mediator.setGenTestPackage(GenTestPackage.JDART);
+//		mediator.setGenTestPackage(GenTestPackage.JDART);
 	}
 	
 	public List<TestInput> generateTestAndRunJDart(LearnTestParams params) throws SavException {

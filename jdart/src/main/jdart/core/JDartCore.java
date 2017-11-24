@@ -8,15 +8,13 @@
 
 package jdart.core;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Queue;
 
-import org.eclipse.core.commands.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import config.PathConfiguration;
 import jdart.model.TestInput;
 import jdart.model.TestVar;
 import main.RunJPF;
@@ -27,18 +25,13 @@ import sav.common.core.Pair;
  * extracted from RunJDartHandler.
  */
 public class JDartCore {
+	private Logger log = LoggerFactory.getLogger(JDartCore.class);
 	public static long timeLimit = 30 * 1000;
 
-/**
- * 
- * @param jdartParams
- * @param jdartInitTc another main entry to run jdart
- * @return
- */
 	public List<TestInput> run_on_demand(JDartParams jdartParams, String jdartInitTc) {
 
 		timeLimit = jdartParams.getTimeLimit() > 0 ? jdartParams.getTimeLimit() : timeLimit;
-		String[] config = constructConfig(jdartParams);
+		String[] config = constructConfig(jdartParams, true);
 		RunJPF jpf = new RunJPF();
 		List<TestInput> init_value = null;
 		LinkedList<TestVar> paramList = new LinkedList<>();
@@ -51,15 +44,14 @@ public class JDartCore {
 	        paramList = init_value.get(0).getParamList();
 		} catch (Exception e) {
 			// TODO: handle exception
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
         
         if(result == null) {
-        	jdartParams.setSiteProperties("libs/jpf.properties");
         	if (jdartInitTc != null && jdartInitTc.length() > 0) {
             	jdartParams.setMainEntry(jdartInitTc);
 			}
-        	config = constructConfig(jdartParams);
+        	config = constructConfig(jdartParams, false);
         	init_value = jpf.run(config);
         	for(Entry<List<int[]>, String[]> entry : jpf.getPathMap().entrySet()) {
             	List<int[]> tempPath = entry.getKey();
@@ -113,19 +105,19 @@ public class JDartCore {
 	 */
 	public Pair<List<TestInput>, Integer> run(JDartParams jdartParams) {
 		timeLimit = jdartParams.getTimeLimit() > 0 ? jdartParams.getTimeLimit() : timeLimit;
-		String[] config = constructConfig(jdartParams);
+		String[] config = constructConfig(jdartParams, false);
 		RunJPF jpf = new RunJPF();
 		List<TestInput> inputList = jpf.run(config);
 		int solveCount = jpf.getSolveCount();
-		System.out.println("solve count : " + solveCount);
+		log.debug("solve count : " + solveCount);
 		Pair<List<TestInput>, Integer> pair = new Pair<List<TestInput>, Integer>(inputList, solveCount);
 		return pair;
 	}
 	
-	private static String[] constructConfig(JDartParams params) {
+	private static String[] constructConfig(JDartParams params, boolean onDemand) {
 		return  new String[]{
 				"+app=" + params.getAppProperties(),
-				"+site=" + params.getSiteProperties(),
+				"+site=" + (onDemand ? params.getOnDemandSiteProperties() : params.getSiteProperties()),
 				"+jpf-jdart.classpath+=" + params.getClasspathStr(),
 				"+target=" + params.getMainEntry(),
 				"+concolic.method=" + params.getMethodName(),
@@ -137,241 +129,6 @@ public class JDartCore {
 				"+explore.node=" + params.getExploreNode(),
 				"+explore.branch=" + params.getExploreBranch()
 		};
-	}
-	
-	private static String[] constructConfig(String mainEntry, String className, String pathString, String methodName, String paramString,
-			long min_free, long timeLimit, int node, int branch) {//pxzhang
-		return  new String[]{
-				"+jdart.tree.dont.print=true", // do not print tree
-				"+app=libs/jdart/jpf.properties",
-				"+site=libs/jpf.properties",
-				"+jpf-jdart.classpath+=" + pathString,
-				"+target=" + mainEntry,
-				"+concolic.method=" + methodName,
-				"+concolic.method." + methodName + "=" +className+"."+ methodName + paramString,
-				"+concolic.method." + methodName + ".config=all_fields_symbolic",
-				"+search.min_free="+min_free,
-				"+search.timeLimit="+timeLimit,
-				"+explore.node=" + node,
-				"+explore.branch="+ branch
-		};
-	}
-
-//	public static void main(String[] args) throws ExecutionException {
-//		
-//		String  pathString = "E:\\hairui\\git\\apache-common-math-2.2\\apache-common-math-2.2\\bin", 
-//				mainEntry = "com.MainEntry",
-//				className = "com.Sorting",				
-//				methodName = "quicksort",
-//				paramString = "(a:int[])";
-//		
-//		className = "org.apache.commons.math.analysis.integration.TrapezoidIntegrator";
-//		methodName = "integrate";
-//		paramString = "(ue:UnivariateRealFunction,mi:double, ma:double)";
-//		
-//		className = "org.apache.commons.math.distribution.BetaDistributionImpl";
-//		methodName = "cumulativeProbability";
-//		paramString = "(d:double)";
-//		
-//		className = "org.apache.commons.math.linear.OpenMapRealVector";
-//		methodName = "getLInfDistance";
-//		paramString = "(op:OpenMapRealVector)";
-////		
-////		className = "org.apache.commons.math.special.Gamma";
-////		methodName = "regularizedGammaQ";
-////		paramString = "(a:double, b:double)";
-////		
-//		className = "org.apache.commons.math.stat.descriptive.moment.Variance";
-//		methodName = "evaluate";
-//		paramString = "(a:double[], b:double[], c:double, i1:int, i2:int)";
-////		
-//		className = "org.apache.commons.math.stat.descriptive.summary.Sum";
-//		methodName = "evaluate";
-//		paramString = "(a:double[],i1:int,i2:int)";
-////		
-////		className = "org.apache.commons.math.stat.descriptive.summary.Sum";
-////		methodName = "evaluate";
-////		paramString = "(a:double[],b:double[], i1:int,i2:int)";
-////
-////		className = "org.apache.commons.math.stat.descriptive.summary.SumOfSquares";
-////		methodName = "evaluate";
-////		paramString = "(a:double[],i1:int,i2:int)";
-////		
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "asinh";
-////		paramString = "(a:double)";
-////
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "atan2";
-////		paramString = "(a:double, b:double)";
-////
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "cos";
-////		paramString = "(a:double)";
-////
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "hypot";
-////		paramString = "(a:double, b:double)";
-////		
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "log1p";
-////		paramString = "(a:double)";
-////
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "nextAfter1";
-////		paramString = "(a:double, b:double)";
-////		
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "nextAfter2";
-////		paramString = "(f:float, b:double)";
-////
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "pow";
-////		paramString = "(a:double, b:double)";		
-////
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "scalb1";
-////		paramString = "(a:double, i:int)";	
-////
-//		mainEntry = className = "org.apache.commons.math.util.FastMath";
-//		methodName = "scalb2";
-//		paramString = "(a:float, i:int)";
-////		
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "sin";
-////		paramString = "(a:double)";
-////		
-////		className = "org.apache.commons.math.util.FastMath";
-////		methodName = "tan";
-////		paramString = "(a:double)";
-////
-////		className = "org.apache.commons.math.util.MathUtils";
-////		methodName = "binomialCoefficient";
-////		paramString = "(a:int, b:int)";
-////		
-////		className = "org.apache.commons.math.util.MathUtils";
-////		methodName = "compareTo";
-////		paramString = "(a:double, b:double, c:double)";
-////
-////		className = "org.apache.commons.math.util.MathUtils";
-////		methodName = "equals";
-////		paramString = "(a:double, b:double)";
-////
-////		className = "org.apache.commons.math.util.MathUtils";
-////		methodName = "equalsIncludingNaN";
-////		paramString = "(a:double, b:double)";
-////
-////		className = "org.apache.commons.math.util.MathUtils";
-////		methodName = "mulAndCheck";
-////		paramString = "(a:int, b:int)";
-////
-////		className = "org.apache.commons.math.util.MathUtils";
-////		methodName = "nextAfter";
-////		paramString = "(a:double, b:double)";
-////
-////		className = "org.apache.commons.math.util.OpenIntToDoubleHashMap";
-////		methodName = "findInsertionIndex";
-////		paramString = "(a:int)";
-////
-////		className = "org.apache.commons.math.util.OpenIntToFieldHashMap";
-////		methodName = "findInsertionIndex";
-////		paramString = "(a:int)";
-//		
-////		mainEntry = "testdata.l2t.test.init.dfp.align.DfpMain";
-////		className = "org.apache.commons.math.dfp.Dfp";
-////		methodName = "align";
-////		paramString = "(e:int)";
-////		
-////		mainEntry = "testdata.l2t.test.init.dfp.divide.DfpMain";
-////		className = "org.apache.commons.math.dfp.Dfp";
-////		methodName = "divide";
-////		paramString = "(e:int)";
-////		
-////		mainEntry = "testdata.l2t.test.init.zipfdistributionimpl.cumulativeprobability.ZipfDistributionImplMain";
-////		className = "org.apache.commons.math.distribution.ZipfDistributionImpl";
-////		methodName = "cumulativeProbability";
-////		paramString = "(e:int)";
-////		
-////		mainEntry = "testdata.l2t.test.init.poissondistributionimpl.probability.PoissonDistributionImplMain";
-////		className = "org.apache.commons.math.distribution.PoissonDistributionImpl";
-////		methodName = "probability";
-////		paramString = "(e:int)";
-//				
-//		long min_free = 20*(1024<<10); // min free memory
-//		long timeLimit = 10 * 1000;
-//		String[] config = constructConfig(mainEntry, className, pathString, methodName, paramString,
-//				min_free, timeLimit, -1, -1);		
-//		List<TestInput> inputList = new JDartCore().run(constructJDartParams(args));
-////		inputList = RunJPF.run(config);
-//		
-//		System.currentTimeMillis();
-//	}
-
-//	private static JDartParams constructJDartParams(String[] args) {
-//		String  classpathStr = "E:\\hairui\\git\\apache-common-math-2.2\\apache-common-math-2.2\\bin", 
-//				mainEntry = "testdata.l2t.test.init.zipfdistributionimpl.cumulativeprobability.ZipfDistributionImplMain",
-//				className = "org.apache.commons.math.distribution.ZipfDistributionImpl",
-//				methodName = "cumulativeProbability",
-//				paramString = "(e:int)";
-//		
-//		className = "org.apache.commons.math.util.FastMath";
-//		mainEntry = className;
-//		methodName = "scalb2";
-//		paramString = "(a:float, i:int)";
-//		long minFree = 20*(1024<<10); // min free memory
-//		long timeLimit = 10 * 1000;
-//		
-//		JDartParams params = new JDartParams();
-//		params.setAppProperties("libs/jdart/jpf.properties");
-//		params.setClassName(className);
-//		params.setClasspathStr(classpathStr);
-//		params.setMainEntry(mainEntry);
-//		params.setMethodName(methodName);
-//		params.setMinFree(minFree);
-//		params.setParamString(paramString);
-//		params.setSiteProperties("libs/jpf.properties");
-//		params.setTimeLimit(timeLimit);
-//		
-//		return params;
-//	}
-	
-	public static String getJarPaths(String path){
-		StringBuffer sb = new StringBuffer();
-		File root = new File(path);
-		if (root.isDirectory()) {
-			Queue<File> queue = new LinkedList<>();
-			queue.add(root);
-			while (!queue.isEmpty()) {
-				File directory= queue.poll();
-				for (File file : directory.listFiles()) {
-					if (file.isDirectory()) {
-						queue.add(file);
-					}else {
-						String jar = file.getAbsolutePath();
-						if (jar.endsWith(".jar")) {
-							sb.append(jar+";");
-						}
-					}
-				}
-			}
-		}
-		return sb.toString();
-	}
-	
-	public static String getRuntimeCP() {
-		String jdartPath = getJdartRoot(), savPath = PathConfiguration.savRoot;
-		StringBuffer sb = new StringBuffer();
-		sb.append(jdartPath+"\\bin;");
-		sb.append(getJarPaths(jdartPath+"\\libs"));
-		sb.append(getJarPaths(savPath+"\\lib"));
-		sb.append(savPath+"\\target\\classes;");
-		sb.append(savPath+"\\target\\test-classes;");
-		return sb.toString();
-	}
-	
-	public static String getJdartRoot() {
-		String jdartPath = PathConfiguration.jdartRoot;
-		return jdartPath;
 	}
 	
 	public static int socketWaiteTime() {

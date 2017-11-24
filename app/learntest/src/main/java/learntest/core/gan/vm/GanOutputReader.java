@@ -111,7 +111,7 @@ public class GanOutputReader extends ServerOutputReader {
 	private void waitingWithTimeout(SingleTimer timer, long timeout) throws SAVExecutionTimeOutException {
 		while (isWaiting()) {
 			if (timer.getExecutionTime() > timeout) {
-				System.out.println("timeout!");
+				log.debug("timeout!");
 				throw new SAVExecutionTimeOutException();
 			}
 		}

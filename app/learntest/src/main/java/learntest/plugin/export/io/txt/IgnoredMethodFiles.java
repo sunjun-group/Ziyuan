@@ -9,6 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is used to ignore the recorded methods.
  * have proper mutation
@@ -17,6 +20,7 @@ import java.util.HashSet;
  * 
  */
 public class IgnoredMethodFiles {
+	private Logger log = LoggerFactory.getLogger(IgnoredMethodFiles.class);
 	private String fileName = "ignored_method.txt";
 	private HashSet<String> set = new HashSet<String>();
 
@@ -26,7 +30,7 @@ public class IgnoredMethodFiles {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 
@@ -46,9 +50,9 @@ public class IgnoredMethodFiles {
 			}
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
-			System.out.println("Unable to open file '" + fileName + "'");
+			log.debug("Unable to open file '" + fileName + "'");
 		} catch (IOException ex) {
-			System.out.println("Error reading file '" + fileName + "'");
+			log.debug("Error reading file '" + fileName + "'");
 		}
 
 	}
@@ -82,7 +86,7 @@ public class IgnoredMethodFiles {
 			// Always close files.
 			bufferedWriter.close();
 		} catch (IOException ex) {
-			System.out.println("Error writing to file '" + fileName + "'");
+			log.debug("Error writing to file '" + fileName + "'");
 		}
 	}
 

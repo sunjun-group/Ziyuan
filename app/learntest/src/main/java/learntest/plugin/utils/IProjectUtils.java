@@ -112,7 +112,7 @@ public class IProjectUtils {
 			}
 
 		} catch (JavaModelException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		}
 
 		return roots;
@@ -175,7 +175,7 @@ public class IProjectUtils {
 				}
 			}
 		} catch (JavaModelException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		String outputPath = project.getProject().getLocation().toOSString() + File.separator + outputFolder;
 		return outputPath;

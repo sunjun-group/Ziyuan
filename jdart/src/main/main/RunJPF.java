@@ -182,12 +182,12 @@ public class RunJPF extends Run {
 
       
     } catch (NoClassDefFoundError ncfx){
-      ncfx.printStackTrace();
+//      ncfx.printStackTrace();
     } catch (ClassNotFoundException cnfx){
       error("cannot find " + JPF_CLASSNAME);
     } catch (InvocationTargetException ix){
       // should already be handled by JPF
-      ix.getCause().printStackTrace();
+//      ix.getCause().printStackTrace();
     }
     
     return null;

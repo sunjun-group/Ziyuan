@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
-import gentest.junit.JWriter;
-import gentest.junit.MWriter;
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LineCoverageResult;
@@ -29,6 +27,8 @@ import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.gan.GanDecisionLearner;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
+import learntest.core.gentest.LearntestJWriter;
+import learntest.core.gentest.MWriter;
 import learntest.core.gentest.TestGenerator;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
@@ -61,7 +61,6 @@ public class LearningMediator {
 	private AppJavaClassPath appClassPath;
 	private LearnTestParams learntestParams;
 	private FinalTests finalTests;
-	private GenTestPackage genTestPackage;
 	
 	public LearningMediator(AppJavaClassPath appClassPath, LearnTestParams params) {
 		this.appClassPath = appClassPath;
@@ -144,10 +143,11 @@ public class LearningMediator {
 		finalTests.filterByCoverageResult(coverageMap);
 	}
 	
+	//TODO LLT: adapt dev mode!
 	public GentestResult genTestAndCompile(List<double[]> solutions, List<ExecVar> vars, PrintOption printOption)
 			throws SavException {
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams,
-				genTestPackage == null ? GenTestPackage.RESULT : genTestPackage);
+				GenTestPackage.RESULT);
 		params.setPrintOption(printOption);
 		return gentestAndCompile(solutions, vars, params);
 	}
@@ -155,7 +155,8 @@ public class LearningMediator {
 	public GentestResult gentestAndCompile(List<double[]> solutions, List<ExecVar> vars, GentestParams params)
 			throws SavException {
 		log.debug("gentest..");
-		GentestResult result = getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new JWriter());
+		GentestResult result = getTestGenerator().genTestAccordingToSolutions(params, solutions, vars,
+				new LearntestJWriter(params.extractTestcaseSequenceMap()));
 		if (!result.isEmpty()) {
 			log.debug("compile..");
 			compileAndLogTestSequences(result);
@@ -178,7 +179,7 @@ public class LearningMediator {
 			PrintOption printOption) throws SavException {
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.RESULT);
 		params.setPrintOption(printOption);
-		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new JWriter());
+		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars);
 	}
 	
 	public GentestResult genMainAndCompile(List<double[]> solutions, List<ExecVar> vars, PrintOption printOption)
@@ -187,17 +188,17 @@ public class LearningMediator {
 		GentestResult result = genMainAccordingToSolutions(solutions, vars, printOption);
 		if (!result.isEmpty()) {
 			log.debug("compile..");
-			compile(result.getAllFiles());
+			compileAndLogTestSequences(result);
 		}
 		return result;
 	}
 
 	public GentestResult genMainAccordingToSolutions(List<double[]> solutions, List<ExecVar> vars,
 			PrintOption printOption) throws SavException {
-		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.MAIN);
+		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.RESULT);
 		params.setPrintOption(printOption);
 		params.setTestMethodPrefix("main");
-		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new MWriter());
+		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new MWriter(true));
 	}
 
 	public LearnTestParams getLearntestParams() {
@@ -223,10 +224,6 @@ public class LearningMediator {
 			log.error("Error when Compiling final tests: {}, {}", e.getMessage(), e);
 			return new LineCoverageResult(targetMethod.getMethodInfo());
 		}
-	}
-
-	public void setGenTestPackage(GenTestPackage genTestPackage) {
-		this.genTestPackage = genTestPackage;
 	}
 
 }

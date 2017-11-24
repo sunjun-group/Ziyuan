@@ -8,13 +8,11 @@
 
 package learntest.plugin.commons.event;
 
-import sav.common.core.pattern.IDataProvider;
-
 /**
  * @author LLT
  *
  */
-public class EmptyGentestManager implements IJavaGentestEventManager, IDataProvider<IJavaModelRuntimeInfo> {
+public class EmptyGentestManager implements IGentestManager {
 
 	@Override
 	public void setData(IJavaModelRuntimeInfo data) {

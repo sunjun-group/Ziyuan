@@ -143,7 +143,7 @@ public class IlpSelectiveSampling {
 		int formulasSize = learnedFormulas== null ? 0 : learnedFormulas.size();
 		for (int i = 0; i < selectiveSamplingDataSize && 
 				((formulasSize > 0 && samplesOnLine.size() < formulasSize) || formulasSize == 0 ) ; i++) {
-			log.info("[LIN YUN] Generate data points on lines: ");
+			log.debug("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 				if (!problems.isEmpty() && learnedFormula != null) {
@@ -155,7 +155,7 @@ public class IlpSelectiveSampling {
 				for (Problem problem : problems) {
 					solver.generateRandomObjective(problem, originVars);
 					updateSampleWithProblem(problem, samplesOnLine, false);						
-					log.info("[LIN YUN] samplesOnLine : " + learnedFormula + ": " + array2Str(samplesOnLine));
+					log.debug("[LIN YUN] samplesOnLine : " + learnedFormula + ": " + array2Str(samplesOnLine));
 				}
 			}
 			
@@ -165,7 +165,7 @@ public class IlpSelectiveSampling {
 			/**
 			 * solve result that satisfy model intersection and preconditions
 			 */
-			log.info("[LIN YUN] Generate data points on models: ");
+			log.debug("[LIN YUN] Generate data points on models: ");
 			addSamplesOnModels(originVars, preconditions, learnedFormulas, samplesOnCorner);
 		}
 		
@@ -179,12 +179,12 @@ public class IlpSelectiveSampling {
 	
 	private void addSamplesOnMedians(List<ExecVar> originVars, List<Divider> learnedFormulas, List<double[]> samples) {
 		for (Divider formula : learnedFormulas) {
-			log.info("[LIN YUN] learned formula: " + formula);
+			log.debug("[LIN YUN] learned formula: " + formula);
 			if (formula.getDataPair() != null) {
 				Pair<DataPoint, DataPoint> pair = formula.getDataPair();
 				double[] d1 = pair.a.getValues();
 				double[] d2 = pair.b.getValues();
-				log.info("[LIN YUN] used data points: (" + array2Str(d1)+ "), ("+ array2Str(d2)+ ")");
+				log.debug("[LIN YUN] used data points: (" + array2Str(d1)+ "), ("+ array2Str(d2)+ ")");
 				double[] median = new double[d1.length];
 				for (int i = 0; i < median.length; i++) {
 					ExecVar var = originVars.get(i);
@@ -223,7 +223,7 @@ public class IlpSelectiveSampling {
 						solver.generateRandomObjective(problem, originVars);
 						updateSampleWithProblem(problem, samples, true);	
 						
-						log.info("[LIN YUN] : intersections " + array2Str(samples));
+						log.debug("[LIN YUN] : intersections " + array2Str(samples));
 						
 						/* restore problem */
 						problem.getConstraints().removeAll(constraints);	

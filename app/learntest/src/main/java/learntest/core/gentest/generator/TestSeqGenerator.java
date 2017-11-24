@@ -204,7 +204,7 @@ public class TestSeqGenerator {
 		String receiver = value.getVarId();
 		if (value.isNull()) {
 			if (value.getChildren().size() > 1) {
-				log.warn("reset isNull to false for variable: {}", value.getVarId());
+				log.debug("reset isNull to false for variable: {}", value.getVarId());
 				value.setNull(false);
 			} else {
 				return firstVarIdx;
@@ -271,7 +271,7 @@ public class TestSeqGenerator {
 				dimension);
 		if (dimension == 0) {
 			if (!value.isNull()) {
-				log.warn("reset isNull to true for variable: {}", value.getVarId());
+				log.debug("reset isNull to true for variable: {}", value.getVarId());
 			}
 			value.setNull(true);
 			return firstVarIdx;

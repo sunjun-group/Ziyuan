@@ -100,9 +100,9 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 					prepareData();
 					return execute(selection, monitor);
 				} catch (CoreException e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 				} catch (PluginException e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 				} finally {
 					monitor.done();
 				}
@@ -136,7 +136,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		try {
 			iProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		} catch (CoreException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 
@@ -429,7 +429,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	 * To test new version of learntest which uses another cfg and jacoco for
 	 * code coverage.
 	 */
-	public RunTimeInfo runLearntest(LearnTestParams params){
+	public RunTimeInfo runLearntest(LearnTestParams params) throws PluginException{
 		try {
 			SAVTimer.enableExecutionTimeout = true;
 			SAVTimer.exeuctionTimeout = 50000000;
@@ -438,10 +438,9 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			printRuntimeInfo(runtimeInfo, params);
 			return runtimeInfo;
 		} catch (Exception e) {
-			//throw PluginException.wrapEx(e);
-			e.printStackTrace();
+			throw PluginException.wrapEx(e);
+//			e.printStackTrace();
 		}
-		return null;
 	}
 	
 	protected void printRuntimeInfo(RunTimeInfo runtimeInfo, LearnTestParams params){
@@ -464,7 +463,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			reader.reset(new File("D:/eclipse/apache-common-math-2.2_0-checked.xlsx"));
 			oldTrials = reader.readDataSheet();
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		String fullName = targetMethod.getMethodFullName();
 		int line = targetMethod.getLineNum();
@@ -486,7 +485,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			}
 			reader.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} finally {
 			if (reader != null) {
 				try {

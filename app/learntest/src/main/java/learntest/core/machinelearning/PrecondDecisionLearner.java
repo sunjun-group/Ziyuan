@@ -92,7 +92,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 			}
 		}
 		FileUtils.write(logFile, sBuffer.toString());
-		log.info(sBuffer.toString());
+		log.debug(sBuffer.toString());
 		
 		if (relevantVarMap == null || inputProbes.getCfg().getNodeList().size() != relevantVarMap.size()) {
 			log.debug("The size of CfgNodes is differnt from the size of map!!!!");
@@ -182,7 +182,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
 		nodeProbe.clearCache();
 
-		log.info("final formula : " + truefalseFormula);
+		log.debug("final formula : " + truefalseFormula);
 	}
 	
 	protected void updatePreconditionWithHerustic(DecisionNodeProbe nodeProbe,	OrCategoryCalculator preconditions, RelationShip relationShip) throws SavException {
@@ -197,7 +197,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 		List<Divider> divider = trueFalseResult == null ? null : trueFalseResult.dividers;
 		nodeProbe.setPrecondition(Pair.of(truefalseFormula, null), divider);
 		nodeProbe.clearCache();
-		log.info("final formula : " + truefalseFormula);
+		log.debug("final formula : " + truefalseFormula);
 	}
 
 	protected Pair<OrCategoryCalculator, Boolean> getPreconditions(DecisionProbes probes, CfgNode node,
@@ -225,7 +225,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 		/* do generate formula and return */
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
 		PositiveSeparationMachine mcm = new LearningMachine(negative);
-		log.info("generate initial formula");
+		log.debug("generate initial formula");
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm, targetVars);
 		double acc = mcm.getModelAccuracy();
 		if (mcm.getDataPoints().size() <= 1) {
@@ -265,7 +265,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 			addDataPoint(mcm.getDataLabels(), targetVars, newData.getTrueValues(), newData.getFalseValues(), mcm);
 			recordSample(probes, sampleResult, logFile);
 
-			System.out.println("the whole data points for this learning:");
+			log.debug("the whole data points for this learning:");
 			if(orgNodeProbe.getCoverage().getCfgNode().getLine()==2345){
 				List<DataPoint> ps = new ArrayList<>();
 				for(DataPoint p: mcm.getDataPoints()){
@@ -439,7 +439,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 		for (BreakpointValue value : falseV) {
 			addBkp(labels, targetVars, value, Category.NEGATIVE, mcm, sBuffer);
 		}
-		log.info(sBuffer.toString());
+		log.debug(sBuffer.toString());
 
 		FileUtils.write(logFile, sBuffer.toString());
 	}

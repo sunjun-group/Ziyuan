@@ -8,8 +8,6 @@
 
 package learntest.plugin.handler.gentest;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -72,22 +70,22 @@ public class GentestSettings {
 					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"));
 			preferences.set(LearntestSystemVariable.JDART_SITE_PROPRETIES,
 					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
+			preferences.set(LearntestSystemVariable.JDART_ON_DEMAND_SITE_PROPERTIES,
+					IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf_on_demand.properties"));
 		} catch (PluginException e) {
 			throw new CoreException(IStatusUtils.exception(e, e.getMessage()));
 		}
 	}
 
-	public static void settingByApproach(LearnTestParams params, int i, List<Integer> sampleSizes)
+	public static void settingByApproach(LearnTestParams params)
 			throws CoreException {
 		switch (params.getApproach()) {
-		case GAN:
-			params.setInitialTcTotal(sampleSizes.get(i - 1));
-			break;
 		case JDART:
 		case L2T:
 			configureJdart(params);
 			break;
 		case RANDOOP:
+		case GAN:
 			// add details if needed!
 			break;
 		default:
