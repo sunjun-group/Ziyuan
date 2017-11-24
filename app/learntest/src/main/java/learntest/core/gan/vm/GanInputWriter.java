@@ -10,7 +10,6 @@ package learntest.core.gan.vm;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.List;
 
 import sav.strategies.vm.interprocess.ServerInputWriter;
 

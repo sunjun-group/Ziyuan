@@ -49,9 +49,9 @@ public class GanTestExcelWriter102 extends SimpleExcelWriter<RowData102> {
 			addBranchTrainingData(data.getTrueTrainData(), row, 0);
 			addBranchTrainingData(data.getFalseTrainData(), row, 1);
 		} else {
-			addCell(row, COVERAGE, data.getCvg());
+//			addCell(row, COVERAGE, data.getCvg());
 			addCell(row, COVERAGE_INFO, data.getCoverageInfo());
-			addCell(row, INIT_COVERAGE_INFO, data.getInitCoverageInfo());
+//			addCell(row, INIT_COVERAGE_INFO, data.getInitCoverageInfo());
 		}
 		rowData.setRowNum(row.getRowNum());
 	}
@@ -88,8 +88,8 @@ public class GanTestExcelWriter102 extends SimpleExcelWriter<RowData102> {
 		TRUE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for TRUE branch"),
 		FALSE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for FALSE branch"),
 		
-		COVERAGE("coverage"),
-		INIT_COVERAGE_INFO("init coverage info"),
+//		COVERAGE("coverage"),
+//		INIT_COVERAGE_INFO("init coverage info"),
 		COVERAGE_INFO("coverage info");
 
 		private String title;

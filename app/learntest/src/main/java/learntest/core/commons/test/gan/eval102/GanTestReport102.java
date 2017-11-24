@@ -53,40 +53,59 @@ public class GanTestReport102 extends GanTestReport {
 	
 	@Override
 	public void trainingDatapoints(CfgNode node, NodeDataSet dataSet) {
+		List<double[]> trueDps = dataSet.getDatapoints(Category.TRUE);
+		List<double[]> falseDps = dataSet.getDatapoints(Category.FALSE);
+		if (CollectionUtils.isEmpty(trueDps) || CollectionUtils.isEmpty(falseDps)) {
+			return;
+		}
 		NodeExportData102 data = getNodeData(node);
 		if (data.getVars() == null) {
 			data.setVars(new ArrayList<String>(dataSet.getLabels()));
 		}
-		data.getTrueTrainData().updateTrainDps(dataSet.getDatapoints(Category.TRUE));
-		data.getFalseTrainData().updateTrainDps(dataSet.getDatapoints(Category.FALSE));
+		data.getTrueTrainData().updateTrainDps(trueDps);
+		data.getFalseTrainData().updateTrainDps(falseDps);
 		export(data, UpdateType.ALL);
 	}
 	
 	@Override
 	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult, Category category) {
-		NodeExportData102 data = getNodeData(node);
+		NodeExportData102 data = nodeDataMap.get(getNodeId(node));
+		if (data == null) {
+			return;
+		}
 		INodeCoveredData newData = samplingResult.getNewData(node);
 		BranchTraningData branchData;
 		List<BreakpointValue> correctGenVals;
-		List<BreakpointValue> wrongGenVals;
+//		List<BreakpointValue> wrongGenVals;
 		if (category == Category.TRUE) {
 			branchData = data.getTrueTrainData();
 			correctGenVals = newData.getTrueValues();
-			wrongGenVals = newData.getFalseValues();
+//			wrongGenVals = newData.getFalseValues();
 		} else {
 			branchData = data.getFalseTrainData();
 			correctGenVals = newData.getFalseValues();
-			wrongGenVals = newData.getTrueValues();
+//			wrongGenVals = newData.getTrueValues();
 		}
-		branchData.updateCorrectGenDps(DomainUtils.getCorrespondingSolution(allDatapoints, correctGenVals));
-		branchData.updateWrongGenDps(DomainUtils.getCorrespondingSolution(allDatapoints, wrongGenVals));
-		/* in case testcases with all new datapoints not cover the node itself, we consider all of them as wrongGenVals */
-		if (CollectionUtils.isEmpty(correctGenVals) && CollectionUtils.isEmpty(wrongGenVals)) {
-			branchData.updateWrongGenDps(allDatapoints);
-		}
+		List<Integer> correctIdexies = DomainUtils.getCorrespondingSolutionIdx(allDatapoints, correctGenVals);
+		List<double[]> correctDps = new ArrayList<>();
+		List<double[]> wrongDps = new ArrayList<>();
+		collectData(allDatapoints, correctIdexies, correctDps, wrongDps);
+		branchData.updateCorrectGenDps(correctDps);
+		branchData.updateWrongGenDps(wrongDps);
 		export(data, UpdateType.ALL);
 	}
 	
+	private void collectData(List<double[]> allDatapoints, List<Integer> correctIdexies, List<double[]> correctDps,
+			List<double[]> wrongDps) {
+		for (int i = 0; i < allDatapoints.size(); i++) {
+			if (correctIdexies.contains(i)) {
+				correctDps.add(allDatapoints.get(i));
+			} else {
+				wrongDps.add(allDatapoints.get(i));
+			}
+		}
+	}
+
 	@Override
 	public void coverage(String cvgInfo, double cvg) {
 		for (NodeExportData102 node : nodeDataMap.values()) {
@@ -98,8 +117,8 @@ public class GanTestReport102 extends GanTestReport {
 	}
 	
 	private NodeExportData102 getNodeData(CfgNode node) {
+		String nodeId = getNodeId(node);
 		int nodeIdx = node.getIdx();
-		String nodeId = NodeExportData102.getId(methodId, nodeIdx);
 		NodeExportData102 data = nodeDataMap.get(nodeId);
 		if (data == null) {
 			data = new NodeExportData102();
@@ -109,6 +128,11 @@ public class GanTestReport102 extends GanTestReport {
 			nodeDataMap.put(nodeId, data);
 		}
 		return data;
+	}
+
+	private String getNodeId(CfgNode node) {
+		String nodeId = NodeExportData102.getId(methodId, node.getIdx());
+		return nodeId;
 	}
 	
 	public void export(NodeExportData102 nodeData, UpdateType updateType) {

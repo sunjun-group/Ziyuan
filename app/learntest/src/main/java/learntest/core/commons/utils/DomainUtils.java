@@ -139,6 +139,19 @@ public class DomainUtils {
 	public static Domain toDomain(int val) {
 		return new FloatIntervalDomain(val, val);
 	}
+	public static List<Integer> getCorrespondingSolutionIdx(List<double[]> allDatapoints,
+			List<BreakpointValue> vals) {
+		List<Integer> result = new ArrayList<Integer>(CollectionUtils.getSize(vals));
+		for (BreakpointValue val : CollectionUtils.nullToEmpty(vals)) {
+			if (val instanceof SolutionBreakpointValue) {
+				SolutionBreakpointValue sBkVal = (SolutionBreakpointValue) val;
+				result.add(sBkVal.getSolutionIdx());
+			} else {
+				log.warn("Breakpoint value is not SolutionBreakpointValue type!");
+			}
+		}
+		return result;
+	}
 
 	public static List<double[]> getCorrespondingSolution(List<double[]> allDatapoints,
 			List<BreakpointValue> vals) {

@@ -109,8 +109,6 @@ public class NodeExportData102 {
 		this.initCoverageInfo = initCoverageInfo;
 	}
 
-
-
 	public class BranchTraningData {
 		private List<double[]> trainingDps = new ArrayList<double[]>();
 		private List<double[]> correctGenDps = new ArrayList<double[]>();
@@ -149,7 +147,13 @@ public class NodeExportData102 {
 				if (dpIdx != dpsLastIdx) {
 					sb.append("\n");
 				}
+				if (sb.length() >= 32500) {
+					System.out.println("TOO BIG " + sb.length());
+					sb.append("...(too big)");
+					break;
+				}
 			}
+			
 			return sb.toString();
 		}
 
