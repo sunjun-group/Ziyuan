@@ -181,7 +181,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		List<BreakpointValue> result = new ArrayList<BreakpointValue>(testcases.size());
 		Map<Integer, List<BreakpointValue>> bkpValsMap = testcaseExecutor.getBkpValsByTestIdx();
 		for (int i = 0; i < testcases.size(); i++) {
-			result.add(bkpValsMap.get(i).get(0));
+			CollectionUtils.addIfNotNull(result, CollectionUtils.getFirstElement(bkpValsMap.get(i)));
 		}
 		return result;
 	}
