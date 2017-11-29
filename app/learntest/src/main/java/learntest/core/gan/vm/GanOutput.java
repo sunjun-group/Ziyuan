@@ -15,7 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import learntest.core.gan.vm.GanInputWriter.RequestType;
-import learntest.core.gan.vm.NodeDataSet.Category;
+import learntest.core.gan.vm.BranchDataSet.Category;
 
 /**
  * @author LLT
@@ -23,7 +23,7 @@ import learntest.core.gan.vm.NodeDataSet.Category;
  */
 public class GanOutput {
 	private RequestType requestType;
-	private NodeDataSet generatedDataSet;
+	private BranchDataSet generatedDataSet;
 
 	public GanOutput(RequestType requestType) {
 		this.requestType = requestType;
@@ -39,7 +39,7 @@ public class GanOutput {
 	
 	public void parseJson(String jsonStr) {
 		JSONObject obj = new JSONObject(jsonStr);
-		NodeDataSet dataSet = new NodeDataSet();
+		BranchDataSet dataSet = new BranchDataSet();
 		dataSet.setNodeId(obj.getString(JsLabel.NODE_ID));
 //		JSONArray arr = obj.getJSONArray(JsLabel.LABELS);
 //		List<String> labels = new ArrayList<String>(arr.length());
@@ -53,7 +53,7 @@ public class GanOutput {
 		this.generatedDataSet = dataSet;
 	}
 
-	public void parseDatapoints(NodeDataSet dataSet, JSONObject datasetObj, Category category) {
+	public void parseDatapoints(BranchDataSet dataSet, JSONObject datasetObj, Category category) {
 		if (datasetObj.has(category.name())) {
 			JSONArray arr = datasetObj.getJSONArray(category.name());
 			List<double[]> datapoints = new ArrayList<double[]>(arr.length());
@@ -69,11 +69,11 @@ public class GanOutput {
 		}
 	}
 	
-	public NodeDataSet getGeneratedDataSet() {
+	public BranchDataSet getGeneratedDataSet() {
 		return generatedDataSet;
 	}
 	
-	public void setGeneratedDataSet(NodeDataSet generatedDataSet) {
+	public void setGeneratedDataSet(BranchDataSet generatedDataSet) {
 		this.generatedDataSet = generatedDataSet;
 	}
 

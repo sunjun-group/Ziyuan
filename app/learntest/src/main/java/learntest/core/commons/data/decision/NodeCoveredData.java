@@ -10,7 +10,6 @@ package learntest.core.commons.data.decision;
 
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
@@ -20,12 +19,14 @@ import icsetlv.common.dto.BreakpointValue;
  *
  */
 public class NodeCoveredData extends AbstractNodeCoveredData implements INodeCoveredData {
+	private List<BreakpointValue> newTestInputs;
 
 	public NodeCoveredData(NodeCoverage coverage, List<BreakpointValue> newTestInputs) {
 		this(coverage, newTestInputs, 0);
 	}
 	
 	private NodeCoveredData(NodeCoverage coverage, List<BreakpointValue> newTestInputs, int newTcsFirstIdx) {
+		this.newTestInputs = newTestInputs;
 		/* collect input values of true branch */
 		trueValues = getBranchCoveredValue(coverage, newTestInputs, DecisionBranchType.TRUE,
 				newTcsFirstIdx);
@@ -74,4 +75,8 @@ public class NodeCoveredData extends AbstractNodeCoveredData implements INodeCov
 		return moreTimesValues;
 	}
 
+	@Override
+	public List<BreakpointValue> getAllInputValues() {
+		return newTestInputs;
+	}
 }

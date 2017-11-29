@@ -186,6 +186,7 @@ public class LearnTest extends AbstractLearntest {
 	 */
 	protected void init(LearnTestParams params) {
 		mediator = new LearningMediator(appClasspath, params);
+		BreakpointValue.resetCount();
 	}
 
 

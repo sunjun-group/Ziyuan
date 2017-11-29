@@ -113,13 +113,18 @@ public class BreakpointDataUtils {
 	public static List<double[]> toDataPoint(List<ExecVar> vars, List<BreakpointValue> values) {
 		List<double[]> result = new ArrayList<double[]>(values.size());
 		for (BreakpointValue value : values) {
-			double[] datapoint = new double[vars.size()];
-			for (int i = 0; i < vars.size(); i++) {
-				datapoint[i] = value.getValue(vars.get(i).getVarId(), 0.0);
-			}
+			double[] datapoint = toDatapoint(vars, value);
 			result.add(datapoint);
 		}
 		return result;
+	}
+
+	public static double[] toDatapoint(List<ExecVar> vars, BreakpointValue value) {
+		double[] datapoint = new double[vars.size()];
+		for (int i = 0; i < vars.size(); i++) {
+			datapoint[i] = value.getValue(vars.get(i).getVarId(), 0.0);
+		}
+		return datapoint;
 	}
 	
 	public static List<ExecVar> collectAllVarsInturn(List<BreakpointValue> bkpVals) {

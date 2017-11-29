@@ -145,6 +145,11 @@ public class DecisionNodeProbe implements IDecisionNode, INodeCoveredData {
 	public void clearCache() {
 		coveredData.clearCache();
 	}
+	
+	@Override
+	public List<BreakpointValue> getAllInputValues() {
+		return coveredData.getAllInputValues();
+	}
 
 	@Override
 	public void update(NodeCoverage coverage, int samplesFirstIdx, List<BreakpointValue> sampleTestInputs) {

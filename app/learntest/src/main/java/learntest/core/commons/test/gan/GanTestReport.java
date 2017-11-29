@@ -11,11 +11,12 @@ package learntest.core.commons.test.gan;
 import java.util.List;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.sampling.SamplingResult;
-import learntest.core.gan.vm.NodeDataSet;
-import learntest.core.gan.vm.NodeDataSet.Category;
+import learntest.core.gan.vm.BranchDataSet;
+import learntest.core.gan.vm.BranchDataSet.Category;
 
 /**
  * @author LLT
@@ -39,11 +40,11 @@ public abstract class GanTestReport {
 		// do nothing by default
 	}
 
-	public void trainingDatapoints(CfgNode node, NodeDataSet dataSet) {
+	public void trainingDatapoints(CfgNode node, DecisionBranchType branchType, BranchDataSet dataSet) {
 		// do nothing by default
 	}
 
-	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult, Category category) {
+	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult, DecisionBranchType branchType) {
 		// do nothing by default
 	}
 

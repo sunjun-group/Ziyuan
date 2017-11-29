@@ -84,6 +84,11 @@ public class SampleNodeCoveredData extends AbstractNodeCoveredData implements IN
 		}
 		return oneTimeValues;
 	}
+	
+	@Override
+	public List<BreakpointValue> getAllInputValues() {
+		return sampleTestInputs;
+	}
 
 	public void clearCache() {
 		trueValues = null;

@@ -356,6 +356,14 @@ public class CollectionUtils {
 		}
 	}
 	
+	public static <T> List<T> subtract(final Collection<T> a, final Collection<T> b) {
+		List<T> list = new ArrayList<T>(a);
+		for (Iterator<T> it = b.iterator(); it.hasNext();) {
+			list.remove(it.next());
+		}
+		return list;
+	}
+	
 	public static <T, V> Map<V, T> revertMap(Map<T, V> map) {
 		if (map == null) {
 			return null;

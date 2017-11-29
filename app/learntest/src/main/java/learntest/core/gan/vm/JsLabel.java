@@ -22,4 +22,5 @@ public class JsLabel {
 	public static final String DATAPOINTS = "DATAPOINTS";
 	public static final String CATEGORY = "CATEGORY";
 	public static final String DATASET = "DATASET";
+	public static final String BRANCH_TYPE = "BRANCH_TYPE";
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
+import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -86,4 +87,12 @@ public class CompositeNodeCoveredData implements INodeCoveredData {
 		}
 	}
 
+	@Override
+	public List<BreakpointValue> getAllInputValues() {
+		List<BreakpointValue> allValues = new ArrayList<BreakpointValue>();
+		for (SampleNodeCoveredData data : CollectionUtils.nullToEmpty(coveredData)) {
+			allValues.addAll(data.getAllInputValues());
+		}
+		return allValues;
+	}
 }

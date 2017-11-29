@@ -8,14 +8,13 @@
 
 package learntest.core.commons.test.gan;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
@@ -24,9 +23,8 @@ import learntest.core.commons.test.TestSettings;
 import learntest.core.commons.test.TestTool;
 import learntest.core.commons.test.gan.eval102.GanTestReport102;
 import learntest.core.commons.utils.CoverageUtils;
-import learntest.core.gan.vm.NodeDataSet;
-import learntest.core.gan.vm.NodeDataSet.Category;
-import sav.common.core.utils.CollectionUtils;
+import learntest.core.gan.vm.BranchDataSet;
+import learntest.core.gan.vm.BranchDataSet.Category;
 import sav.common.core.utils.TextFormatUtils;
 
 /**
@@ -35,11 +33,9 @@ import sav.common.core.utils.TextFormatUtils;
  */
 public class GanTestTool extends TestTool {
 	private GanTestReport report;
-	private Set<Integer> fullCoveredNodes;
 	
 	public GanTestTool() {
 		try {
-			fullCoveredNodes = new HashSet<>();
 		} catch (Exception e) {
 			log("cannot init test report: ", e.getMessage());
 		}
@@ -49,7 +45,6 @@ public class GanTestTool extends TestTool {
 	public void startMethod(String methodFullName) {
 		try {
 			report = new GanTestReport102(TestSettings.GAN_EXCEL_PATH_102);
-			fullCoveredNodes.clear();
 		} catch (Exception e) {
 			log("cannot init test report: ", e.getMessage());
 		}
@@ -84,13 +79,9 @@ public class GanTestTool extends TestTool {
 		flush();
 	}
 	
-	public void logTrainDatapoints(CfgNode node, NodeDataSet dataSet) {
+	public void logTrainDatapoints(CfgNode node, DecisionBranchType branchType, BranchDataSet dataSet) {
 		if (!isEnable()) {
 			return;
-		}
-		if (CollectionUtils.isNotEmpty(dataSet.getDataset().get(Category.TRUE))
-				&& CollectionUtils.isNotEmpty(dataSet.getDataset().get(Category.FALSE))) {
-			fullCoveredNodes.add(node.getIdx());
 		}
 		log("Training datapoints: ");
 		logFormat("NodeIdx={}", dataSet.getNodeId());
@@ -99,12 +90,12 @@ public class GanTestTool extends TestTool {
 			log(TextFormatUtils.printCol(dataSet.getDataset().get(cat), "\n"));
 		}
 		flush();
-		report.trainingDatapoints(node, dataSet);
+		report.trainingDatapoints(node, branchType, dataSet);
 	}
 	
 	public void logSamplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult,
-			Category category) {
-		report.samplingResult(node, allDatapoints, samplingResult, category);
+			DecisionBranchType branchType) {
+		report.samplingResult(node, allDatapoints, samplingResult, branchType);
 	}
 	
 	public void logRoundResult(RunTimeInfo runtimeInfo, int i) {

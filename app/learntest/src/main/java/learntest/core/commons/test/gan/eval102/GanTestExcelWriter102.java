@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Row;
 
-import learntest.core.commons.test.gan.eval102.NodeExportData102.BranchTraningData;
+import learntest.core.commons.test.gan.eval102.BranchExportData102.CategoryTrainingData;
 import learntest.core.commons.test.gan.eval102.RowData102.UpdateType;
 import learntest.plugin.export.io.excel.common.ExcelHeader;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
@@ -41,9 +41,10 @@ public class GanTestExcelWriter102 extends SimpleExcelWriter<RowData102> {
 
 	@Override
 	protected void addRowData(Row row, RowData102 rowData) throws IOException {
-		NodeExportData102 data = rowData.getNodeData();
+		BranchExportData102 data = rowData.getBranchData();
 		addCell(row, METHOD_NAME, data.getMethodId());
 		addCell(row, NODE_ID, data.getNodeIdx());
+		addCell(row, BRANCH_TYPE, data.getBranchType().name());
 		addCell(row, LINE_NUMBER, data.getLineNum());
 		if (rowData.getUpdateType() != UpdateType.COVERAGE) {
 			addBranchTrainingData(data.getTrueTrainData(), row, 0);
@@ -56,7 +57,7 @@ public class GanTestExcelWriter102 extends SimpleExcelWriter<RowData102> {
 		rowData.setRowNum(row.getRowNum());
 	}
 
-	private void addBranchTrainingData(BranchTraningData data, Row row, int offset) {
+	private void addBranchTrainingData(CategoryTrainingData data, Row row, int offset) {
 		addCell(row, Header.valueOf(TRUE_BRANCH_TRAIN_DPS_TOTAL, offset), data.getTrainDpsTotal());
 		addCell(row, Header.valueOf(TRUE_BRANCH_GEN_DPS_TOTAL, offset), data.getGenDpsTotal());
 		addCell(row, Header.valueOf(TRUE_BRANCH_GEN_ACC, offset), data.getAvgAcc());
@@ -68,25 +69,26 @@ public class GanTestExcelWriter102 extends SimpleExcelWriter<RowData102> {
 	public static enum Header implements ExcelHeader {
 		METHOD_NAME ("method name"),
 		NODE_ID ("node_id"),
+		BRANCH_TYPE ("branch"),
 		LINE_NUMBER ("line_number"),
 		
-		TRUE_BRANCH_TRAIN_DPS_TOTAL("number of traning data points for TRUE branch"),
-		FALSE_BRANCH_TRAIN_DPS_TOTAL("number of traning data points for FALSE branch"),
+		TRUE_BRANCH_TRAIN_DPS_TOTAL("number of traning data points for TRUE category (covered)"),
+		FALSE_BRANCH_TRAIN_DPS_TOTAL("number of traning data points for FALSE category (uncovered)"),
 		
-		TRUE_BRANCH_GEN_DPS_TOTAL("number of genrated data points for TRUE branch"),
-		FALSE_BRANCH_GEN_DPS_TOTAL("number of generated data points for FALSE branch"),
+		TRUE_BRANCH_GEN_DPS_TOTAL("number of genrated data points for TRUE category (covered)"),
+		FALSE_BRANCH_GEN_DPS_TOTAL("number of generated data points for FALSE category (uncovered)"),
 		
-		TRUE_BRANCH_GEN_ACC("accuracy of generated data points for TRUE branch"),
-		FALSE_BRANCH_GEN_ACC("accuracy of generated data points for FALSE branch"),
+		TRUE_BRANCH_GEN_ACC("accuracy of generated data points for TRUE category (covered)"),
+		FALSE_BRANCH_GEN_ACC("accuracy of generated data points for FALSE category (uncovered)"),
 		
-		TRUE_BRANCH_TRAIN_DPS("training data points for TRUE branch"),
-		FALSE_BRANCH_TRAIN_DPS("training data points for FALSE branch"),
+		TRUE_BRANCH_TRAIN_DPS("training data points for TRUE category (covered)"),
+		FALSE_BRANCH_TRAIN_DPS("training data points for FALSE category (uncovered)"),
 		
-		TRUE_BRANCH_CORRECT_GEN_DPS("correctly generated data points for TRUE branch"),
-		FALSE_BRANCH_CORRECT_GEN_DPS("correctly generated data points for FALSE branch"),
+		TRUE_BRANCH_CORRECT_GEN_DPS("correctly generated data points for TRUE category (covered)"),
+		FALSE_BRANCH_CORRECT_GEN_DPS("correctly generated data points for FALSE category (uncovered)"),
 		
-		TRUE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for TRUE branch"),
-		FALSE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for FALSE branch"),
+		TRUE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for TRUE category (covered)"),
+		FALSE_BRANCH_WRONG_GEN_DPS("wrongly generated data points for FALSE category (uncovered)"),
 		
 //		COVERAGE("coverage"),
 //		INIT_COVERAGE_INFO("init coverage info"),

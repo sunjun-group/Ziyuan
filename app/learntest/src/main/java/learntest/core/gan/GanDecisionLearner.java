@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.LearningMediator;
@@ -27,18 +28,17 @@ import learntest.core.commons.data.decision.BranchType;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
-import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.test.TestTools;
 import learntest.core.commons.test.gan.GanTestTool;
-import learntest.core.commons.utils.CfgUtils;
+import learntest.core.gan.vm.BranchDataSet;
+import learntest.core.gan.vm.BranchDataSet.Category;
 import learntest.core.gan.vm.GanMachine;
-import learntest.core.gan.vm.NodeDataSet;
-import learntest.core.gan.vm.NodeDataSet.Category;
 import learntest.core.machinelearning.AbstractDecisionLearner;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.SampleExecutor;
 import sav.common.core.SavException;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
@@ -54,6 +54,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 	private SampleExecutor sampleExecutor;
 	private TrainingVariables trainingVars;
 	private Set<Integer> ganTrainedNodes;
+	private InputDatapointMapping inputDpMapping;
 	
 	public GanDecisionLearner(LearningMediator mediator) {
 		super(mediator);
@@ -82,11 +83,13 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 				return inputProbes.getOriginalVars();
 			}
 		};
+		inputDpMapping = new InputDatapointMapping(inputProbes.getOriginalVars());
 	}
 	
 	@Override
 	protected void onFinishLearning() {
 		machine.stop();
+		inputDpMapping.clear();
 	}
 
 	@Override
@@ -107,12 +110,12 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 			train(node, nodeProbe, trainingVars);
 			// sampling
 			BranchRelationship type = getSamplingBranches(nodeProbe);
-			if (CfgUtils.implyTrueBranch(type)) {
-				sampling(nodeProbe, trainingVars, Category.TRUE);
-			}
-			if (CfgUtils.implyFalseBranch(type)) {
-				sampling(nodeProbe, trainingVars, Category.FALSE);
-			}
+//			if (CfgUtils.implyTrueBranch(type)) {
+				sampling(nodeProbe, trainingVars, DecisionBranchType.TRUE);
+//			}
+//			if (CfgUtils.implyFalseBranch(type)) {
+				sampling(nodeProbe, trainingVars, DecisionBranchType.FALSE);
+//			}
 		} 
 		return null;
 	}
@@ -140,10 +143,10 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 		return type;
 	}
 	
-	private SamplingResult sampling(DecisionNodeProbe nodeProbe, TrainingVariables trainingVars, Category category) {
+	private SamplingResult sampling(DecisionNodeProbe nodeProbe, TrainingVariables trainingVars, DecisionBranchType branchType) {
 		CfgNode node = nodeProbe.getNode();
 		int nodeIdx = node.getIdx();
-		NodeDataSet generatedDataSet = machine.requestData(nodeIdx, trainingVars.getLabel(node.getIdx()), category);
+		BranchDataSet generatedDataSet = machine.requestData(nodeIdx, trainingVars.getLabel(node.getIdx()), branchType);
 		ganLog.log("Generated datapoints: ");
 		SamplingResult samplingResult = null;
 		if (generatedDataSet == null) {
@@ -160,7 +163,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 				// log new coverage
 				ganLog.logFormat("new coverage: ");
 				ganLog.logCoverage(nodeProbe.getDecisionProbes());
-				ganLog.logSamplingResult(node, allDatapoints, samplingResult, category);
+				ganLog.logSamplingResult(node, allDatapoints, samplingResult, branchType);
 			} catch (SavException e) {
 				log.debug("Error when generating new testcases: {}", e.getMessage());
 			}
@@ -168,21 +171,27 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 		return samplingResult;
 	}
 
-	private void train(CfgNode node, INodeCoveredData nodeProbe, TrainingVariables trainingVars) {
+	private void train(CfgNode node, DecisionNodeProbe nodeProbe, TrainingVariables trainingVars) {
 		if (ganTrainedNodes.contains(node.getIdx())) {
 			return;
 		}
-		NodeDataSet trainingData = new NodeDataSet();
+		trainBranch(nodeProbe, DecisionBranchType.TRUE, nodeProbe.getTrueValues());
+		trainBranch(nodeProbe, DecisionBranchType.FALSE, nodeProbe.getFalseValues());
+		ganTrainedNodes.add(node.getIdx());
+	}
+	
+	private void trainBranch(DecisionNodeProbe nodeProbe, DecisionBranchType branchType, List<BreakpointValue> coveredInputs) {
+		CfgNode node = nodeProbe.getNode();
+		BranchDataSet trainingData = new BranchDataSet();
+		trainingData.setNodeId(String.valueOf(node.getIdx()));
+		trainingData.setBranchType(branchType);
 		trainingData.setLabels(trainingVars.getLabel(node.getIdx()));
 		List<ExecVar> execVars = trainingVars.getExecVars(node.getIdx());
-		trainingData.setDatapoints(Category.TRUE,
-				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getTrueValues()));
-		trainingData.setDatapoints(Category.FALSE,
-				BreakpointDataUtils.toDataPoint(execVars, nodeProbe.getFalseValues()));
-		trainingData.setNodeId(String.valueOf(node.getIdx()));
-		ganLog.logTrainDatapoints(node, trainingData);
-		machine.train(node.getIdx(), trainingData);
-		ganTrainedNodes.add(node.getIdx());
+		trainingData.setDatapoints(Category.TRUE, inputDpMapping.getDatapoints(coveredInputs, execVars));
+		trainingData.setDatapoints(Category.FALSE, inputDpMapping
+				.getDatapoints(CollectionUtils.subtract(nodeProbe.getAllInputValues(), coveredInputs), execVars));
+		ganLog.logTrainDatapoints(node, branchType, trainingData);
+		machine.train(node.getIdx(), branchType, trainingData);
 	}
 
 	@Override

@@ -15,15 +15,16 @@ import java.util.List;
 import java.util.Map;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.test.gan.GanTestReport;
-import learntest.core.commons.test.gan.eval102.NodeExportData102.BranchTraningData;
+import learntest.core.commons.test.gan.eval102.BranchExportData102.CategoryTrainingData;
 import learntest.core.commons.test.gan.eval102.RowData102.UpdateType;
 import learntest.core.commons.utils.DomainUtils;
-import learntest.core.gan.vm.NodeDataSet;
-import learntest.core.gan.vm.NodeDataSet.Category;
+import learntest.core.gan.vm.BranchDataSet;
+import learntest.core.gan.vm.BranchDataSet.Category;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -33,7 +34,7 @@ import sav.common.core.utils.CollectionUtils;
 public class GanTestReport102 extends GanTestReport {
 	private Map<String, RowData102> rowDataMap = new HashMap<>();
 	private GanTestExcelWriter102 excelWriter;
-	private Map<String, NodeExportData102> nodeDataMap = new HashMap<String, NodeExportData102>();
+	private Map<String, BranchExportData102> nodeDataMap = new HashMap<String, BranchExportData102>();
 	private String methodId;
 	private String initCvg;
 	
@@ -52,13 +53,13 @@ public class GanTestReport102 extends GanTestReport {
 	}
 	
 	@Override
-	public void trainingDatapoints(CfgNode node, NodeDataSet dataSet) {
+	public void trainingDatapoints(CfgNode node, DecisionBranchType branchType, BranchDataSet dataSet) {
 		List<double[]> trueDps = dataSet.getDatapoints(Category.TRUE);
 		List<double[]> falseDps = dataSet.getDatapoints(Category.FALSE);
 		if (CollectionUtils.isEmpty(trueDps) || CollectionUtils.isEmpty(falseDps)) {
 			return;
 		}
-		NodeExportData102 data = getNodeData(node);
+		BranchExportData102 data = getNodeData(node, branchType);
 		if (data.getVars() == null) {
 			data.setVars(new ArrayList<String>(dataSet.getLabels()));
 		}
@@ -68,23 +69,21 @@ public class GanTestReport102 extends GanTestReport {
 	}
 	
 	@Override
-	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult, Category category) {
-		NodeExportData102 data = nodeDataMap.get(getNodeId(node));
+	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult,
+			DecisionBranchType branchType) {
+		BranchExportData102 data = nodeDataMap.get(getNodeId(node, branchType));
 		if (data == null) {
 			return;
 		}
 		INodeCoveredData newData = samplingResult.getNewData(node);
-		BranchTraningData branchData;
+		CategoryTrainingData branchData;
 		List<BreakpointValue> correctGenVals;
-//		List<BreakpointValue> wrongGenVals;
-		if (category == Category.TRUE) {
+		if (branchType == DecisionBranchType.TRUE) {
 			branchData = data.getTrueTrainData();
 			correctGenVals = newData.getTrueValues();
-//			wrongGenVals = newData.getFalseValues();
 		} else {
 			branchData = data.getFalseTrainData();
 			correctGenVals = newData.getFalseValues();
-//			wrongGenVals = newData.getTrueValues();
 		}
 		List<Integer> correctIdexies = DomainUtils.getCorrespondingSolutionIdx(allDatapoints, correctGenVals);
 		List<double[]> correctDps = new ArrayList<>();
@@ -108,7 +107,7 @@ public class GanTestReport102 extends GanTestReport {
 
 	@Override
 	public void coverage(String cvgInfo, double cvg) {
-		for (NodeExportData102 node : nodeDataMap.values()) {
+		for (BranchExportData102 node : nodeDataMap.values()) {
 			node.setCoverageInfo(cvgInfo);
 			node.setCvg(cvg);
 			node.setInitCoverageInfo(initCvg);
@@ -116,12 +115,12 @@ public class GanTestReport102 extends GanTestReport {
 		}
 	}
 	
-	private NodeExportData102 getNodeData(CfgNode node) {
-		String nodeId = getNodeId(node);
+	private BranchExportData102 getNodeData(CfgNode node, DecisionBranchType branchType) {
+		String nodeId = getNodeId(node, branchType);
 		int nodeIdx = node.getIdx();
-		NodeExportData102 data = nodeDataMap.get(nodeId);
+		BranchExportData102 data = nodeDataMap.get(nodeId);
 		if (data == null) {
-			data = new NodeExportData102();
+			data = new BranchExportData102();
 			data.setMethodId(methodId);
 			data.setNodeIdx(nodeIdx);
 			data.setLineNum(node.getLine());
@@ -130,12 +129,12 @@ public class GanTestReport102 extends GanTestReport {
 		return data;
 	}
 
-	private String getNodeId(CfgNode node) {
-		String nodeId = NodeExportData102.getId(methodId, node.getIdx());
+	private String getNodeId(CfgNode node, DecisionBranchType branchType) {
+		String nodeId = BranchExportData102.getId(methodId, node.getIdx(), branchType);
 		return nodeId;
 	}
 	
-	public void export(NodeExportData102 nodeData, UpdateType updateType) {
+	public void export(BranchExportData102 nodeData, UpdateType updateType) {
 		try {
 			String rowId = nodeData.getId();
 			RowData102 rowData = rowDataMap.get(rowId);
@@ -144,7 +143,7 @@ public class GanTestReport102 extends GanTestReport {
 				rowData.setId(rowId);
 				rowDataMap.put(rowId, rowData);
 			}
-			rowData.setNodeData(nodeData);
+			rowData.setBranchData(nodeData);
 			rowData.setUpdateType(updateType);
 			excelWriter.export(rowData);
 		} catch(Exception ex) {

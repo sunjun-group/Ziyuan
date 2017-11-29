@@ -10,8 +10,10 @@ package learntest.core.gan.vm;
 
 import java.util.List;
 
-import learntest.core.gan.vm.NodeDataSet.Category;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import learntest.core.gan.vm.BranchDataSet.Category;
 import sav.common.core.SavException;
+import sav.common.core.utils.Assert;
 import sav.strategies.vm.interprocess.python.PythonVmConfiguration;
 import sav.strategies.vm.interprocess.python.PythonVmRunner;
 
@@ -54,22 +56,18 @@ public class GanMachine {
 		inputWriter.request(GanInput.createStartMethodRequest(methodName));
 	}
 	
-	public void train(int nodeIdx, NodeDataSet trainingData) {
-		inputWriter.request(GanInput.createTrainingRequest(toNodeId(nodeIdx), trainingData));
+	public void train(int nodeIdx, DecisionBranchType branchType, BranchDataSet trainingData) {
+		inputWriter.request(GanInput.createTrainingRequest(toNodeId(nodeIdx), branchType, trainingData));
 	}
-
+	
 	private String toNodeId(int nodeIdx) {
 		return String.valueOf(nodeIdx);
 	}
 	
-	public NodeDataSet requestData(int nodeIdx, List<String> labels, Category category) {
-		Category[] categories;
-		if (category == null) {
-			categories = Category.values();
-		} else {
-			categories = new Category[] { category };
-		}
-		inputWriter.request(GanInput.createGeneratingRequest(toNodeId(nodeIdx), labels, categories));
+	public BranchDataSet requestData(int nodeIdx, List<String> labels, DecisionBranchType branchType) {
+		Assert.assertNotNull(branchType, "GanMachine: branchType must not be null!");
+		Category[] categories = new Category[] { Category.TRUE }; // request data to covered data for branch only.
+		inputWriter.request(GanInput.createGeneratingRequest(toNodeId(nodeIdx), branchType, labels, categories));
 		GanOutput output = outputReader.readOutput();
 		if (output == null) {
 			return null;

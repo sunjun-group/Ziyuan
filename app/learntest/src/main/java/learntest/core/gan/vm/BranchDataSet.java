@@ -13,23 +13,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import sav.common.core.utils.TextFormatUtils;
 
 /**
  * @author LLT
  *
  */
-public class NodeDataSet {
+public class BranchDataSet {
 	private String nodeId;
+	private DecisionBranchType branchType;
 	private List<String> labels;
 	private Map<Category, List<double[]>> dataset;
 	
-	public NodeDataSet(int nodeIdx) {
+	public BranchDataSet(int nodeIdx) {
 		this();
 		this.nodeId = String.valueOf(nodeIdx);
 	}
 	
-	public NodeDataSet() {
+	public BranchDataSet() {
 		dataset = new HashMap<Category, List<double[]>>();
 	}
 
@@ -65,6 +67,14 @@ public class NodeDataSet {
 		return nodeId;
 	}
 	
+	public DecisionBranchType getBranchType() {
+		return branchType;
+	}
+
+	public void setBranchType(DecisionBranchType branchType) {
+		this.branchType = branchType;
+	}
+
 	public static enum Category {
 		TRUE,
 		FALSE

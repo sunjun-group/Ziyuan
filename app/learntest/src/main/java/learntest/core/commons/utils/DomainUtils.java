@@ -129,7 +129,7 @@ public class DomainUtils {
 	}
 	
 	public static BreakpointValue toHierachyBreakpointValue(double[] solution, List<ExecVar> vars) {
-		BreakpointValue value = new BreakpointValue(StringUtils.EMPTY);
+		BreakpointValue value = new BreakpointValue();
 		for (int i = 0; i < vars.size(); i++) {
 			value.append(vars.get(i).getVarId(), 0, vars.get(i), solution[i]);
 		}

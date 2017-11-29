@@ -19,13 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
 import learntest.core.commons.test.gan.GanExportData;
 import learntest.core.commons.test.gan.GanTestReport;
-import learntest.core.gan.vm.NodeDataSet.Category;
 import learntest.plugin.export.io.excel.common.ExcelHeader;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 import sav.common.core.utils.CollectionUtils;
@@ -62,12 +62,12 @@ public class GanTrialReport extends GanTestReport {
 	
 	@Override
 	public void samplingResult(CfgNode node, List<double[]> allDatapoints, SamplingResult samplingResult,
-			Category category) {
+			DecisionBranchType branchType) {
 		INodeCoveredData newData = samplingResult.getNewData(node);
 		int falseSize = CollectionUtils.getSize(newData.getFalseValues());
 		int trueSize = CollectionUtils.getSize(newData.getTrueValues());
 		int total = falseSize + trueSize;
-		int accSize = (category == Category.TRUE ? trueSize : falseSize);
+		int accSize = (branchType == DecisionBranchType.TRUE ? trueSize : falseSize);
 		trial.updateAcc(node.getIdx(), accSize / ((double) total));
 	}
 	

@@ -11,6 +11,7 @@ package learntest.core.commons.test.gan.eval102;
 import java.util.ArrayList;
 import java.util.List;
 
+import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
@@ -18,13 +19,14 @@ import sav.common.core.utils.StringUtils;
  * @author LLT
  *
  */
-public class NodeExportData102 {
+public class BranchExportData102 {
 	private String methodId;
 	private int nodeIdx;
+	private DecisionBranchType branchType;
 	private int lineNum;
 	private List<String> vars;
-	private BranchTraningData trueTrainData = new BranchTraningData();
-	private BranchTraningData falseTrainData = new BranchTraningData();
+	private CategoryTrainingData trueTrainData = new CategoryTrainingData();
+	private CategoryTrainingData falseTrainData = new CategoryTrainingData();
 	private String coverageInfo;
 	private double cvg;
 	private String initCoverageInfo;
@@ -45,19 +47,19 @@ public class NodeExportData102 {
 		this.nodeIdx = nodeIdx;
 	}
 
-	public BranchTraningData getTrueTrainData() {
+	public CategoryTrainingData getTrueTrainData() {
 		return trueTrainData;
 	}
 
-	public void setTrueTrainData(BranchTraningData trueTrainData) {
+	public void setTrueTrainData(CategoryTrainingData trueTrainData) {
 		this.trueTrainData = trueTrainData;
 	}
 
-	public BranchTraningData getFalseTrainData() {
+	public CategoryTrainingData getFalseTrainData() {
 		return falseTrainData;
 	}
 
-	public void setFalseTrainData(BranchTraningData falseTrainData) {
+	public void setFalseTrainData(CategoryTrainingData falseTrainData) {
 		this.falseTrainData = falseTrainData;
 	}
 
@@ -70,7 +72,7 @@ public class NodeExportData102 {
 	}
 	
 	public String getId() {
-		return getId(methodId, nodeIdx);
+		return getId(methodId, nodeIdx, branchType);
 	}
 	
 	public void setVars(List<String> vars) {
@@ -81,8 +83,8 @@ public class NodeExportData102 {
 		return vars;
 	}
 	
-	public static String getId(String methodId, int nodeIdx) {
-		return StringUtils.dotJoin(methodId, nodeIdx);
+	public static String getId(String methodId, int nodeIdx, DecisionBranchType branchType) {
+		return StringUtils.dotJoin(methodId, nodeIdx, branchType);
 	}
 	
 	public String getCoverageInfo() {
@@ -108,8 +110,16 @@ public class NodeExportData102 {
 	public void setInitCoverageInfo(String initCoverageInfo) {
 		this.initCoverageInfo = initCoverageInfo;
 	}
+	
+	public DecisionBranchType getBranchType() {
+		return branchType;
+	}
 
-	public class BranchTraningData {
+	public void setBranchType(DecisionBranchType branchType) {
+		this.branchType = branchType;
+	}
+
+	public class CategoryTrainingData {
 		private List<double[]> trainingDps = new ArrayList<double[]>();
 		private List<double[]> correctGenDps = new ArrayList<double[]>();
 		private List<double[]> wrongGenDps = new ArrayList<double[]>();

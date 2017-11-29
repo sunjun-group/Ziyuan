@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -23,9 +25,18 @@ import sav.strategies.dto.execute.value.ExecVarType;
  * 
  */
 public class BreakpointValue extends ExecValue {
+	private static final AtomicInteger count = new AtomicInteger(0); 
+	
+	public BreakpointValue() {
+		this(StringUtils.lowLineJoin("genId_", count.getAndDecrement()));
+	}
 
 	public BreakpointValue(String id) {
 		super(id);
+	}
+	
+	public static void resetCount() {
+		count.set(0);
 	}
 	
 	public String getBkpId() {

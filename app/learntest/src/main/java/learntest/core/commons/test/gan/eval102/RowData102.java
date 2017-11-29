@@ -16,7 +16,7 @@ import learntest.core.commons.test.gan.AbstractRowData;
  */
 public class RowData102 extends AbstractRowData {
 	private String id;
-	private NodeExportData102 nodeData;
+	private BranchExportData102 branchData;
 	private UpdateType updateType;
 
 	public String getId() {
@@ -27,12 +27,12 @@ public class RowData102 extends AbstractRowData {
 		this.id = id;
 	}
 
-	public NodeExportData102 getNodeData() {
-		return nodeData;
+	public BranchExportData102 getBranchData() {
+		return branchData;
 	}
 
-	public void setNodeData(NodeExportData102 nodeData) {
-		this.nodeData = nodeData;
+	public void setBranchData(BranchExportData102 nodeData) {
+		this.branchData = nodeData;
 	}
 	
 	public UpdateType getUpdateType() {

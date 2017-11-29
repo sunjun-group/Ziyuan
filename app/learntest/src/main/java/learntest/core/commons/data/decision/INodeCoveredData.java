@@ -30,4 +30,5 @@ public interface INodeCoveredData {
 
 	void update(NodeCoverage coverage, int samplesFirstIdx, List<BreakpointValue> sampleTestInputs);
 	
+	List<BreakpointValue> getAllInputValues();
 }
