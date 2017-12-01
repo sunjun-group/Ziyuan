@@ -25,6 +25,14 @@ public class NumberUtils {
 		}
 	}
 	
+	public static int toNumber(String str, int defaultValue)  {
+		try {
+			return Integer.parseInt(str);
+		} catch(Exception ex) {
+			return defaultValue;
+		}
+	}
+	
 	public static double round(double val, int fraction) {
 		return Math.round(val * fraction) / fraction;
 	}

@@ -59,7 +59,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 	public GanDecisionLearner(LearningMediator mediator) {
 		super(mediator);
 		machine = new GanMachine();
-		machine.setVmTimeout(3600000);
+//		machine.setVmTimeout(3600000);
 	}
 	
 	@Override

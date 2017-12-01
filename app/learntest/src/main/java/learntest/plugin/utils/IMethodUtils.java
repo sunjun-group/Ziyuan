@@ -14,8 +14,14 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import learntest.core.commons.data.classinfo.ClassInfo;
+import learntest.core.commons.data.classinfo.MethodInfo;
+import sav.common.core.Constants;
+import sav.common.core.Pair;
+import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.NumberUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -25,6 +31,9 @@ import sav.common.core.utils.StringUtils;
 public class IMethodUtils {
 
 	public static int getStartLineNo(CompilationUnit cu, MethodDeclaration method) {
+		if (method.getBody() == null || method.getBody().statements().isEmpty()) {
+			return cu.getLineNumber(method.getStartPosition());
+		}
 		return cu.getLineNumber(((ASTNode)method.getBody().statements().get(0)).getStartPosition());
 	}
 	
@@ -55,4 +64,22 @@ public class IMethodUtils {
 		return StringUtils.dotJoin(methodName, methodStartLine);
 	}
 
+	/**
+	 * methodId: [className].[methodName].[lineNumber]
+	 * */
+	public static MethodInfo toMethodInfo(String methodId) {
+		int idx = methodId.lastIndexOf(Constants.DOT);
+		Assert.assertTrue(idx >= 0, "Invalid methodId: " + methodId);
+		
+		int lineNumber = NumberUtils.toNumber(methodId.substring(idx + 1), -1);
+		Assert.assertTrue(lineNumber > 0,  "Invalid methodId: " + methodId);
+		
+		Pair<String, String> classMethod = ClassUtils.splitClassMethod(methodId.substring(0, idx));
+		
+		ClassInfo targetClass = new ClassInfo(classMethod.a);
+		MethodInfo method = new MethodInfo(targetClass);
+		method.setMethodName(classMethod.b);
+		method.setLineNum(lineNumber);
+		return method;
+	}
 }

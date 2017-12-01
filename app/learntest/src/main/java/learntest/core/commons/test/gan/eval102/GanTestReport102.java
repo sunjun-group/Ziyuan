@@ -76,13 +76,11 @@ public class GanTestReport102 extends GanTestReport {
 			return;
 		}
 		INodeCoveredData newData = samplingResult.getNewData(node);
-		CategoryTrainingData branchData;
+		CategoryTrainingData branchData = data.getTrueTrainData();
 		List<BreakpointValue> correctGenVals;
 		if (branchType == DecisionBranchType.TRUE) {
-			branchData = data.getTrueTrainData();
 			correctGenVals = newData.getTrueValues();
 		} else {
-			branchData = data.getFalseTrainData();
 			correctGenVals = newData.getFalseValues();
 		}
 		List<Integer> correctIdexies = DomainUtils.getCorrespondingSolutionIdx(allDatapoints, correctGenVals);
@@ -123,6 +121,7 @@ public class GanTestReport102 extends GanTestReport {
 			data = new BranchExportData102();
 			data.setMethodId(methodId);
 			data.setNodeIdx(nodeIdx);
+			data.setBranchType(branchType);
 			data.setLineNum(node.getLine());
 			nodeDataMap.put(nodeId, data);
 		}

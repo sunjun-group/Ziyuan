@@ -24,12 +24,10 @@ import cfgcoverage.org.objectweb.asm.tree.AbstractInsnNode;
 import cfgcoverage.org.objectweb.asm.tree.FieldInsnNode;
 import cfgcoverage.org.objectweb.asm.tree.LocalVariableNode;
 import cfgcoverage.org.objectweb.asm.tree.VarInsnNode;
-import learntest.core.BreakpointCreator;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
-import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT

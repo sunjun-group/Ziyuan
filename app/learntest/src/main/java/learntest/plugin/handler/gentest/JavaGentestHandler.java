@@ -8,13 +8,16 @@
 
 package learntest.plugin.handler.gentest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -62,8 +65,10 @@ import learntest.plugin.handler.TargetMethodConverter;
 import learntest.plugin.handler.gentest.filter.GentestMethodFilter;
 import learntest.plugin.handler.gentest.filter.GentestTypeFilter;
 import learntest.plugin.utils.AstUtils;
+import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.WorkbenchUtils;
+import sav.common.core.Constants;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVTimer;
@@ -117,18 +122,52 @@ public class JavaGentestHandler extends AbstractHandler {
 			getEventManager().fireGentestStartEvent();
 			GentestWorkObject workObject = new GentestWorkObject();
 			// elements must not be empty as being configured in plugin.xml
-			for (Object obj : elements) {
-				if (obj instanceof IJavaElement) {
-					workObject.extend((IJavaElement) obj);
-				}
-			}
+			initWorkObject(elements, workObject);
 			JavaModelRuntimeInfo runtimeInfo = runGentest(workObject, approach);
 			getEventManager().fireOnChangedEvent(new JavaGentestEvent(runtimeInfo));
 		}
 		return IStatusUtils.ok();
 	}
+
+	private void initWorkObject(Object[] elements, GentestWorkObject workObject) {
+		if (elements.length == 1 && (CollectionUtils.getFirstElement(elements) instanceof IFile)) {
+			initWorkObjectFromConfigFile((IFile)CollectionUtils.getFirstElement(elements), workObject);
+			return;
+		}
+		for (Object obj : elements) {
+			if (obj instanceof IJavaElement) {
+				workObject.extend((IJavaElement) obj);
+			}
+		}
+	}
 	
-	private JavaModelRuntimeInfo runGentest(GentestWorkObject workObject, LearnTestApproach approach) {
+	private void initWorkObjectFromConfigFile(IFile file, GentestWorkObject workObject) {
+		String name = file.getName();
+		if (!Constants.TEXT_FILE_EXT.equals(file.getFileExtension())) {
+			return;
+		}
+		try {
+			IJavaProject project = IProjectUtils.getJavaProject(file.getProject());
+			List<?> lines = IOUtils.readLines(file.getContents());
+			for (Object line : lines) {
+				String methodId = (String) line;
+				if (methodId.startsWith("#")) {
+					log.info("ignore {}", methodId.substring(1));
+					// ignore
+					continue;
+				}
+				IMethod method = IProjectUtils.getIMethod(project, methodId);
+				if(method != null) {
+					workObject.extend(method);
+				}
+			}
+		} catch (IOException | CoreException e) {
+			log.info("Cannot read file {}!", file.getName());
+		}
+		System.out.println(name);
+	}
+
+	protected JavaModelRuntimeInfo runGentest(GentestWorkObject workObject, LearnTestApproach approach) {
 		JavaModelRuntimeInfo result = new JavaModelRuntimeInfo(workObject);
 		TestTools.getInstance().reset(approach);
 		for (WorkProject workProject : workObject.getWorkProjects()) {

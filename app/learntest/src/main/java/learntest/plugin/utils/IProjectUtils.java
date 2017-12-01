@@ -35,11 +35,14 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.commons.PluginException;
 import sav.common.core.Pair;
 import sav.common.core.SavRtException;
@@ -286,5 +289,33 @@ public class IProjectUtils {
 			}
 		}
 		return Pair.of(testcases, methods);
+	}
+	
+	public static IMethod getIMethod(IJavaProject javaProject, String methodId) {
+		try {
+			MethodInfo methodInfo = IMethodUtils.toMethodInfo(methodId);
+			IType type;
+			type = javaProject.findType(methodInfo.getClassName());
+
+			CompilationUnit cu = AstUtils.toAstNode(type.getCompilationUnit());
+			for (IMethod method : type.getMethods()) {
+				if (method.getElementName().equals(methodInfo.getMethodName())) {
+					MethodDeclaration methodDecl;
+					try {
+						methodDecl = AstUtils.findNode(cu, method);
+						int startLine = IMethodUtils.getStartLineNo(cu, methodDecl);
+						int endLine = startLine + IMethodUtils.getLength(cu, methodDecl);
+						if (methodInfo.getLineNum() >= startLine && methodInfo.getLineNum() <= endLine) {
+							return method;
+						}
+					} catch (PluginException e) {
+						// ignore
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			// ignore
+		}
+		return null;
 	}
 }
