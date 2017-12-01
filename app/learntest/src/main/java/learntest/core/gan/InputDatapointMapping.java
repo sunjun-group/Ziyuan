@@ -24,7 +24,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  */
 public class InputDatapointMapping {
 	private List<ExecVar> orgVars;
-	private Map<String, double[]> dpMap = new HashMap<String, double[]>();
+	private Map<BreakpointValue, double[]> dpMap = new HashMap<>();
 
 	public InputDatapointMapping(List<ExecVar> originalVars) {
 		this.orgVars = originalVars;
@@ -40,10 +40,10 @@ public class InputDatapointMapping {
 		}
 		List<double[]> result = new ArrayList<double[]>(CollectionUtils.getSize(values));
 		for (BreakpointValue value : values) {
-			double[] dp = dpMap.get(value.getVarId());
+			double[] dp = dpMap.get(value);
 			if (dp == null) {
 				dp = BreakpointDataUtils.toDatapoint(execVars, value);
-				dpMap.put(value.getVarId(), dp);
+				dpMap.put(value, dp);
 			}
 			result.add(dp);
 		}
