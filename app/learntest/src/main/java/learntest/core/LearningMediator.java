@@ -198,7 +198,7 @@ public class LearningMediator {
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams, GenTestPackage.RESULT);
 		params.setPrintOption(printOption);
 		params.setTestMethodPrefix("main");
-		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new MWriter(true));
+		return getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new MWriter(false));
 	}
 
 	public LearnTestParams getLearntestParams() {

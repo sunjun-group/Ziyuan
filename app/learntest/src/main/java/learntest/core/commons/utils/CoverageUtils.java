@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
@@ -116,8 +116,8 @@ public class CoverageUtils {
 		return coveredBranches;
 	}
 	
-	public static HashMap<String, Set<DecisionBranchType>> getBranchCoverage(CfgCoverage cfgCoverage) {
-		HashMap<String , Set<DecisionBranchType>> relationships = new HashMap<>();
+	public static LinkedHashMap<String, Set<DecisionBranchType>> getBranchCoverage(CfgCoverage cfgCoverage) {
+		LinkedHashMap<String , Set<DecisionBranchType>> relationships = new LinkedHashMap<>();
 		int testIdx = -1;
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);

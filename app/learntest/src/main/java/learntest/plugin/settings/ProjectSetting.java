@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.plugin;
+package learntest.plugin.settings;
 
 import java.io.File;
 
@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import learntest.core.commons.LearntestConstants;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IStatusUtils;
 
@@ -27,7 +28,7 @@ public class ProjectSetting {
 
 	public static String createOutputFolderInWorkspace() {
 		String workspace = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-		File learntest = new File(workspace, "learntest");
+		File learntest = new File(workspace, LearntestConstants.REPORT_FOLDER);
 		if (!learntest.exists()) {
 			learntest.mkdir();
 		}
@@ -42,7 +43,7 @@ public class ProjectSetting {
 		if (project == null || !project.exists() || !project.isOpen()) {
 			throw new CoreException(IStatusUtils.error(String.format("Project %s is not open!", projectName)));
 		}
-		IFolder outputFolder = project.getFolder("learntest");
+		IFolder outputFolder = project.getFolder(LearntestConstants.REPORT_FOLDER);
 		if (!outputFolder.exists()) {
 			outputFolder.create(IResource.NONE, true, null);
 		}

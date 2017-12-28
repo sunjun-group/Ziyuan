@@ -10,7 +10,7 @@ package learntest.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -145,7 +145,7 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		long executionTime = SAVTimer.getExecutionTime();
 		int testCnt = cfgCoverage.getTotalTcs();
 		
-		HashMap<String , Set<DecisionBranchType>> relationships = CoverageUtils.getBranchCoverage(cfgCoverage);
+		LinkedHashMap<String , Set<DecisionBranchType>> relationships = CoverageUtils.getBranchCoverage(cfgCoverage);
 		
 		List<String> lines = CoverageUtils.getBranchCoverageDisplayTexts(cfgCoverage, -1);
 		for (String line : lines) {
@@ -154,12 +154,12 @@ public abstract class AbstractLearntest implements ILearnTestSolution {
 		String cvgInfo = StringUtils.newLineJoin(lines);
 		if (!test) {
 			RunTimeInfo info = new RunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
-			info.setRelationships(relationships);
+			info.setCoveredBranchMap(relationships);
 			return info;
 		}
 
 		RunTimeInfo tInfo = new TestRunTimeInfo(executionTime, coverage, testCnt, cvgInfo);
-		tInfo.setRelationships(relationships);
+		tInfo.setCoveredBranchMap(relationships);
 		return tInfo;
 	}
 	

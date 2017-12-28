@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -123,6 +124,27 @@ public class JunitUtils {
 		for (String classMethod : junitClassTestMethods) {
 			Pair<String, String> classMethodPair = toPair(classMethod);
 			CollectionUtils.getListInitIfEmpty(map, classMethodPair.a).add(classMethodPair.b);
+		}
+		return map;
+	}
+	
+	public static Map<String, List<String>> toOrderedClassMethodsMap(Collection<String> junitClassTestMethods) {
+		List<String> classMethods = new ArrayList<>(junitClassTestMethods);
+		StringUtils.sortAlphanumericStrings(classMethods);
+		Map<String, List<String>> map = new LinkedHashMap<>();
+		List<List<String>> methodLists = new ArrayList<>();
+		for (String classMethod : junitClassTestMethods) {
+			Pair<String, String> classMethodPair = toPair(classMethod);
+			List<String> methodList = map.get(classMethodPair.a);
+			if (methodList == null) {
+				methodList = new ArrayList<>();
+				map.put(classMethodPair.a, methodList);
+				methodLists.add(methodList);
+			}
+			methodList.add(classMethodPair.b);
+		}
+		for (List<String> methodList : methodLists) {
+			StringUtils.sortAlphanumericStrings(methodList);
 		}
 		return map;
 	}

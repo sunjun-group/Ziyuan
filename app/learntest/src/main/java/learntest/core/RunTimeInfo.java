@@ -1,10 +1,11 @@
 package learntest.core;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import learntest.core.commons.data.LineCoverageResult;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.machinelearning.IInputLearner;
 import sav.common.core.utils.TextFormatUtils;
 
@@ -13,7 +14,7 @@ public class RunTimeInfo {
 	protected double coverage;
 	protected int testCnt;
 	private String coverageInfo;
-	private HashMap<String , Set<DecisionBranchType>> relationships = new HashMap<>();
+	private LinkedHashMap<String , Set<DecisionBranchType>> nodeBranchCoveredMap = new LinkedHashMap<>();
 	
 	private LineCoverageResult lineCoverageResult;
 	private int symbolicTimes = 0;
@@ -148,12 +149,12 @@ public class RunTimeInfo {
 		return 0.0;
 	}
 
-	public HashMap<String, Set<DecisionBranchType>> getRelationships() {
-		return relationships;
+	public LinkedHashMap<String, Set<DecisionBranchType>> getCoveredBranchMap() {
+		return nodeBranchCoveredMap;
 	}
 
-	public void setRelationships(HashMap<String, Set<DecisionBranchType>> relationships) {
-		this.relationships = relationships;
+	public void setCoveredBranchMap(LinkedHashMap<String, Set<DecisionBranchType>> relationships) {
+		this.nodeBranchCoveredMap = relationships;
 	}
 
 	public int getSymbolicTimes() {
@@ -164,5 +165,7 @@ public class RunTimeInfo {
 		this.symbolicTimes = symbolicTimes;
 	}
 
-	
+	public MethodInfo getMethodInfo() {
+		return lineCoverageResult.getMethodInfo();
+	}
 }

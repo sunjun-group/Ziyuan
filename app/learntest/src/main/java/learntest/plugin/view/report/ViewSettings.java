@@ -13,7 +13,7 @@ package learntest.plugin.view.report;
  *
  */
 public class ViewSettings {
-	private GroupBy groupBy = GroupBy.PROJECT;
+	private GroupBy groupBy = getDefault();
 
 	public GroupBy getGroupBy() {
 		return groupBy;
@@ -21,10 +21,14 @@ public class ViewSettings {
 
 	public void setGroupBy(GroupBy groupBy) {
 		if (groupBy == null) {
-			this.groupBy = GroupBy.PROJECT;
+			this.groupBy = getDefault();
 		} else {
 			this.groupBy = groupBy;
 		}
+	}
+	
+	private static GroupBy getDefault() {
+		return GroupBy.METHOD;
 	}
 	
 	public static enum GroupBy {

@@ -327,8 +327,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	private void recordBetterInfo(CfgNode node, StringBuffer l2tWorseSb, StringBuffer ranWorseSb,
 			TestRunTimeInfo ranAverageInfo, TestRunTimeInfo l2tAverageInfo) {
-		java.util.Set<DecisionBranchType> relInRan = ranAverageInfo.getRelationships().get(node.toString()),
-				relInL2t = l2tAverageInfo.getRelationships().get(node.toString());
+		java.util.Set<DecisionBranchType> relInRan = ranAverageInfo.getCoveredBranchMap().get(node.toString()),
+				relInL2t = l2tAverageInfo.getCoveredBranchMap().get(node.toString());
 		for (DecisionBranchType branchRelationship : relInL2t) {
 			if (!relInRan.contains(branchRelationship)) {
 				ranWorseSb.append(node.toString() + " : " + branchRelationship +";");

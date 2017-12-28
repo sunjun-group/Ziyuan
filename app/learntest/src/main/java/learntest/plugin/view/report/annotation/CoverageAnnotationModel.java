@@ -28,6 +28,8 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.slf4j.Logger;
@@ -254,7 +256,7 @@ public class CoverageAnnotationModel
 
 	@Override
 	public void onChange(AnnotationChangeEvent event) {
-		if (this.cu != event.getTargetMethod().getDeclaringType().getCompilationUnit()) {
+		if (!this.cu.equals(event.getTargetMethod().getDeclaringType().getCompilationUnit())) {
 			return;
 		}
 		if (testcases == null) {
@@ -265,4 +267,11 @@ public class CoverageAnnotationModel
 		fireModelChanged(new AnnotationModelEvent(this));
 	}
 
+	public static void attachCoverageAnnotation() {
+		IWorkbenchPage page = LearntestPlugin.getActiveWorkbenchWindow().getActivePage();
+		IEditorPart editor = page != null ? editor = page.getActiveEditor() : null;
+		if (editor instanceof ITextEditor) {
+			CoverageAnnotationModel.attach((ITextEditor) editor);
+		}
+	}
 }

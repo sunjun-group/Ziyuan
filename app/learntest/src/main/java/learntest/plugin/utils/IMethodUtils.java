@@ -8,8 +8,6 @@
 
 package learntest.plugin.utils;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -32,11 +30,8 @@ public class IMethodUtils {
 		if (method.getBody() == null || CollectionUtils.isEmpty(method.getBody().statements())) {
 			return 0;
 		}
-		List<?> statements = method.getBody().statements();
-		ASTNode firstStatement = (ASTNode) statements.get(0);
-		ASTNode lastStatement = (ASTNode) statements.get(statements.size() - 1);
-		return cu.getLineNumber(lastStatement.getStartPosition())
-				- cu.getLineNumber(firstStatement.getStartPosition());
+		return cu.getLineNumber(method.getStartPosition() + method.getLength())
+				- cu.getLineNumber(method.getStartPosition());
 	}
 	
 	public static String getMethodId(CompilationUnit cu, MethodDeclaration method) {

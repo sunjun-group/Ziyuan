@@ -79,13 +79,9 @@ public class LearntestPlugin extends AbstractUIPlugin {
 	}
 
 	public static void initLogger(String projectName) throws PluginException {
-		getDefault().internalInitLogger(projectName);
+		LearntestLogger.initLog4j(projectName);
 	}
 
-	protected void internalInitLogger(String projectName) throws PluginException {
-		LearntestLogger.initLog4j(projectName, "learntest_log4j");
-	}
-	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		if (Display.getCurrent() != null) {
 			return getDefault().getWorkbench().getActiveWorkbenchWindow();

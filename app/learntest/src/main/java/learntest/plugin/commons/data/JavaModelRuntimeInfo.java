@@ -41,12 +41,14 @@ public class JavaModelRuntimeInfo implements IJavaModelRuntimeInfo {
 	private GentestWorkObject workObject;
 	private Map<IJavaElement, IModelRuntimeInfo> jEleRuntimeInfoMap;
 	private Map<IMethod, List<IMethod>> targetMethodTestcasesMap;
+	private Map<String, IMethod> testcaseTargetMethodMap;
 	private Map<IMethod, String> testcasesMap;
 
 	public JavaModelRuntimeInfo(GentestWorkObject workObject) {
 		this.workObject = workObject;
 		jEleRuntimeInfoMap = new HashMap<IJavaElement, IModelRuntimeInfo>();
 		targetMethodTestcasesMap = new HashMap<IMethod, List<IMethod>>();
+		testcaseTargetMethodMap = new HashMap<String, IMethod>();
 		testcasesMap = new HashMap<IMethod, String>();
 	}
 
@@ -105,10 +107,9 @@ public class JavaModelRuntimeInfo implements IJavaModelRuntimeInfo {
 	public IModelRuntimeInfo getCorrespondingRuntimeInfo(IJavaElement element) {
 		IModelRuntimeInfo runtimeInfo = jEleRuntimeInfoMap.get(element);
 		if ((runtimeInfo == null) && (element.getElementType() == IJavaElement.METHOD)) {
-			for (IMethod targetMethod : targetMethodTestcasesMap.keySet()) {
-				if (targetMethodTestcasesMap.get(targetMethod).contains(element)) {
-					return jEleRuntimeInfoMap.get(targetMethod);
-				}
+			IMethod targetMethod = testcaseTargetMethodMap.get(testcasesMap.get(element));
+			if (targetMethod != null) {
+				return jEleRuntimeInfoMap.get(targetMethod);
 			}
 		}
 		return runtimeInfo;
@@ -131,7 +132,9 @@ public class JavaModelRuntimeInfo implements IJavaModelRuntimeInfo {
 				testcases = iMethodTestcasesPair.b;
 				targetMethodTestcasesMap.put(targetMethod, testcases);
 				for (int i = 0; i < testcases.size(); i++) {
-					testcasesMap.put(testcases.get(i), iMethodTestcasesPair.a.get(i));
+					String testcase = iMethodTestcasesPair.a.get(i);
+					testcasesMap.put(testcases.get(i), testcase);
+					testcaseTargetMethodMap.put(testcase, targetMethod);
 				}
 			}
 			return testcases.toArray();

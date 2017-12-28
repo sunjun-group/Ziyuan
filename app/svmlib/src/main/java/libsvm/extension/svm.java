@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
@@ -313,6 +316,7 @@ abstract class Kernel extends QMatrix {
 // solution will be put in \alpha, objective value will be put in obj
 //
 class Solver {
+	private Logger log = LoggerFactory.getLogger(Solver.class);
 	int active_size;
 	byte[] y;
 	double[] G;		// gradient of objective function
@@ -683,7 +687,7 @@ class Solver {
 				active_size = l;
 				svm.info("*");
 			}
-			System.err.print("\nWARNING: reaching max number of iterations\n");
+			log.debug("\nWARNING: reaching max number of iterations\n");
 		}
 
 		// calculate rho

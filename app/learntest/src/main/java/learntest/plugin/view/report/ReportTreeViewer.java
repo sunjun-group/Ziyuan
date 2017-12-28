@@ -8,16 +8,26 @@
 
 package learntest.plugin.view.report;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.TreeViewerEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+import learntest.plugin.commons.data.IModelRuntimeInfo;
 
 /**
  * @author LLT
@@ -25,25 +35,47 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class ReportTreeViewer extends TreeViewer {
 	private ReportLabelProvider textProvider;
+	private ReportContentProvider contentProvider;
+	private TreeViewerColumn jEleColumn;
+	private Map<Object, Boolean> highlightSelected = new HashMap<Object, Boolean>();
 
 	public ReportTreeViewer(Composite parent, ViewSettings settings) {
-		super(parent, SWT.MULTI);
+		super(parent, SWT.MULTI | SWT.BORDER);
 		Tree tree = getTree();
+		GridData layoutData = new GridData(GridData.FILL_BOTH);
+		layoutData.heightHint = 400;
+		tree.setLayoutData(layoutData);
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
-
-		setContentProvider(new ReportContentProvider(settings));
+		
+		contentProvider = new ReportContentProvider(settings);
+		setContentProvider(contentProvider);
 		textProvider = new ReportLabelProvider();
 
 		/* add columns */
 		addJEleColumn();
-		addTestableColumn();
-		addGeneratedTestColumn();
-		addStartLineColumn();
+//		addTestableColumn();
+		addBranchCoverageColumn();
+//		addUncoveredBranchesColumn();
 		addLengthColumn();
 		
 		/* header */
 		initColumnHeader();
+		TreeViewerEditor.create(this, new ColumnViewerEditorActivationStrategy(this), ColumnViewerEditor.DEFAULT);
+	}
+	
+	public void updateHighlightElements(IModelRuntimeInfo runtimeInfo, Object[] elements) {
+		boolean fullHighlight = (elements == null);
+		highlightSelected.put(runtimeInfo.getJavaElement(), fullHighlight);
+		for (Object ele : contentProvider.getChildren(runtimeInfo.getJavaElement())) {
+			highlightSelected.put(ele, fullHighlight);
+		}
+		if (elements != null) {
+			for (Object ele : elements) {
+				highlightSelected.put(ele, true);
+			}
+		}
+		jEleColumn.getViewer().refresh(runtimeInfo.getJavaElement());
 	}
 
 	private void initColumnHeader() {
@@ -56,9 +88,9 @@ public class ReportTreeViewer extends TreeViewer {
 	}
 	
 	private TreeViewerColumn addJEleColumn() {
-		TreeViewerColumn column = new TreeViewerColumn(this, SWT.LEFT);
-		column.setLabelProvider(new CellLabelProvider() {
-			private final ILabelProvider delegate = new WorkbenchLabelProvider();
+		jEleColumn = new TreeViewerColumn(this, SWT.LEFT);
+		final ILabelProvider delegate = new WorkbenchLabelProvider();
+		jEleColumn.setLabelProvider(new CellLabelProvider() {
 			
 			@Override
 			public void update(ViewerCell cell) {
@@ -67,8 +99,21 @@ public class ReportTreeViewer extends TreeViewer {
 					cell.setImage(null);
 				} else {
 					cell.setText(textProvider.getJEleColumnText(cell.getElement()));
-					cell.setImage(delegate.getImage(cell.getElement()));
+					Image image = delegate.getImage(cell.getElement());
+					cell.setImage(image);
 				}
+			}
+		});
+		return jEleColumn;
+	}
+	
+	private TreeViewerColumn addBranchCoverageColumn() {
+		TreeViewerColumn column = new TreeViewerColumn(this, SWT.CENTER);
+		column.setLabelProvider(new CellLabelProvider() {
+			
+			@Override
+			public void update(ViewerCell cell) {
+				cell.setText(textProvider.getBranchCoverageText(cell.getElement()));
 			}
 		});
 		return column;
@@ -91,35 +136,13 @@ public class ReportTreeViewer extends TreeViewer {
 		return column;
 	}
 
-	private TreeViewerColumn addGeneratedTestColumn() {
+	private TreeViewerColumn addUncoveredBranchesColumn() {
 		TreeViewerColumn column = new TreeViewerColumn(this, SWT.RIGHT);
 		column.setLabelProvider(new CellLabelProvider() {
 			
 			@Override
 			public void update(ViewerCell cell) {
-				if (cell.getElement() == ReportContentProvider.LOADING) {
-					cell.setText("");
-					cell.setImage(null);
-				} else {
-					cell.setText("TODO-GENERATEDTESTS");
-				}
-			}
-		});
-		return column;
-	}
-
-	private TreeViewerColumn addStartLineColumn() {
-		TreeViewerColumn column = new TreeViewerColumn(this, SWT.RIGHT);
-		column.setLabelProvider(new CellLabelProvider() {
-			
-			@Override
-			public void update(ViewerCell cell) {
-				if (cell.getElement() == ReportContentProvider.LOADING) {
-					cell.setText("");
-					cell.setImage(null);
-				} else {
-					cell.setText("TODO-STARTLINE");
-				}
+				cell.setText(textProvider.getUncoveredBranchesText(cell.getElement()));
 			}
 		});
 		return column;
@@ -131,31 +154,28 @@ public class ReportTreeViewer extends TreeViewer {
 			
 			@Override
 			public void update(ViewerCell cell) {
-				if (cell.getElement() == ReportContentProvider.LOADING) {
-					cell.setText("");
-					cell.setImage(null);
-				} else {
-					cell.setText("TODO-LENGTH");
-				}
+				cell.setText(textProvider.getMethodLengthText(cell.getElement()));
 			}
 		});
 		return column;
 	}
 	
 	private static enum ReportHeader {
-		JELE_COLUMN (300),
-		TEST_STATUS_COLUMN (100),
-		GENERATED_TESTCASES_COLUMN (200),
-		TARGET_METHOD_START_LINE_COLUMN (200),
-		TARGET_METHOD_LENGHT_COLUMN (200);
+		JELE_COLUMN ("", 300),
+//		TEST_STATUS_COLUMN ("", 100),
+		BRANCH_COVERAGE("Branch coverage", 100),
+//		MISSING_BRANCH_COLUMN ("Uncovered branches", 200),
+		TARGET_METHOD_LENGHT_COLUMN ("Method length", 200);
 		
 		private int width;
-		private ReportHeader(int width) {
+		private String text;
+		private ReportHeader(String text, int width) {
+			this.text = text;
 			this.width = width;
 		}
 		
 		public String getText() {
-			return name();
+			return text;
 		}
 		
 		public int getColIdx() {
@@ -166,4 +186,5 @@ public class ReportTreeViewer extends TreeViewer {
 			return width;
 		}
 	}
+
 }

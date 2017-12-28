@@ -110,7 +110,8 @@ public class LineCoverageResult {
 			return "empty result!";
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("\nTarget method: ").append(methodInfo.getMethodFullName()).append("\n");
+		sb.append("\nTarget method: ").append(methodInfo.getMethodFullName()).append("\n")
+			.append("------------------------------------").append("\n");
 		Map<String, List<String>> groupByTestClass = JunitUtils.toClassMethodsMap(testCoverageMap.keySet());
 		sb.append("Generated testcases: ").append("\n");
 		for (Entry<String, List<String>> entry : groupByTestClass.entrySet()) {
@@ -162,5 +163,7 @@ public class LineCoverageResult {
 		return lines;
 	}
 	
-	
+	public MethodInfo getMethodInfo() {
+		return methodInfo;
+	}
 }

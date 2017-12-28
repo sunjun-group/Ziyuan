@@ -29,4 +29,5 @@ public interface IJavaModelRuntimeInfo {
 	IModelRuntimeInfo getCorrespondingRuntimeInfo(IJavaElement element);
 
 	List<String> getTestcaseStrings(Object[] elements);
+
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -23,6 +24,7 @@ import learntest.plugin.LearntestPlugin;
 import learntest.plugin.commons.data.IModelRuntimeInfo;
 import learntest.plugin.commons.event.AnnotationChangeEvent;
 import learntest.plugin.commons.event.IJavaModelRuntimeInfo;
+import learntest.plugin.view.report.annotation.CoverageAnnotationModel;
 import sav.common.core.pattern.IDataProvider;
 import sav.common.core.utils.CollectionUtils;
 
@@ -51,16 +53,27 @@ public class UpdateAnnotationHandler extends AbstractHandler {
 			return null;
 		}
 		IModelRuntimeInfo runtimeInfo = dataProvider.getData().getCorrespondingRuntimeInfo((IJavaElement) elements[0]);
+		try {
+			JavaUI.openInEditor(runtimeInfo.getJavaElement());
+			CoverageAnnotationModel.attachCoverageAnnotation();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (runtimeInfo.getJavaElement() != elements[0]) {
 			// testcases selected
 			List<String> testcases = dataProvider.getData().getTestcaseStrings(elements);
 			LearntestPlugin.getJavaGentestEventManager()
 					.fireAnnotationChange(new AnnotationChangeEvent((IMethod) runtimeInfo.getJavaElement(), testcases));
+			onUpdateAnnotation(runtimeInfo, elements);
 		} else {
 			LearntestPlugin.getJavaGentestEventManager()
 					.fireAnnotationChange(new AnnotationChangeEvent((IMethod) runtimeInfo.getJavaElement(), null));
+			onUpdateAnnotation(runtimeInfo, null);
 		}
 		return null;
 	}
 
+	public void onUpdateAnnotation(IModelRuntimeInfo runtimeInfo, Object[] elements) {
+		// do nothing by default
+	}
 }
