@@ -232,6 +232,9 @@ public class ReportView extends ViewPart implements IJavaGentestCompleteListener
 		if (elements.length == 1) {
 			IJavaElement element = (IJavaElement) elements[0];
 			methodRtInfo = dataProvider.getData().getCorrespondingRuntimeInfo(element);
+			if (methodRtInfo == null) {
+				return null;
+			}
 			if (methodRtInfo.getJavaElement() == elements[0] || (element.getElementType() != IJavaElement.METHOD)) {
 				return Pair.of(methodRtInfo, null);
 			}
@@ -243,7 +246,7 @@ public class ReportView extends ViewPart implements IJavaGentestCompleteListener
 				return null; // invalid
 			}
 			IModelRuntimeInfo targetMethodInfo = dataProvider.getData().getCorrespondingRuntimeInfo(element);
-			if (targetMethodInfo.getJavaElement() == element) {
+			if (targetMethodInfo == null || targetMethodInfo.getJavaElement() == element) {
 				return null; // invalid
 			}
 			if (methodRtInfo == null) {

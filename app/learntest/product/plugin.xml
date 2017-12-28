@@ -245,7 +245,7 @@
       <specification
             annotationType="learntest.plugin.specification.coverage"
             colorPreferenceKey="coverage_color"
-            colorPreferenceValue="189,215,153"
+            colorPreferenceValue="184,236,169"
             contributesToHeader="false"
             highlightPreferenceKey="coverage_highlight"
             highlightPreferenceValue="true"

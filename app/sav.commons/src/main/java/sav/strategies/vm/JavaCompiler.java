@@ -60,7 +60,7 @@ public class JavaCompiler {
 		} else {
 			String errorMsg = vmRunner.getProccessError();
 			if (!StringUtils.isEmpty(errorMsg)) {
-				log.warn(errorMsg);
+				log.debug(errorMsg);
 			}
 		}
 		return success;

@@ -33,7 +33,7 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class LineCoverageResult {
-	private Map<String, LineCoverage> testCoverageMap;
+	private Map<String, LineCoverage> testCoverageMap = Collections.EMPTY_MAP;
 	private MethodInfo methodInfo;
 
 	public LineCoverageResult(MethodInfo methodInfo) {

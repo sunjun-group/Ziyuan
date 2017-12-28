@@ -8,17 +8,27 @@
 
 package learntest.plugin.view.report;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import learntest.plugin.LearntestPlugin;
+import learntest.plugin.commons.PluginException;
 import learntest.plugin.commons.data.IModelRuntimeInfo;
 import learntest.plugin.commons.data.MethodRuntimeInfo;
+import learntest.plugin.utils.IResourceUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -27,6 +37,8 @@ import sav.common.core.utils.StringUtils;
  */
 public class ReportLabelProvider {
 	private WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
+	private Map<ImageType, Image> imgMap = new HashMap<ReportLabelProvider.ImageType, Image>();
+	public static final String ERROR = "Error";
 
 	public String getJEleColumnText(Object element) {
 		return workbenchLabelProvider.getText(element);
@@ -37,10 +49,26 @@ public class ReportLabelProvider {
 			return StringUtils.EMPTY;
 		}
 		MethodRuntimeInfo runtimeInfo = getMethodInfo(element);
-		if (runtimeInfo == null) {
+		if (runtimeInfo == null || runtimeInfo.getRawRuntimeInfo().isEmpty()) {
+			if (runtimeInfo != null && ((IJavaElement) element).getElementType() == IJavaElement.METHOD) {
+				return ERROR;
+			}
 			return StringUtils.EMPTY;
 		}
 		return (int)(runtimeInfo.getRawRuntimeInfo().getCoverage() * 100) + "%";
+	}
+
+	public Image getImage(ImageType type) {
+		Image img = imgMap.get(type);
+		if (img == null) {
+			try {
+				img = LearntestPlugin.getImageDescriptor(type.getPath()).createImage();
+			} catch (Exception e) {
+				return null;
+			}
+			imgMap.put(type, img);
+		}
+		return img;
 	}
 
 	public String getMethodLengthText(Object element) {
@@ -60,7 +88,7 @@ public class ReportLabelProvider {
 			return null;
 		}
 		MethodRuntimeInfo runtimeInfo = (MethodRuntimeInfo)jEle.getAdapter(IModelRuntimeInfo.class);
-		if (runtimeInfo.getJavaElement() == element) {
+		if (runtimeInfo != null && runtimeInfo.getJavaElement() == element) {
 			return runtimeInfo;
 		}
 		return null;
@@ -91,5 +119,17 @@ public class ReportLabelProvider {
 			}
 		}
 		return sb.toString();
+	}
+
+	public enum ImageType {
+		ERROR("icon/error.png"),
+		SUCCESS("icon/success.png");
+		private String path;
+		private ImageType(String path) {
+			this.path = path;
+		}
+		public String getPath() {
+			return path;
+		}
 	}
 }

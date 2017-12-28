@@ -293,10 +293,10 @@ public class JavaGentestHandler extends AbstractHandler {
 		try {
 			MethodInfo targetMethod = TargetMethodConverter.toTargetMethod(method);
 			RunTimeInfo runtimeInfo = runGentestOnSingleMethod(params, targetMethod);
-			return new MethodRuntimeInfo(method, runtimeInfo);
+			return new MethodRuntimeInfo(method, runtimeInfo, params.getTargetMethod());
 		} catch (PluginException e) {
 			log.error(e.getMessage());
-			return null;
+			return new MethodRuntimeInfo(method, null, params.getTargetMethod());
 		}
 	}
 	
@@ -310,7 +310,7 @@ public class JavaGentestHandler extends AbstractHandler {
 			MethodInfo method = TargetMethodConverter.toTargetMethod(cu, targetMethod);
 			try {
 				RunTimeInfo runtimeInfo = runGentestOnSingleMethod(params, method);
-				result.add(new MethodRuntimeInfo(AstUtils.findImethod(targetMethod, iMethods), runtimeInfo));
+				result.add(new MethodRuntimeInfo(AstUtils.findImethod(targetMethod, iMethods), runtimeInfo, params.getTargetMethod()));
 			} catch (PluginException e) {
 				log.error(e.getMessage());
 			}

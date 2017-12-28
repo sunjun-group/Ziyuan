@@ -14,7 +14,9 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 
+import learntest.core.EmptyRuntimeInfo;
 import learntest.core.RunTimeInfo;
+import learntest.core.commons.data.classinfo.TargetMethod;
 
 /**
  * @author LLT
@@ -23,9 +25,13 @@ import learntest.core.RunTimeInfo;
 public class MethodRuntimeInfo extends AbstractModelRuntimeInfo<IModelRuntimeInfo> implements IModelRuntimeInfo {
 	private RunTimeInfo runtimeInfo;
 	
-	public MethodRuntimeInfo(IMethod element, RunTimeInfo runtimeInfo) {
+	public MethodRuntimeInfo(IMethod element, RunTimeInfo runtimeInfo, TargetMethod targetMethod) {
 		super(element, 0);
-		this.runtimeInfo = runtimeInfo;
+		if (runtimeInfo == null) {
+			this.runtimeInfo = new EmptyRuntimeInfo(targetMethod);
+		} else {
+			this.runtimeInfo = runtimeInfo;
+		}
 	}
 	
 	@Override

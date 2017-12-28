@@ -168,4 +168,8 @@ public class RunTimeInfo {
 	public MethodInfo getMethodInfo() {
 		return lineCoverageResult.getMethodInfo();
 	}
+	
+	public boolean isEmpty() {
+		return false;
+	}
 }

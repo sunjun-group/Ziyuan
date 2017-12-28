@@ -11,6 +11,7 @@ package learntest.plugin.view.report;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
@@ -23,11 +24,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import learntest.plugin.commons.data.IModelRuntimeInfo;
+import learntest.plugin.view.report.ReportLabelProvider.ImageType;
+import sav.common.core.utils.StringUtils;
 
 /**
  * @author LLT
@@ -61,7 +65,6 @@ public class ReportTreeViewer extends TreeViewer {
 		
 		/* header */
 		initColumnHeader();
-		TreeViewerEditor.create(this, new ColumnViewerEditorActivationStrategy(this), ColumnViewerEditor.DEFAULT);
 	}
 	
 	public void updateHighlightElements(IModelRuntimeInfo runtimeInfo, Object[] elements) {
@@ -99,6 +102,9 @@ public class ReportTreeViewer extends TreeViewer {
 					cell.setImage(null);
 				} else {
 					cell.setText(textProvider.getJEleColumnText(cell.getElement()));
+					if (((IJavaElement) cell.getElement()).getAdapter(IModelRuntimeInfo.class) == null) {
+						cell.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_GRAY));
+					}
 					Image image = delegate.getImage(cell.getElement());
 					cell.setImage(image);
 				}
@@ -113,7 +119,19 @@ public class ReportTreeViewer extends TreeViewer {
 			
 			@Override
 			public void update(ViewerCell cell) {
-				cell.setText(textProvider.getBranchCoverageText(cell.getElement()));
+				String cvgText = textProvider.getBranchCoverageText(cell.getElement());
+				if (ReportLabelProvider.ERROR == cvgText || "0%".equals(cvgText)) {
+					cell.setText("0%");
+					Image img = textProvider.getImage(ImageType.ERROR);
+					cell.setImage(img);
+				} else {
+					cell.setText(cvgText);
+					if (!StringUtils.isEmpty(cvgText)) {
+						cell.setImage(textProvider.getImage(ImageType.SUCCESS));
+					} else {
+						cell.setImage(null);
+					}
+				}
 			}
 		});
 		return column;
@@ -161,7 +179,7 @@ public class ReportTreeViewer extends TreeViewer {
 	}
 	
 	private static enum ReportHeader {
-		JELE_COLUMN ("", 300),
+		JELE_COLUMN ("", 500),
 //		TEST_STATUS_COLUMN ("", 100),
 		BRANCH_COVERAGE("Branch coverage", 100),
 //		MISSING_BRANCH_COLUMN ("Uncovered branches", 200),
