@@ -168,4 +168,8 @@ public class StringUtils {
 		Collections.sort(list, new AlphanumComparator());
 		return list;
 	}
+	
+	public static String[] dotSplit(String str) {
+		return str.split("\\.");
+	}
 }

@@ -150,6 +150,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 		ganLog.log("Generated datapoints: ");
 		SamplingResult samplingResult = null;
 		if (generatedDataSet == null) {
+			log.debug("empty generatedDataSet!");
 			ganLog.log("empty generatedDataSet!");
 		} else {
 			ganLog.logFormat("NodeIdx={}", generatedDataSet.getNodeId());
