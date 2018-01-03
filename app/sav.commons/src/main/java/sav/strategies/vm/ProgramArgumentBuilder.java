@@ -23,10 +23,10 @@ import sav.common.core.utils.StringUtils;
 public class ProgramArgumentBuilder {
 	private List<String> arguments = new ArrayList<String>();
 
-	public ProgramArgumentBuilder addArgument(String option, Collection<String> testClassNames) {
-		if (!isBlank(testClassNames)) {
+	public ProgramArgumentBuilder addArgument(String option, Collection<String> values) {
+		if (!isBlank(values)) {
 			arguments.add("-" + option);
-			arguments.addAll(testClassNames);
+			arguments.addAll(values);
 		}
 		return this;
 	}
@@ -45,6 +45,14 @@ public class ProgramArgumentBuilder {
 
 	public ProgramArgumentBuilder addArgument(String option, String... values) {
 		return addArgument(option, Arrays.asList(values));
+	}
+	
+	public ProgramArgumentBuilder addArgument(String option, long value) {
+		return addArgument(option, String.valueOf(value));
+	}
+	
+	public ProgramArgumentBuilder addArgument(String option, int value) {
+		return addArgument(option, String.valueOf(value));
 	}
 	
 	public ProgramArgumentBuilder addOptionArgument(String option) {

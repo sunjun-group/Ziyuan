@@ -9,12 +9,18 @@
 package cfgcoverage.jacoco.analysis.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sav.common.core.SavRtException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
@@ -25,23 +31,16 @@ import sav.common.core.utils.TextFormatUtils;
  *
  */
 public class CfgCoverage {
+	private static final Logger log = LoggerFactory.getLogger(CfgCoverage.class);
 	protected CFG cfg;
 	protected List<NodeCoverage> nodeCoverages;
 	protected List<String> testcases;
 	protected Map<Integer, Set<Integer>> dupTcMap;
+	private Set<Integer> passTests = Collections.EMPTY_SET;
 	
 	public CfgCoverage(CFG cfg) {
 		this.cfg = cfg;
 		nodeCoverages = new ArrayList<NodeCoverage>();
-	}
-	
-	/* return idx of the added testcase */
-	public int addTestcases(String testcase) {
-		if (this.testcases == null) {
-			this.testcases = new ArrayList<String>();
-		}
-		this.testcases.add(testcase);
-		return testcases.size() - 1;
 	}
 	
 	public void setTestcases(List<String> testcases) {
@@ -148,5 +147,35 @@ public class CfgCoverage {
 
 	public int getTestIdx(String tc) {
 		return testcases.indexOf(tc);
+	}
+
+	public void updateTestResult(List<String> junitMethods, List<Boolean> testResult) {
+		if (CollectionUtils.isEmpty(junitMethods)) {
+			return;
+		}
+		int firstIdx = this.testcases.indexOf(junitMethods.get(0));
+		if (firstIdx < 0 || (firstIdx + junitMethods.size() > testcases.size())) {
+			log.debug("Error when update test result: Cannot match testcases!\nCurrent testcases: {}, testResult testcases: {}",
+					this.testcases, junitMethods);
+			return;
+		}
+		int idx = firstIdx;
+		if (passTests == Collections.EMPTY_SET) {
+			passTests = new HashSet<Integer>();
+		}
+		for (Boolean result : testResult) {
+			if (result) {
+				passTests.add(idx);
+			}
+			idx++;
+		}
+	}
+	
+	public Set<Integer> getPassTests() {
+		return passTests;
+	}
+	
+	public boolean isPass(int tcIdx) {
+		return passTests.contains(tcIdx);
 	}
 }

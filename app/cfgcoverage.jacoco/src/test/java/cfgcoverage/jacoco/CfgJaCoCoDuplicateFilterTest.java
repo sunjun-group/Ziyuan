@@ -38,7 +38,7 @@ public class CfgJaCoCoDuplicateFilterTest extends AbstractTest {
 			String classesFolder) throws Exception {
 		AppJavaClassPath appClasspath = initAppClasspath();
 		appClasspath.addClasspath(classesFolder);
-		appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
+		appClasspath.getPreferences().set(CfgJaCoCoParams.DUPLICATE_FILTER, true);
 		CfgJaCoCo jacoco = new CfgJaCoCo(appClasspath);
 		Map<String, CfgCoverage> result = jacoco.runBySimpleRunner(targetMethods, testingClassNames, junitClassNames);
 		System.out.println(TextFormatUtils.printMap(result));

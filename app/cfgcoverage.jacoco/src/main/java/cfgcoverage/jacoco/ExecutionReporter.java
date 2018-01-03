@@ -104,7 +104,7 @@ public class ExecutionReporter extends AbstractExecutionReporter implements IExe
 		this.coverageBuilder.setMethodCfgCoverageMap(cfgCoverageMap);
 	}
 
-	public void setConfig(CfgJaCoCoConfigs config) {
-		duplicateFilter = config.needToFilterDuplicate();
+	public void setDuplicateFilter(boolean duplicateFilter) {
+		this.duplicateFilter = duplicateFilter;
 	}
 }

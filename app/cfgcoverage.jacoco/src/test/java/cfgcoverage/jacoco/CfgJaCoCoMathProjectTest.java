@@ -32,6 +32,7 @@ import sav.strategies.dto.AppJavaClassPath;
  */
 @ExcludeCategory
 public class CfgJaCoCoMathProjectTest extends AbstractTest {
+	private static final String mathTrunk = "/Users/lylytran/apache-common-math-2.2/apache-common-math-2.2";
 	private static final String MATH_PROJ_BIN_FOLDER = "/Users/lylytran/apache-common-math-2.2/apache-common-math-2.2/bin";
 	private static final String HAMCREST_CORE_JAR_PATH = "/Applications/Eclipse.app/Contents/Eclipse/plugins/org.hamcrest.core_1.3.0.v201303031735.jar";
 	private static final String JUNIT_JAR_PATH = "/Applications/Eclipse.app/Contents/Eclipse/plugins/org.junit_4.12.0.v201504281640/junit.jar";
@@ -44,13 +45,16 @@ public class CfgJaCoCoMathProjectTest extends AbstractTest {
 		appClasspath.addClasspath(HAMCREST_CORE_JAR_PATH);
 		appClasspath.addClasspath(JUNIT_JAR_PATH);
 		appClasspath.addClasspath(MATH_PROJ_BIN_FOLDER);
-		appClasspath.getPreferences().set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
+		appClasspath.addClasspath(mathTrunk + "/libs/evosuite-standalone-runtime-1.0.5.jar");
+		
+		appClasspath.getPreferences().set(CfgJaCoCoParams.DUPLICATE_FILTER, true);
 		appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER,
 				ProjClassLoader.getClassLoader(appClasspath.getClasspaths()));
 		appClasspath.setTarget(MATH_PROJ_BIN_FOLDER);
 		appClasspath.getPreferences().set(SystemVariables.TESTCASE_TIMEOUT, -1l);
 		CfgJaCoCo jacoco = new CfgJaCoCo(appClasspath);
-		Map<String, CfgCoverage> result = jacoco.runBySimpleRunner(targetMethods, testingClassNames, junitClassNames);
+//		Map<String, CfgCoverage> result = jacoco.runBySimpleRunner(targetMethods, testingClassNames, junitClassNames);
+		Map<String, CfgCoverage> result = jacoco.runJunit(targetMethods, testingClassNames, junitClassNames);
 //		System.out.println(TextFormatUtils.printMap(result));
 		printDecisionNodes(result.values().iterator().next());
 		
@@ -94,6 +98,14 @@ public class CfgJaCoCoMathProjectTest extends AbstractTest {
 		List<String> targetClasses = Arrays.asList("org.apache.commons.math.estimation.LevenbergMarquardtEstimator");
 		List<String> targetMethods = Arrays.asList("org.apache.commons.math.estimation.LevenbergMarquardtEstimator.estimate");
 		List<String> junitClassNames = Arrays.asList("testdata.ram.init.levenbergmarquardtestimator.estimate.LevenbergMarquardtEstimator1");
+		run(targetMethods, targetClasses, junitClassNames);
+	}
+	
+	@Test
+	public void runTestEsTest() throws Exception {
+		List<String> targetClasses = Arrays.asList("org.apache.commons.math.Testing");
+		List<String> targetMethods = Arrays.asList("org.apache.commons.math.Testing.multiCond");
+		List<String> junitClassNames = Arrays.asList("org.apache.commons.math.testing.multicond22.Testing_ESTest");
 		run(targetMethods, targetClasses, junitClassNames);
 	}
 }

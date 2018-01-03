@@ -61,6 +61,9 @@ public class JunitResult {
 		return tests;
 	}
 	
+	/**
+	 * return list pair of class-method name 
+	 */
 	public List<Pair<String, String>> getPassTests() {
 		List<Pair<String, String>> tests = new ArrayList<Pair<String,String>>();
 		for (Entry<Pair<String, String>, TestResult> entry : testResult.entrySet()) {

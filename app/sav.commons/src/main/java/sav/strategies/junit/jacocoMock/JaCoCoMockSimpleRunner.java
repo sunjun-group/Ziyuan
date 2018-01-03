@@ -30,9 +30,10 @@ public class JaCoCoMockSimpleRunner extends JaCoCoMockJunitRunner {
 	public JunitResult runTestcases(JunitRunnerParameters params) throws ClassNotFoundException, IOException {
 		System.out.println("RunTestcases:");
 		ExecutionTimer executionTimer = getExecutionTimer(params.getTimeout());
+		final JunitResult junitResult = new JunitResult();
 		for (String classMethodStr : params.getClassMethods()) {
 			System.out.println(classMethodStr + "...");
-			Pair<String, String> classMethod = JunitUtils.toPair(classMethodStr);
+			final Pair<String, String> classMethod = JunitUtils.toPair(classMethodStr);
 			final Class<?> clazz = Class.forName(classMethod.a);
 			final Method method = ClassUtils.loockupMethod(clazz, classMethod.b);
 			executionTimer.run(new Runnable() {
@@ -41,15 +42,15 @@ public class JaCoCoMockSimpleRunner extends JaCoCoMockJunitRunner {
 				public void run() {
 					try {
 						method.invoke(clazz.newInstance());
-					} catch (Exception e) {
-						// ignore
-						e.printStackTrace();
+						junitResult.addResult(classMethod, true, null);
+					} catch (Throwable e) {
+						junitResult.addResult(classMethod, false, null);
 					} 
 				}
 			});
 			onFinishTestCase(classMethodStr, null);
 		}
-		return null;
+		return junitResult;
 	}
 	
 }

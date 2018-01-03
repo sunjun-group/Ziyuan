@@ -13,14 +13,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.runner.JUnitCore;
 
-import sav.common.core.SystemVariablesUtils;
 import sav.common.core.SavRtException;
+import sav.common.core.SystemVariablesUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.BreakPoint;
 import sav.strategies.vm.VMConfiguration;
