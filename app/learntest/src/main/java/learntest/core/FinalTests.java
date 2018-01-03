@@ -76,18 +76,19 @@ public class FinalTests {
 
 	public List<File> commit(PrinterParams printerParams, CfgCoverage cfgCoverage, TargetMethod targetMethod) {
 		/* build linecoverage and do filter the sequences again by covered line numbers */
-		buildLineCoverageAndFilterSequences(cfgCoverage, targetMethod);
+		Pair<List<Sequence>, List<Sequence>> passFailSeqs = buildLineCoverageAndFilterSequences(cfgCoverage, targetMethod);
 		/* print selected tests */
 		TestsPrinter printer = new TestsPrinter(printerParams);
 		LearntestJWriter jWriter = new LearntestJWriter(true);
 		printer.setCuWriter(jWriter);
-		List<Sequence> allSequences = new ArrayList<Sequence>(sequences.values());
-		printer.printTests(Pair.of(allSequences, new ArrayList<Sequence>(0)));
+		printer.printTests(passFailSeqs);
 		updateNewTestcaseNameInLineCoverageResult(jWriter.getTestcaseSequenceMap());
 		return ((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles();
 	}
 
-	private void buildLineCoverageAndFilterSequences(CfgCoverage cfgCoverage, TargetMethod targetMethod) {
+	private Pair<List<Sequence>, List<Sequence>> buildLineCoverageAndFilterSequences(CfgCoverage cfgCoverage,
+			TargetMethod targetMethod) {
+		Pair<List<Sequence>, List<Sequence>> passFailSeqs = Pair.of(new ArrayList<>(), new ArrayList<>());
 		lineCoverageResult = LineCoverageResult.build(sequences.keySet(), cfgCoverage, targetMethod, true);
 		Collection<String> filteredTestcases = lineCoverageResult.getCoveredTestcases();
 		Iterator<Entry<String, Sequence>> it = sequences.entrySet().iterator();
@@ -95,8 +96,15 @@ public class FinalTests {
 			Entry<String, Sequence> entry = it.next();
 			if (!filteredTestcases.contains(entry.getKey())) {
 				it.remove();
+			} else {
+				if (lineCoverageResult.getPassTests().contains(entry.getKey())) {
+					passFailSeqs.a.add(entry.getValue());
+				} else {
+					passFailSeqs.b.add(entry.getValue());
+				}
 			}
 		}
+		return passFailSeqs;
 	}
 
 	private void updateNewTestcaseNameInLineCoverageResult(Map<String, Sequence> newTestcaseSequenceMap) {

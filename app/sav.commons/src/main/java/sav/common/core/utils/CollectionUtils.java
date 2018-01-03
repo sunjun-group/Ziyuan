@@ -255,6 +255,13 @@ public class CollectionUtils {
 		}
 		return list.get(list.size() - 1);
 	}
+	
+	public static <T> T getLast(T[] arr) {
+		if (isEmpty(arr)) {
+			return null;
+		}
+		return arr[arr.length - 1];
+	}
 
 	/**
 	 * fromIndex, inclusive, 

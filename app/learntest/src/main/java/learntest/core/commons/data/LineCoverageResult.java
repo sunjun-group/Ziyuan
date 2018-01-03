@@ -35,9 +35,11 @@ import sav.common.core.utils.StringUtils;
 public class LineCoverageResult {
 	private Map<String, LineCoverage> testCoverageMap = Collections.EMPTY_MAP;
 	private MethodInfo methodInfo;
+	private Set<String> passTests;
 
 	public LineCoverageResult(MethodInfo methodInfo) {
 		this.methodInfo = methodInfo;
+		passTests = new HashSet<>();
 	}
 
 	public void updateTestcase(Map<String, String> oldToNewTestcaseMap) {
@@ -70,7 +72,8 @@ public class LineCoverageResult {
 			boolean add = true;
 			if (filterDuplicateLineCoverage) {
 				String coveredStr = StringUtils.join(lineCoverage.getCoveredLineNums(), ",");
-				if (existingCoverages.contains(coveredStr)) {
+				if (existingCoverages.contains(coveredStr) && 
+						!(lineCoverage.isTestPass() ^ result.passTests.contains(testcase))) {
 					add = false;
 				} else {
 					existingCoverages.add(coveredStr);
@@ -78,6 +81,9 @@ public class LineCoverageResult {
 			}
 			if (add) {
 				result.testCoverageMap.put(testcase, lineCoverage);
+				if (lineCoverage.isTestPass()) {
+					result.passTests.add(testcase);
+				}
 			}
 		}
 		return result;
@@ -102,6 +108,7 @@ public class LineCoverageResult {
 		});
 		lineCoverage.setCoveredLineNums(coveredLineNums);
 		lineCoverage.setBranchCoverageText(CoverageUtils.getBranchCoverageDisplayText(cfgCoverage, orgTcIdx));
+		lineCoverage.setTestPass(cfgCoverage.isPass(orgTcIdx));
 		return lineCoverage;
 	}
 
@@ -165,5 +172,9 @@ public class LineCoverageResult {
 	
 	public MethodInfo getMethodInfo() {
 		return methodInfo;
+	}
+	
+	public Set<String> getPassTests() {
+		return passTests;
 	}
 }

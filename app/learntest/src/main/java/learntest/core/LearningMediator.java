@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
+import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter.PrintOption;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LineCoverageResult;
@@ -205,7 +206,6 @@ public class LearningMediator {
 		return learntestParams;
 	}
 	
-	
 	public LineCoverageResult commitFinalTests(CfgCoverage cfgCoverage, TargetMethod targetMethod) {
 		/* delete init & result folder */
 		FileUtils.deleteAllFiles(JavaFileUtils.getClassFolder(appClassPath.getTestSrc(), 
@@ -216,7 +216,14 @@ public class LearningMediator {
 		GentestParams params = LearntestParamsUtils.createGentestParams(appClassPath, learntestParams,
 				GenTestPackage.RESULT);
 		params.setPrintOption(PrintOption.OVERRIDE);
-		List<File> junitFiles = finalTests.commit(params.getPrinterParams(), cfgCoverage, targetMethod);
+		PrinterParams printerParams = params.getPrinterParams();
+		if (learntestParams.isSeparateTestResult()) {
+			String pkg = printerParams.getPkg();
+			printerParams.setPkg(pkg + ".pass");
+			printerParams.setFailPkg(pkg + ".fail");
+		}
+		
+		List<File> junitFiles = finalTests.commit(printerParams, cfgCoverage, targetMethod);
 		try {
 			compile(junitFiles);
 			return finalTests.getLineCoverageResult();

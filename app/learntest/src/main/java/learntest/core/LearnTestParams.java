@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.JunitTestsInfo;
@@ -37,6 +36,7 @@ public class LearnTestParams {
 	private int maxTcs;
 	private int initialTcTotal = 1;// by default
 	private CompilationUnit cu;
+	private boolean separateTestResult = true;
 	
 	public LearnTestParams(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
@@ -156,6 +156,14 @@ public class LearnTestParams {
 		return getSystemConfig().get(var.name());
 	}
 	
+	public boolean isSeparateTestResult() {
+		return separateTestResult;
+	}
+
+	public void setSeparateTestResult(boolean separateTestResult) {
+		this.separateTestResult = separateTestResult;
+	}
+
 	public static enum LearntestSystemVariable implements ISystemVariable {
 		JDART_APP_PROPRETIES,
 		JDART_SITE_PROPRETIES,

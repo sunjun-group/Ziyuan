@@ -9,10 +9,12 @@
 package learntest.core;
 
 import learntest.core.commons.LearntestConstants;
+import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.gentest.GentestParams;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
+import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
 /**
@@ -64,6 +66,23 @@ public class LearntestParamsUtils {
 		private String format;
 		private GenTestPackage(String format) {
 			this.format = format;
+		}
+		
+		public static boolean isTestResultPackage(String packageName) {
+			String[] frags = StringUtils.dotSplit(packageName);
+			if (frags.length < 4) {
+				return false;
+			}
+			if (!"testdata".equals(frags[0])) {
+				return false;
+			}
+			try {
+				LearnTestApproach.valueOf(frags[1]);
+				return true;
+			} catch (Exception ex) {
+				return false;
+			}
+			
 		}
 	}
 }

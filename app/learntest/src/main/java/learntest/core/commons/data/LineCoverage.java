@@ -24,6 +24,7 @@ public class LineCoverage {
 	private List<Integer> coveredLineNums;
 	private String testcase;
 	private String branchCoverageText;
+	private boolean testPass;
 
 	public LineCoverage(MethodInfo methodInfo, String testcase) {
 		this.methodInfo = methodInfo;
@@ -73,6 +74,14 @@ public class LineCoverage {
 		return sb.toString();
 	}
 	
+	public boolean isTestPass() {
+		return testPass;
+	}
+
+	public void setTestPass(boolean testPass) {
+		this.testPass = testPass;
+	}
+
 	@Override
 	public String toString() {
 		return getDisplayText();

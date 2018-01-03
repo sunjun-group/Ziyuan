@@ -52,7 +52,12 @@ public class ReportTreeViewer extends TreeViewer {
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
 		
-		contentProvider = new ReportContentProvider(settings);
+		contentProvider = new ReportContentProvider(settings) {
+			public void inputChanged(org.eclipse.jface.viewers.Viewer viewer, Object oldInput, Object newInput) {
+				super.inputChanged(viewer, oldInput, newInput);
+				textProvider.onInputChanged();
+			};
+		};
 		setContentProvider(contentProvider);
 		textProvider = new ReportLabelProvider();
 

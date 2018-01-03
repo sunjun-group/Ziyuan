@@ -8,8 +8,6 @@
 
 package learntest.plugin.view.report;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -18,17 +16,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.plugin.LearntestPlugin;
-import learntest.plugin.commons.PluginException;
 import learntest.plugin.commons.data.IModelRuntimeInfo;
 import learntest.plugin.commons.data.MethodRuntimeInfo;
-import learntest.plugin.utils.IResourceUtils;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -39,9 +36,21 @@ public class ReportLabelProvider {
 	private WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
 	private Map<ImageType, Image> imgMap = new HashMap<ReportLabelProvider.ImageType, Image>();
 	public static final String ERROR = "Error";
+	private Map<Object, MethodRuntimeInfo> methodRtInfoMap = new HashMap<>();
 
 	public String getJEleColumnText(Object element) {
+		if (((IJavaElement) element).getElementType() == IJavaElement.METHOD) {
+			IMethod method = (IMethod) element;
+			String pkg = method.getDeclaringType().getPackageFragment().getElementName();
+			if (GenTestPackage.isTestResultPackage(pkg)) {
+				return StringUtils.dotJoin(pkg, method.getDeclaringType().getElementName(), method.getElementName());
+			}
+		}
 		return workbenchLabelProvider.getText(element);
+	}
+	
+	public void onInputChanged() {
+		methodRtInfoMap.clear();
 	}
 
 	public String getBranchCoverageText(Object element) {
@@ -83,15 +92,24 @@ public class ReportLabelProvider {
 	}
 	
 	private MethodRuntimeInfo getMethodInfo(Object element) {
-		IJavaElement jEle = (IJavaElement)element;
-		if (jEle.getElementType() != IJavaElement.METHOD) {
-			return null;
-		}
-		MethodRuntimeInfo runtimeInfo = (MethodRuntimeInfo)jEle.getAdapter(IModelRuntimeInfo.class);
+		MethodRuntimeInfo runtimeInfo = getCorrespondingMethodInfo(element);
 		if (runtimeInfo != null && runtimeInfo.getJavaElement() == element) {
 			return runtimeInfo;
 		}
 		return null;
+	}
+
+	private MethodRuntimeInfo getCorrespondingMethodInfo(Object element) {
+		IJavaElement jEle = (IJavaElement)element;
+		if (jEle.getElementType() != IJavaElement.METHOD) {
+			return null;
+		}
+		MethodRuntimeInfo runtimeInfo = methodRtInfoMap.get(element);
+		if (runtimeInfo == null) {
+			runtimeInfo = (MethodRuntimeInfo)jEle.getAdapter(IModelRuntimeInfo.class);
+			methodRtInfoMap.put(element, runtimeInfo);
+		}
+		return runtimeInfo;
 	}
 
 	public String getUncoveredBranchesText(Object element) {
@@ -132,4 +150,5 @@ public class ReportLabelProvider {
 			return path;
 		}
 	}
+
 }

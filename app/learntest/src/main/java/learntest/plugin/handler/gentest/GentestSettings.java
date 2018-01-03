@@ -11,7 +11,7 @@ package learntest.plugin.handler.gentest;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 
-import cfgcoverage.jacoco.CfgJaCoCoConfigs;
+import cfgcoverage.jacoco.CfgJaCoCoParams;
 import learntest.core.ILearnTestSolution;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
@@ -54,7 +54,8 @@ public class GentestSettings {
 	public static void configureSystemPreferences(SystemPreferences preferences, IJavaProject javaProject) {
 		preferences.set(SystemVariables.PROJECT_CLASSLOADER, IProjectUtils.getPrjClassLoader(javaProject));
 		preferences.set(SystemVariables.TESTCASE_TIMEOUT, Constants.DEFAULT_JUNIT_TESTCASE_TIMEOUT);
-		preferences.set(CfgJaCoCoConfigs.DUPLICATE_FILTER, true);
+		preferences.set(CfgJaCoCoParams.DUPLICATE_FILTER, true);
+		preferences.set(CfgJaCoCoParams.COLLECT_JUNIT_RESULT, true);
 	}
 	
 	public static void configureJdart(LearnTestParams params) throws CoreException {

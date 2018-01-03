@@ -8,6 +8,7 @@
 
 package learntest.plugin.utils;
 
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -50,4 +51,8 @@ public class IMethodUtils {
 		return StringUtils.dotJoin(methodName, methodStartLine);
 	}
 
+	public static String getMethodFullName(IMethod method) {
+		return StringUtils.dotJoin(method.getDeclaringType().getPackageFragment().getElementName(),
+				method.getDeclaringType().getElementName(), method.getElementName());
+	}
 }

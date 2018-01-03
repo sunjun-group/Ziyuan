@@ -81,15 +81,15 @@ public class TestsPrinter implements ITestsPrinter {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> printTests(Pair<List<Sequence>, List<Sequence>> testSeqs) {
+	public List<String> printTests(Pair<List<Sequence>, List<Sequence>> passFailTestSeqs) {
 		List<CompilationUnit> units;
 		if (!separatePassFail) {
 			List<Sequence> allTests = CollectionUtils.join(
-					testSeqs.a, testSeqs.b);
+					passFailTestSeqs.a, passFailTestSeqs.b);
 			units = createCompilationUnits(allTests, params.pkg);
 		} else {
-			units = createCompilationUnits(testSeqs.a, params.pkg);
-			units.addAll(createCompilationUnits(testSeqs.b, params.failPkg));
+			units = createCompilationUnits(passFailTestSeqs.a, params.pkg);
+			units.addAll(createCompilationUnits(passFailTestSeqs.b, params.failPkg));
 		}
 		/* print all compilation units */
 		cuPrinter.print(units);
@@ -118,6 +118,9 @@ public class TestsPrinter implements ITestsPrinter {
 		List<List<Sequence>> subSeqs = divideSequencess(seqs);
 		List<CompilationUnit> units = new ArrayList<CompilationUnit>();
 		for (List<Sequence> subSeq : subSeqs) {
+			if (subSeq.isEmpty()) {
+				continue;
+			}
 			CompilationUnit cu = cuWriter.write(subSeq, pkgName, getClassName(),
 					params.methodPrefix);
 			units.add(cu);
