@@ -1,11 +1,14 @@
 package learntest.core;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.machinelearning.IInputLearner;
+import sav.common.core.Pair;
 import sav.common.core.utils.TextFormatUtils;
 
 public class RunTimeInfo {
@@ -17,6 +20,7 @@ public class RunTimeInfo {
 	
 	private LineCoverageResult lineCoverageResult;
 	private int symbolicTimes = 0;
+	private List<Pair<Integer, Double>> covTimeLine = new LinkedList<>();
 	
 	public RunTimeInfo(long time, double coverage, int testCnt) {
 		this.time = time;
@@ -164,5 +168,12 @@ public class RunTimeInfo {
 		this.symbolicTimes = symbolicTimes;
 	}
 
+	public List<Pair<Integer, Double>> getCovTimeLine() {
+		return covTimeLine;
+	}
+
+	public void setCovTimeLine(List<Pair<Integer, Double>> covTimeLine) {
+		this.covTimeLine = covTimeLine;
+	}
 	
 }

@@ -24,6 +24,7 @@ import learntest.core.gentest.GentestParams;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
+import learntest.core.time.CovTimer;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;
@@ -86,7 +87,13 @@ public class LearnTest extends AbstractLearntest {
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				
+				CovTimer timer = new CovTimer(initProbes, SAVTimer.getExecutionTime());
+				timer.start();
+				
 				DecisionProbes probes = learner.learn(initProbes, relevantVarMap);
+				
+				timer.getTimer().cancel();
+				timer.recordCovTimeLine(probes);
 				
 				/** 
 				 * In this way, all samples are recorded.
@@ -103,6 +110,7 @@ public class LearnTest extends AbstractLearntest {
 				}
 				info.setSample(learner);
 				info.setLogFile(learner.getLogFile());
+				info.setCovTimeLine(timer.getCovTimeLine());
 				return info;
 			}
 		} catch (SAVExecutionTimeOutException e) {

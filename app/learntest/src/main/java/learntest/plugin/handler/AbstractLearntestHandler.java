@@ -71,6 +71,7 @@ import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import learntest.plugin.utils.LearnTestUtil;
 import sav.common.core.ModuleEnum;
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
@@ -432,7 +433,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	public RunTimeInfo runLearntest(LearnTestParams params){
 		try {
 			SAVTimer.enableExecutionTimeout = true;
-			SAVTimer.exeuctionTimeout = 50000000;
+			SAVTimer.exeuctionTimeout = 150 * 1000;//50000000;
 			learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
 			printRuntimeInfo(runtimeInfo, params);
@@ -454,6 +455,10 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			log.info("TIME: {}; COVERAGE: {}; CNT: {}", TextFormatUtils.printTimeString(runtimeInfo.getTime()),
 					runtimeInfo.getCoverage(), runtimeInfo.getTestCnt());
 			log.info("TOTAL COVERAGE INFO: \n{}", runtimeInfo.getCoverageInfo());
+			log.info("coverage time line :");
+			for (Pair<Integer, Double> pair : runtimeInfo.getCovTimeLine()) {
+				log.info(pair.toString() + ", ");
+			}
 		}
 	}
 	
