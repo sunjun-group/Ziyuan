@@ -28,7 +28,7 @@ public class CovTimer {
 	         if(!isRun){
 	             isRun = true;
 	             timer = new Timer();
-	             timer.schedule(new CovTimeTask(cfgCoverage, this), 30 * 1000);
+	             timer.schedule(new CovTimeTask(cfgCoverage, this), 30 * 1000,  30 * 1000);
 	         }
 	}
 
