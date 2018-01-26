@@ -60,7 +60,7 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			
 			LearnTestParams jdartParam = l2tParam.createNew();
 			jdartParam.setApproach(LearnTestApproach.JDART);
-			RunTimeInfo jdartInfo = runJdart(jdartParam);
+//			RunTimeInfo jdartInfo = runJdart(jdartParam);
 			
 			l2tParam.setApproach(LearnTestApproach.L2T);
 			l2tParam.setCu(constructCu(l2tParam.getTargetMethod().getClassName()));
@@ -75,7 +75,7 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			log.info("run randoop..");
 			RunTimeInfo ranInfo = runLearntest(randoopParam);		
 			
-			printRuntimeInfo(jdartInfo, jdartParam);
+//			printRuntimeInfo(jdartInfo, jdartParam);
 			printRuntimeInfo(l2tRuntimeInfo, l2tParam);
 			StringBuffer sb = new StringBuffer();
 			sb.append("learned formulas : =====================================");
