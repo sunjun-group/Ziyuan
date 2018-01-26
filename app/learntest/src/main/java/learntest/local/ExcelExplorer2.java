@@ -9,22 +9,25 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import learntest.local.explore.basic.DetailExcelReader;
+import learntest.local.explore.basic.DetailExcelWriter;
+import learntest.local.explore.basic.DetailTrial;
+import learntest.local.explore.basic.MethodTrial;
+import learntest.local.explore.text.LogExplorer;
+
 /**
  * @author ZhangHr
  */
 public class ExcelExplorer2 {
 	HashMap<String, HashSet<MethodTrial>> map = new HashMap<>();
 	public static void main(String[] args) throws Exception {
-		String root = "E:\\172\\experiment\\statistic\\", project = "apache-common-math-2.2" ;
-		String jdartP = "apache-common-math-2.2-jdart.xlsx",
-				l2tP = "apache-common-math-2.2-l2t-l2tAdv.xlsx";
-		String output = root + project + ".l2tAdv.merge.xlsx";
-//		ExcelExplorer2.mergeJdartAndL2t(output, root+jdartP, root+l2tP, false);
+		String root = "E:\\172\\SUTD\\statistic\\";
+		String output = "";
 		
-		output = root + "apache-common-math-2.2_2.xlsx";
-//		output = root + "colt_0.xlsx";
+		output = root + "apache-common-math-2.2_17_0955.xlsx";
+		output = root + "colt_2.xlsx";
 		output = root + "jblas_0.xlsx";
-//		output = root + "jscience_1.xlsx";
+		output = root + "jscience_1.xlsx";
 		ExcelExplorer2 explorer = new ExcelExplorer2();
 		explorer.calculateBranchD(root, output);
 		if (explorer.map != null) {

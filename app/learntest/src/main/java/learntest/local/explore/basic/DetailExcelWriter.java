@@ -1,4 +1,4 @@
-package learntest.local;
+package learntest.local.explore.basic;
 
 import static learntest.plugin.export.io.excel.TrialHeader.*;
 

@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.local;
+package learntest.local.explore.singleTrial;
 
 import learntest.plugin.export.io.excel.common.ExcelHeader;
 

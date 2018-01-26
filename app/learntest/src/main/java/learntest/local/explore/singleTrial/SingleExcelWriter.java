@@ -1,6 +1,6 @@
-package learntest.local;
+package learntest.local.explore.singleTrial;
 
-import static learntest.local.SingleHeader.*;
+import static learntest.local.explore.singleTrial.SingleHeader.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,11 +8,16 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
 
+import learntest.local.explore.basic.DetailExcelReader;
+import learntest.local.explore.basic.DetailTrial;
+import learntest.local.explore.basic.MethodTrial;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 import mosek.Env.networkdetect;
 
 public class SingleExcelWriter extends SimpleExcelWriter<DetailTrial> {
-
+	int jdartSolveTimesTotal = 0;
+	int l2tSolveTimesTotal = 0;
+	
 	public SingleExcelWriter(File file) throws Exception {
 		super(file, SingleHeader.values());
 	}
@@ -23,6 +28,10 @@ public class SingleExcelWriter extends SimpleExcelWriter<DetailTrial> {
 	}
 
 	private void exportTrials(Row row, DetailTrial trial) {
+		int jdartSolveTimes = trial.getJdartSolveTimes() >= 0 ? trial.getJdartSolveTimes() : 0;
+		int l2tSolveTimes = trial.getL2tSolveTimes() >= 0 ? trial.getL2tSolveTimes() : 0;
+		jdartSolveTimesTotal += jdartSolveTimes;
+		l2tSolveTimesTotal += l2tSolveTimes;
 		addCell(row, TRIAL, trial.getMethodName() + "." + trial.getIndex());
 		addCell(row, L2T_COVERAGE, trial.getL2t());
 		addCell(row, LEARNSTATE, trial.getLearnedState() > 0 ? 1 : 0);
@@ -41,6 +50,7 @@ public class SingleExcelWriter extends SimpleExcelWriter<DetailTrial> {
 					trial.setIndex(i+1);
 					addRowData(trial);
 				}
+				System.out.println(methodTrial.getMethodName());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -49,12 +59,20 @@ public class SingleExcelWriter extends SimpleExcelWriter<DetailTrial> {
 	}
 
 	public static void main(String[] args) {
-		String root = "E:\\git\\test-projects\\jscience\\jscience-master\\learntest\\";
-		String input = "colt_0.xlsx";
+		String root = "E:\\172\\SUTD\\statistic\\";
+		String input = "jscience_1.xlsx";
+//		input = "jblas_0.xlsx";
+//		input = "colt_2.xlsx";
+//		input = "apache-common-math-2.2_17_0955.xlsx";
 		String output = "single_" + input;
 		try {
-			SingleExcelWriter writer = new SingleExcelWriter(new File(root + output));
+			File file = new File(root + output);
+			if (file.exists()) {
+				file.delete();
+			}
+			SingleExcelWriter writer = new SingleExcelWriter(file);
 			writer.export(root + input);
+			System.out.format("%s jdartSolves : %d, l2tSolves : %d%n", input, writer.jdartSolveTimesTotal, writer.l2tSolveTimesTotal);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

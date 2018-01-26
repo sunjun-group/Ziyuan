@@ -1,4 +1,4 @@
-package learntest.local;
+package learntest.local.explore.basic;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,6 +6,8 @@ import mosek.Env.parametertype;
 
 /** 
 * @author ZhangHr 
+* 
+* information about one method , responding for one entry of input excel
 */
 public class MethodTrial {
 	private List<DetailTrial> trials = new ArrayList<>(5);
@@ -13,6 +15,8 @@ public class MethodTrial {
 	private int line;
 	private double validAveCoverageAdv; // the coverage 
 	private int jdartTime;
+	private int l2tTime;
+	private int randoopTime;
 	private double jdartCov;
 	private int jdartCnt;
 	private double evosuiteCov;
@@ -85,6 +89,18 @@ public class MethodTrial {
 	}
 	public void setRandoopMaxCov(double randoopMaxCov) {
 		this.randoopMaxCov = randoopMaxCov;
+	}
+	public int getL2tTime() {
+		return l2tTime;
+	}
+	public void setL2tTime(int l2tTime) {
+		this.l2tTime = l2tTime;
+	}
+	public int getRandoopTime() {
+		return randoopTime;
+	}
+	public void setRandoopTime(int randoopTime) {
+		this.randoopTime = randoopTime;
 	}
 	
 	

@@ -1,6 +1,8 @@
-package learntest.local;
+package learntest.local.explore.basic;
 /** 
 * @author ZhangHr 
+* 
+* information about one trial
 */
 public class DetailTrial {
 	private String methodName;
@@ -9,6 +11,8 @@ public class DetailTrial {
 	private String l2tBetter, ranBetter;
 	private int learnedState;
 	private int index; //ith trial
+	private int jdartSolveTimes , l2tSolveTimes;
+	
 	public String getMethodName() {
 		return methodName;
 	}
@@ -68,6 +72,18 @@ public class DetailTrial {
 	}
 	public void setIndex(int index) {
 		this.index = index;
+	}
+	public int getJdartSolveTimes() {
+		return jdartSolveTimes;
+	}
+	public void setJdartSolveTimes(int jdartSolveTimes) {
+		this.jdartSolveTimes = jdartSolveTimes;
+	}
+	public int getL2tSolveTimes() {
+		return l2tSolveTimes;
+	}
+	public void setL2tSolveTimes(int l2tSolveTimes) {
+		this.l2tSolveTimes = l2tSolveTimes;
 	}
 	
 }

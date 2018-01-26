@@ -155,7 +155,15 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 //			}
 //			System.currentTimeMillis();
 			/* todo : test special method end */
-
+//			if (targetMethod.getMethodFullName().contains(".dfp.")) {
+//				continue;
+//			}
+			if (!targetMethod.getMethodFullName().contains("org.apache.commons.math.random.")
+					&& !targetMethod.getMethodFullName().contains("org.apache.commons.math.stat.special.")
+					){
+				continue;
+			}
+			
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);
 

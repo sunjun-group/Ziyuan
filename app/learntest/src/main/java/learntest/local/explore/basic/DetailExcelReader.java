@@ -1,4 +1,4 @@
-package learntest.local;
+package learntest.local.explore.basic;
 import static learntest.plugin.export.io.excel.TrialHeader.*;
 import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_RAND_WORSE_THAN_L2T;
 import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_ADV;
@@ -72,7 +72,7 @@ public class DetailExcelReader extends ExcelReader {
 		Assert.assertNotNull(dataSheet, "TrialExcelReader has not initialized!");
 		Iterator<Row> it = dataSheet.rowIterator();
 		Row header = it.next(); // ignore first row (header)
-//		Assert.assertTrue(isDataSheetHeader(header), "Data sheet is invalid!");
+		Assert.assertTrue(isDataSheetHeader(header), "Data sheet is invalid!");
 		List<MethodTrial> data = new LinkedList<>();
 		try {
 			while (it.hasNext()) {
@@ -99,6 +99,8 @@ public class DetailExcelReader extends ExcelReader {
 		trial.setJdartCov(getDoubleCellValue(row, TrialHeader.JDART_COVERAGE));
 		trial.setEvosuiteCov(getDoubleCellValue(row, EVOSUITECOV));
 		trial.setEvosuiteInfo(getStringCellValue(row, EVOSUITEINFO));
+		trial.setL2tTime(getIntCellValue(row, TrialHeader.L2T_TIME));
+		trial.setRandoopTime(getIntCellValue(row, TrialHeader.RANDOOP_TIME));
 		
 		double l2tMaxCov = 0;
 		double randoopMaxCov = 0;
@@ -117,6 +119,8 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setJdart(getDoubleCellValue(row, FIRST_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, FIRST_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, FIRST_L2T_WORSE_THAN_RAND));
+					dTrial.setJdartSolveTimes(getIntCellValue(row, FIRST_TRIAL_JDART_SOLVE_TIMES));
+					dTrial.setL2tSolveTimes(getIntCellValue(row, FIRST_SYMBOLIC_TIMES));
 					trial.getTrials().add(dTrial);
 					if (dTrial.getL2t() > l2tMaxCov) {
 						l2tMaxCov = dTrial.getL2t();
@@ -135,6 +139,8 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setJdart(getDoubleCellValue(row, SECOND_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, SECOND_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, SECOND_L2T_WORSE_THAN_RAND));
+					dTrial.setJdartSolveTimes(getIntCellValue(row, SECOND_TRIAL_JDART_SOLVE_TIMES));
+					dTrial.setL2tSolveTimes(getIntCellValue(row, SECOND_SYMBOLIC_TIMES));
 					trial.getTrials().add(dTrial);
 					if (dTrial.getL2t() > l2tMaxCov) {
 						l2tMaxCov = dTrial.getL2t();
@@ -153,6 +159,8 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setJdart(getDoubleCellValue(row, THIRD_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, THIRD_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, THIRD_L2T_WORSE_THAN_RAND));
+					dTrial.setJdartSolveTimes(getIntCellValue(row, THIRD_TRIAL_JDART_SOLVE_TIMES));
+					dTrial.setL2tSolveTimes(getIntCellValue(row, THIRD_SYMBOLIC_TIMES));
 					trial.getTrials().add(dTrial);
 					if (dTrial.getL2t() > l2tMaxCov) {
 						l2tMaxCov = dTrial.getL2t();
@@ -171,6 +179,8 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setJdart(getDoubleCellValue(row, FORTH_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, FORTH_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, FORTH_L2T_WORSE_THAN_RAND));
+					dTrial.setJdartSolveTimes(getIntCellValue(row, FORTH_TRIAL_JDART_SOLVE_TIMES));
+					dTrial.setL2tSolveTimes(getIntCellValue(row, FORTH_SYMBOLIC_TIMES));
 					trial.getTrials().add(dTrial);
 					if (dTrial.getL2t() > l2tMaxCov) {
 						l2tMaxCov = dTrial.getL2t();
@@ -189,6 +199,8 @@ public class DetailExcelReader extends ExcelReader {
 					dTrial.setJdart(getDoubleCellValue(row, FIFTH_TRIAL_JDART));
 					dTrial.setL2tBetter(getStringCellValue(row, FIFTH_RAND_WORSE_THAN_L2T));
 					dTrial.setRanBetter(getStringCellValue(row, FIFTH_L2T_WORSE_THAN_RAND));
+					dTrial.setJdartSolveTimes(getIntCellValue(row, FIFTH_TRIAL_JDART_SOLVE_TIMES));
+					dTrial.setL2tSolveTimes(getIntCellValue(row,FIFTH_SYMBOLIC_TIMES));
 					trial.getTrials().add(dTrial);
 					if (dTrial.getL2t() > l2tMaxCov) {
 						l2tMaxCov = dTrial.getL2t();
