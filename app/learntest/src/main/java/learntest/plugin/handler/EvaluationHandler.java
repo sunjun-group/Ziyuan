@@ -150,9 +150,9 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodInfo targetMethod : targetMethods) {
 
 			/* todo : test special method start */
-//			if (!ifInTxt(targetMethod, LearntestConstants.CHECK_METHOD_FILE_NAME)) {
-//				continue;
-//			}
+			if (!ifInTxt(targetMethod, LearntestConstants.CHECK_METHOD_FILE_NAME)) {
+				continue;
+			}
 //			System.currentTimeMillis();
 			/* todo : test special method end */
 //			if (targetMethod.getMethodFullName().contains(".dfp.")) {
