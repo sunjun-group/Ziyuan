@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import learntest.core.RunTimeInfo;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
+import sav.common.core.Pair;
 
 public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 	
@@ -59,9 +60,18 @@ public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 
 	private void export5Trials(Row row, List<Trial> trials) {
 		for (int i = 0; i < trials.size() && i < 5; i++) {
+			StringBuffer sBuffer = new StringBuffer();
 			Trial trial = trials.get(i);
 			RunTimeInfo l2tInfo = trial.getL2tRtInfo();
 			RunTimeInfo jdartInfo = trial.getJdartRtInfo();
+
+			for (Pair<Integer, Double> pair : l2tInfo.getCovTimeLine()) {
+				sBuffer.append(pair.toString()+ "//");
+			}
+			sBuffer.append(";");
+			for (Pair<Integer, Double> pair : trial.getRanRtInfo().getCovTimeLine()) {
+				sBuffer.append(pair.toString()+ "//");
+			}
 			
 			switch (i) {
 			case 0:
@@ -75,6 +85,7 @@ public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 				addCell(row, FIRST_TRIAL_JDART_CNT, trial.getJdartRtInfo().getTestCnt());
 				addCell(row, FIRST_SYMBOLIC_TIMES, l2tInfo.getSymbolicTimes());
 				addCell(row, FIRST_TRIAL_JDART_SOLVE_TIMES, jdartInfo.getSymbolicTimes());
+				addCell(row, FIRST_COV_TIMELINE, sBuffer.toString());
 				break;
 			case 1:
 				addCell(row, SECOND_TRIAL_R, trial.getRanRtInfo().getCoverage());
@@ -87,6 +98,7 @@ public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 				addCell(row, SECOND_TRIAL_JDART_CNT, trial.getJdartRtInfo().getTestCnt());
 				addCell(row, SECOND_SYMBOLIC_TIMES, l2tInfo.getSymbolicTimes());
 				addCell(row, SECOND_TRIAL_JDART_SOLVE_TIMES, jdartInfo.getSymbolicTimes());
+				addCell(row, SECOND_COV_TIMELINE, sBuffer.toString());
 				break;
 			case 2:
 				addCell(row, THIRD_TRIAL_R, trial.getRanRtInfo().getCoverage());
@@ -99,6 +111,7 @@ public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 				addCell(row, THIRD_TRIAL_JDART_CNT, trial.getJdartRtInfo().getTestCnt());
 				addCell(row, THIRD_SYMBOLIC_TIMES, l2tInfo.getSymbolicTimes());
 				addCell(row, THIRD_TRIAL_JDART_SOLVE_TIMES, jdartInfo.getSymbolicTimes());
+				addCell(row, THIRD_COV_TIMELINE, sBuffer.toString());
 				break;
 			case 3:
 				addCell(row, FORTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
@@ -111,6 +124,7 @@ public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 				addCell(row, FORTH_TRIAL_JDART_CNT, trial.getJdartRtInfo().getTestCnt());
 				addCell(row, FORTH_SYMBOLIC_TIMES, l2tInfo.getSymbolicTimes());
 				addCell(row, FORTH_TRIAL_JDART_SOLVE_TIMES, jdartInfo.getSymbolicTimes());
+				addCell(row, FORTH_COV_TIMELINE, sBuffer.toString());
 				break;
 			case 4:
 				addCell(row, FIFTH_TRIAL_R, trial.getRanRtInfo().getCoverage());
@@ -123,6 +137,7 @@ public class TrialExcelWriter extends SimpleExcelWriter<Trial> {
 				addCell(row, FIFTH_TRIAL_JDART_CNT, trial.getJdartRtInfo().getTestCnt());	
 				addCell(row, FIFTH_SYMBOLIC_TIMES, l2tInfo.getSymbolicTimes());
 				addCell(row, FIFTH_TRIAL_JDART_SOLVE_TIMES, jdartInfo.getSymbolicTimes());
+				addCell(row, FIFTH_COV_TIMELINE, sBuffer.toString());
 				break;
 
 			default:

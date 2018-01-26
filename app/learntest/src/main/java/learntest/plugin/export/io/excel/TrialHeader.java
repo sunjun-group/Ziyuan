@@ -42,6 +42,7 @@ public enum TrialHeader implements ExcelHeader {
 	FIRST_L2T_WORSE_THAN_RAND("1st l2t worse than randoop"),
 	FIRST_RAND_WORSE_THAN_L2T("1st randoop worse than l2t"),
 	FIRST_SYMBOLIC_TIMES("1st symbolic times"),
+	FIRST_COV_TIMELINE("1st coverage time line"),
 	
 	SECOND_TRIAL_R("2nd trial ran"),
 	SECOND_TRIAL_L2T("2nd trial l2t"),
@@ -50,6 +51,7 @@ public enum TrialHeader implements ExcelHeader {
 	SECOND_L2T_WORSE_THAN_RAND("2nd l2t worse than randoop"),
 	SECOND_RAND_WORSE_THAN_L2T("2nd randoop worse than l2t"),
 	SECOND_SYMBOLIC_TIMES("2nd symbolic times"),
+	SECOND_COV_TIMELINE("2nd coverage time line"),
 	
 	THIRD_TRIAL_R("3rd trial ran"),
 	THIRD_TRIAL_L2T("3rd trial l2t"),
@@ -58,6 +60,7 @@ public enum TrialHeader implements ExcelHeader {
 	THIRD_L2T_WORSE_THAN_RAND("3rd l2t worse than randoop"),
 	THIRD_RAND_WORSE_THAN_L2T("3rd randoop worse than l2t"),
 	THIRD_SYMBOLIC_TIMES("3rd symbolic times"),
+	THIRD_COV_TIMELINE("3rd coverage time line"),
 	
 	FORTH_TRIAL_R("4th trial ran"),
 	FORTH_TRIAL_L2T("4th trial l2t"),
@@ -66,6 +69,7 @@ public enum TrialHeader implements ExcelHeader {
 	FORTH_L2T_WORSE_THAN_RAND("4th l2t worse than randoop"),
 	FORTH_RAND_WORSE_THAN_L2T("4th randoop worse than l2t"),
 	FORTH_SYMBOLIC_TIMES("4th symbolic times"),
+	FORTH_COV_TIMELINE("4th coverage time line"),
 	
 	FIFTH_TRIAL_R("5th trial ran"),
 	FIFTH_TRIAL_L2T("5th trial l2t"),
@@ -74,6 +78,7 @@ public enum TrialHeader implements ExcelHeader {
 	FIFTH_L2T_WORSE_THAN_RAND("5th l2t worse than randoop"),
 	FIFTH_RAND_WORSE_THAN_L2T("5th randoop worse than l2t"),
 	FIFTH_SYMBOLIC_TIMES("5th symbolic times"),
+	FIFTH_COV_TIMELINE("5th coverage time line"),
 	
 	EVOSUITECOV("evosuite coverage"),
 	EVOSUITEINFO("evosuite coverage info"),
