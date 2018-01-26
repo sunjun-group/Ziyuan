@@ -52,6 +52,7 @@ import sav.common.core.formula.Formula;
 import sav.common.core.formula.OrFormula;
 import sav.common.core.utils.FileUtils;
 import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.execute.value.ExecVar;
 import variable.Variable;
 
@@ -239,7 +240,9 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 		DecisionNodeProbe nodeProbe = orgNodeProbe;
 		CfgNode node = nodeProbe.getNode();
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
-
+			if (SAVTimer.isTimeOut()) {
+				break;
+			}
 			/** record learned formulas */
 			if (!learnedFormulas.containsKey(node)) {
 				learnedFormulas.put(node, new FormulaInfo(node));

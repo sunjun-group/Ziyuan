@@ -28,6 +28,7 @@ import learntest.core.commons.utils.CfgUtils;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
+import sav.settings.SAVTimer;
 import variable.Variable;
 
 /**
@@ -87,6 +88,9 @@ public abstract class AbstractDecisionLearner extends AbstractLearningComponent 
 		queue.add(node);
 		int loopTimes = 0;
 		while (!queue.isEmpty()) {
+			if (SAVTimer.isTimeOut()) {
+				break;
+			}
 			loopTimes++;
 			node = queue.poll();
 			log.debug("parsing the node in line " + node.getLine() + "(" + node + ")");

@@ -37,6 +37,7 @@ import sav.common.core.SavException;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.Randomness;
 import sav.settings.SAVExecutionTimeOutException;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 
@@ -141,10 +142,14 @@ public class IlpSelectiveSampling {
 		solver.initRangeIfEmpty(originVars);
 		int selectiveSamplingDataSize = 3;
 		int formulasSize = learnedFormulas== null ? 0 : learnedFormulas.size();
+		outer:
 		for (int i = 0; i < selectiveSamplingDataSize && 
 				((formulasSize > 0 && samplesOnLine.size() < formulasSize) || formulasSize == 0 ) ; i++) {
 			log.info("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
+				if (SAVTimer.isTimeOut()) {
+					break outer;
+				}
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);
 				if (!problems.isEmpty() && learnedFormula != null) {
 					for (Problem problem : problems) {

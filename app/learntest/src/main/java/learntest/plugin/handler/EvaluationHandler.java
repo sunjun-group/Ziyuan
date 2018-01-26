@@ -158,11 +158,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 //			if (targetMethod.getMethodFullName().contains(".dfp.")) {
 //				continue;
 //			}
-			if (!targetMethod.getMethodFullName().contains("org.apache.commons.math.random.")
-					&& !targetMethod.getMethodFullName().contains("org.apache.commons.math.stat.special.")
-					){
-				continue;
-			}
 			
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);
