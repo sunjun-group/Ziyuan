@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
 
+import gov.nasa.jpf.util.FileUtils;
 import learntest.local.explore.basic.DetailExcelReader;
 import learntest.local.explore.basic.DetailTrial;
 import learntest.local.explore.basic.MethodTrial;
@@ -66,8 +67,8 @@ public class TimeExcelWriter extends SimpleExcelWriter<MethodTrial> {
 		String lable = System.currentTimeMillis() + "";
 		String output = "time_"+ lable + ".xlsx";
 		for (String input : paths) {
-			output = "time_" + input;
-			TimeExcelWriter.explore(root + input, root + output);
+			output = "learnedMethods_" + input + ".txt";
+			TimeExcelWriter.print(root + input, root + output);
 		}
 
 	}
@@ -81,6 +82,35 @@ public class TimeExcelWriter extends SimpleExcelWriter<MethodTrial> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void print(String input, String output){
+
+		DetailExcelReader reader;
+		try {
+			StringBuffer sBuffer = new StringBuffer();
+			reader = new DetailExcelReader(new File(input));
+			List<MethodTrial> methodTrials = reader.readDataSheet();
+			for (MethodTrial methodTrial : methodTrials) {
+				boolean learnedState = false;
+				for (int i = 0; i < methodTrial.getTrials().size(); i++) {
+					DetailTrial trial = methodTrial.getTrials().get(i);
+					if (trial.getLearnedState() > 0) {
+						learnedState = true;
+						break;
+					}
+				}
+				if (learnedState) {
+					sBuffer.append(methodTrial.getMethodName() + "." + methodTrial.getLine()+"\n");
+				}
+				System.out.println(methodTrial.getMethodName());
+			}
+			sav.common.core.utils.FileUtils.write(output, sBuffer.toString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

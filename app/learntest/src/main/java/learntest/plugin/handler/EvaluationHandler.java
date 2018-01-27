@@ -20,6 +20,7 @@ import learntest.core.LearnTestParams;
 import learntest.core.Visitor;
 import learntest.core.commons.LearntestConstants;
 import learntest.core.commons.data.classinfo.MethodInfo;
+import learntest.local.timer.TimerTrialExcelHandler;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.ProjectSetting;
 import learntest.plugin.export.io.excel.MultiTrial;
@@ -64,7 +65,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		try {
 			String outputFolder = ProjectSetting.getLearntestOutputFolder(projectName);
 			log.info("learntest output folder: {}", outputFolder);
-			excelHandler = new TrialExcelHandler(outputFolder, projectName);
+			excelHandler = new TimerTrialExcelHandler(outputFolder, projectName);
 			initFilters();
 		} catch (Exception e1) {
 			handleException(e1);
