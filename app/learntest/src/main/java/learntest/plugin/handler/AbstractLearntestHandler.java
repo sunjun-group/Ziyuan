@@ -340,7 +340,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		for (DecisionBranchType branchRelationship : relInRan) {
 			if (!relInL2t.contains(branchRelationship)) {
 				l2tWorseSb.append(node.toString() + " : " + branchRelationship +";");
-				l2tAverageInfo.randWorseBranches++;
+				l2tAverageInfo.l2tWorseBranches++;
 			}
 		}
 		
