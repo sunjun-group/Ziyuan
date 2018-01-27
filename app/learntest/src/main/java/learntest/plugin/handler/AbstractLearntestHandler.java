@@ -239,14 +239,14 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 //			jdartInfo = runJdart(jdartParam);
 
 			log.info("run l2t..");
-			l2tParams.setApproach(LearnTestApproach.L2T);
+			l2tParams.setApproach(LearnTestApproach.L2TTimer);
 			l2tParams.setInitialTests(jdartParam.getGeneratedInitTest());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
 			l2tParams.setCu(cu);
 			l2tAverageInfo = runLearntest(l2tAverageInfo, l2tParams);
 
 			log.info("run randoop..");
-			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+			randoopParam.setApproach(LearnTestApproach.RANDOOPTimer);
 			randoopParam.setInitialTests(l2tParams.getInitialTests());
 			randoopParam.setMaxTcs(l2tAverageInfo.getTestCnt());
 			randoopParam.setCu(cu);
@@ -433,7 +433,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	public RunTimeInfo runLearntest(LearnTestParams params){
 		try {
 			SAVTimer.enableExecutionTimeout = true;
-			SAVTimer.exeuctionTimeout = 150 * 1000;//50000000;
+			SAVTimer.exeuctionTimeout = 50000000;
 			learntest.core.LearnTest learntest = new learntest.core.LearnTest(params.getAppClasspath());
 			RunTimeInfo runtimeInfo = learntest.run(params);
 			printRuntimeInfo(runtimeInfo, params);

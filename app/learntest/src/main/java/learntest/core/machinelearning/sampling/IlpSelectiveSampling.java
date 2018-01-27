@@ -24,6 +24,7 @@ import learntest.core.commons.utils.VarSolutionUtils;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import learntest.core.machinelearning.sampling.javailp.ProblemBuilder;
 import learntest.core.machinelearning.sampling.javailp.ProblemSolver;
+import learntest.core.time.CovTimer;
 import learntest.plugin.utils.Settings;
 import libsvm.core.Divider;
 import libsvm.core.Machine.DataPoint;
@@ -147,7 +148,7 @@ public class IlpSelectiveSampling {
 				((formulasSize > 0 && samplesOnLine.size() < formulasSize) || formulasSize == 0 ) ; i++) {
 			log.info("[LIN YUN] Generate data points on lines: ");
 			for (Divider learnedFormula : learnedFormulas) {
-				if (SAVTimer.isTimeOut()) {
+				if (CovTimer.stopFlag) {
 					break outer;
 				}
 				List<Problem> problems = ProblemBuilder.buildProblemWithPreconditions(originVars, preconditions, false);

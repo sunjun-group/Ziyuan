@@ -10,7 +10,6 @@ package learntest.core.machinelearning;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,55 +21,50 @@ import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
+import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
+import sav.settings.SAVTimer;
 import variable.Variable;
 
 /**
  * @author LLT
  *	only do sampling randomly, not based on precondition.
  */
-public class RandomLearner implements IInputLearner {
-	private static final Logger log = LoggerFactory.getLogger(RandomLearner.class);
+public class RandomTimerLearner implements IInputLearner {
+	private static final Logger log = LoggerFactory.getLogger(RandomTimerLearner.class);
 	private LearningMediator mediator;
-	private int maxTcs;
 	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(), branchFalseRecord = new HashMap<>();
 	private String logFile;
+	private List<Pair<Integer, Double>> timeLine;
 	
-	public RandomLearner(LearningMediator mediator, int maxTcs, String logFile) {
+	public RandomTimerLearner(LearningMediator mediator,String logFile) {
 		this.mediator = mediator;
-		this.maxTcs = maxTcs;
 		this.logFile = logFile;
 		RunTimeInfo.createFile(logFile);
 	}
 	
 	@Override
 	public DecisionProbes learn(DecisionProbes inputProbes, Map<Integer, List<Variable>> relevantVarMap) throws SavException {
+		CovTimer timer = new CovTimer(inputProbes, SAVTimer.getExecutionTime());
+		timer.start();	
+		
 		DecisionProbes probes = inputProbes;
 		SampleExecutor sampleExecutor = new SampleExecutor(mediator, inputProbes);
 
 		SelectiveSampling<SamplingResult> selectiveSampling = new SelectiveSampling<SamplingResult>(sampleExecutor, inputProbes);
-		int tc = maxTcs - probes.getTotalTcs();
-		int failToSelectSample = 0;
-		while (tc > 0) {
-			int sampleTotal = tc < 100 ? tc : 100;
-			SamplingResult sampleResult = selectiveSampling.selectData(inputProbes.getOriginalVars(), null, null, sampleTotal); /** gentest and run test cases*/
-			recordSample(inputProbes, sampleResult, logFile);
-			
-			int remainTc = maxTcs - probes.getTotalTcs();
-			if (remainTc == tc) {
-				if (failToSelectSample == 5) {
-					log.warn("cannot select any more sample!");
-					break;
-				} else {
-					failToSelectSample++;
-				}
-			} else {
-				failToSelectSample = 0;
-				tc = remainTc;
+		try {
+			while (!CovTimer.stopFlag) {
+				int sampleTotal = 20;
+				SamplingResult sampleResult = selectiveSampling.selectData(inputProbes.getOriginalVars(), null, null, sampleTotal); /** gentest and run test cases*/
+				recordSample(inputProbes, sampleResult, logFile);
 			}
+		} finally {
+			timer.close();
+			timer.recordCovTimeLine(probes);
+			timeLine= timer.getCovTimeLine();
 		}
-		
+
 		return probes;
 	}
 
@@ -90,11 +84,10 @@ public class RandomLearner implements IInputLearner {
 	@Override
 	public void cleanup() {
 	}
-
+	
 	@Override
 	public List<Pair<Integer, Double>> getCovTimeLine() {
-		return new LinkedList<>();
+		return timeLine;
 	}
-	
 	
 }

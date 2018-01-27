@@ -9,13 +9,14 @@ import learntest.core.commons.utils.CoverageUtils;
 import sav.common.core.Pair;
 
 public class CovTimer {
-	public boolean isRun = false;
+	public volatile static boolean stopFlag = false;
+	public static int timeOUt = 150 * 1000;
 	public Timer timer = new Timer();
 	public long startTime = 0;
 	CfgCoverage cfgCoverage;
-	private List<Pair<Integer, Double>> covTimeLine;
+	private List<Pair<Integer, Double>> covTimeLine = new LinkedList<>();
 	
-	public CovTimer(CfgCoverage cfgCoverage, long ranTime) {
+	public CovTimer(CfgCoverage cfgCoverage, long ranTime) { 
 		covTimeLine = new LinkedList<>();
 		this.cfgCoverage = cfgCoverage;
 		double coverage = CoverageUtils.calculateCoverageByBranch(cfgCoverage);
@@ -25,11 +26,14 @@ public class CovTimer {
 	}
 	
 	public void start(){
-	         if(!isRun){
-	             isRun = true;
-	             timer = new Timer();
-	             timer.schedule(new CovTimeTask(cfgCoverage, this), 30 * 1000,  30 * 1000);
-	         }
+		stopFlag = false;
+        timer = new Timer();
+        timer.schedule(new CovTimeTask(cfgCoverage, this), 30 * 1000,  30 * 1000);
+	}
+	
+	public void close(){
+		timer.cancel();
+		timer = null;
 	}
 
 	public Timer getTimer() {
@@ -45,6 +49,12 @@ public class CovTimer {
 
 	public List<Pair<Integer, Double>> getCovTimeLine() {
 		return covTimeLine;
+	}
+	
+	public void checkTime(){
+		if ((int)(System.currentTimeMillis() - startTime) >= timeOUt) {
+			stopFlag = true;
+		}
 	}
 	
 }

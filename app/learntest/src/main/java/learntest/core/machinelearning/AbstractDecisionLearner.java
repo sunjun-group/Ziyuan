@@ -25,6 +25,8 @@ import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CfgUtils;
+import learntest.core.time.CovTimer;
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
@@ -82,13 +84,13 @@ public abstract class AbstractDecisionLearner extends AbstractLearningComponent 
 	protected abstract void prepareDataBeforeLearn(DecisionProbes inputProbes,
 			Map<Integer, List<Variable>> relevantVarMap) throws SavException;
 
-	private void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes,
+	protected void learn(CfgNode node, DecisionProbes probes, List<Integer> visitedNodes,
 			HashMap<Integer, List<CfgNode>> indexMap) throws SavException {
 		Queue<CfgNode> queue = new LinkedList<>();
 		queue.add(node);
 		int loopTimes = 0;
 		while (!queue.isEmpty()) {
-			if (SAVTimer.isTimeOut()) {
+			if (CovTimer.stopFlag) {
 				break;
 			}
 			loopTimes++;
@@ -185,6 +187,10 @@ public abstract class AbstractDecisionLearner extends AbstractLearningComponent 
 	public void cleanup() {
 		getTrueSample().clear();
 		getFalseSample().clear();
+	}
+	
+	public List<Pair<Integer, Double>> getCovTimeLine() {
+		return new LinkedList();
 	}
 	
 }

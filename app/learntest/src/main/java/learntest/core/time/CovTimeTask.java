@@ -19,6 +19,7 @@ public class CovTimeTask extends TimerTask{
 	@Override
 	public void run() {
 		timer.recordCovTimeLine(cfgCoverage);
+		timer.checkTime();
 	}
 
 }

@@ -62,13 +62,13 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			jdartParam.setApproach(LearnTestApproach.JDART);
 //			RunTimeInfo jdartInfo = runJdart(jdartParam);
 			
-			l2tParam.setApproach(LearnTestApproach.L2T);
+			l2tParam.setApproach(LearnTestApproach.L2TTimer);
 			l2tParam.setCu(constructCu(l2tParam.getTargetMethod().getClassName()));
 			l2tParam.setInitialTests(jdartParam.getGeneratedInitTest());
 			RunTimeInfo l2tRuntimeInfo = runLearntest(l2tParam);
 
 			LearnTestParams randoopParam = l2tParam.createNew();
-			randoopParam.setApproach(LearnTestApproach.RANDOOP);
+			randoopParam.setApproach(LearnTestApproach.RANDOOPTimer);
 			randoopParam.setInitialTests(l2tParam.getInitialTests());
 			randoopParam.setMaxTcs(l2tRuntimeInfo.getTestCnt());
 			

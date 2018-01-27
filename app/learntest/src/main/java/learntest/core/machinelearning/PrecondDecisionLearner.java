@@ -36,6 +36,7 @@ import learntest.core.machinelearning.sampling.IlpSelectiveSampling;
 import learntest.core.rule.EqualVarRelationShip;
 import learntest.core.rule.NotEqualVarRelationShip;
 import learntest.core.rule.RelationShip;
+import learntest.core.time.CovTimer;
 import learntest.plugin.utils.Settings;
 import libsvm.core.Category;
 import libsvm.core.Divider;
@@ -240,7 +241,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 		DecisionNodeProbe nodeProbe = orgNodeProbe;
 		CfgNode node = nodeProbe.getNode();
 		while (trueFlaseFormula != null && time < FORMULAR_LEARN_MAX_ATTEMPT && nodeProbe.needToLearnPrecond()) {
-			if (SAVTimer.isTimeOut()) {
+			if (CovTimer.stopFlag) {
 				break;
 			}
 			/** record learned formulas */

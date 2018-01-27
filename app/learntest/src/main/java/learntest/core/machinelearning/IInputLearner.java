@@ -23,6 +23,7 @@ import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.sampling.SamplingResult;
+import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.FileUtils;
 import variable.Variable;
@@ -104,4 +105,6 @@ public interface IInputLearner {
 	public String getLogFile(); // eclipse may crash because Log print too many characters, thus use a file to store detail content
 
 	void cleanup();
+	
+	public List<Pair<Integer, Double>> getCovTimeLine();
 }

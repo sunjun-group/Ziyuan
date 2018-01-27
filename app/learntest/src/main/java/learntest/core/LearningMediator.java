@@ -32,7 +32,9 @@ import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.TestGenerator;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
+import learntest.core.machinelearning.PrecondDecisionTimerLearner;
 import learntest.core.machinelearning.RandomLearner;
+import learntest.core.machinelearning.RandomTimerLearner;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
@@ -120,6 +122,14 @@ public class LearningMediator {
 			String initialTc = params.getInitialTests().getMainClass();
 			learner.setInitialTc(initialTc);
 			return learner;
+		case L2TTimer:
+			PrecondDecisionLearner tlearner = new PrecondDecisionTimerLearner(this, "./logs/"+methodName+".l2t."+time+".log");
+			tlearner.setCu(params.getCu());
+			String tinitialTc = params.getInitialTests().getMainClass();
+			tlearner.setInitialTc(tinitialTc);
+			return tlearner;
+		case RANDOOPTimer:
+			return new RandomTimerLearner(this, "./logs/"+methodName+".randoop."+time+".log");
 		case RANDOOP:
 			return new RandomLearner(this, params.getMaxTcs(), "./logs/"+methodName+".randoop."+time+".log");
 		case GAN:

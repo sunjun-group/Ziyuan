@@ -87,13 +87,7 @@ public class LearnTest extends AbstractLearntest {
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				
-				CovTimer timer = new CovTimer(initProbes, SAVTimer.getExecutionTime());
-				timer.start();
-				
 				DecisionProbes probes = learner.learn(initProbes, relevantVarMap);
-				
-				timer.getTimer().cancel();
-				timer.recordCovTimeLine(probes);
 				
 				/** 
 				 * In this way, all samples are recorded.
@@ -110,7 +104,7 @@ public class LearnTest extends AbstractLearntest {
 				}
 				info.setSample(learner);
 				info.setLogFile(learner.getLogFile());
-				info.setCovTimeLine(timer.getCovTimeLine());
+				info.setCovTimeLine(learner.getCovTimeLine());
 				return info;
 			}
 		} catch (SAVExecutionTimeOutException e) {
