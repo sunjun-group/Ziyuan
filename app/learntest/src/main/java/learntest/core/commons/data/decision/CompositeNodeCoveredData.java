@@ -72,7 +72,14 @@ public class CompositeNodeCoveredData implements INodeCoveredData {
 	public CoveredBranches getCoveredBranches() {
 		BranchCoveredType coveredType = BranchCoveredType.NONE;
 		for (SampleNodeCoveredData data : coveredData) {
-			coveredType = BranchCoveredType.append(coveredType, data.getCoveredBranches().getType());
+			BranchCoveredType type;
+			try {
+				type = data.getCoveredBranches().getType();
+			} catch (Exception e) {
+				e.printStackTrace();
+				type = BranchCoveredType.NONE;
+			}
+			coveredType = BranchCoveredType.append(coveredType, type);
 		}
 		return CoveredBranches.valueOf(coveredType);
 	}
