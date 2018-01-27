@@ -172,7 +172,7 @@ public class LearnTest extends AbstractLearntest {
 		}
 		/* init test */
 		GentestParams gentestParams = LearntestParamsUtils.createGentestParams(appClasspath, params, GenTestPackage.INIT);
-		if (CollectionUtils.existIn(params.getApproach(), LearnTestApproach.JDART, LearnTestApproach.L2T)) {
+		if (CollectionUtils.existIn(params.getApproach(), LearnTestApproach.JDART, LearnTestApproach.L2T, LearnTestApproach.L2TTimer)) {
 			gentestParams.setGenerateMainClass(true);
 		}
 		randomGenerateInitTestWithBestEffort(params, gentestParams);

@@ -234,8 +234,8 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo ranAverageInfo = new RunTimeInfo();
 			RunTimeInfo jdartInfo = new RunTimeInfo();
 
-			log.info("run jdart..");
-			jdartParam.setApproach(LearnTestApproach.JDART);
+//			log.info("run jdart..");
+//			jdartParam.setApproach(LearnTestApproach.JDART);
 //			jdartInfo = runJdart(jdartParam);
 
 			log.info("run l2t..");
@@ -333,12 +333,14 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		for (DecisionBranchType branchRelationship : relInL2t) {
 			if (!relInRan.contains(branchRelationship)) {
 				ranWorseSb.append(node.toString() + " : " + branchRelationship +";");
+				l2tAverageInfo.randWorseBranches++;
 			}
 		}
 
 		for (DecisionBranchType branchRelationship : relInRan) {
 			if (!relInL2t.contains(branchRelationship)) {
 				l2tWorseSb.append(node.toString() + " : " + branchRelationship +";");
+				l2tAverageInfo.randWorseBranches++;
 			}
 		}
 		
