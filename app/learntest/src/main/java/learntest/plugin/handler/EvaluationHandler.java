@@ -44,7 +44,7 @@ import sav.settings.SAVTimer;
 
 public class EvaluationHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(EvaluationHandler.class);
-	private static final int EVALUATIONS_PER_METHOD = 5;
+	private static final int EVALUATIONS_PER_METHOD = 3;
 	private static final int MAX_TRY_TIMES_PER_METHOD = 50;
 	private List<IMethodFilter> methodFilters;
 	private List<ITypeFilter> classFilters;
