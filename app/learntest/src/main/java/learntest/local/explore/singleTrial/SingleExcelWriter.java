@@ -37,6 +37,19 @@ public class SingleExcelWriter extends SimpleExcelWriter<DetailTrial> {
 		addCell(row, LEARNSTATE, trial.getLearnedState() > 0 ? 1 : 0);
 		addCell(row, RANDOOP_COVERAGE, trial.getRandoop());
 		addCell(row, JDART_COVERAGE, trial.getJdart());
+		addCell(row, L2T_TIME,  trial.getL2tCostTime());
+		addCell(row, RAND_TIME,  trial.getRandCostTime());
+//		writeTimeLine(row, trial);
+	}
+
+	private void writeTimeLine(Row row, DetailTrial trial) {
+		String l2t = trial.getL2tTimeLine();
+		String randoop = trial.getRandTimeLine();
+		String[] l2tTL = l2t.split("////");
+		String[] randTL = randoop.split("////");
+		for (int i = 1; i < randTL.length-1 && i <= 5; i++) {
+			
+		}
 	}
 
 	public void export(String oldXlsx) {
@@ -57,27 +70,4 @@ public class SingleExcelWriter extends SimpleExcelWriter<DetailTrial> {
 			e.printStackTrace();
 		}
 	}
-
-	public static void main(String[] args) {
-		String root = "E:\\172\\SUTD\\statistic\\";
-		String input = "jscience_1.xlsx";
-//		input = "jblas_0.xlsx";
-//		input = "colt_2.xlsx";
-//		input = "apache-common-math-2.2_17_0955.xlsx";
-		String output = "single_" + input;
-		try {
-			File file = new File(root + output);
-			if (file.exists()) {
-				file.delete();
-			}
-			SingleExcelWriter writer = new SingleExcelWriter(file);
-			writer.export(root + input);
-			System.out.format("%s jdartSolves : %d, l2tSolves : %d%n", input, writer.jdartSolveTimesTotal, writer.l2tSolveTimesTotal);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
 }
