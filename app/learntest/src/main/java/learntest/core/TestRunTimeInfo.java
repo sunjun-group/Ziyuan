@@ -29,6 +29,7 @@ public class TestRunTimeInfo extends RunTimeInfo {
 	private List<FormulaInfo> learnedFormulas = new LinkedList<>();
 	private double validCoverage;
 	public String l2tWorseThanRand = "", randWorseThanl2t = "";
+	public int l2tWorseBranches = 0, randWorseBranches = 0;
 
 	private HashMap<String, Collection<BreakpointValue>> trueSample = new HashMap<>(),
 			falseSample = new HashMap<>();

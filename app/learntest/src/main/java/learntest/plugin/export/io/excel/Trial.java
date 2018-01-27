@@ -15,6 +15,7 @@ public class Trial {
 	protected RunTimeInfo ranRtInfo;
 	protected RunTimeInfo jdartRtInfo;
 	protected String l2tWorseThanRand, randWorseThanl2t;
+	protected int l2tWorseBranches , randWorseBranches ;
 	private int l2tSymbolicTimes = 0;
 	private int jdartSymbolicTimes = 0;
 
@@ -33,6 +34,8 @@ public class Trial {
 		if (l2tAverageInfo instanceof TestRunTimeInfo) {
 			this.l2tWorseThanRand = ((TestRunTimeInfo)l2tAverageInfo).l2tWorseThanRand;
 			this.randWorseThanl2t = ((TestRunTimeInfo)l2tAverageInfo).randWorseThanl2t;
+			this.l2tWorseBranches = ((TestRunTimeInfo)l2tAverageInfo).l2tWorseBranches;
+			this.randWorseBranches = ((TestRunTimeInfo)l2tAverageInfo).randWorseBranches;
 			this.l2tSymbolicTimes = ((TestRunTimeInfo)l2tAverageInfo).getSymbolicTimes();
 		}
 		this.jdartSymbolicTimes = jdartInfo.getSymbolicTimes();
@@ -136,6 +139,14 @@ public class Trial {
 
 	public int getJdartSymbolicTimes() {
 		return jdartSymbolicTimes;
+	}
+
+	public int getL2tWorseBranches() {
+		return l2tWorseBranches;
+	}
+
+	public int getRandWorseBranches() {
+		return randWorseBranches;
 	}
 	
 	
