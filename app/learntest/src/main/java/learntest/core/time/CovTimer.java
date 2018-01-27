@@ -10,7 +10,8 @@ import sav.common.core.Pair;
 
 public class CovTimer {
 	public volatile static boolean stopFlag = false;
-	public static int timeOUt = 150 * 1000;
+	public static int timeOUt = 90 * 1000;
+	public static int interval = 15 * 1000;
 	public Timer timer = new Timer();
 	public long startTime = 0;
 	CfgCoverage cfgCoverage;
@@ -28,7 +29,7 @@ public class CovTimer {
 	public void start(){
 		stopFlag = false;
         timer = new Timer();
-        timer.schedule(new CovTimeTask(cfgCoverage, this), 30 * 1000,  30 * 1000);
+        timer.schedule(new CovTimeTask(cfgCoverage, this), interval,  interval);
 	}
 	
 	public void close(){
