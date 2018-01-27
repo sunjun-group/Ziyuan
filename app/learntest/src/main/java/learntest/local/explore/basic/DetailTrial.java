@@ -12,6 +12,8 @@ public class DetailTrial {
 	private int learnedState;
 	private int index; //ith trial
 	private int jdartSolveTimes , l2tSolveTimes;
+	private String l2tTimeLine, randTimeLine;
+	private int l2tCostTime, randCostTime;
 	
 	public String getMethodName() {
 		return methodName;
@@ -84,6 +86,30 @@ public class DetailTrial {
 	}
 	public void setL2tSolveTimes(int l2tSolveTimes) {
 		this.l2tSolveTimes = l2tSolveTimes;
+	}
+	public String getL2tTimeLine() {
+		return l2tTimeLine;
+	}
+	public void setL2tTimeLine(String l2tTimeLine) {
+		this.l2tTimeLine = l2tTimeLine;
+	}
+	public String getRandTimeLine() {
+		return randTimeLine;
+	}
+	public void setRandTimeLine(String randTimeLine) {
+		this.randTimeLine = randTimeLine;
+	}
+	public int getL2tCostTime() {
+		return l2tCostTime;
+	}
+	public void setL2tCostTime(int l2tCostTime) {
+		this.l2tCostTime = l2tCostTime;
+	}
+	public int getRandCostTime() {
+		return randCostTime;
+	}
+	public void setRandCostTime(int randCostTime) {
+		this.randCostTime = randCostTime;
 	}
 	
 }

@@ -1,36 +1,5 @@
 package learntest.local.explore.basic;
-import static learntest.plugin.export.io.excel.TrialHeader.*;
-import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_RAND_WORSE_THAN_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_ADV;
-import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_L;
-import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.FIFTH_TRIAL_R;
-import static learntest.plugin.export.io.excel.TrialHeader.FIRST_L2T_WORSE_THAN_RAND;
-import static learntest.plugin.export.io.excel.TrialHeader.FIRST_RAND_WORSE_THAN_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_ADV;
-import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_L;
-import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.FIRST_TRIAL_R;
-import static learntest.plugin.export.io.excel.TrialHeader.FORTH_L2T_WORSE_THAN_RAND;
-import static learntest.plugin.export.io.excel.TrialHeader.FORTH_RAND_WORSE_THAN_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_ADV;
-import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_L;
-import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.FORTH_TRIAL_R;
-import static learntest.plugin.export.io.excel.TrialHeader.SECOND_L2T_WORSE_THAN_RAND;
-import static learntest.plugin.export.io.excel.TrialHeader.SECOND_RAND_WORSE_THAN_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_ADV;
-import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_L;
-import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.SECOND_TRIAL_R;
-import static learntest.plugin.export.io.excel.TrialHeader.THIRD_L2T_WORSE_THAN_RAND;
-import static learntest.plugin.export.io.excel.TrialHeader.THIRD_RAND_WORSE_THAN_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_ADV;
-import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_L;
-import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_L2T;
-import static learntest.plugin.export.io.excel.TrialHeader.THIRD_TRIAL_R;
-import static learntest.plugin.export.io.excel.TrialHeader.EVOSUITECOV;
-import static learntest.plugin.export.io.excel.TrialHeader.EVOSUITEINFO;
+import static learntest.local.explore.basic.TrialHeader.*;
 
 import java.io.File;
 import java.util.Iterator;
@@ -42,10 +11,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import learntest.core.commons.exception.LearnTestException;
 import learntest.plugin.export.io.excel.TrialExcelConstants;
-import learntest.plugin.export.io.excel.TrialHeader;
 import learntest.plugin.export.io.excel.common.ExcelReader;
 import learntest.plugin.export.io.excel.common.ExcelSettings;
-import mosek.Env.mark;
 import sav.common.core.utils.Assert;
 
 /**
@@ -109,6 +76,8 @@ public class DetailExcelReader extends ExcelReader {
 			DetailTrial dTrial = new DetailTrial();
 			dTrial.setLine(trial.getLine());
 			dTrial.setMethodName(trial.getMethodName());
+			dTrial.setL2tCostTime(trial.getL2tTime());
+			dTrial.setRandCostTime(trial.getRandoopTime());
 			switch (i) {
 			case 0:
 				if (row.getCell(FIRST_TRIAL_ADV.getCellIdx()) != null) {
@@ -128,6 +97,10 @@ public class DetailExcelReader extends ExcelReader {
 					if (dTrial.getRandoop() > randoopMaxCov) {
 						randoopMaxCov = dTrial.getRandoop();
 					}
+//					String timeLine = getStringCellValue(row, FIRST_COV_TIMELINE);
+//					String[] strings = timeLine.split(";");
+//					dTrial.setL2tTimeLine(strings[0]);
+//					dTrial.setRandTimeLine(strings[1]);
 				}
 				break;
 			case 1:
@@ -148,6 +121,10 @@ public class DetailExcelReader extends ExcelReader {
 					if (dTrial.getRandoop() > randoopMaxCov) {
 						randoopMaxCov = dTrial.getRandoop();
 					}
+//					String timeLine = getStringCellValue(row, SECOND_COV_TIMELINE);
+//					String[] strings = timeLine.split(";");
+//					dTrial.setL2tTimeLine(strings[0]);
+//					dTrial.setRandTimeLine(strings[1]);
 				}
 				break;
 			case 2:
@@ -168,6 +145,10 @@ public class DetailExcelReader extends ExcelReader {
 					if (dTrial.getRandoop() > randoopMaxCov) {
 						randoopMaxCov = dTrial.getRandoop();
 					}
+//					String timeLine = getStringCellValue(row, THIRD_COV_TIMELINE);
+//					String[] strings = timeLine.split(";");
+//					dTrial.setL2tTimeLine(strings[0]);
+//					dTrial.setRandTimeLine(strings[1]);
 				}
 				break;
 			case 3:
@@ -188,6 +169,10 @@ public class DetailExcelReader extends ExcelReader {
 					if (dTrial.getRandoop() > randoopMaxCov) {
 						randoopMaxCov = dTrial.getRandoop();
 					}
+//					String timeLine = getStringCellValue(row, FORTH_COV_TIMELINE);
+//					String[] strings = timeLine.split(";");
+//					dTrial.setL2tTimeLine(strings[0]);
+//					dTrial.setRandTimeLine(strings[1]);
 				}
 				break;
 			case 4:
@@ -208,6 +193,10 @@ public class DetailExcelReader extends ExcelReader {
 					if (dTrial.getRandoop() > randoopMaxCov) {
 						randoopMaxCov = dTrial.getRandoop();
 					}
+//					String timeLine = getStringCellValue(row, FIFTH_COV_TIMELINE);
+//					String[] strings = timeLine.split(";");
+//					dTrial.setL2tTimeLine(strings[0]);
+//					dTrial.setRandTimeLine(strings[1]);
 				}
 				break;
 

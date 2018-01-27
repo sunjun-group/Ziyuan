@@ -1,6 +1,6 @@
 package learntest.local.explore.basic;
 
-import static learntest.plugin.export.io.excel.TrialHeader.*;
+import static learntest.local.explore.basic.TrialHeader.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
 
-import learntest.plugin.export.io.excel.TrialHeader;
+import learntest.local.explore.basic.TrialHeader;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 
 public class DetailExcelWriter extends SimpleExcelWriter<MethodTrial> {
