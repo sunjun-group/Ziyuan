@@ -33,6 +33,7 @@ import gentest.junit.TestsPrinter;
 import learntest.core.commons.LearntestExceptionType;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.gentest.generator.TestSeqGenerator;
+import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
@@ -120,6 +121,9 @@ public class TestGenerator {
 		//int index = 0;
 		Set<String> failToSetVars = new HashSet<String>();
 		for (int i = 0; i < solutions.size(); i++) {
+			if (CovTimer.stopFlag) {
+				break;
+			}
 			double[] solution = solutions.get(i);
 			result.addInputData(DomainUtils.toBreakpointValue(solution, vars, i));
 			sequences.add(generator.generateSequence(solution, vars, failToSetVars));
