@@ -4,6 +4,7 @@ import static learntest.local.timer.TimerTrialHeader.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -57,7 +58,14 @@ public class TimerTrialExcelWriter extends SimpleExcelWriter<Trial> {
 	}
 
 	private void addTimeLineCell(Row row, List<Pair<Integer, Double>> list, boolean flag) {
-		for (int i = 1; i < 10 && i < list.size(); i++) {
+		int steps = 10;
+		if (list.size() < steps && list.get(list.size()-1).b == 1) { // fill in short time line
+			Pair<Integer, Double> pair = list.get(list.size()-1);
+			 while (list.size() < steps) {
+				list.add(pair);				
+			}
+		}
+		for (int i = 1; i < steps && i < list.size(); i++) {
 			Pair<Integer, Double> pair = list.get(i);
 			TimerTrialHeader header = null;
 			switch (i) {
