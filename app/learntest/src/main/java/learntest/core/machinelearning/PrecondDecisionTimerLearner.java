@@ -14,6 +14,7 @@ import java.util.List;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionProbes;
+import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -38,7 +39,7 @@ public class PrecondDecisionTimerLearner extends PrecondDecisionLearner {
 		timer.start();		
 		CfgNode startNode = node;
 		try {
-			while (!CovTimer.stopFlag)
+			while (!CovTimer.stopFlag && CoverageUtils.calculateCoverageByBranch(probes) < 1)
 				super.learn(startNode, probes, new ArrayList<Integer>(), indexMap);
 		} finally {
 			timer.close();

@@ -21,6 +21,7 @@ import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
+import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -54,7 +55,7 @@ public class RandomTimerLearner implements IInputLearner {
 
 		SelectiveSampling<SamplingResult> selectiveSampling = new SelectiveSampling<SamplingResult>(sampleExecutor, inputProbes);
 		try {
-			while (!CovTimer.stopFlag) {
+			while (!CovTimer.stopFlag && CoverageUtils.calculateCoverageByBranch(probes) < 1) {
 				int sampleTotal = 20;
 				SamplingResult sampleResult = selectiveSampling.selectData(inputProbes.getOriginalVars(), null, null, sampleTotal); /** gentest and run test cases*/
 				recordSample(inputProbes, sampleResult, logFile);
