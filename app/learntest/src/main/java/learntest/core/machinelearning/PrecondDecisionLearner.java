@@ -119,7 +119,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 
 			Pair<OrCategoryCalculator, Boolean> pair = null;
 			log.debug("learning the node in line " + node.getLine() + "(" + node + ")");
-			if (loopTimes < 70 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
+			if (loopTimes < 50 ? node.isLoopHeader() : node.isInLoop()) { // give a simple patch when there is a bug that will cause infinite loop
 				/**
 				 * todo : handle the loop loop header dominate and is
 				 * dominated by nodes in loop, thus in order to break the
