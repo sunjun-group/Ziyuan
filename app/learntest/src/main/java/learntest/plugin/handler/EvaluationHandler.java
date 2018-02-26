@@ -89,6 +89,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				}
 			}
 			log.info(overalInfo.toString());
+			extractFilterInfo();
 		} catch (JavaModelException e) {
 			handleException(e);
 		} catch (OperationCanceledException e) {
@@ -100,37 +101,48 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		return Status.OK_STATUS;
 	}
 
-	private void initFilters() {
-		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker(),
-		 new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME),
-		 new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME));
-		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(Arrays.asList("org.apache.tools.ant.Main"), false));
-//		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getSpecialClasses(LearntestConstants.CHECK_METHOD_FILE_NAME), true)); // only reserve checked methods
-	}
-
-	private List<String> getSpecialClasses(String txt) {
-		List<String> list = new LinkedList<>();
-		File file = new File(txt);
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(file));
-			String tempString = null;
-			while ((tempString = reader.readLine()) != null) {
-				list.add(tempString);
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+	/**
+	 * log filter information
+	 */
+	private void extractFilterInfo() {
+		for (ITypeFilter iTypeFilter : classFilters) {
+			if (iTypeFilter instanceof TestableClassFilter) {
+				TestableClassFilter filter = (TestableClassFilter)iTypeFilter;
+				log.info("TestableClassFilter : ");
+				log.info("ok : {}, abstract class : {}, interface : {}, not public class : {}", 
+						filter.getOk().size(), filter.getAbstracts().size(), 
+						filter.getInterfaces().size(), filter.getNotPublicClasses().size());
 			}
 		}
-		return list;
+		
+		for (IMethodFilter iMethodFilter : methodFilters) {
+			if (iMethodFilter instanceof TestableMethodFilter) {
+				TestableMethodFilter filter = (TestableMethodFilter) iMethodFilter;
+				log.info("TestableMethodFilter : ");
+				log.info("ok : {}, constructors : {}, empty body : {}, empty params : {}, "
+						+ "no primitive field : {}, no primitive param : {}, no public methods : {}", 
+						filter.getOk().size(), filter.getConstructors().size(), filter.getEmptyBody().size(),
+						filter.getEmptyParms().size(), filter.getNoPrimitiveField().size(),
+						filter.getNoPrimitiveParam().size(), filter.getNotPublicMethods().size());
+			}else if (iMethodFilter instanceof NestedBlockChecker) {
+				NestedBlockChecker filter = (NestedBlockChecker) iMethodFilter;
+				log.info("NestedBlockChecker : ");
+				log.info("ok : {}, invalid nested block : {}", filter.getOk().size(), filter.getInvalid().size());
+			}
+		}
+		
+	}
+
+	private void initFilters() {
+		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker());
+//		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, false));
+//		methodFilters.add(new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME, false));
+//		methodFilters.add(new MethodNameFilter(LearntestConstants.CHECK_METHOD_FILE_NAME, true));// only reserve checked methods
+		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExclusiveClasses(), false));
+	}
+	
+	private List<String> getExclusiveClasses(){
+		return Arrays.asList("org.apache.tools.ant.Main");
 	}
 
 	private RunTimeCananicalInfo runEvaluation(IPackageFragment pkg, TrialExcelHandler excelHandler,
@@ -159,6 +171,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				evaluateForMethodList(excelHandler, validMethods, monitor, cu);
 			}
 		}
+		log.info("package : {} ", pkg.getElementName());
 		return info;
 	}
 

@@ -8,6 +8,9 @@
 
 package learntest.plugin.handler.filter.classfilter;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -18,15 +21,25 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  *
  */
 public class TestableClassFilter implements ITypeFilter {
+
+	List<String> ok = new LinkedList<>();
+	List<String> notPublicClasses = new LinkedList<>();
+	List<String> interfaces = new LinkedList<>();
+	List<String> abstracts = new LinkedList<>();
 	
 	public boolean isValid(CompilationUnit cu) {
 		if (cu.types().isEmpty()) {
 			return false;
 		}
 		AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
-		if (isInterfaceOrAbstractType(type) || !Modifier.isPublic(type.getModifiers())) {
+		if (isInterfaceOrAbstractType(type)){
 			return false;
 		}
+		else if (!Modifier.isPublic(type.getModifiers())) {
+			notPublicClasses.add(type.getName().toString());
+			return false;
+		}
+		ok.add(type.getName().toString());
 		return true;
 	}
 
@@ -35,6 +48,11 @@ public class TestableClassFilter implements ITypeFilter {
 			return false;
 		}
 		TypeDeclaration td = (TypeDeclaration) type;
+		if (td.isInterface()) {
+			interfaces.add(type.getName().toString());
+		}else if (Modifier.isAbstract(type.getModifiers())) {
+			abstracts.add(type.getName().toString());
+		}
 		return td.isInterface() || Modifier.isAbstract(type.getModifiers());
 	}
 
@@ -42,4 +60,22 @@ public class TestableClassFilter implements ITypeFilter {
 	public boolean isValid(TypeDeclaration typeDecl) {
 		return true;
 	}
+
+	public List<String> getOk() {
+		return ok;
+	}
+
+	public List<String> getNotPublicClasses() {
+		return notPublicClasses;
+	}
+
+	public List<String> getInterfaces() {
+		return interfaces;
+	}
+
+	public List<String> getAbstracts() {
+		return abstracts;
+	}
+	
+	
 }

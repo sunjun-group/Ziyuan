@@ -8,6 +8,7 @@
 
 package learntest.plugin.handler.filter.methodfilter;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jdt.core.IField;
@@ -32,21 +33,62 @@ import sav.common.core.utils.PrimitiveUtils;
  */
 public class TestableMethodFilter implements IMethodFilter {
 	
-	@Override
+//	@Override
+//	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
+//		if(md.isConstructor() || md.parameters().isEmpty()
+//				|| !Modifier.isPublic(md.getModifiers()) || Modifier.isAbstract(md.getModifiers())
+//						|| !checkPrimitiveType(md, cu)){
+//			return false;
+//		}
+//		if (CollectionUtils.isEmpty(md.getBody().statements())) {
+//			return false;
+//		}
+//		return true;
+//	}
+	
+	List<String> ok = new LinkedList<>();
+	List<String> constructors = new LinkedList<>();
+	List<String> emptyParms = new LinkedList<>();
+	List<String> notPublicMethods = new LinkedList<>();
+	List<String> emptyBody = new LinkedList<>();
+	List<String> noPrimitiveParam = new LinkedList<>();
+	List<String> noPrimitiveField = new LinkedList<>();
+	
 	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
-		if(md.isConstructor() || md.parameters().isEmpty()
-				|| !Modifier.isPublic(md.getModifiers()) || Modifier.isAbstract(md.getModifiers())
-						|| !checkPrimitiveType(md, cu)){
+		if(md.isConstructor()){
+			constructors.add(md.getName().toString());
+			return false;			
+		}
+		else if(md.parameters().isEmpty()) {
+			emptyParms.add(md.getName().toString());
+			return false;			
+		}
+		else if(!Modifier.isPublic(md.getModifiers())){
+			notPublicMethods.add(md.getName().toString());
+			return false;
+		}
+		else if (Modifier.isAbstract(md.getModifiers())){
+			emptyBody.add(md.getName().toString());
+			return false;
+		}
+		else if (!checkPrimitiveType(md, cu)){
 			return false;
 		}
 		if (CollectionUtils.isEmpty(md.getBody().statements())) {
+			emptyBody.add(md.getName().toString());
 			return false;
 		}
+		ok.add(md.getName().toString());
 		return true;
 	}
-	
+
 	private boolean checkPrimitiveType(MethodDeclaration md, CompilationUnit cu){
-		if (containsAtLeastOnePrimitiveTypeParam(md.parameters()) || containsAtLeastOnePrimitiveTypeField(cu)) {
+		if (containsAtLeastOnePrimitiveTypeParam(md.parameters())){
+			noPrimitiveParam.add(md.getName().toString());
+			return true;
+		}
+		else if (containsAtLeastOnePrimitiveTypeField(cu)) {
+			noPrimitiveField.add(md.getName().toString());
 			return true;
 		}else {
 			return false;
@@ -149,5 +191,33 @@ public class TestableMethodFilter implements IMethodFilter {
 			}
 		}
 		return false;
+	}
+
+	public List<String> getOk() {
+		return ok;
+	}
+
+	public List<String> getConstructors() {
+		return constructors;
+	}
+
+	public List<String> getEmptyParms() {
+		return emptyParms;
+	}
+
+	public List<String> getNotPublicMethods() {
+		return notPublicMethods;
+	}
+
+	public List<String> getEmptyBody() {
+		return emptyBody;
+	}
+
+	public List<String> getNoPrimitiveParam() {
+		return noPrimitiveParam;
+	}
+
+	public List<String> getNoPrimitiveField() {
+		return noPrimitiveField;
 	}
 }

@@ -29,16 +29,18 @@ import learntest.plugin.utils.IMethodUtils;
  */
 public class MethodNameFilter implements IMethodFilter {
 	private static Logger log = LoggerFactory.getLogger(MethodNameFilter.class);
-	private Collection<String> excludedMethods = Collections.EMPTY_LIST;
+	private Collection<String> specificMethods = Collections.EMPTY_LIST;
+	boolean filterKind; // if TRUE, only reserve specialClasses, otherwise discard specialClasses
 	
-	public MethodNameFilter(String excludedFileName) {
+	public MethodNameFilter(String excludedFileName, boolean filterKind) {
+		this.filterKind = filterKind;
 		File file = new File(excludedFileName);
 		try {
 			List<?> lines = FileUtils.readLines(file);
-			excludedMethods = new ArrayList<String>(lines.size());
+			specificMethods = new ArrayList<String>(lines.size());
 			for (Object line : lines) {
 				String methodId = (String) line;
-				excludedMethods.add(methodId);
+				specificMethods.add(methodId);
 				
 			}
 		} catch (IOException e) {
@@ -49,17 +51,17 @@ public class MethodNameFilter implements IMethodFilter {
 	}
 	
 	public MethodNameFilter(Collection<String> excludedMethods) {
-		this.excludedMethods = excludedMethods;
+		this.specificMethods = excludedMethods;
 	}
 
 	@Override
 	public boolean isValid(CompilationUnit cu, MethodDeclaration method) {
 		String methodId = IMethodUtils.getMethodId(cu, method);
-		if (excludedMethods.contains(methodId)) {
-			log.debug("ignore method: {}", methodId);
-			return false;
+		if (specificMethods.contains(methodId)) {
+			log.debug(filterKind + " specific method: {}", methodId);
+			return filterKind;
 		}
-		return true;
+		return !filterKind;
 	}
 
 

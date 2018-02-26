@@ -102,9 +102,9 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 
 	private void initFilters() {
 		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker(),
-				new MethodNameFilter(SUCCESSFUL_FILE_NAME),
-				new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME));
-		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses()));
+				new MethodNameFilter(SUCCESSFUL_FILE_NAME, false),
+				new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME, false));
+		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses(), false));
 	}
 
 	private List<String> getExcludedClasses() {
