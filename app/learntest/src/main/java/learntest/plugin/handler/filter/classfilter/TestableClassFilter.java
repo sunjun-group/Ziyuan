@@ -23,9 +23,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 public class TestableClassFilter implements ITypeFilter {
 
 	List<String> ok = new LinkedList<>();
-	List<String> notPublicClasses = new LinkedList<>();
 	List<String> interfaces = new LinkedList<>();
 	List<String> abstracts = new LinkedList<>();
+	List<String> notPublicClasses = new LinkedList<>();
 	
 	public boolean isValid(CompilationUnit cu) {
 		if (cu.types().isEmpty()) {

@@ -109,9 +109,11 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			if (iTypeFilter instanceof TestableClassFilter) {
 				TestableClassFilter filter = (TestableClassFilter)iTypeFilter;
 				log.info("TestableClassFilter : ");
-				log.info("ok : {}, abstract class : {}, interface : {}, not public class : {}", 
-						filter.getOk().size(), filter.getAbstracts().size(), 
-						filter.getInterfaces().size(), filter.getNotPublicClasses().size());
+				log.info("ok : {}, interface : {}, abstract class : {}, not public class : {}", 
+						filter.getOk().size(), 
+						filter.getInterfaces().size(), 
+						filter.getAbstracts().size(), 
+						filter.getNotPublicClasses().size());
 			}
 		}
 		
@@ -119,11 +121,22 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			if (iMethodFilter instanceof TestableMethodFilter) {
 				TestableMethodFilter filter = (TestableMethodFilter) iMethodFilter;
 				log.info("TestableMethodFilter : ");
-				log.info("ok : {}, constructors : {}, empty body : {}, empty params : {}, "
-						+ "no primitive field : {}, no primitive param : {}, not public methods : {}", 
-						filter.getOk().size(), filter.getConstructors().size(), filter.getEmptyBody().size(),
-						filter.getEmptyParms().size(), filter.getNoPrimitiveField().size(),
-						filter.getNoPrimitiveParam().size(), filter.getNotPublicMethods().size());
+				log.info("ok : {}, "
+						+ "constructors : {}, "
+						+ "empty params : {}, "
+						+ "not public methods : {}, "
+						+ "abstract methods : {}, "
+						+ "empty body : {}, "
+						+ "no primitive param : {}, "
+						+ "no primitive field : {}", 
+						filter.getOk().size(), 
+						filter.getConstructors().size(), 
+						filter.getEmptyParms().size(),
+						filter.getNotPublicMethods().size(), 
+						filter.getAbstracts().size(),
+						filter.getEmptyBody().size(), 
+						filter.getNoPrimitiveParam().size(),
+						filter.getNoPrimitiveField().size());
 			}else if (iMethodFilter instanceof NestedBlockChecker) {
 				NestedBlockChecker filter = (NestedBlockChecker) iMethodFilter;
 				log.info("NestedBlockChecker : ");
