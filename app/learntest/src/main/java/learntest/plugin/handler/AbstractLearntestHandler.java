@@ -481,34 +481,4 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 		return false;
 	}
 	
-	protected boolean ifInTxt(MethodInfo targetMethod, String txt) {
-		HashSet<String> set = new HashSet<>();
-		File file = new File(txt);
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(file));
-			String tempString = null;
-			while ((tempString = reader.readLine()) != null) {
-				set.add(tempString);
-			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-		String fullName = targetMethod.getMethodFullName();
-		int line = targetMethod.getLineNum();
-		System.out.println(fullName + "." + line);
-		if (set.contains(fullName + "." + line)) {
-			return true;
-		}
-		return false;
-	}
 }

@@ -21,10 +21,12 @@ import sav.common.core.utils.ClassUtils;
  *
  */
 public class ClassNameFilter implements ITypeFilter {
-	private List<String> excludedClasses;
+	boolean filterKind; // if TRUE, only reserve specialClasses, otherwise only discard specialClasses
+	private List<String> specialClasses;
 	
-	public ClassNameFilter(List<String> excludedClasses) {
-		this.excludedClasses = excludedClasses;
+	public ClassNameFilter(List<String> specialClasses, boolean filterKind) {
+		this.specialClasses = specialClasses;
+		this.filterKind = filterKind;
 	}
 
 	public boolean isValid(CompilationUnit cu) {
@@ -32,11 +34,11 @@ public class ClassNameFilter implements ITypeFilter {
 			return false;
 		}
 		AbstractTypeDeclaration type = (AbstractTypeDeclaration) cu.types().get(0);
-		if (excludedClasses.contains(ClassUtils.getCanonicalName(cu.getPackage().getName().getFullyQualifiedName(),
+		if (specialClasses.contains(ClassUtils.getCanonicalName(cu.getPackage().getName().getFullyQualifiedName(),
 				type.getName().getFullyQualifiedName()))) {
-			return false;
+			return filterKind;
 		}
-		return true;
+		return !filterKind;
 	}
 
 	public boolean isValid(TypeDeclaration typeDecl) {

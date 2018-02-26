@@ -1,6 +1,11 @@
 package learntest.plugin.handler;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -99,12 +104,33 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker(),
 		 new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME),
 		 new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME));
-		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExcludedClasses()));
+		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(Arrays.asList("org.apache.tools.ant.Main"), false));
+//		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getSpecialClasses(LearntestConstants.CHECK_METHOD_FILE_NAME), true)); // only reserve checked methods
 	}
 
-	private List<String> getExcludedClasses() {
-		/* TODO - temporary hard code */
-		return Arrays.asList("org.apache.tools.ant.Main");
+	private List<String> getSpecialClasses(String txt) {
+		List<String> list = new LinkedList<>();
+		File file = new File(txt);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String tempString = null;
+			while ((tempString = reader.readLine()) != null) {
+				list.add(tempString);
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+		return list;
 	}
 
 	private RunTimeCananicalInfo runEvaluation(IPackageFragment pkg, TrialExcelHandler excelHandler,
@@ -148,18 +174,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		if (targetMethods.isEmpty()) {
 			return;
 		}
-		for (MethodInfo targetMethod : targetMethods) {
-
-			/* todo : test special method start */
-			if (!ifInTxt(targetMethod, LearntestConstants.CHECK_METHOD_FILE_NAME)) {
-				continue;
-			}
-//			System.currentTimeMillis();
-			/* todo : test special method end */
-//			if (targetMethod.getMethodFullName().contains(".dfp.")) {
-//				continue;
-//			}
-			
+		for (MethodInfo targetMethod : targetMethods) {			
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);
 
