@@ -120,7 +120,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				TestableMethodFilter filter = (TestableMethodFilter) iMethodFilter;
 				log.info("TestableMethodFilter : ");
 				log.info("ok : {}, constructors : {}, empty body : {}, empty params : {}, "
-						+ "no primitive field : {}, no primitive param : {}, no public methods : {}", 
+						+ "no primitive field : {}, no primitive param : {}, not public methods : {}", 
 						filter.getOk().size(), filter.getConstructors().size(), filter.getEmptyBody().size(),
 						filter.getEmptyParms().size(), filter.getNoPrimitiveField().size(),
 						filter.getNoPrimitiveParam().size(), filter.getNotPublicMethods().size());
@@ -168,7 +168,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				cu.accept(collector);
 				List<MethodInfo> validMethods = collector.getValidMethods();
 				updateRuntimeInfo(info, cu, collector.getTotalMethodNum(), validMethods.size());
-				evaluateForMethodList(excelHandler, validMethods, monitor, cu);
+//				evaluateForMethodList(excelHandler, validMethods, monitor, cu);
 			}
 		}
 		log.info("package : {} ", pkg.getElementName());
