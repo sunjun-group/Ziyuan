@@ -10,6 +10,7 @@ package learntest.plugin.handler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
+import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
 
 /**
  * @author LLT
@@ -34,6 +36,8 @@ public class TestableMethodCollector extends ASTVisitor {
 	private int totalMethodNum = 0;
 	private int typeIdx;
 	private List<MethodInfo> validMethods = new ArrayList<MethodInfo>();
+	private List<String> allPTValidMethods = new LinkedList<>(); // a list of valid methods whose all parameters and fields are primitive type
+	private List<String> somePTValidMethods = new LinkedList<>();// a list of valid methods who has any parameters or fields that is not primitive type
 
 	public TestableMethodCollector(CompilationUnit cu, Collection<IMethodFilter> methodFilters) {
 		this.cu = cu;
@@ -65,7 +69,14 @@ public class TestableMethodCollector extends ASTVisitor {
 		}
 		if (testable) {
 			try {
-				validMethods.add(TargetMethodConverter.toTargetMethod(cu, md));
+				MethodInfo candidate = TargetMethodConverter.toTargetMethod(cu, md);
+				validMethods.add(candidate);
+				if (TestableMethodFilter.containsAllPrimitiveTypeParam(md.parameters())
+						&& TestableMethodFilter.containsAllPrimitiveTypeField(cu)) {
+					allPTValidMethods.add(candidate.getMethodFullName() + "." + candidate.getLineNum());
+				}else {
+					somePTValidMethods.add(candidate.getMethodFullName() + "." + candidate.getLineNum());
+				}
 				md.parameters();
 			} catch (Exception e) {
 				log.debug(e.getMessage());
@@ -80,6 +91,14 @@ public class TestableMethodCollector extends ASTVisitor {
 	
 	public List<MethodInfo> getValidMethods() {
 		return validMethods;
+	}
+
+	public List<String> getAllPTValidMethods() {
+		return allPTValidMethods;
+	}
+
+	public List<String> getSomePTValidMethods() {
+		return somePTValidMethods;
 	}
 	
 }

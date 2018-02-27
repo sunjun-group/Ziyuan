@@ -144,7 +144,7 @@ public class TestableMethodFilter implements IMethodFilter {
 		return false;
 	}
 	
-	private boolean containsAllPrimitiveTypeParam(List<?> parameters){
+	public static boolean containsAllPrimitiveTypeParam(List<?> parameters){
 		for (Object obj : parameters) {
 			if (obj instanceof SingleVariableDeclaration) {
 				SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
@@ -164,7 +164,7 @@ public class TestableMethodFilter implements IMethodFilter {
 	}
 	
 	@SuppressWarnings("restriction")
-	private boolean containsAllPrimitiveTypeField(CompilationUnit cu){
+	public static boolean containsAllPrimitiveTypeField(CompilationUnit cu){
 		ITypeRoot type = cu.getTypeRoot();
 		try {
 			IJavaElement[] elements = type.getChildren();
@@ -209,7 +209,7 @@ public class TestableMethodFilter implements IMethodFilter {
 		return false;
 	}
 
-	private boolean isPrimitiveType(String signature) {
+	private static boolean isPrimitiveType(String signature) {
 		if (signature.equals(Signature.SIG_INT)
 				|| signature.equals(Signature.SIG_SHORT) 
 				|| signature.equals(Signature.SIG_BYTE)

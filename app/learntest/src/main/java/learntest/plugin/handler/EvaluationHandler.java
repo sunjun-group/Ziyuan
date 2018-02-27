@@ -53,6 +53,8 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	private static final int MAX_TRY_TIMES_PER_METHOD = 50;
 	private List<IMethodFilter> methodFilters;
 	private List<ITypeFilter> classFilters;
+	private List<String> allPTValidMethods; // a list of valid methods whose all parameters and fields are primitive type
+	private List<String> somePTValidMethods;// a list of valid methods who has any parameters or fields that is not primitive type
 
 	static {
 	}
@@ -128,7 +130,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						+ "native methods : {}, "
 						+ "no primitive vars : {}, "
 						+ "all primitive vars : {}, "
-						+ "some primitive vars : {}, ", 
+						+ "some primitive vars : {}", 
 						filter.getOk().size(), 
 						filter.getEmptyVars().size(),
 						filter.getNotPublicMethods().size(), 
@@ -144,6 +146,16 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			}
 		}
 		
+		log.info("all primitive vars : {}, some primitive vars : {}, ",
+				allPTValidMethods.size(), somePTValidMethods.size());
+		log.info("allPTValidMethods : ");
+		for (String s : allPTValidMethods) {
+			log.info(s);
+		}
+		log.info("somePTValidMethods : ");
+		for (String s : somePTValidMethods) {
+			log.info(s);
+		}
 	}
 
 	private void initFilters() {
@@ -152,6 +164,8 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 //		methodFilters.add(new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME, false));
 //		methodFilters.add(new MethodNameFilter(LearntestConstants.CHECK_METHOD_FILE_NAME, true));// only reserve checked methods
 		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExclusiveClasses(), false));
+		allPTValidMethods = new LinkedList<>();
+		somePTValidMethods = new LinkedList<>();
 	}
 	
 	private List<String> getExclusiveClasses(){
@@ -180,6 +194,8 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				TestableMethodCollector collector = new TestableMethodCollector(cu, methodFilters);
 				cu.accept(collector);
 				List<MethodInfo> validMethods = collector.getValidMethods();
+				allPTValidMethods.addAll(collector.getAllPTValidMethods());
+				somePTValidMethods.addAll(collector.getSomePTValidMethods());
 				updateRuntimeInfo(info, cu, collector.getTotalMethodNum(), validMethods.size());
 //				evaluateForMethodList(excelHandler, validMethods, monitor, cu);
 			}
