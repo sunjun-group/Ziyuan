@@ -126,6 +126,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						+ "empty params : {}, "
 						+ "not public methods : {}, "
 						+ "abstract methods : {}, "
+						+ "native methods : {}, "
 						+ "no primitive param : {}, "
 						+ "no primitive param and field : {}, "
 						+ "empty body : {}", 
@@ -134,6 +135,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						filter.getEmptyParms().size(),
 						filter.getNotPublicMethods().size(), 
 						filter.getAbstracts().size(), 
+						filter.getNatives().size(), 
 						filter.getNoPrimitiveParam().size(),
 						filter.getNoPrimitiveField().size(),
 						filter.getEmptyBody().size());

@@ -51,6 +51,7 @@ public class TestableMethodFilter implements IMethodFilter {
 	List<String> emptyParms = new LinkedList<>();
 	List<String> notPublicMethods = new LinkedList<>();
 	List<String> abstracts = new LinkedList<>();
+	List<String> natives = new LinkedList<>();
 	List<String> noPrimitiveParam = new LinkedList<>();
 	List<String> noPrimitiveField = new LinkedList<>();
 	List<String> emptyBody = new LinkedList<>();
@@ -70,6 +71,10 @@ public class TestableMethodFilter implements IMethodFilter {
 		}
 		else if (Modifier.isAbstract(md.getModifiers())){
 			abstracts.add(md.getName().toString());
+			return false;
+		}
+		else if(Modifier.isNative(md.getModifiers())){
+			natives.add(md.getName().toString());
 			return false;
 		}
 		else if (!checkPrimitiveType(md, cu)){
@@ -223,5 +228,9 @@ public class TestableMethodFilter implements IMethodFilter {
 
 	public List<String> getAbstracts() {
 		return abstracts;
+	}
+
+	public List<String> getNatives() {
+		return natives;
 	}
 }
