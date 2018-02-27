@@ -122,23 +122,21 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				TestableMethodFilter filter = (TestableMethodFilter) iMethodFilter;
 				log.info("TestableMethodFilter : ");
 				log.info("ok : {}, "
-						+ "constructors : {}, "
-						+ "empty params : {}, "
+						+ "empty vars : {}, "
 						+ "not public methods : {}, "
 						+ "abstract methods : {}, "
 						+ "native methods : {}, "
-						+ "no primitive param : {}, "
-						+ "no primitive param and field : {}, "
-						+ "empty body : {}", 
+						+ "no primitive vars : {}, "
+						+ "all primitive vars : {}, "
+						+ "some primitive vars : {}, ", 
 						filter.getOk().size(), 
-						filter.getConstructors().size(), 
-						filter.getEmptyParms().size(),
+						filter.getEmptyVars().size(),
 						filter.getNotPublicMethods().size(), 
 						filter.getAbstracts().size(), 
 						filter.getNatives().size(), 
-						filter.getNoPrimitiveParam().size(),
-						filter.getNoPrimitiveField().size(),
-						filter.getEmptyBody().size());
+						filter.getNoPrimitiveVars().size(), 
+						filter.getAllPrimitiveVars().size(),
+						filter.getSomePrimitiveVars().size());
 			}else if (iMethodFilter instanceof NestedBlockChecker) {
 				NestedBlockChecker filter = (NestedBlockChecker) iMethodFilter;
 				log.info("NestedBlockChecker : ");

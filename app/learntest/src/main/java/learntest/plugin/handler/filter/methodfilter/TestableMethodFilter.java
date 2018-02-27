@@ -48,21 +48,17 @@ public class TestableMethodFilter implements IMethodFilter {
 	
 	List<String> ok = new LinkedList<>();
 	List<String> constructors = new LinkedList<>();
-	List<String> emptyParms = new LinkedList<>();
+	List<String> emptyVars = new LinkedList<>();
 	List<String> notPublicMethods = new LinkedList<>();
 	List<String> abstracts = new LinkedList<>();
 	List<String> natives = new LinkedList<>();
-	List<String> noPrimitiveParam = new LinkedList<>();
-	List<String> noPrimitiveField = new LinkedList<>();
-	List<String> emptyBody = new LinkedList<>();
+	List<String> noPrimitiveVars = new LinkedList<>();
+	List<String> allPrimitiveVars = new LinkedList<>();
+	List<String> somePrimitiveVars = new LinkedList<>();
 	
 	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
-		if(md.isConstructor()){
-			constructors.add(md.getName().toString());
-			return false;			
-		}
-		else if(md.parameters().isEmpty()) {
-			emptyParms.add(md.getName().toString());
+		if(md.parameters().isEmpty() && !hasField(cu)) {
+			emptyVars.add(md.getName().toString());
 			return false;			
 		}
 		else if(!Modifier.isPublic(md.getModifiers())){
@@ -80,23 +76,25 @@ public class TestableMethodFilter implements IMethodFilter {
 		else if (!checkPrimitiveType(md, cu)){
 			return false;
 		}
-		if (CollectionUtils.isEmpty(md.getBody().statements())) {
-			emptyBody.add(md.getName().toString());
-			return false;
-		}
+//		if (CollectionUtils.isEmpty(md.getBody().statements())) {
+//			emptyBody.add(md.getName().toString());
+//			return false;
+//		}
 		ok.add(md.getName().toString());
 		return true;
 	}
 
 	private boolean checkPrimitiveType(MethodDeclaration md, CompilationUnit cu){
-		if (containsAtLeastOnePrimitiveTypeParam(md.parameters())){
+		if (containsAtLeastOnePrimitiveTypeParam(md.parameters()) || containsAtLeastOnePrimitiveTypeField(cu)){
+			if (containsAllPrimitiveTypeParam(md.parameters())
+					&& containsAllPrimitiveTypeField(cu)) {
+				allPrimitiveVars.add(md.getName().toString());
+			}else {
+				somePrimitiveVars.add(md.getName().toString());
+			}
 			return true;
 		}
-		noPrimitiveParam.add(md.getName().toString());
-		if (containsAtLeastOnePrimitiveTypeField(cu)) {
-			return true;
-		}
-		noPrimitiveField.add(md.getName().toString());
+		noPrimitiveVars.add(md.getName().toString());
 		return false;
 	}
 	
@@ -136,6 +134,71 @@ public class TestableMethodFilter implements IMethodFilter {
 						if (isPrimitiveType(fieldT)) {
 							return true;
 						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	private boolean containsAllPrimitiveTypeParam(List<?> parameters){
+		for (Object obj : parameters) {
+			if (obj instanceof SingleVariableDeclaration) {
+				SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
+				Type type = svd.getType();
+				if(!type.isPrimitiveType()){
+					return false;
+				}
+				if(type.isArrayType()){
+					ArrayType aType = (ArrayType)type;
+					if(!aType.getElementType().isPrimitiveType()){
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	@SuppressWarnings("restriction")
+	private boolean containsAllPrimitiveTypeField(CompilationUnit cu){
+		ITypeRoot type = cu.getTypeRoot();
+		try {
+			IJavaElement[] elements = type.getChildren();
+			for (int i = 0; i < elements.length; i++) {
+				IJavaElement element = elements[i];
+				if (element instanceof SourceType) {
+					SourceType source = (SourceType) element;
+					IField[] fields = source.getFields();
+					for (IField iField : fields) {
+						String fieldT = iField.getTypeSignature();
+						if (!isPrimitiveType(fieldT)) {
+							return false;
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	private boolean hasField(CompilationUnit cu){
+		ITypeRoot type = cu.getTypeRoot();
+		try {
+			IJavaElement[] elements = type.getChildren();
+			for (int i = 0; i < elements.length; i++) {
+				IJavaElement element = elements[i];
+				if (element instanceof SourceType) {
+					SourceType source = (SourceType) element;
+					IField[] fields = source.getFields();
+					if (fields.length > 0) {
+						return true;
 					}
 				}
 			}
@@ -206,24 +269,16 @@ public class TestableMethodFilter implements IMethodFilter {
 		return constructors;
 	}
 
-	public List<String> getEmptyParms() {
-		return emptyParms;
+	public List<String> getEmptyVars() {
+		return emptyVars;
 	}
 
 	public List<String> getNotPublicMethods() {
 		return notPublicMethods;
 	}
-
-	public List<String> getEmptyBody() {
-		return emptyBody;
-	}
-
-	public List<String> getNoPrimitiveParam() {
-		return noPrimitiveParam;
-	}
-
-	public List<String> getNoPrimitiveField() {
-		return noPrimitiveField;
+	
+	public List<String> getNoPrimitiveVars() {
+		return noPrimitiveVars;
 	}
 
 	public List<String> getAbstracts() {
@@ -232,5 +287,13 @@ public class TestableMethodFilter implements IMethodFilter {
 
 	public List<String> getNatives() {
 		return natives;
+	}
+
+	public List<String> getAllPrimitiveVars() {
+		return allPrimitiveVars;
+	}
+
+	public List<String> getSomePrimitiveVars() {
+		return somePrimitiveVars;
 	}
 }
