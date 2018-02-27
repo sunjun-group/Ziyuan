@@ -51,9 +51,9 @@ public class TestableMethodFilter implements IMethodFilter {
 	List<String> emptyParms = new LinkedList<>();
 	List<String> notPublicMethods = new LinkedList<>();
 	List<String> abstracts = new LinkedList<>();
-	List<String> emptyBody = new LinkedList<>();
 	List<String> noPrimitiveParam = new LinkedList<>();
 	List<String> noPrimitiveField = new LinkedList<>();
+	List<String> emptyBody = new LinkedList<>();
 	
 	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
 		if(md.isConstructor()){
@@ -85,15 +85,14 @@ public class TestableMethodFilter implements IMethodFilter {
 
 	private boolean checkPrimitiveType(MethodDeclaration md, CompilationUnit cu){
 		if (containsAtLeastOnePrimitiveTypeParam(md.parameters())){
-			noPrimitiveParam.add(md.getName().toString());
 			return true;
 		}
-		else if (containsAtLeastOnePrimitiveTypeField(cu)) {
-			noPrimitiveField.add(md.getName().toString());
+		noPrimitiveParam.add(md.getName().toString());
+		if (containsAtLeastOnePrimitiveTypeField(cu)) {
 			return true;
-		}else {
-			return false;
 		}
+		noPrimitiveField.add(md.getName().toString());
+		return false;
 	}
 	
 	/* backup from previous implementation */

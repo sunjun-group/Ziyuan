@@ -126,17 +126,17 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 						+ "empty params : {}, "
 						+ "not public methods : {}, "
 						+ "abstract methods : {}, "
-						+ "empty body : {}, "
 						+ "no primitive param : {}, "
-						+ "no primitive field : {}", 
+						+ "no primitive param and field : {}, "
+						+ "empty body : {}", 
 						filter.getOk().size(), 
 						filter.getConstructors().size(), 
 						filter.getEmptyParms().size(),
 						filter.getNotPublicMethods().size(), 
-						filter.getAbstracts().size(),
-						filter.getEmptyBody().size(), 
+						filter.getAbstracts().size(), 
 						filter.getNoPrimitiveParam().size(),
-						filter.getNoPrimitiveField().size());
+						filter.getNoPrimitiveField().size(),
+						filter.getEmptyBody().size());
 			}else if (iMethodFilter instanceof NestedBlockChecker) {
 				NestedBlockChecker filter = (NestedBlockChecker) iMethodFilter;
 				log.info("NestedBlockChecker : ");
