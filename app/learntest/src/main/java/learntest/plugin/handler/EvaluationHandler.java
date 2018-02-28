@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -159,10 +160,12 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 
 	private void initFilters() {
-		methodFilters = Arrays.asList(new TestableMethodFilter(), new NestedBlockChecker());
-//		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, false));
-//		methodFilters.add(new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME, false));
-//		methodFilters.add(new MethodNameFilter(LearntestConstants.CHECK_METHOD_FILE_NAME, true));// only reserve checked methods
+		methodFilters = new ArrayList<IMethodFilter>();
+		methodFilters.add(new TestableMethodFilter());
+		methodFilters.add(new NestedBlockChecker());
+		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, false));
+		methodFilters.add(new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME, false));
+		methodFilters.add(new MethodNameFilter(LearntestConstants.CHECK_METHOD_FILE_NAME, true));// only reserve checked methods
 		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExclusiveClasses(), false));
 		allPTValidMethods = new LinkedList<>();
 		somePTValidMethods = new LinkedList<>();
@@ -197,7 +200,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 				allPTValidMethods.addAll(collector.getAllPTValidMethods());
 				somePTValidMethods.addAll(collector.getSomePTValidMethods());
 				updateRuntimeInfo(info, cu, collector.getTotalMethodNum(), validMethods.size());
-//				evaluateForMethodList(excelHandler, validMethods, monitor, cu);
+				evaluateForMethodList(excelHandler, validMethods, monitor, cu);
 			}
 		}
 		log.info("package : {} ", pkg.getElementName());

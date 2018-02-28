@@ -66,6 +66,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 	private static int FORMULAR_LEARN_MAX_ATTEMPT = 10;
 	protected LearnedDataProcessor dataPreprocessor;
 	public HashMap<CfgNode, FormulaInfo> learnedFormulas = new HashMap<>();
+	private boolean useSymbolicSolver = true;
 
 	HashMap<String, Collection<BreakpointValue>> branchTrueRecord = new HashMap<>(),
 			branchFalseRecord = new HashMap<>();
@@ -152,7 +153,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 				
 			} else {
 				dataPreprocessor.sampleForBranchCvg(node, preconditions, this);
-				boolean ifInvokeSolver = dataPreprocessor.sampleForMissingBranch(node, this, initialTc);
+				boolean ifInvokeSolver = useSymbolicSolver ? dataPreprocessor.sampleForMissingBranch(node, this, initialTc) : false;
 				if (ifInvokeSolver) {
 					symoblicTime++;
 				}
@@ -866,5 +867,9 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 
 	public void setInitialTc(String initialTc) {
 		this.initialTc = initialTc;
+	}
+	
+	public void setUseSymbolicSolver(boolean bl){
+		this.useSymbolicSolver = bl;
 	}
 }

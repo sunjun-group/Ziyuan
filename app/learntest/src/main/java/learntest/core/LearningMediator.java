@@ -124,6 +124,7 @@ public class LearningMediator {
 			return learner;
 		case L2TTimer:
 			PrecondDecisionLearner tlearner = new PrecondDecisionTimerLearner(this, "./logs/"+methodName+".l2t."+time+".log");
+			tlearner.setUseSymbolicSolver(false);
 			tlearner.setCu(params.getCu());
 			String tinitialTc = params.getInitialTests().getMainClass();
 			tlearner.setInitialTc(tinitialTc);
