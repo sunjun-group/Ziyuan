@@ -4,6 +4,9 @@ import learntest.plugin.export.io.excel.common.ExcelHeader;
 
 public enum TimerTrialHeader implements ExcelHeader {
 	METHOD_NAME("method name"),
+	JDART_TIME("jdart time"),
+	JDART_COVERAGE("jdart coverage"),
+	JDART_TEST_CNT("jdart test cnt"),
 	L2T_TIME("l2t time"),
 	L2T_COVERAGE("l2t coverage"),
 	L2T_TEST_CNT("l2t test cnt"),

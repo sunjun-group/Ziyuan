@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import com.sun.tools.classfile.Annotation.element_value;
 
+import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
@@ -27,6 +28,13 @@ public class TimerTrialExcelWriter extends SimpleExcelWriter<Trial> {
 	
 	protected void addRowData(Row row, Trial trial) throws IOException {
 		addCell(row, METHOD_NAME, trial.getMethodName());
+
+		if (trial.getJdartRtInfo() != null) {
+			RunTimeInfo jdartInfo = trial.getJdartRtInfo();
+			addCell(row, JDART_TIME, jdartInfo.getTime());
+			addCell(row, JDART_COVERAGE, jdartInfo.getCoverage());
+			addCell(row, JDART_TEST_CNT, jdartInfo.getTestCnt());
+		}
 		
 		if (trial.getL2tRtInfo() != null) {
 			addCell(row, L2T_TIME, trial.getL2tRtInfo().getTime());

@@ -165,7 +165,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		methodFilters.add(new NestedBlockChecker());
 		methodFilters.add(new MethodNameFilter(LearntestConstants.EXCLUSIVE_METHOD_FILE_NAME, false));
 		methodFilters.add(new MethodNameFilter(LearntestConstants.SKIP_METHOD_FILE_NAME, false));
-		methodFilters.add(new MethodNameFilter(LearntestConstants.CHECK_METHOD_FILE_NAME, true));// only reserve checked methods
+//		methodFilters.add(new MethodNameFilter(LearntestConstants.CHECK_METHOD_FILE_NAME, true));// only reserve checked methods
 		classFilters = Arrays.asList(new TestableClassFilter(), new ClassNameFilter(getExclusiveClasses(), false));
 		allPTValidMethods = new LinkedList<>();
 		somePTValidMethods = new LinkedList<>();
@@ -224,6 +224,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 			log.info("Method {}", ++curMethodIdx);
 
 			MultiTrial multiTrial = new MultiTrial();
+			multiTrial.setVarType(targetMethod.isVarType());
 			int validTrial = 0;
 			for (int i = 0; i < MAX_TRY_TIMES_PER_METHOD && validTrial < EVALUATIONS_PER_METHOD; i++) {
 				checkJobCancelation(monitor);
@@ -233,6 +234,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 					if (trial != null) {
 						validTrial++;
 						multiTrial.addTrial(trial);
+						trial.setVarType(targetMethod.isVarType());
 					}
 				} catch (Exception e) {
 					handleException(e);
