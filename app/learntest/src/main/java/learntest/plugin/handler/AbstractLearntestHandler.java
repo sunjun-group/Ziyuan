@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import icsetlv.common.dto.BreakpointValue;
+import jdart.core.JDartCore;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
@@ -59,6 +60,7 @@ import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;
+import learntest.core.time.CovTimer;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.LearntestPlugin;
 import learntest.plugin.commons.PluginException;
@@ -235,10 +237,12 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			RunTimeInfo jdartInfo = new RunTimeInfo();
 
 			log.info("run jdart..");
+			JDartCore.setSocketWaiteTime(CovTimer.timeOUt);
 			jdartParam.setApproach(LearnTestApproach.JDART);
 			jdartInfo = runJdart(jdartParam);
 
 			log.info("run l2t..");
+			JDartCore.setSocketWaiteTime(10 * 1000);
 			l2tParams.setApproach(LearnTestApproach.L2TTimer);
 			l2tParams.setInitialTests(jdartParam.getGeneratedInitTest());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());

@@ -118,7 +118,6 @@ public class LearningMediator {
 		long time = System.currentTimeMillis();
 		switch (params.getApproach()) {
 		case JDART:
-			JDartCore.setSocketWaiteTime(CovTimer.timeOUt);
 		case L2T:
 			PrecondDecisionLearner learner = new PrecondDecisionLearner(this, "./logs/"+methodName+".l2t."+time+".log");
 			learner.setCu(params.getCu());
@@ -127,7 +126,6 @@ public class LearningMediator {
 			return learner;
 		case L2TTimer:
 			PrecondDecisionLearner tlearner = new PrecondDecisionTimerLearner(this, "./logs/"+methodName+".l2t."+time+".log");
-			JDartCore.setSocketWaiteTime(15 * 1000);
 //			tlearner.setUseSymbolicSolver(false); // stop symbolic solver
 			tlearner.setCu(params.getCu());
 			String tinitialTc = params.getInitialTests().getMainClass();

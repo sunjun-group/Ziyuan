@@ -58,7 +58,7 @@ public class MethodNameFilter implements IMethodFilter {
 	public boolean isValid(CompilationUnit cu, MethodDeclaration method) {
 		String methodId = IMethodUtils.getMethodId(cu, method);
 		if (specificMethods.contains(methodId)) {
-			log.debug(filterKind + " specific method: {}", methodId);
+			log.debug("filterKind : " + filterKind + ", specific method: {}", methodId);
 			return filterKind;
 		}
 		return !filterKind;
