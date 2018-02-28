@@ -242,7 +242,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			jdartInfo = runJdart(jdartParam);
 
 			log.info("run l2t..");
-			JDartCore.setSocketWaiteTime(10 * 1000);
+			JDartCore.setSocketWaiteTime(15 * 1000);
 			l2tParams.setApproach(LearnTestApproach.L2TTimer);
 			l2tParams.setInitialTests(jdartParam.getGeneratedInitTest());
 			l2tParams.setMaxTcs(ranAverageInfo.getTestCnt());
