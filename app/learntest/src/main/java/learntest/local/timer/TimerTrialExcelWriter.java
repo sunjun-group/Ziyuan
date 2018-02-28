@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import com.sun.tools.classfile.Annotation.element_value;
 
+import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.export.io.excel.Trial;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
 import mosek.Env.boundkey;
@@ -47,6 +48,7 @@ public class TimerTrialExcelWriter extends SimpleExcelWriter<Trial> {
 		addCell(row, TRIAL_L, trial.getL2tRtInfo().getLearnState());
 		addCell(row, RAND_WORSE_THAN_L2T_B, trial.getRandWorseBranches());
 		addCell(row, L2T_WORSE_THAN_RAND_B, trial.getL2tWorseBranches());
+		addCell(row, VAR_TYPE, trial.getVarType() == MethodInfo.ALL_PT_VAR ? 1 :0);
 		
 		List<Pair<Integer, Double>> l2tTl = trial.getL2tRtInfo().getCovTimeLine();
 		addTimeLineCell(row, l2tTl, L2T_FLAG);

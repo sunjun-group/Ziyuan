@@ -37,7 +37,8 @@ public enum TimerTrialHeader implements ExcelHeader {
 	L2T_S8("l2t coverage in step 8"),
 	RANDOOP_S8("randoop coverage in step 8"),
 	L2T_S9("l2t coverage in step 9"),
-	RANDOOP_S9("randoop coverage in step 9"),
+	RANDOOP_S9("randoop coverage in step 9"),	
+	VAR_TYPE("if all primitive type"),
 	;
 	
 	private String title;

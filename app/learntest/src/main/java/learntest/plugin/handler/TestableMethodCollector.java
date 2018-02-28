@@ -74,8 +74,10 @@ public class TestableMethodCollector extends ASTVisitor {
 				if (TestableMethodFilter.containsAllPrimitiveTypeParam(md.parameters())
 						&& TestableMethodFilter.containsAllPrimitiveTypeField(cu)) {
 					allPTValidMethods.add(candidate.getMethodFullName() + "." + candidate.getLineNum());
+					candidate.setVarType(MethodInfo.ALL_PT_VAR);
 				}else {
 					somePTValidMethods.add(candidate.getMethodFullName() + "." + candidate.getLineNum());
+					candidate.setVarType(MethodInfo.SOME_PT_VAR);
 				}
 				md.parameters();
 			} catch (Exception e) {

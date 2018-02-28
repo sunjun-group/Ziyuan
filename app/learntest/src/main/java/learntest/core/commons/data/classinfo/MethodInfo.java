@@ -41,6 +41,9 @@ public class MethodInfo {
 	private int methodLength = -1; // can be null
 	private List<String> params;
 	private List<String> paramTypes;
+	private boolean varType; // if all primitive TRUE, otherwise FALSE;
+	public final static boolean ALL_PT_VAR = true;
+	public final static boolean SOME_PT_VAR = false;
 	
 	public MethodInfo(ClassInfo targetClass) {
 		this.targetClazz = targetClass;
@@ -152,5 +155,13 @@ public class MethodInfo {
 
 	public String getMethodId() {
 		return StringUtils.dotJoin(getClassName(), methodName, lineNum);
+	}
+
+	public boolean isVarType() {
+		return varType;
+	}
+
+	public void setVarType(boolean varType) {
+		this.varType = varType;
 	}
 }

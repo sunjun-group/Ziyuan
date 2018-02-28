@@ -18,6 +18,7 @@ public class Trial {
 	protected int l2tWorseBranches , randWorseBranches ;
 	private int l2tSymbolicTimes = 0;
 	private int jdartSymbolicTimes = 0;
+	private boolean varType;
 
 	public Trial(){
 		
@@ -147,6 +148,14 @@ public class Trial {
 
 	public int getRandWorseBranches() {
 		return randWorseBranches;
+	}
+
+	public boolean getVarType() {
+		return varType;
+	}
+
+	public void setVarType(boolean varType) {
+		this.varType = varType;
 	}
 	
 	
