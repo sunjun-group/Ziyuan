@@ -10,8 +10,8 @@ import sav.common.core.Pair;
 
 public class CovTimer {
 	public volatile static boolean stopFlag = false;
-	private int timeOUt = 150 * 1000;
-	private int interval = 25 * 1000;
+	public static int timeOUt = 90 * 1000;
+	private int interval = timeOUt/6;
 	public Timer timer = new Timer();
 	public long startTime = 0;
 	CfgCoverage cfgCoverage;

@@ -23,6 +23,7 @@ import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import gentest.junit.JWriter;
 import gentest.junit.MWriter;
 import gentest.junit.TestsPrinter.PrintOption;
+import jdart.core.JDartCore;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.commons.data.classinfo.TargetMethod;
@@ -35,6 +36,7 @@ import learntest.core.machinelearning.PrecondDecisionLearner;
 import learntest.core.machinelearning.PrecondDecisionTimerLearner;
 import learntest.core.machinelearning.RandomLearner;
 import learntest.core.machinelearning.RandomTimerLearner;
+import learntest.core.time.CovTimer;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
@@ -116,6 +118,7 @@ public class LearningMediator {
 		long time = System.currentTimeMillis();
 		switch (params.getApproach()) {
 		case JDART:
+			JDartCore.setSocketWaiteTime(CovTimer.timeOUt);
 		case L2T:
 			PrecondDecisionLearner learner = new PrecondDecisionLearner(this, "./logs/"+methodName+".l2t."+time+".log");
 			learner.setCu(params.getCu());
@@ -124,7 +127,8 @@ public class LearningMediator {
 			return learner;
 		case L2TTimer:
 			PrecondDecisionLearner tlearner = new PrecondDecisionTimerLearner(this, "./logs/"+methodName+".l2t."+time+".log");
-			tlearner.setUseSymbolicSolver(false);
+			JDartCore.setSocketWaiteTime(15 * 1000);
+//			tlearner.setUseSymbolicSolver(false); // stop symbolic solver
 			tlearner.setCu(params.getCu());
 			String tinitialTc = params.getInitialTests().getMainClass();
 			tlearner.setInitialTc(tinitialTc);

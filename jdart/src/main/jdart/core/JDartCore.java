@@ -27,7 +27,7 @@ import sav.common.core.Pair;
  * extracted from RunJDartHandler.
  */
 public class JDartCore {
-	public static long timeLimit = 30 * 1000;
+	public static long timeLimit = 30 * 1000; // break solving method with long time, but we use waitTime to stop Process
 
 /**
  * 
@@ -374,8 +374,13 @@ public class JDartCore {
 		return jdartPath;
 	}
 	
+	private static int wait = 15 * 1000; //ms
+	
 	public static int socketWaiteTime() {
-		int wait = 15 * 1000; //ms
 		return wait;
+	}
+	
+	public static void setSocketWaiteTime(int waitTime) {
+		wait = waitTime;
 	}
 }
