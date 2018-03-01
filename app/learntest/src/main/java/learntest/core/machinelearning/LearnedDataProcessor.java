@@ -197,7 +197,7 @@ public class LearnedDataProcessor {
 					System.currentTimeMillis();
 				}
 				return true;
-			} catch (SavException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
