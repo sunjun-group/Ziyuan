@@ -69,7 +69,7 @@ public class TimerTrialExcelWriter extends SimpleExcelWriter<Trial> {
 
 	private void addTimeLineCell(Row row, List<Pair<Integer, Double>> list, boolean flag) {
 		int steps = 10;
-		if (list.size() < steps && list.get(list.size()-1).b == 1) { // fill in short time line
+		if (list.size() > 0 && list.size() < steps && list.get(list.size()-1).b == 1) { // fill in short time line
 			Pair<Integer, Double> pair = list.get(list.size()-1);
 			 while (list.size() < steps) {
 				list.add(pair);				

@@ -51,7 +51,7 @@ import sav.settings.SAVTimer;
 public class EvaluationHandler extends AbstractLearntestHandler {
 	private static Logger log = LoggerFactory.getLogger(EvaluationHandler.class);
 	private static final int EVALUATIONS_PER_METHOD = 3;
-	private static final int MAX_TRY_TIMES_PER_METHOD = 50;
+	private static final int MAX_TRY_TIMES_PER_METHOD = 20;
 	private List<IMethodFilter> methodFilters;
 	private List<ITypeFilter> classFilters;
 	private List<String> allPTValidMethods; // a list of valid methods whose all parameters and fields are primitive type
@@ -222,7 +222,10 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodInfo targetMethod : targetMethods) {			
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);
-
+			if (targetMethod.getClassName().startsWith("org.apache.commons.math.dfp")
+					|| targetMethod.getClassName().startsWith("org.apache.commons.math.random.ValueServer")) {
+				continue;
+			}
 			MultiTrial multiTrial = new MultiTrial();
 			multiTrial.setVarType(targetMethod.isVarType());
 			int validTrial = 0;
