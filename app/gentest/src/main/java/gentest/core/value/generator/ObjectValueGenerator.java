@@ -41,7 +41,13 @@ public class ObjectValueGenerator extends ValueGenerator {
 	@Override
 	public boolean doAppendVariable(GeneratedVariable variable, int level)
 			throws SavException {
+		long start = System.currentTimeMillis();
+		long limit = 30 * 1000;
 		for (int i = 0; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
+			long now = System.currentTimeMillis();
+			if (now > start +limit) {
+				return false;
+			}
 			TypeInitializer initializer = loadInitializer(type, 0);
 			if (initializer == null || initializer.hasNoConstructor()) {
 				continue;
