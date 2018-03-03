@@ -148,19 +148,24 @@ public class TestsPrinter implements ITestsPrinter {
 		List<Sequence> curSubSeq = new ArrayList<Sequence>();
 		subSeqs.add(curSubSeq);
 		int lineCount = 0;
+		boolean empty = true;
 		for (Sequence seq : seqs) {
 			int statements =seq.getStmtsSize(); 
 			if (statements >= BYTE_LENGTH_LIMIT_PER_METHOD/3) {
 				System.err.println("method is oversize!");
 			}else {
+				empty = false;
 				lineCount += statements;
-				if (lineCount >= LINE_LIMIT_PER_CLASS) {
+				if (lineCount > LINE_LIMIT_PER_CLASS) {
 					curSubSeq = new ArrayList<Sequence>();
 					subSeqs.add(curSubSeq);
 					lineCount = 0;
 				}
 				curSubSeq.add(seq);
 			}
+		}
+		if (empty) {
+			subSeqs.clear();
 		}
 		return subSeqs;
 	}
