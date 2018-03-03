@@ -11,6 +11,8 @@ package gentest.junit;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.tools.javac.util.Log;
+
 import gentest.core.data.Sequence;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.TypeDeclaration;
@@ -32,6 +34,8 @@ public class TestsPrinter implements ITestsPrinter {
 	private int methodSPerClass = INFINITIVE_METHODS_PER_CLASS;
 	private int classIdx;
 	private PrinterParams params;
+	private final int LINE_LIMIT_PER_CLASS = 10000; // if a class file is too large, javac will cost much time
+	private final int BYTE_LENGTH_LIMIT_PER_METHOD = 1 << 16; // the limit length of method in java
 	
 	public TestsPrinter(String pkg, String failPkg, String methodPrefix, String classPrefix,
 			String srcPath) {
@@ -132,22 +136,31 @@ public class TestsPrinter implements ITestsPrinter {
 	}
 	
 	/**
-	 * divide sequences into small parts depend on methods per class
+	 * divide sequences into small parts depend on line limit per class
 	 * configuration.
 	 */
 	private List<List<Sequence>> divideSequencess(List<Sequence> seqs) {
-		if (methodSPerClass == INFINITIVE_METHODS_PER_CLASS) {
-			return CollectionUtils.listOf(seqs);
-		}
+//		if (methodSPerClass == INFINITIVE_METHODS_PER_CLASS) {
+//			return CollectionUtils.listOf(seqs);
+//		}
+		
 		List<List<Sequence>> subSeqs = new ArrayList<List<Sequence>>();
 		List<Sequence> curSubSeq = new ArrayList<Sequence>();
 		subSeqs.add(curSubSeq);
+		int lineCount = 0;
 		for (Sequence seq : seqs) {
-			if (curSubSeq.size() >= methodSPerClass) {
-				curSubSeq = new ArrayList<Sequence>();
-				subSeqs.add(curSubSeq);
+			int statements =seq.getStmtsSize(); 
+			if (statements >= BYTE_LENGTH_LIMIT_PER_METHOD/3) {
+				System.err.println("method is oversize!");
+			}else {
+				lineCount += statements;
+				if (lineCount >= LINE_LIMIT_PER_CLASS) {
+					curSubSeq = new ArrayList<Sequence>();
+					subSeqs.add(curSubSeq);
+					lineCount = 0;
+				}
+				curSubSeq.add(seq);
 			}
-			curSubSeq.add(seq);
 		}
 		return subSeqs;
 	}
