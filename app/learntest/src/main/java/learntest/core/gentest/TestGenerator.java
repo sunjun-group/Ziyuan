@@ -10,6 +10,7 @@ package learntest.core.gentest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -120,10 +121,13 @@ public class TestGenerator {
 		List<Sequence> sequences = new ArrayList<Sequence>();
 		//int index = 0;
 		Set<String> failToSetVars = new HashSet<String>();
+		HashMap<Sequence, Integer> map= new HashMap<>();
 		for (int i = 0; i < solutions.size(); i++) {
 			double[] solution = solutions.get(i);
-			result.addInputData(DomainUtils.toBreakpointValue(solution, vars, i));
-			sequences.add(generator.generateSequence(solution, vars, failToSetVars));
+//			result.addInputData(DomainUtils.toBreakpointValue(solution, vars, i));
+			Sequence seq = generator.generateSequence(solution, vars, failToSetVars);
+			map.put(seq, i);
+			sequences.add(seq);
 		}
 		if (!failToSetVars.isEmpty()) {
 			log.debug("Cannot modify value for variables: {}", failToSetVars);
@@ -131,7 +135,20 @@ public class TestGenerator {
 		injectorModule.exit(TestcaseGenerationScope.class);
 		TestsPrinter printer = new TestsPrinter(params.getPrinterParams());
 		printer.setCuWriter(cuWriter);
-		result.setJunitClassNames(printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0))));
+		List<String> generatedClasses = printer.printTests(Pair.of(sequences, new ArrayList<Sequence>(0)));
+		
+		/** there probably are some sequences that could not be parsed into method, 
+		 *  we need to record suitable solution rather than all solution
+		 */
+		int index = 0;
+		for (Sequence seq : printer.getValidSequences()) {
+			if (map.containsKey(seq)) {
+				double[] solution = solutions.get(map.get(seq));
+				result.addInputData(DomainUtils.toBreakpointValue(solution, vars, index));
+				index++;
+			}
+		}
+		result.setJunitClassNames(generatedClasses);
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 		return result;
 	}

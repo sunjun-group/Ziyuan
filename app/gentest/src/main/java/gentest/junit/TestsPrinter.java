@@ -9,6 +9,7 @@
 package gentest.junit;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.sun.tools.javac.util.Log;
@@ -16,6 +17,7 @@ import com.sun.tools.javac.util.Log;
 import gentest.core.data.Sequence;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.TypeDeclaration;
+import mosek.Env.iinfitem;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
@@ -135,6 +137,7 @@ public class TestsPrinter implements ITestsPrinter {
 		}
 	}
 	
+	List<Sequence> validSequences = new LinkedList<>();
 	/**
 	 * divide sequences into small parts depend on line limit per class
 	 * configuration.
@@ -149,7 +152,8 @@ public class TestsPrinter implements ITestsPrinter {
 		subSeqs.add(curSubSeq);
 		int lineCount = 0;
 		boolean empty = true;
-		for (Sequence seq : seqs) {
+		for (int i = 0; i < seqs.size(); i++) {
+			Sequence seq = seqs.get(i);
 			int statements =seq.getStmtsSize(); 
 			if (statements >= BYTE_LENGTH_LIMIT_PER_METHOD/3) {
 				System.err.println("method is oversize!");
@@ -162,6 +166,7 @@ public class TestsPrinter implements ITestsPrinter {
 					lineCount = 0;
 				}
 				curSubSeq.add(seq);
+				validSequences.add(seq);
 			}
 		}
 		if (empty) {
@@ -170,6 +175,10 @@ public class TestsPrinter implements ITestsPrinter {
 		return subSeqs;
 	}
 
+	public List<Sequence> getValidSequences(){
+		return validSequences;
+	}
+	
 	private String getClassName() {
 		return params.classPrefix + (classIdx ++);
 	}
