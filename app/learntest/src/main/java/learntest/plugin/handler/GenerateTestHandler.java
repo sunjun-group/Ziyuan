@@ -15,11 +15,13 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jdart.core.JDartCore;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.TestRunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;
 import learntest.core.machinelearning.FormulaInfo;
+import learntest.core.time.CovTimer;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IStatusUtils;
@@ -60,8 +62,10 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 			
 			LearnTestParams jdartParam = l2tParam.createNew();
 			jdartParam.setApproach(LearnTestApproach.JDART);
-//			RunTimeInfo jdartInfo = runJdart(jdartParam);
-			
+			JDartCore.setSocketWaiteTime(CovTimer.timeOUt);
+			RunTimeInfo jdartInfo = runJdart(jdartParam);
+
+			JDartCore.setSocketWaiteTime(15 * 1000);
 			l2tParam.setApproach(LearnTestApproach.L2TTimer);
 			l2tParam.setCu(constructCu(l2tParam.getTargetMethod().getClassName()));
 			l2tParam.setInitialTests(jdartParam.getGeneratedInitTest());

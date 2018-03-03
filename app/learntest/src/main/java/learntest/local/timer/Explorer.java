@@ -1,6 +1,7 @@
 package learntest.local.timer;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,34 @@ public class Explorer {
 			for (String path : paths) {
 				TimerTrialExcelReader reader = new TimerTrialExcelReader(new File(path));
 				Map<String, Trial> map = reader.readDataSheet();
+				List<String> list = new LinkedList<>();		
+				list.addAll(map.keySet());
+				list.sort(new Comparator<String>() {
+					@Override
+					public int compare(String o1, String o2) {
+						int l1 = o1.length();
+						int l2 = o2.length();
+						for (int i = 0; i < Math.min(l1, l2); i++) {
+							if (o1.charAt(i) > o2.charAt(i)) {
+								return 1;
+							}else if (o1.charAt(i) < o2.charAt(i)) {
+								return -1;
+							}
+						}
+						if (l1 > l2) {
+							return 1;
+						}else if (l2 > l1) {
+							return -1;
+						}
+						return 0;
+					}
+				});
 				StringBuilder sBuilder = new StringBuilder();
-				for (String s : map.keySet()) {
+				for (String s : list) {
 					s = s.replace(TrialExcelConstants.METHOD_ID_SEPARATOR, ".");
 					sBuilder.append(s + "\n");
 				}
+
 				FileUtils.write(path+".skip.txt", sBuilder.toString());
 				System.out.println(path);
 			}
