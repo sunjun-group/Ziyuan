@@ -53,13 +53,14 @@ public class LearnTest extends AbstractLearntest {
 		boolean learningStarted = false;
 		CfgCoverage cfgCoverage = null;
 		TargetMethod targetMethod = params.getTargetMethod();
+		IInputLearner learner = null;
 		try {
 			/* collect coverage and build cfg */
 			cfgCoverage = runCfgCoverage(targetMethod, params.getInitialTests().getJunitClasses());
 
 			if (CoverageUtils.notCoverAtAll(cfgCoverage)) {
 				log.info("Start node is not covered!");
-				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode());
+				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode(), null);
 			}
 			
 			/* <offset, relevant variables> */
@@ -80,10 +81,10 @@ public class LearnTest extends AbstractLearntest {
 					log.info("No decision node is covered!");
 				}
 				copyTestsToResultFolder(params);
-				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode());
+				return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode(), null);
 			} else {
 				/* learn */
-				IInputLearner learner = mediator.initDecisionLearner(params);
+				learner = mediator.initDecisionLearner(params);
 				DecisionProbes initProbes = initProbes(targetMethod, cfgCoverage, result);
 				learningStarted = true;
 				
@@ -97,14 +98,14 @@ public class LearnTest extends AbstractLearntest {
 				learner.cleanup();
 				learner.recordSample(probes, learner.getLogFile());
 				
-				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod, params.isTestMode());
-				if (learner instanceof PrecondDecisionLearner) { 
-					setLearnState((PrecondDecisionLearner)learner, info);
-					info.setSymbolicTimes(((PrecondDecisionLearner)learner).getSymoblicTimes());
-				}
-				info.setSample(learner);
-				info.setLogFile(learner.getLogFile());
-				info.setCovTimeLine(learner.getCovTimeLine());
+				RunTimeInfo info = reconcileGeneratedTestsAndGetRuntimeInfo(probes, targetMethod, params.isTestMode(), learner);
+//				if (learner instanceof PrecondDecisionLearner) { 
+//					setLearnState((PrecondDecisionLearner)learner, info);
+//					info.setSymbolicTimes(((PrecondDecisionLearner)learner).getSymoblicTimes());
+//				}
+//				info.setSample(learner);
+//				info.setLogFile(learner.getLogFile());
+//				info.setCovTimeLine(learner.getCovTimeLine());
 				return info;
 			}
 		} catch (SAVExecutionTimeOutException e) {
@@ -113,20 +114,32 @@ public class LearnTest extends AbstractLearntest {
 			}
 		} catch (LearnTestException e) {
 			log.warn("still cannot get entry value when coverage is not empty!");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		if (cfgCoverage != null) {
-			return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode());
+			return reconcileGeneratedTestsAndGetRuntimeInfo(cfgCoverage, targetMethod, params.isTestMode(), learner);
 		} 
 		return null;
 	}
 
 
-	private RunTimeInfo reconcileGeneratedTestsAndGetRuntimeInfo(CfgCoverage cfgCoverage, TargetMethod targetMethod, boolean testMode) {
+	private RunTimeInfo reconcileGeneratedTestsAndGetRuntimeInfo(CfgCoverage cfgCoverage, TargetMethod targetMethod, boolean testMode, 
+			IInputLearner learner) {
 		/* clean up testcases */
 //		LineCoverageResult lineCoverageResult = mediator.commitFinalTests(cfgCoverage, targetMethod);
-		RunTimeInfo runtimeInfo = getRuntimeInfo(cfgCoverage, testMode);
+		RunTimeInfo info = getRuntimeInfo(cfgCoverage, testMode);
 //		runtimeInfo.setLineCoverageResult(lineCoverageResult);
-		return runtimeInfo;
+		if (learner != null) {
+			if (learner instanceof PrecondDecisionLearner) { 
+				setLearnState((PrecondDecisionLearner)learner, info);
+				info.setSymbolicTimes(((PrecondDecisionLearner)learner).getSymoblicTimes());
+			}
+			info.setSample(learner);
+			info.setLogFile(learner.getLogFile());
+			info.setCovTimeLine(learner.getCovTimeLine());
+		}
+		return info;
 	}
 
 	private void setLearnState(PrecondDecisionLearner learner, RunTimeInfo runtimeInfo) {
