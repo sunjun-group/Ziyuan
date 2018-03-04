@@ -168,9 +168,6 @@ public class LearningMediator {
 	public GentestResult gentestAndCompile(List<double[]> solutions, List<ExecVar> vars, GentestParams params)
 			throws SavException {
 		log.debug("gentest..");
-		if (solutions != null && solutions.size() > 0) {
-			log.info("solution size : {}", solutions.get(0).length);
-		}
 		GentestResult result = getTestGenerator().genTestAccordingToSolutions(params, solutions, vars, new JWriter());
 		if (!result.isEmpty()) {
 			log.debug("compile..");

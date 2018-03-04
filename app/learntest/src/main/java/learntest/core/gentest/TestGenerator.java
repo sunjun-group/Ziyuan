@@ -148,6 +148,7 @@ public class TestGenerator {
 				index++;
 			}
 		}
+		log.info("generated methods : {}", index);
 		result.setJunitClassNames(generatedClasses);
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 		return result;
