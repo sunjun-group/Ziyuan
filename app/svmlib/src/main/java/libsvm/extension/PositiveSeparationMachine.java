@@ -153,6 +153,7 @@ public class PositiveSeparationMachine extends Machine {
 
 		classifyNegativePositivePoints(dataPoints, positives, negatives);
 
+		Category majorCategory = (positives.size() > negatives.size()) ? Category.POSITIVE : Category.NEGATIVE;
 		List<DataPoint> trainingData = (positives.size() > negatives.size()) ? negatives : positives;
 		List<DataPoint> selectionData = (positives.size() > negatives.size()) ? positives : negatives;
 
@@ -195,10 +196,16 @@ public class PositiveSeparationMachine extends Machine {
 					log.info("selected points to learn : ");
 					for (int i = 0; i < selectedPoints.size(); i++) {
 						DataPoint p = trainingData.remove(trainingData.size() - 1);
-						selectionData.add(p); // restore removed 
+						selectionData.add(p);  // restore removed
 						log.info(p.toString());
 					}
-					removeClassifiedNegativePoints(selectionData);
+					// in general, it should remove all classified true points, but here only remove points with negative category, 
+					// because machine only support "And models". If positive should be a>10 || a <-10, this machine will only
+					// get one formula like a>10 or a<-10, because when it generate one formula, it will discard points in the other side, 
+					// thus it will never generate the other formula. If we remove all classified true points, the machine will get a>10 and a<-10,
+					// but it will think model is a>10 && a <-10.
+					// Example : org.jscience.mathematics.number.LargeInteger.isPowerOfTwo.470
+					removeClassifiedNegativePoints(selectionData); 
 					
 //					System.currentTimeMillis();
 //					learnedModels.clear();

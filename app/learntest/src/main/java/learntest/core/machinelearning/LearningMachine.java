@@ -70,6 +70,7 @@ public class LearningMachine extends PositiveSeparationMachine {
 	}
 	
 	public Formula getLearnedMultiFormula(List<ExecVar> vars, List<String> dataLabels, double accuracyFilter) {
+		System.currentTimeMillis();
 		List<svm_model> models = getLearnedModels();
 		final int numberOfFeatures = getNumberOfFeatures();
 //		if (models != null && numberOfFeatures > 0) {

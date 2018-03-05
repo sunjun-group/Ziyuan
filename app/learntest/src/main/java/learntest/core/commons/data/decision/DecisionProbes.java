@@ -181,6 +181,7 @@ public class DecisionProbes extends CfgCoverage {
 				precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 			}
 		}
+		// each element in precondition.getPreconditions() is a path
 		return new Pair<OrCategoryCalculator, Boolean>(new OrCategoryCalculator(precondition.getPreconditions(), learningVars, originalVars), true);
 	}
 
