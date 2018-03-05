@@ -31,7 +31,12 @@ public class MultiOrDividerBasedCategoryCalculator implements CategoryCalculator
 	
 	@Override
 	public String toString() {
-		return dividers.toString();
+		StringBuffer sb = new StringBuffer();
+		sb.append("or divider:");
+		for (Divider divider : dividers) {
+			sb.append(divider+"||");
+		}
+		return sb.toString();
 	}
 
 }

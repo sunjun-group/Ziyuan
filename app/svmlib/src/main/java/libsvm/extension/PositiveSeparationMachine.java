@@ -40,16 +40,16 @@ public class PositiveSeparationMachine extends Machine {
 	protected List<svm_model> learnedModels = new ArrayList<svm_model>();
 	protected List<Pair<DataPoint, DataPoint>> pairList = new ArrayList<>();
 
-	private static final int MAXIMUM_ATTEMPT_COUNT = 10;
-	private static final int MAXIMUM_DIVIDER_COUNT = 20;
+	protected static final int MAXIMUM_ATTEMPT_COUNT = 10;
+	protected static final int MAXIMUM_DIVIDER_COUNT = 20;
 
-	private NegativePointSelection negativePointSelection;
+	protected NegativePointSelection negativePointSelection;
 
 	public PositiveSeparationMachine(NegativePointSelection pointSelection) {
 		this.negativePointSelection = pointSelection;
 	}
 
-	private boolean canDivideWithOneFormula(List<DataPoint> dataPoints) {
+	protected boolean canDivideWithOneFormula(List<DataPoint> dataPoints) {
 		boolean canDivideWithOneFormula = true;
 
 		try {
@@ -237,7 +237,7 @@ public class PositiveSeparationMachine extends Machine {
 		return this;
 	}
 
-	private boolean isValidModel(svm_model model) {
+	protected boolean isValidModel(svm_model model) {
 		/* 
 		 * LLT: validate model (for simple case, check if sv_coef is empty or not
 		 * this is just quick fix to avoid exception due to empty sv_coef.
@@ -262,7 +262,7 @@ public class PositiveSeparationMachine extends Machine {
 	 * @param positives
 	 * @param negatives
 	 */
-	private void classifyNegativePositivePoints(final List<DataPoint> dataPoints, final List<DataPoint> positives,
+	protected void classifyNegativePositivePoints(final List<DataPoint> dataPoints, final List<DataPoint> positives,
 			final List<DataPoint> negatives) {
 		for (DataPoint point : dataPoints) {
 			if (Category.POSITIVE == point.getCategory()) {

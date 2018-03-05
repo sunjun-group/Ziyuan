@@ -31,7 +31,13 @@ public class MultiNotOrDividerBasedCategoryCalculator implements CategoryCalcula
 	
 	@Override
 	public String toString() {
-		return dividers.toString();
+		StringBuffer sb = new StringBuffer();
+		sb.append("not or divider: !(");
+		for (Divider divider : dividers) {
+			sb.append(divider+"||");
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 
 }
