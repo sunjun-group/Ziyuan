@@ -34,4 +34,14 @@ public enum Category {
 	public static Category fromDouble(double value){
 		return (Double.compare(value, 0) >= 0? POSITIVE: NEGATIVE);
 	}
+	
+	public static Category not(Category c){
+		if (c == POSITIVE) {
+			return NEGATIVE;
+		}else if (c == NEGATIVE) {
+			return POSITIVE;
+		}else {
+			return null;
+		}
+	}
 }

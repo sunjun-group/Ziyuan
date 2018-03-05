@@ -22,6 +22,7 @@ public class MultiNotDividerBasedCategoryCalculator implements CategoryCalculato
 				return Category.POSITIVE;
 			}
 		}
+		//if satisfy all divider return negative
 		return Category.NEGATIVE;
 	}
 

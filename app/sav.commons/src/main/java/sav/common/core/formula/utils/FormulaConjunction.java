@@ -96,6 +96,15 @@ public class FormulaConjunction extends ExpressionVisitor {
 		}
 		return formula;
 	}
+	
+	public static Formula or(List<Formula> formulas) {
+		Assert.assertTrue(CollectionUtils.isNotEmpty(formulas), "conj formula array must not be empty!");
+		Formula formula = formulas.get(0);
+		for (int i = 1; i < formulas.size(); i++) {
+			formula = or(formula, formulas.get(i));
+		}
+		return formula;
+	}
 
 	private static Formula conjOf(Formula curCond, Formula newCond, Operator op) {
 		FormulaConjunction visitor = new FormulaConjunction();
