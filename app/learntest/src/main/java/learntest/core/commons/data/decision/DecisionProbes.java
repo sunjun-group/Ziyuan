@@ -33,6 +33,8 @@ import learntest.core.machinelearning.calculator.OrCategoryCalculator;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
+import libsvm.extension.MultiNotOrDividerBasedCategoryCalculator;
+import libsvm.extension.MultiOrDividerBasedCategoryCalculator;
 import sav.common.core.Pair;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -266,6 +268,61 @@ public class DecisionProbes extends CfgCoverage {
 				condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
 			} else if (branchRel == BranchRelationship.FALSE) {
 				condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+			}
+			break;
+		}
+		return condFromDividers;
+	}
+	
+	/**
+	 * 
+	 * @param domDividers
+	 * @param OR  indicate if domDividers is 'AND' or 'OR'. Default is 'AND', use this flag to enhance
+	 * @param branchRel  
+	 * @param type a herustic relationship, but it is decrepted now. 
+	 * @return
+	 */
+	private CategoryCalculator getCalculator(List<Divider> domDividers, boolean OR, BranchRelationship branchRel, int type) {
+		CategoryCalculator condFromDividers = null;
+		switch (type) {
+		// for ISEQUAL and ISNOTEQUAL,  we use a>=b and b>=a to represent a=b
+		case Precondition.ISEQUAL: 
+			if (branchRel == BranchRelationship.TRUE) {
+				condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+			} else if (branchRel == BranchRelationship.FALSE) {
+				List<Divider> dividers = new LinkedList<>();
+				for (Divider divider : domDividers) {
+					Divider tDivider = new Divider(divider.getThetas(), 0.1);
+					dividers.add(tDivider);
+				}
+				condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+			}
+			break;
+		case Precondition.ISNOTEQUAL:
+			if (branchRel == BranchRelationship.TRUE) {
+				condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+			} else if (branchRel == BranchRelationship.FALSE) {
+				List<Divider> dividers = new LinkedList<>();
+				for (Divider divider : domDividers) {
+					Divider tDivider = new Divider(divider.getThetas(), 0);
+					dividers.add(tDivider);
+				}
+				condFromDividers = new MultiDividerBasedCategoryCalculator(dividers);
+			}
+			break;
+		default:
+			if (branchRel == BranchRelationship.TRUE) {
+				if (OR) {
+					condFromDividers = new MultiOrDividerBasedCategoryCalculator(domDividers);
+				}else {
+					condFromDividers = new MultiDividerBasedCategoryCalculator(domDividers);
+				}
+			} else if (branchRel == BranchRelationship.FALSE) {
+				if (OR) {
+					condFromDividers = new MultiNotOrDividerBasedCategoryCalculator(domDividers);						
+				}else {
+					condFromDividers = new MultiNotDividerBasedCategoryCalculator(domDividers);
+				}
 			}
 			break;
 		}
