@@ -52,8 +52,8 @@ public class JDartLearntest extends LearnTest {
 			log.info("jdart result: {}", TextFormatUtils.printListSeparateWithNewLine(inputs));
 			return;
 		} else{
-			log.info("jdart result (print 100 result at most):");
-			for (int i = 0; i < inputs.size() && i < 100; i++) {
+			log.info("jdart result (print 10 result at most):");
+			for (int i = 0; i < inputs.size() && i < 10; i++) {
 				log.info("input: {}", inputs.get(i).toString());
 			}
 		}

@@ -45,9 +45,9 @@ public class JDartProcess {
 			list = exec(JDartClient.class, args);
 			if (list != null) {
 				log.info("JDart return " + list.size() + " test cases");
-				for (TestInput testInput : list) {
-					System.out.println(testInput.toString());
-				}
+//				for (TestInput testInput : list) {
+//					System.out.println(testInput.toString());
+//				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

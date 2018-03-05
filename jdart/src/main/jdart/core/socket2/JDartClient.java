@@ -16,8 +16,7 @@ import sav.common.core.Pair;
 
 public class JDartClient {
 	private static Logger log = LoggerFactory.getLogger(JDartClient.class);
-	int javaPathLimit = 500;
-
+	int javaPathLimit = 50;//Integer.MAX_VALUE; if too many result, Gentest will cost much time to generate test case, if 20000 result, it probably cost over 8hours.
 	/***
 	 * to constraint the number of returned result, which may cause java error :
 	 * The filename or extension is too long
@@ -46,8 +45,8 @@ public class JDartClient {
 			pw = new DataOutputStream(socket.getOutputStream());
 			pw.writeInt(solveCount);
 			if (result != null) {
+				log.info("JDart result : " + result.size());
 				for (int i = 0; i < result.size() && i < javaPathLimit; i++) {
-					log.info("JDart result : " + result.get(i));
 					byte[] bytes = ByteConverter.convertToBytes(result.get(i));
 					log.info("send byte[] :" + bytes.length);
 					pw.writeInt(bytes.length);
