@@ -172,7 +172,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	}
 	
 	private List<String> getExclusiveClasses(){
-		return Arrays.asList("org.apache.tools.ant.Main");
+		return Arrays.asList("org.jblas.ComplexFloatMatrix","org.jblas.SimpleBlas");
 	}
 
 	private RunTimeCananicalInfo runEvaluation(IPackageFragment pkg, TrialExcelHandler excelHandler,
@@ -222,10 +222,6 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 		for (MethodInfo targetMethod : targetMethods) {			
 			log.info("-----------------------------------------------------------------------------------------------");
 			log.info("Method {}", ++curMethodIdx);
-			if (targetMethod.getClassName().startsWith("org.apache.commons.math.dfp")
-					|| targetMethod.getClassName().startsWith("org.apache.commons.math.random.ValueServer")) {
-				continue;
-			}
 			MultiTrial multiTrial = new MultiTrial();
 			multiTrial.setVarType(targetMethod.isVarType());
 			int validTrial = 0;
