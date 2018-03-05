@@ -38,7 +38,7 @@ public class TimerTrialExcelReader extends SimpleExcelReader {
 		super(TrialExcelConstants.DATA_SHEET_NAME, TimerTrialHeader.values());
 		reset(file);
 	}
-	
+		
 	public Map<String, Trial> readDataSheet() {
 		Assert.assertNotNull(dataSheet, "TrialExcelReader has not initialized!");
 		Iterator<Row> it = dataSheet.rowIterator();

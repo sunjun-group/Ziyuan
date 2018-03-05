@@ -13,7 +13,26 @@ import sav.common.core.utils.FileUtils;
 public class Explorer {
 	public static void main(String[] args) {
 		List<String> paths = new LinkedList<>();
-//		paths.add("E:\\172\\SUTD\\statistic\\限定时间比较\\colt_1.xlsx");
+//		paths.add("E:\\172\\SUTD\\fse统计\\90s\\colt0_0_u1.xlsx");
+//		paths.add("E:\\172\\SUTD\\fse统计\\90s\\apache-common-math-2.2_0_u1.xlsx");
+		paths.add("E:\\172\\SUTD\\fse统计\\90s\\jscience_0.xlsx");
+
+		try {
+			for (String path : paths) {
+				System.out.println(path + " start");
+				TimerTrialExcelWriter reader = new TimerTrialExcelWriter(new File(path));
+				reader.updateRowData();
+				System.out.println("finish!");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void getMethodLables(){
+		List<String> paths = new LinkedList<>();
+		paths.add("E:\\172\\SUTD\\statistic\\限定时间比较\\colt_1.xlsx");
 		paths.add("E:\\172\\SUTD\\statistic\\限定时间比较\\jscience_0.xlsx");
 		paths.add("E:\\172\\SUTD\\statistic\\限定时间比较\\jblas_0.xlsx");
 		try {
