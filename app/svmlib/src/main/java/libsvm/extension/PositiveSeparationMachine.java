@@ -98,6 +98,22 @@ public class PositiveSeparationMachine extends Machine {
 	}
 
 	private boolean isModelEqual(svm_model m1, svm_model m2) {
+		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
+		if (numberOfFeatures > 0) {
+			Divider d1 = new Model(m1, numberOfFeatures).getExplicitDivider();
+			double theta1[] = d1.getThetas();
+			Divider d2 = new Model(m2, numberOfFeatures).getExplicitDivider();
+			double theta2[] = d2.getThetas();
+			if (theta1.length != theta2.length) {
+				return false;
+			}
+			for (int i = 0; i < theta1.length; i++) {
+				if (theta1[i] * theta2[i] < 0) {
+					return false;
+				}
+			}
+		}
+		
 		if (m1.sv_coef.length == m2.sv_coef.length) {
 			for (int i = 0; i < m1.sv_coef.length; i++) {
 				if (m1.sv_coef[i].length == m2.sv_coef[i].length) {
@@ -147,7 +163,7 @@ public class PositiveSeparationMachine extends Machine {
 		return false;
 	}
 
-	private Machine attemptTraining(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
+	protected Machine attemptTraining(final List<DataPoint> dataPoints) throws SAVExecutionTimeOutException {
 		final List<DataPoint> positives = new ArrayList<DataPoint>(dataPoints.size());
 		final List<DataPoint> negatives = new ArrayList<DataPoint>(dataPoints.size());
 
@@ -235,6 +251,10 @@ public class PositiveSeparationMachine extends Machine {
 		}
 
 		return this;
+	}
+	
+	protected void svmTrain(List<DataPoint> trainingData) throws SAVExecutionTimeOutException{
+		super.train(trainingData);
 	}
 
 	protected boolean isValidModel(svm_model model) {
