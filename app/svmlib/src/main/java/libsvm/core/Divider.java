@@ -119,5 +119,14 @@ public class Divider {
 		this.dataPair = dataPair;
 	}
 	
+	public Divider not(){
+		double[] thetasN = new double[thetas.length];
+		for (int i = 0; i < thetas.length; i++) {
+			thetasN[i] = -1 * thetas[i];
+		}
+		Divider notDivider = new Divider(thetasN, theta0, this.isRounded);
+		return notDivider;
+	}
+	
 	
 }

@@ -8,6 +8,8 @@
 
 package learntest.core.machinelearning;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import icsetlv.common.utils.BreakpointDataUtils;
@@ -71,6 +73,21 @@ public class SelectiveSampling<T extends ISampleResult> {
 			OrCategoryCalculator preconditions, List<Divider> learnedDividers) throws SavException {
 		List<double[]> data = selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions,
 				learnedDividers);
+		return runData(data, originalVars);
+	}
+	
+	public T selectDataForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars, 
+			OrCategoryCalculator preconditions, List<Divider> learnedDividers, boolean seperateDividers) throws SavException {
+		List<double[]> data = new LinkedList<>();
+		if (seperateDividers) {
+			for (Divider divider : learnedDividers) {
+				data.addAll(selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions,
+						Arrays.asList(divider)));
+			}
+		}else {
+			data = selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions,
+					learnedDividers);
+		}
 		return runData(data, originalVars);
 	}
 	
