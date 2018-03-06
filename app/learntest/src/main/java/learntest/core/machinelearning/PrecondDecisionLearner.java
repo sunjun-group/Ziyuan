@@ -211,7 +211,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 	private TrueFalseLearningResult generateTrueFalseFormula(DecisionNodeProbe orgNodeProbe,
 			CoveredBranches coveredType, OrCategoryCalculator preconditions, List<ExecVar> targetVars)
 					throws SavException {
-
+		System.currentTimeMillis();
 		if (!orgNodeProbe.needToLearnPrecond()) {
 			log.debug("no need to learn precondition");
 			return null;
@@ -227,7 +227,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 
 		/* do generate formula and return */
 		NegativePointSelection negative = new ByDistanceNegativePointSelection();
-		PositiveSeparationMachine mcm = new LearningMachine(negative);
+		PositiveSeparationMachine mcm = new LearningMachine2(negative);
 		log.info("generate initial formula");
 		trueFlaseFormula = generateInitialFormula(orgNodeProbe, mcm, targetVars);
 		double acc = mcm.getModelAccuracy();
@@ -258,8 +258,12 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 			log.debug("selective sampling: ");
 			log.debug("original vars: {}, targetVars : {}", probes.getOriginalVars(), targetVars);
 			/* after running sampling, probes will be updated as well */
+//			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, orignalVars, preconditions,
+//					mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars), logFile);
 			SamplingResult sampleResult = dataPreprocessor.sampleForModel(nodeProbe, orignalVars, preconditions,
-					mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars), logFile);
+					mcm.getFullLearnedDividers(mcm.getDataLabels(), orignalVars), logFile, 
+					trueFlaseFormula instanceof OrFormula);
+			
 			if (sampleResult == null) {
 				log.debug("sampling result is null");
 				continue;
@@ -283,9 +287,6 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 					System.out.println(s);
 				}
 				
-				if(ps.size()>1){
-					System.currentTimeMillis();
-				}
 			}			
 			
 			mcm.train();
@@ -320,7 +321,6 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 		TrueFalseLearningResult result = new TrueFalseLearningResult();
 		result.formula = trueFlaseFormula;
 		result.dividers = dividers;
-		System.currentTimeMillis();
 		return result;
 	}
 
@@ -376,7 +376,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 					trueFlaseFormula = new AndFormula(trueFlaseFormula, current);
 				}
 			}
-			dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile);
+			dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile, trueFlaseFormula instanceof OrFormula);
 		}else if (relationShip instanceof NotEqualVarRelationShip) {
 			type = Precondition.ISNOTEQUAL;
 			dividers = constructDividers(labels, relationShip, 0.1);
@@ -394,10 +394,10 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 				int theta0 = (int)((Math.random()>0.5?1:-1) * Math.random() * Settings.getBound());/* sample will take border of divider, thus prefer a random int rather than 0*/
 				Divider tDivider = new Divider(divider.getThetas(), theta0); 
 				tDividers.add(tDivider);
-				dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, tDividers, logFile);
+				dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, tDividers, logFile, trueFlaseFormula instanceof OrFormula);
 			}
 		}else {
-			dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile);
+			dataPreprocessor.sampleForModel(nodeProbe, originalVars, preconditions, dividers, logFile, trueFlaseFormula instanceof OrFormula);
 		}
 
 		TrueFalseLearningResult result = new TrueFalseLearningResult();

@@ -129,7 +129,7 @@ public class LearnedDataProcessor {
 	}
 
 	public SamplingResult sampleForModel(DecisionNodeProbe nodeProbe, List<ExecVar> originalVars,
-			OrCategoryCalculator preconditions, List<Divider> learnedDividers, String logFile) throws SavException {
+			OrCategoryCalculator preconditions, List<Divider> learnedDividers, String logFile, boolean seperateDividers) throws SavException {
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("vars : " + originalVars + "\n");
 		sBuffer.append("select sample with precondition : ");
@@ -141,7 +141,7 @@ public class LearnedDataProcessor {
 			}
 			sBuffer.append(")||");
 		}
-		sBuffer.append("\nselect sample with learnedDividers : ");
+		sBuffer.append("\nselect sample with learnedDividers (" + seperateDividers + ") : ");
 		if (learnedDividers != null) {
 			for (Divider d : learnedDividers) {
 				sBuffer.append(d + ",");
@@ -150,7 +150,7 @@ public class LearnedDataProcessor {
 		log.info(sBuffer.toString());
 		sBuffer.append("\n");
 		FileUtils.write(logFile, sBuffer.toString());
-		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers);
+		return selectiveSampling.selectDataForModel(nodeProbe, originalVars, preconditions, learnedDividers,seperateDividers);
 	}
 
 	/**

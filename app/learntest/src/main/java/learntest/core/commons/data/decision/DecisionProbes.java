@@ -36,6 +36,8 @@ import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import libsvm.extension.MultiNotOrDividerBasedCategoryCalculator;
 import libsvm.extension.MultiOrDividerBasedCategoryCalculator;
 import sav.common.core.Pair;
+import sav.common.core.formula.False;
+import sav.common.core.formula.OrFormula;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -110,6 +112,7 @@ public class DecisionProbes extends CfgCoverage {
 			Precondition domPrecond = getNodeProbe(dominator).getPrecondition();
 			int type = domPrecond.getType();
 			List<Divider> domDividers = domPrecond.getDividers();
+			boolean OR = domPrecond.getTrueFalse() == null ? false : domPrecond.getTrueFalse() instanceof OrFormula;
 			BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
 			path.putAll(domPrecond.getPath());
 			if (CollectionUtils.isEmpty(domDividers)) {
@@ -121,7 +124,7 @@ public class DecisionProbes extends CfgCoverage {
 				log.debug("from "+dominator + " to "+node+" : "+branchRel);
 				CategoryCalculator condFromDividers = null;
 				if (branchRel == BranchRelationship.TRUE || branchRel == BranchRelationship.FALSE) {
-					condFromDividers = getCalculator(domDividers, branchRel, type);
+					condFromDividers = getCalculator(domDividers, OR, branchRel, type);
 					path.put(dominator, branchRel);
 				} else if (branchRel == BranchRelationship.TRUE_FALSE) {
 					bothBranchNode.add(dominator);
@@ -178,7 +181,8 @@ public class DecisionProbes extends CfgCoverage {
 			}
 			log.debug("from "+dominator + " to "+node+" : "+branchRel);
 			int type = domPrecond.getType();
-			CategoryCalculator condFromDividers = getCalculator(domDividers, branchRel, type);
+			boolean OR = domPrecond.getTrueFalse() == null ? false : domPrecond.getTrueFalse() instanceof OrFormula;
+			CategoryCalculator condFromDividers = getCalculator(domDividers, OR, branchRel, type);
 			if (condFromDividers != null) {
 				precondition.addPreconditions(domPrecond.getPreconditions(), condFromDividers);
 			}
@@ -236,6 +240,7 @@ public class DecisionProbes extends CfgCoverage {
 		return false;
 	}
 
+	@Deprecated
 	private CategoryCalculator getCalculator(List<Divider> domDividers, BranchRelationship branchRel, int type) {
 		CategoryCalculator condFromDividers = null;
 		switch (type) {

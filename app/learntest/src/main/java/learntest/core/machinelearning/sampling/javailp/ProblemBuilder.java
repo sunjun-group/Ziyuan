@@ -11,6 +11,8 @@ import learntest.plugin.utils.Settings;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
+import libsvm.extension.MultiNotOrDividerBasedCategoryCalculator;
+import libsvm.extension.MultiOrDividerBasedCategoryCalculator;
 import net.sf.javailp.Constraint;
 import net.sf.javailp.Linear;
 import net.sf.javailp.Operator;
@@ -145,16 +147,35 @@ public class ProblemBuilder {
 		for (List<CategoryCalculator> precon : precons) {
 			List<Divider> dividers =  new ArrayList<Divider>();
 			List<List<Divider>> notDividers = new ArrayList<List<Divider>>();
+			List<MultiOrDividerBasedCategoryCalculator> orCalculators = new ArrayList<>();
 			for (CategoryCalculator calculator : precon) {
 				if (calculator instanceof MultiDividerBasedCategoryCalculator) {
 					dividers.addAll(((MultiDividerBasedCategoryCalculator) calculator).getDividers());
 				} else if (calculator instanceof MultiNotDividerBasedCategoryCalculator) {
 					unfold((MultiNotDividerBasedCategoryCalculator) calculator, notDividers);
+				} else if(calculator instanceof MultiOrDividerBasedCategoryCalculator) {
+					orCalculators.add((MultiOrDividerBasedCategoryCalculator) calculator);
+				} else if(calculator instanceof MultiNotOrDividerBasedCategoryCalculator){
+					List<Divider> orDividers = ((MultiNotOrDividerBasedCategoryCalculator) calculator).getDividers();
+					for (Divider d : orDividers) {
+						dividers.add(d.not());
+					}
 				}
 			}
 			if (notDividers.isEmpty()) {
 				if (!dividers.isEmpty()) {
-					problems.add(buildTrueValueProblemWithConstraints(vars, dividers, null, random));
+					if (orCalculators.isEmpty()) {
+						problems.add(buildTrueValueProblemWithConstraints(vars, dividers, null, random));
+					}else {
+						// OrCalculator means branches, we get more divider paths
+						List<List<Divider>> orDividers = extractOrDividers(orCalculators, dividers.size());
+						for (List<Divider> d : orDividers) {
+							List<Divider> entireD = new LinkedList<>();
+							entireD.addAll(dividers);
+							entireD.addAll(d);
+							problems.add(buildTrueValueProblemWithConstraints(vars, entireD, null, random));
+						}
+					}
 				}
 			}			
 			for (List<Divider> nots : notDividers) {
@@ -170,6 +191,38 @@ public class ProblemBuilder {
 		return problems;
 	}
 
+	/**
+	 * extract Divider paths and restrict path length
+	 * @param orCalculators is not empty
+	 * @param size
+	 * @return
+	 */
+	private static List<List<Divider>> extractOrDividers(List<MultiOrDividerBasedCategoryCalculator> orCalculators, int size) {
+		List<List<Divider>> list = new LinkedList<>();
+		int MAX_PATHS = 20-size;
+		list.add(new LinkedList<>());
+		boolean bl = false;
+		for (int i = 0; i < orCalculators.size(); i++) {
+			List<List<Divider>> candidates = new LinkedList<>();
+			for (List<Divider> ds : list) {
+				for (Divider divider : orCalculators.get(i).getDividers()) {
+					List<Divider> tem = new LinkedList<>();
+					tem.addAll(ds);
+					tem.add(divider);
+					candidates.add(tem);
+					if (tem.size() > MAX_PATHS) {
+						bl = true;
+					}
+				}
+			}
+			list.clear();
+			list = candidates;
+			if (bl) {
+				break;
+			}
+		}		
+		return list;
+	}
 	public static List<Problem> buildTrueValueProblems(List<ExecVar> vars, OrCategoryCalculator preconditions, 
 			List<Divider> contraints, boolean random) {
 		List<Problem> problems = new ArrayList<Problem>();
@@ -193,16 +246,36 @@ public class ProblemBuilder {
 			List<Divider> dividers = contraints == null ? new ArrayList<Divider>() 
 					: new ArrayList<Divider>(contraints);
 			List<List<Divider>> notDividers = new ArrayList<List<Divider>>();
+			List<MultiOrDividerBasedCategoryCalculator> orCalculators = new ArrayList<>();
 			for (CategoryCalculator calculator : precon) {
 				if (calculator instanceof MultiDividerBasedCategoryCalculator) {
 					dividers.addAll(((MultiDividerBasedCategoryCalculator) calculator).getDividers());
 				} else if (calculator instanceof MultiNotDividerBasedCategoryCalculator) {
 					unfold((MultiNotDividerBasedCategoryCalculator) calculator, notDividers);
+				} else if(calculator instanceof MultiOrDividerBasedCategoryCalculator) {
+					orCalculators.add((MultiOrDividerBasedCategoryCalculator) calculator);
+				} else if(calculator instanceof MultiNotOrDividerBasedCategoryCalculator){
+					List<Divider> orDividers = ((MultiNotOrDividerBasedCategoryCalculator) calculator).getDividers();
+					for (Divider d : orDividers) {
+						dividers.add(d.not());
+					}
 				}
 			}
 			if (notDividers.isEmpty()) {
 				if (!dividers.isEmpty()) {
-					problems.add(buildTrueValueProblemWithConstraints(vars, dividers, null, random));
+					if (orCalculators.isEmpty()) {
+						problems.add(buildTrueValueProblemWithConstraints(vars, dividers, null, random));
+					}
+					else {
+						// OrCalculator means branches, we get more divider paths
+						List<List<Divider>> orDividers = extractOrDividers(orCalculators, dividers.size());
+						for (List<Divider> d : orDividers) {
+							List<Divider> entireD = new LinkedList<>();
+							entireD.addAll(dividers);
+							entireD.addAll(d);
+							problems.add(buildTrueValueProblemWithConstraints(vars, entireD, null, random));
+						}
+					}
 				}
 			}			
 			for (List<Divider> nots : notDividers) {
