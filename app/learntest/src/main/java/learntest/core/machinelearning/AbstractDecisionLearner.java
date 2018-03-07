@@ -11,6 +11,7 @@ package learntest.core.machinelearning;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import cfgcoverage.jacoco.analysis.data.CfgNode;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
+import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CfgUtils;
@@ -156,6 +158,51 @@ public abstract class AbstractDecisionLearner extends AbstractLearningComponent 
 
 	protected boolean needToLearn(DecisionNodeProbe nodeProbe) {
 		if (!nodeProbe.areAllbranchesUncovered()) {
+			return true;
+		} else {
+			log.debug("All branches are uncovered!");
+			DecisionProbes probes = nodeProbe.getDecisionProbes();
+			for (CfgNode dependentee : dominationMap.get(nodeProbe.getNode()).getDominatees()) {
+				DecisionNodeProbe dependenteeProbe = probes.getNodeProbe(dependentee);
+				if (dependenteeProbe.hasUncoveredBranch()) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+	/**
+	 * if cover all branch, check whether dominatee nodes have uncovered branches
+	 * @param nodeProbe
+	 * @return
+	 */
+	protected boolean needToLearn2(DecisionNodeProbe nodeProbe) {
+		if (!nodeProbe.areAllbranchesUncovered()) {
+			if (nodeProbe.getCoveredBranches() == CoveredBranches.TRUE_AND_FALSE){
+				DecisionProbes probes = nodeProbe.getDecisionProbes();
+				HashSet<CfgNode> set = new HashSet<>();
+				CfgNode node = nodeProbe.getNode();
+				set.add(node);
+				Queue<CfgNode> queue = new LinkedList<>();
+				queue.add(node);
+				while (!queue.isEmpty()) {
+					node = queue.poll();
+					for (CfgNode dependentee : dominationMap.get(node).getDominatees()) {
+						if (dominationMap.get(dependentee).getDominators().contains(node)) {
+							if (probes.getNodeProbe(dependentee).hasUncoveredBranch()) {
+								return true;
+							} else {
+								if (!set.contains(dependentee)) {
+									set.add(dependentee);
+									queue.add(dependentee);
+								}
+							}
+						}
+					}
+				}
+				return false; // all dominatees all branches covered
+			}
 			return true;
 		} else {
 			log.debug("All branches are uncovered!");

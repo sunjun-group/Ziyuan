@@ -95,7 +95,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 	@Override
 	protected CfgNode learn(DecisionNodeProbe nodeProbe, List<Integer> visitedNodes, int loopTimes) throws SavException {
 		CfgNode node = nodeProbe.getNode();
-		if (needToLearn(nodeProbe)) {
+		if (needToLearn2(nodeProbe)) {
 			List<CfgNode> dominators = getDominators(node);
 			for (CfgNode dominator : dominators) {
 				/* 

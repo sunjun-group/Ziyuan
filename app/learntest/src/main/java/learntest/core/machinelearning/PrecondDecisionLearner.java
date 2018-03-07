@@ -109,7 +109,7 @@ public class PrecondDecisionLearner extends AbstractDecisionLearner {
 			throws SavException {
 		DecisionProbes probes = nodeProbe.getDecisionProbes();
 		CfgNode node = nodeProbe.getNode();
-		if (needToLearn(nodeProbe)) {
+		if (needToLearn2(nodeProbe)) {
 			List<ExecVar> targetVars;
 //			relevantVars = null;
 			if (relevantVars != null) {
