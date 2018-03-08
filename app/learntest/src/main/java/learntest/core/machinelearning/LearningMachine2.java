@@ -38,6 +38,7 @@ import sav.common.core.formula.LIAAtom;
 import sav.common.core.formula.LIATerm;
 import sav.common.core.formula.utils.FormulaConjunction;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -250,10 +251,14 @@ public class LearningMachine2 extends PositiveSeparationMachine {
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (svm_model learnModel : models) {
 			if (learnModel != null) {
-				Divider divider = new Model(learnModel, getNumberOfFeatures()).getExplicitDivider();
-				if (divider != null) {
-					divider = divider.round();
-					roundDividers.add(divider);
+				try {
+					Divider divider = new Model(learnModel, getNumberOfFeatures()).getExplicitDivider();
+					if (divider != null) {
+						divider = divider.round();
+						roundDividers.add(divider);
+					}
+				}catch (Exception e){
+					log.debug(TextFormatUtils.printObj(e.getStackTrace()));
 				}
 			}
 		}
