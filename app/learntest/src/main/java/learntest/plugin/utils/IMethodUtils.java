@@ -42,10 +42,13 @@ public class IMethodUtils {
 			return 0;
 		}
 		List<?> statements = method.getBody().statements();
+		
 		ASTNode firstStatement = (ASTNode) statements.get(0);
 		ASTNode lastStatement = (ASTNode) statements.get(statements.size() - 1);
-		return cu.getLineNumber(lastStatement.getStartPosition())
-				- cu.getLineNumber(firstStatement.getStartPosition());
+		int length = cu.getLineNumber(method.getStartPosition() + method.getLength()) - cu.getLineNumber(firstStatement.getStartPosition());
+//		return cu.getLineNumber(lastStatement.getStartPosition())
+//				- cu.getLineNumber(firstStatement.getStartPosition());
+		return length;
 	}
 	
 	public static String getMethodId(CompilationUnit cu, MethodDeclaration method) {
@@ -83,3 +86,4 @@ public class IMethodUtils {
 		return method;
 	}
 }
+
