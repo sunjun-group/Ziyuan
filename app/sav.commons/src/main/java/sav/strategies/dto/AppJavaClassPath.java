@@ -106,4 +106,8 @@ public class AppJavaClassPath {
 	public ClassLoader getClassLoader() {
 		return getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
 	}
+	
+	public void clearClasspath() {
+		classpaths.clear();
+	}
 }

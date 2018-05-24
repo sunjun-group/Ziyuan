@@ -278,7 +278,6 @@ public class TestSeqGenerator {
 		}
 		IType type = typeMap.get(classMap.get(varId));
 		if (variable == null) {
-			/* TODO NICE TO HAVE-LLT: fix duplicate code */
 			variable = arrayValueGenerator.generate(type, firstVarIdx, arrayLength);
 			firstVarIdx += variable.getNewVariables().size();
 			varMap.put(varId, variable);

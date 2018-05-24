@@ -172,4 +172,18 @@ public class StringUtils {
 	public static String[] dotSplit(String str) {
 		return str.split("\\.");
 	}
+	
+	public static String subString(String str, String startToken, String endToken) {
+		int si = str.indexOf(startToken);
+		if (si < 0) {
+			return EMPTY;
+		}
+		si += startToken.length();
+		int ei = str.indexOf(endToken, si);
+		if (ei < 0) {
+			return EMPTY;
+		}
+		String subStr = str.substring(si, ei).trim();
+		return subStr;
+	}
 }

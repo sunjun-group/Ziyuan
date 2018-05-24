@@ -261,4 +261,9 @@ public class VMRunner {
 	public Process getProcess() {
 		return process;
 	}
+	
+	public String getCommandLinesString(VMConfiguration config) throws SavException {
+		List<String> commands = buildCommandsFromConfiguration(config);
+		return StringUtils.join(commands, " ");
+	}
 }
