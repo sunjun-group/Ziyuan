@@ -19,10 +19,9 @@ public abstract class ServerOutputReader extends AbstractStatefulStream {
 	public abstract boolean isMatched(String line);
 
 	public synchronized void read(BufferedReader br) {
-		synchronized (state) {
+		synchronized (this) {
 			waiting();
 			readData(br);
-			ready();
 		}
 	}
 

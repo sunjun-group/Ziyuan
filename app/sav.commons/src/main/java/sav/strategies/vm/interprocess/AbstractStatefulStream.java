@@ -13,35 +13,49 @@ package sav.strategies.vm.interprocess;
  * a marker stream used to communicate with server.
  */
 public class AbstractStatefulStream {
-	protected volatile StreamState state;
+	protected volatile StreamState state = StreamState.CLOSED;
 	
 	protected void ready() {
-		this.state = StreamState.READY;
+		synchronized (this) {
+			this.state = StreamState.READY;
+		}
 	}
 	
 	protected void waiting() {
-		this.state = StreamState.WAITING;
+		synchronized (this) {
+			this.state = StreamState.WAITING;
+		}
 	}
 	
 	public void close() {
-		this.state = StreamState.CLOSED;
+		synchronized (this) {
+			this.state = StreamState.CLOSED;
+		}
 	}
 	
 	public boolean isClosed() {
-		return this.state == StreamState.CLOSED;
+		synchronized (this) {
+			return this.state == StreamState.CLOSED;
+		}
 	}
 
 	public boolean isReady() {
-		return this.state == StreamState.READY;
+		synchronized (this) {
+			return this.state == StreamState.READY;
+		}
 	}
 	
 	public boolean isWaiting() {
-		return this.state == StreamState.WAITING;
+		synchronized (this) {
+			return this.state == StreamState.WAITING;
+		}
 	}
 	
 	public void open() {
-		if (this.state == StreamState.CLOSED) {
-			this.state = StreamState.WAITING;
+		synchronized (this) {
+			if (this.state == StreamState.CLOSED) {
+				this.state = StreamState.WAITING;
+			}
 		}
 	}
 }
