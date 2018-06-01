@@ -89,14 +89,18 @@ public class EvoJavaFileAdaptor {
 		}
 	}
 
-	public void enableMethod(int line) throws Exception {
-		int lineIdx = methodStartLineMap.get(line);
+	public boolean enableMethod(int line) throws Exception {
+		Integer lineIdx = methodStartLineMap.get(line);
+		if (lineIdx == null) {
+			return false;
+		}
 		revertPrevIncludeLine();
 		String code = content.get(lineIdx);
 		code = code.replace(EXCLUDE_ANNOTATION, INCLUDE_ANNOTATION);
 		content.set(lineIdx, code);
 		prevIncludeLine = lineIdx;
 		updateFile();
+		return true;
 	}
 
 	private void updateFile() throws Exception {

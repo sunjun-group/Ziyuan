@@ -22,6 +22,7 @@ import evosuite.core.commons.CoverageUtils;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.JavaCompiler;
@@ -65,10 +66,13 @@ public class EvosuitEvaluation {
 
 						/* modify java file */
 						line = targetClass.getMethodStartLines().get(i);
-						adaptor.enableMethod(line);
+						if (!adaptor.enableMethod(line)) {
+							continue;
+						}
+						log.debug("Run Evosuite for " + targetClass.getMethodFullName(i) + "." + targetClass.getMethodStartLines().get(i));
 						javaCompiler.compile(appClasspath.getTarget(), adaptor.getSourceFile());
 						
-						/* run evosuit */
+						/* run evosuite */
 						EvosuitParams params = new EvosuitParams();
 						params.setClasspath(appClasspath.getClasspathStr());
 						params.setTargetClass(targetClass.getClassName());
@@ -76,11 +80,13 @@ public class EvosuitEvaluation {
 						params.setMethodPosition(adaptor.getStartLine(line), adaptor.getEndLine(line));
 						params.setBaseDir(config.getEvoBaseDir());
 						EvosuiteResult result = EvosuiteRunner.run(evosuiteConfig, params);
-						CfgCoverage coverage = coverageCounter.calculateCoverage(config, targetClass.generatePackage(i), result);
-						result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
-						System.out.println("Coverage calculated by Ziyuan: " + result.branchCoverage);
-						result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
-						System.out.println(StringUtils.newLineJoin(result.coverageInfo));
+						if (result.targetMethod != null) {
+							CfgCoverage coverage = coverageCounter.calculateCoverage(config, targetClass.generatePackage(i), result);
+							result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
+							System.out.println("Coverage calculated by Ziyuan: " + result.branchCoverage);
+							result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
+							System.out.println(StringUtils.newLineJoin(result.coverageInfo));
+						}
 						config.updateResult(targetClass.getMethodFullName(i), line, result);
 					} catch (Exception e) {
 						revert(adaptor);
@@ -125,7 +131,7 @@ public class EvosuitEvaluation {
 						targetClass.setClassName(className);
 						map.put(className, targetClass);
 					}
-					targetClass.addMethod(name, pair.b, line, classMethod);
+					targetClass.addMethod(name, pair.b, line, className + "." + SignatureUtils.extractMethodName(pair.b));
 				} else {
 					throw new IllegalArgumentException();
 				}

@@ -19,6 +19,7 @@ public class ByteConverter {
 			out = new ObjectOutputStream(bos);
 			out.writeObject(object);
 			bytes = bos.toByteArray();
+			bos.flush();
 		} finally {
 			if (bos != null) {
 				bos.close();

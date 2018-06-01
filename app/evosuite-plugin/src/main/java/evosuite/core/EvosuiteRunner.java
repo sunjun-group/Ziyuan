@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.io.IOUtils;
 import org.evosuite.result.BranchInfo;
@@ -41,24 +43,30 @@ import sav.strategies.vm.VMRunner;
  */
 public class EvosuiteRunner {
 	private static Logger log = LoggerFactory.getLogger(EvosuiteRunner.class);
+	private static ExecutorService executorService = Executors.newCachedThreadPool(); 
 	
 	@SuppressWarnings("unchecked")
 	public static EvosuiteResult run(VMConfiguration vmConfig, EvosuitParams params)
 			throws SavException, IOException, ClassNotFoundException {
+		
+		
 		final VMRunner vmRunner = new VMRunner() {
 			@Override
 			public void setupInputStream(final InputStream is, final StringBuffer sb, boolean error) {
-				new Thread(new Runnable() {
+				executorService.execute(new Runnable() {
 					public void run() {
 						final InputStreamReader streamReader = new InputStreamReader(is);
 						BufferedReader br = new BufferedReader(streamReader);
 						try {
 							String line = null;
 							try {
-								while ((line = br.readLine()) != null) {
+								boolean stop = false;
+								while (!stop && (line = br.readLine()) != null) {
 									log.debug(line);
 									if (EvosuiteInvoker.END_TOKEN.equals(line)) {
-										process.destroy();
+										stop = true;
+										process.destroyForcibly();
+										break;
 									}
 								}
 							} catch (IOException e) {
@@ -71,13 +79,15 @@ public class EvosuiteRunner {
 						}
 						
 					}
-				}).start();
+				});
 			}
 		};
 		vmConfig.setLaunchClass(EvosuiteInvoker.class.getName());
 		File dumpFile = File.createTempFile("evosuiteResult", ".txt");
+		vmConfig.getProgramArgs().clear();
 		vmConfig.addProgramArgs(dumpFile.getAbsolutePath());
 		vmConfig.addProgramArgs(StringUtils.join(EvosuiteInvoker.CMD_SEPRATOR, (Object[]) params.getCommandLine()));
+		System.out.println(vmRunner.getCommandLinesString(vmConfig));
 		vmRunner.startAndWaitUntilStop(vmConfig);
 
 		DataInputStream reader = null;
@@ -106,10 +116,12 @@ public class EvosuiteRunner {
 					System.out.println("branch coverage: " + evoResult.branchCoverage);
 				}
 			}
+			if (evoResult.targetMethod == null) {
+				evoResult.targetMethod = params.getMethod();
+			}
 			dumpFile.delete();
 			return evoResult;
 		} finally {
-			close(stream);
 			close(reader);
 		}
 	}

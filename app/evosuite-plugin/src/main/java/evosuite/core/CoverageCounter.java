@@ -90,7 +90,7 @@ public class CoverageCounter {
 		info.allFiles = CollectionUtils.toArrayList((File[])(new File(junitNewFolder)).listFiles());
 		/* modify package */
 		for (File file : info.allFiles) {
-			modifyPackage(file, pkgDecl);
+			modifyJavaFile(file, pkgDecl);
 		}
 		/* compile */
 		jCompiler.compile(appClasspath.getTestTarget(), getAllJavaFiles(junitNewFolder));
@@ -101,29 +101,47 @@ public class CoverageCounter {
 		return org.apache.commons.io.FileUtils.listFiles(new File(folder), new String[] { "java" }, true);
 	}
 	
-	private void modifyPackage(File file, String newPkgDecl) {
+	private void modifyJavaFile(File file, String newPkgDecl) {
 		try {
 			List<String> lines = org.apache.commons.io.FileUtils.readLines(file);
-			int i = 0;
-			String newPkgLine = null;
-			for (; i < lines.size(); i++) {
-				String line = lines.get(i);
-				if (line.startsWith("package ")) {
-					int endDeclIdx = line.indexOf(";");
-					if (endDeclIdx == (line.length() - 1)) {
-						newPkgLine = newPkgDecl;
-					} else {
-						newPkgLine = new StringBuilder(newPkgDecl).append(line.substring(endDeclIdx + 1, line.length() - 1)).toString();
-					}
-					break;
-				}
-			}
-			lines.set(i, newPkgLine);
+			modifyPackage(lines, newPkgDecl);
+			modifyClassDeclaration(lines);
 			org.apache.commons.io.FileUtils.writeLines(file, lines);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new SavRtException(e);
 		}
+	}
+	
+	private void modifyPackage(List<String> lines, String newPkgDecl) {
+		int i = 0;
+		String newPkgLine = null;
+		for (; i < lines.size(); i++) {
+			String line = lines.get(i);
+			if (line.startsWith("package ")) {
+				int endDeclIdx = line.indexOf(";");
+				if (endDeclIdx == (line.length() - 1)) {
+					newPkgLine = newPkgDecl;
+				} else {
+					newPkgLine = new StringBuilder(newPkgDecl).append(line.substring(endDeclIdx + 1, line.length() - 1)).toString();
+				}
+				break;
+			}
+		}
+		lines.set(i, newPkgLine);
+	}
+	
+	private void modifyClassDeclaration(List<String> lines) {
+		int i = 0;
+		String newLine = null;
+		for (; i < lines.size(); i++) {
+			String line = lines.get(i);
+			if (line.startsWith("public class ")) {
+				newLine = new StringBuilder("@SuppressWarnings(\"deprecation\")   ").append(line).toString();
+				break;
+			}
+		}
+		lines.set(i, newLine);
 	}
 
 	private static class FilesInfo {
