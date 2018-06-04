@@ -45,6 +45,7 @@ public class CfgJaCoCo {
 	private AppJavaClassPath appClasspath;
 	private ExecutionReporter reporter;
 	private Map<String, CfgCoverage> cfgCoverageMap;
+	private long timeout = -1;
 	
 	public CfgJaCoCo(AppJavaClassPath appClasspath) {
 		this.appClasspath = appClasspath;
@@ -81,6 +82,9 @@ public class CfgJaCoCo {
 		params.setTargetClassNames(targetClassNames);
 		params.setJunitClassNames(junitClassNames, appClasspath.getPreferences().<ClassLoader>get(SystemVariables.PROJECT_CLASSLOADER));
 		params.setUsingSimpleRunner(usingSimpleRunner);
+		if (timeout > 0) {
+			params.setTimeout(timeout);
+		}
 		return run(params);
 	}
 	
@@ -194,5 +198,9 @@ public class CfgJaCoCo {
 	 */
 	public void setCfgCoverageMap(Map<String, CfgCoverage> cfgCoverageMap) {
 		this.cfgCoverageMap = cfgCoverageMap;
+	}
+	
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 }

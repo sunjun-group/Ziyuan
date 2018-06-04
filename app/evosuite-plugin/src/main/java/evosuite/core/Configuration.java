@@ -11,14 +11,12 @@ package evosuite.core;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
-import sav.strategies.dto.AppJavaClassPath;
 
 /**
  * @author LLT
@@ -60,7 +58,10 @@ public class Configuration {
 			List<?> objs = org.apache.commons.io.FileUtils.readLines(new File(targetMethodListFile));
 			List<String> lines = new ArrayList<String>(objs.size());
 			for (Object obj : objs) {
-				lines.add((String) obj);
+				String line = (String) obj;
+				if (!line.startsWith("#")) {
+					lines.add(line);
+				}
 			}
 			return lines;
 		} catch (IOException e) {

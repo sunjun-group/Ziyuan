@@ -69,7 +69,7 @@ public class EvosuitEvaluation {
 						if (!adaptor.enableMethod(line)) {
 							continue;
 						}
-						log.debug("Run Evosuite for " + targetClass.getMethodFullName(i) + "." + targetClass.getMethodStartLines().get(i));
+						log.debug("Run Evosuite for method " + i + "th: " + targetClass.getMethodFullName(i) + "." + targetClass.getMethodStartLines().get(i));
 						javaCompiler.compile(appClasspath.getTarget(), adaptor.getSourceFile());
 						
 						/* run evosuite */

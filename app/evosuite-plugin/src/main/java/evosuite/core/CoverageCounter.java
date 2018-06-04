@@ -49,6 +49,7 @@ public class CoverageCounter {
 		try {
 			System.out.println();
 			CfgJaCoCo cfgJacoco = new CfgJaCoCo(appClasspath);
+			cfgJacoco.setTimeout(5000l);
 			FilesInfo info = lookupJunitClasses(config, newPkg);
 			Map<String, CfgCoverage> cfgCoverage = cfgJacoco.runBySimpleRunner(extractTargetMethod(result),
 					extractTargetClass(result), info.junitClasses);

@@ -37,6 +37,7 @@ public class RunSingleProjectHandler extends AbstractHandler {
 				} finally {
 					monitor.done();
 				}
+				log.info("Complete!");
 				return Status.OK_STATUS;
 			}
 
