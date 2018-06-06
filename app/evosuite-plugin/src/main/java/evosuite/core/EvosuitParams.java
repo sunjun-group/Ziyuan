@@ -8,7 +8,6 @@
 
 package evosuite.core;
 
-import sav.common.core.Pair;
 import sav.strategies.vm.ProgramArgumentBuilder;
 
 /**

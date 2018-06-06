@@ -36,7 +36,6 @@ import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import libsvm.extension.MultiNotOrDividerBasedCategoryCalculator;
 import libsvm.extension.MultiOrDividerBasedCategoryCalculator;
 import sav.common.core.Pair;
-import sav.common.core.formula.False;
 import sav.common.core.formula.OrFormula;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecVar;
