@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package cfgcoverage.jacoco.utils;
+package cfg.analysis;
 
 import org.objectweb.asm.Opcodes;
 

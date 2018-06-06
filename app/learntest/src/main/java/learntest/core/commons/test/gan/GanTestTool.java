@@ -12,9 +12,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import cfg.CfgNode;
+import cfg.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.LearnTestApproach;

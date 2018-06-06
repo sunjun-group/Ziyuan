@@ -19,9 +19,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
+import cfg.BranchRelationship;
+import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;

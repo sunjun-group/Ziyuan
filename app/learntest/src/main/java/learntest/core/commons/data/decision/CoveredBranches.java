@@ -8,8 +8,8 @@
 
 package learntest.core.commons.data.decision;
 
-import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
+import cfg.BranchCoveredType;
+import cfg.BranchRelationship;
 import sav.common.core.utils.Assert;
 
 /**

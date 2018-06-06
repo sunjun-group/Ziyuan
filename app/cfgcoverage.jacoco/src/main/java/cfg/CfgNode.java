@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package cfgcoverage.jacoco.analysis.data;
+package cfg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 
-import cfgcoverage.jacoco.utils.OpcodeUtils;
+import cfg.analysis.OpcodeUtils;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 

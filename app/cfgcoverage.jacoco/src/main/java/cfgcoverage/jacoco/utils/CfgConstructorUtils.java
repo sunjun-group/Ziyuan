@@ -16,10 +16,10 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
-import cfgcoverage.jacoco.analysis.data.CFG;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.BranchRelationship;
+import cfg.CFG;
+import cfg.CfgNode;
+import cfg.DecisionBranchType;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;

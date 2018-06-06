@@ -20,7 +20,7 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.CfgNode;
 import learntest.core.AbstractLearningComponent;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.CoveredBranches;

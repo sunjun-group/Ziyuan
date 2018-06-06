@@ -15,14 +15,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cfgcoverage.jacoco.analysis.data.CFG;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.jacoco.utils.OpcodeUtils;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import cfg.CFG;
+import cfg.CfgNode;
+import cfg.analysis.OpcodeUtils;
 import learntest.core.BreakpointCreator;
 import sav.common.core.utils.Assert;
 import sav.strategies.dto.BreakPoint;

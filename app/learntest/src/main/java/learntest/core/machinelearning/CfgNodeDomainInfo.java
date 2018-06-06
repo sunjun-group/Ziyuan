@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.CfgNode;
 
 /** 
 * @author ZhangHr 

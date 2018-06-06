@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.CfgNode;
 
 /** 
 * @author ZhangHr 

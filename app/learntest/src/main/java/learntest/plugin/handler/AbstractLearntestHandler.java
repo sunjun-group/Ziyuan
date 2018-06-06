@@ -45,8 +45,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.CfgNode;
+import cfg.DecisionBranchType;
 import icsetlv.common.dto.BreakpointValue;
 import jdart.core.JDartCore;
 import learntest.core.JDartLearntest;

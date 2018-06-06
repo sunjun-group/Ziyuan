@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;

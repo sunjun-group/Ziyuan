@@ -13,9 +13,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
-import cfgcoverage.jacoco.analysis.data.CFG;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.BranchRelationship;
+import cfg.CFG;
+import cfg.CfgNode;
 import cfgcoverage.jacoco.utils.CfgConstructorUtils;
 import sav.common.core.utils.CollectionUtils;
 

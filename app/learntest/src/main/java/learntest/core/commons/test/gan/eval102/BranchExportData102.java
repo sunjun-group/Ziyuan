@@ -11,7 +11,7 @@ package learntest.core.commons.test.gan.eval102;
 import java.util.ArrayList;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.DecisionBranchType;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 

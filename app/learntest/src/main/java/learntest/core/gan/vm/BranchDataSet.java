@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.DecisionBranchType;
 import sav.common.core.utils.TextFormatUtils;
 
 /**

@@ -18,8 +18,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.CfgNode;
+import cfg.DecisionBranchType;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.INodeCoveredData;

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
+import cfg.BranchRelationship;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.ExecValueUtils;
 import learntest.core.commons.data.decision.DecisionNodeProbe;

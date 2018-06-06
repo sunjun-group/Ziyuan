@@ -13,7 +13,10 @@ import java.util.Set;
 
 import org.jacoco.core.internal.flow.Instruction;
 
-import cfgcoverage.jacoco.utils.OpcodeUtils;
+import cfg.BranchRelationship;
+import cfg.CfgNode;
+import cfg.DecisionBranchType;
+import cfg.analysis.OpcodeUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**

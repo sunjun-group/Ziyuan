@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgextractor.CFGBuilder;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearntestParamsUtils.GenTestPackage;

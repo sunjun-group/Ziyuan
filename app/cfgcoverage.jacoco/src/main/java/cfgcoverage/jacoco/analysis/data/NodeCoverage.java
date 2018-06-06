@@ -16,6 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import cfg.BranchCoveredType;
+import cfg.CfgNode;
+
 import java.util.Set;
 
 import sav.common.core.utils.CollectionUtils;

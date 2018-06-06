@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package cfgcoverage.jacoco.analysis.data;
+package cfg;
 
 import java.util.ArrayList;
 import java.util.List;

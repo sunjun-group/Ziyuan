@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.machinelearning.CfgNodeDomainInfo;
 import learntest.core.machinelearning.FormulaInfo;

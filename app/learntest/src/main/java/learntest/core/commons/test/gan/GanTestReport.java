@@ -10,8 +10,8 @@ package learntest.core.commons.test.gan;
 
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.CfgNode;
+import cfg.DecisionBranchType;
 import learntest.core.LearnTestParams;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.sampling.SamplingResult;

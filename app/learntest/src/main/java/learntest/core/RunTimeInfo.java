@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.DecisionBranchType;
 import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.machinelearning.IInputLearner;
 import sav.common.core.Pair;

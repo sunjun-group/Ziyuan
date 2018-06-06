@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.DecisionBranchType;
 import learntest.core.gan.vm.BranchDataSet.Category;
 import learntest.core.gan.vm.GanInputWriter.IGanInput;
 import learntest.core.gan.vm.GanInputWriter.RequestType;

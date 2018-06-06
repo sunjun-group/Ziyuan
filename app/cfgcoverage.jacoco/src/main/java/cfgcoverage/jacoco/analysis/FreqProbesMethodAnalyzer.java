@@ -23,10 +23,10 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.BranchRelationship;
+import cfg.DecisionBranchType;
+import cfg.analysis.OpcodeUtils;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
-import cfgcoverage.jacoco.utils.OpcodeUtils;
 
 /**
  * @author LLT

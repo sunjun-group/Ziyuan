@@ -20,9 +20,9 @@ import org.objectweb.asm.tree.MethodNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.CFG;
+import cfg.CFG;
+import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.utils.CfgConstructorUtils;

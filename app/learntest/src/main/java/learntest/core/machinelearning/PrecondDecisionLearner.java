@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.CfgNode;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;

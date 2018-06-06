@@ -10,7 +10,7 @@ package learntest.core.gan.vm;
 
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
+import cfg.DecisionBranchType;
 import learntest.core.gan.vm.BranchDataSet.Category;
 import sav.common.core.SavException;
 import sav.common.core.utils.Assert;

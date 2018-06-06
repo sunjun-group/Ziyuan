@@ -3,7 +3,7 @@ package learntest.core.machinelearning;
 import java.util.LinkedList;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.CfgNode;
 import learntest.plugin.utils.Settings;
 
 /**

@@ -10,7 +10,7 @@ package learntest.core.commons.data.decision;
 
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.machinelearning.calculator.OrCategoryCalculator;

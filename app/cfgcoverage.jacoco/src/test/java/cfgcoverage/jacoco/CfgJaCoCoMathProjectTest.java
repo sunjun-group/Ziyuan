@@ -17,9 +17,9 @@ import java.util.Set;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories.ExcludeCategory;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
+import cfg.BranchRelationship;
+import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.test.utils.ProjClassLoader;
 import sav.common.core.SystemVariables;

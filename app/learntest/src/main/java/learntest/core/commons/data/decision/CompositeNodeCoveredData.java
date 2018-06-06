@@ -11,7 +11,7 @@ package learntest.core.commons.data.decision;
 import java.util.ArrayList;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.BranchCoveredType;
+import cfg.BranchCoveredType;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.CollectionUtils;

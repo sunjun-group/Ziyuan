@@ -6,11 +6,11 @@
  *  Version:  $Revision: 1 $
  */
 
-package cfgcoverage.jacoco.analysis.data;
+package cfg;
 
 /**
  * @author LLT
- *
+ * the branchRelationship is at bytecode level, not sourcecode
  */
 public enum BranchRelationship {
 	FALSE,

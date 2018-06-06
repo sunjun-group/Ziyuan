@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+import cfg.BranchRelationship;
+import cfg.CfgNode;
 import libsvm.core.CategoryCalculator;
 import libsvm.core.Divider;
 import sav.common.core.formula.Formula;

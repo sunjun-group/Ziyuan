@@ -1,6 +1,6 @@
 package learntest.core.commons.data.decision;
 
-import cfgcoverage.jacoco.analysis.data.BranchRelationship;
+import cfg.BranchRelationship;
 
 public enum BranchType {
 	FALSE,

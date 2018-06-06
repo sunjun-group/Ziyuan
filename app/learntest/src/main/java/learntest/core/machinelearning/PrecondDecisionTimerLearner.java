@@ -11,7 +11,8 @@ package learntest.core.machinelearning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import cfgcoverage.jacoco.analysis.data.CfgNode;
+
+import cfg.CfgNode;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.utils.CoverageUtils;

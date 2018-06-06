@@ -18,9 +18,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cfg.DecisionBranchType;
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import cfgcoverage.jacoco.analysis.data.DecisionBranchType;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.DefaultValues;
