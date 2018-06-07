@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import cfg.CFG;
 import cfg.CfgNode;
+import cfg.utils.CfgConstructorUtils;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
-import cfgcoverage.jacoco.utils.CfgConstructorUtils;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import codecoverage.jacoco.agent.JaCoCoUtils;
 import sav.common.core.utils.Assert;

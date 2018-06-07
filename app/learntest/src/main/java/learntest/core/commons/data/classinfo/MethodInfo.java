@@ -24,7 +24,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import cfg.CFG;
 import cfg.CfgNode;
-import cfg.analysis.OpcodeUtils;
+import cfg.utils.OpcodeUtils;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;

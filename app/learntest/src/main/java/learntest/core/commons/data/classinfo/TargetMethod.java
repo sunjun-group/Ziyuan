@@ -23,7 +23,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import cfg.CFG;
 import cfg.CfgNode;
-import cfg.analysis.OpcodeUtils;
+import cfg.utils.OpcodeUtils;
 import learntest.core.BreakpointCreator;
 import sav.common.core.utils.Assert;
 import sav.strategies.dto.BreakPoint;

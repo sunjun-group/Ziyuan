@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package cfg.analysis;
+package cfg.utils;
 
 import org.objectweb.asm.Opcodes;
 

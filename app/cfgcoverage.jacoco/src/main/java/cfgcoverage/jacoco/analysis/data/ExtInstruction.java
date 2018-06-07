@@ -16,7 +16,7 @@ import org.jacoco.core.internal.flow.Instruction;
 import cfg.BranchRelationship;
 import cfg.CfgNode;
 import cfg.DecisionBranchType;
-import cfg.analysis.OpcodeUtils;
+import cfg.utils.OpcodeUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**

@@ -25,7 +25,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import cfg.BranchRelationship;
 import cfg.DecisionBranchType;
-import cfg.analysis.OpcodeUtils;
+import cfg.utils.OpcodeUtils;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 
 /**

@@ -15,8 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
 
-import cfg.analysis.OpcodeUtils;
+import cfg.utils.OpcodeUtils;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 
@@ -47,8 +48,8 @@ public class CfgNode {
 	
 	/* dominatees are decision nodes which controls this node, if this node is not a decision node,
 	 * then its dominatee will be the previous decision node */
-	private Set<CfgNode> dominatees;
-	private Set<CfgNode> loopDominatees;
+	private Set<CfgNode> dominators;
+	private Set<CfgNode> loopDominators;
 	/*
 	 * dependentees is only not null if node is a decision node, dependentees
 	 * are decision nodes which under control of this node
@@ -57,6 +58,7 @@ public class CfgNode {
 	private Set<CfgNode> loopDependentees;
 	/* keep type of relationship between this node with other nodes */
 	private Map<Integer, BranchRelationship> branchTypes = new HashMap<Integer, BranchRelationship>();
+	private List<SwitchCase> switchCases;
 	
 	public CfgNode(AbstractInsnNode insnNode, int line) {
 		predecessors = new ArrayList<CfgNode>();
@@ -158,7 +160,17 @@ public class CfgNode {
 				sb.append("(").append(trueBranchId).append("=").append(getBranchRelationship(trueBranchId))
 					.append(",").append(falseBranchId).append("=").append(getBranchRelationship(falseBranchId))
 					.append(")");
+			} 
+		} else if (insnNode instanceof JumpInsnNode) {
+			sb.append(", jumpTo {");
+			for (int i = 0; i < branches.size(); i++) {
+				CfgNode branch = branches.get(i);
+				sb.append(branch.getIdx());
+				if (i != branches.size() - 1) {
+					sb.append(", ");
+				}
 			}
+			sb.append("}");
 		}
 		if (isLoopHeader()) {
 			sb.append(", loopHeader");
@@ -211,13 +223,13 @@ public class CfgNode {
 	 * @param node
 	 * @param branchType 
 	 */
-	public void addDominatee(CfgNode node, boolean loop, BranchRelationship branchType) {
+	public void addDominator(CfgNode node, boolean loop, BranchRelationship branchType) {
 		if (loop) {
-			loopDominatees = CollectionUtils.initIfEmpty(loopDominatees);
-			loopDominatees.add(node);
+			loopDominators = CollectionUtils.initIfEmpty(loopDominators);
+			loopDominators.add(node);
 		} else {
-			dominatees = CollectionUtils.initIfEmpty(dominatees);
-			dominatees.add(node);
+			dominators = CollectionUtils.initIfEmpty(dominators);
+			dominators.add(node);
 			addBranchRelationship(node, branchType);
 		}
 	}
@@ -244,12 +256,12 @@ public class CfgNode {
 		return loopHeaders;
 	}
 
-	public Set<CfgNode> getDominatees() {
-		return dominatees;
+	public Set<CfgNode> getDominators() {
+		return dominators;
 	}
 
-	public Set<CfgNode> getLoopDominatees() {
-		return loopDominatees;
+	public Set<CfgNode> getLoopDominators() {
+		return loopDominators;
 	}
 
 	public Set<CfgNode> getDependentees() {
@@ -334,4 +346,13 @@ public class CfgNode {
 		}
 		return null;
 	}
+
+	public List<SwitchCase> getSwitchCases() {
+		return switchCases;
+	}
+
+	public void setSwitchCases(List<SwitchCase> switchCases) {
+		this.switchCases = switchCases;
+	}
+	
 }

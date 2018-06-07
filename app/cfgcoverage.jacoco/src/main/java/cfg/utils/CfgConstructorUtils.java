@@ -6,9 +6,10 @@
  *  Version:  $Revision: 1 $
  */
 
-package cfgcoverage.jacoco.utils;
+package cfg.utils;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -135,7 +136,7 @@ public class CfgConstructorUtils {
 				while (child != null && child != node) {
 					/* if the branch of node is actually its loop header, then add */
 					boolean childIsLoopHeaderOfNode = child.isLoopHeaderOf(node);
-					child.addDominatee(node, childIsLoopHeaderOfNode, branchType);
+					child.addDominator(node, childIsLoopHeaderOfNode, branchType);
 					if (child.isDecisionNode()) {
 						node.addDependentee(child, childIsLoopHeaderOfNode, branchType);
 						break;
@@ -151,9 +152,9 @@ public class CfgConstructorUtils {
 		
 		/* copy dominatees of parent node to each node */
 		CfgNode root = getVeryFirstDecisionNode(decisionNodes);
-		Assert.assertNotNull(root, "fail to loop up the first decision node!");
+		Assert.assertNotNull(root, "fail to look up the first decision node!");
 		updateDependentees(root);
-		updateDominatees(decisionNodes);
+		updateDominators(cfg);
 	}
 
 	private static void updateDependentees(CfgNode root) {
@@ -179,7 +180,7 @@ public class CfgConstructorUtils {
 				if (!visited.contains(dependentee)) {
 					allDependenteesVisited = false;
 					if (visitStack.contains(dependentee)) {
-						log.debug("suspicious dependency!!: dependentee[{}], lastNode[{}]", dependentee,
+						log.debug("warning: suspicious dependency!!: dependentee[{}], lastNode[{}]", dependentee,
 								lastNode);
 					}
 					visitStack.push(dependentee);
@@ -197,16 +198,23 @@ public class CfgConstructorUtils {
 		}
 	}
 	
-	/**
-	 * @param decisionNodes
-	 */
-	private static void updateDominatees(List<CfgNode> decisionNodes) {
-		for (CfgNode node : decisionNodes) {
+	private static void updateDominators(CFG cfg) {
+		for (CfgNode node : cfg.getDecisionNodes()) {
 			if (node.getDependentees() == null) {
 				continue;
 			}
 			for (CfgNode dependentee : node.getDependentees()) {
-				dependentee.addDominatee(node, false, node.getBranchRelationship(dependentee.getIdx()));
+				dependentee.addDominator(node, false, node.getBranchRelationship(dependentee.getIdx()));
+			}
+		}
+		/* update branch relationship with decision node for not decision nodes */
+		for (CfgNode node : cfg.getNodeList()) {
+			if (!node.isDecisionNode()) {
+				for (CfgNode directDominator : CollectionUtils.nullToEmpty(node.getDominators())) {
+					for (CfgNode indirectDominator : CollectionUtils.nullToEmpty(directDominator.getDominators())) {
+						node.addBranchRelationship(indirectDominator, directDominator.getBranchRelationship(indirectDominator.getIdx()));
+					}
+				}
 			}
 		}
 	}
@@ -218,7 +226,7 @@ public class CfgConstructorUtils {
 	public static CfgNode getVeryFirstDecisionNode(List<CfgNode> decisionNodes) {
 		Assert.assertTrue(CollectionUtils.isNotEmpty(decisionNodes), "cfg has no decisionNode!");
 		CfgNode first = decisionNodes.get(0);
-		if (first.getDominatees() == null) {
+		if (first.getDominators() == null) {
 			return first;
 		}
 		
@@ -227,10 +235,42 @@ public class CfgConstructorUtils {
 			throw new SavRtException("first decision node has dominatee but not inside a loop! " + first.toString());
 		}
 		for (CfgNode loopHeader : first.getLoopHeaders()) {
-			if (loopHeader.getDominatees() == null) {
+			if (loopHeader.getDominators() == null) {
 				return loopHeader;
 			}
 		}
 		throw new SavRtException("could not find the very root node of cfg!");
+	}
+	
+	/**
+	 * control dependency graph. 
+	 * TODO LLT: this is just draft, so-called "branchRelationship" must be implemented correctly according to
+	 * control dependency concept. 
+	 */
+	public static void toCDG(CFG cfg) {
+		if (cfg.isCDG()) {
+			return;
+		}
+		for (CfgNode node : cfg.getNodeList()) {
+			/* dominator - dependentee */
+			Iterator<CfgNode> it = node.getDominators().iterator();
+			while (it.hasNext()) {
+				CfgNode dominator = it.next();
+				if (node.getBranchRelationship(dominator.getIdx()) == BranchRelationship.TRUE_FALSE) {
+					it.remove();
+					dominator.getDependentees().remove(node);
+				}
+			}
+			/* loopDominator - loopDependentee */
+			it = node.getLoopDominators().iterator();
+			while (it.hasNext()) {
+				CfgNode dominator = it.next();
+				if (node.getBranchRelationship(dominator.getIdx()) == BranchRelationship.TRUE_FALSE) {
+					it.remove();
+					dominator.getLoopDependentees().remove(node);
+				}
+			}
+		}
+		cfg.setCDG(true);
 	}
 }

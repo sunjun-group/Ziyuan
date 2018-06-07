@@ -24,6 +24,7 @@ public class CFG {
 	private List<CfgNode> exitList;
 	
 	private MethodNode methodNode;
+	private boolean isCDG = false;
 	
 	public CFG(String methodId) {
 		this.id = methodId;
@@ -73,7 +74,7 @@ public class CFG {
 
 	@Override
 	public String toString () {
-		return "CfgCoverage [nodeList=" + nodeList + ", \nstartNode=" + startNode + ",\n exitList=" + exitList
+		return "Cfg[nodeList=" + nodeList + ", \nstartNode=" + startNode + ",\n exitList=" + exitList
 				+ ", \nmethodNode=" + methodNode + "]";
 	}
 
@@ -90,10 +91,15 @@ public class CFG {
 		return decisionNodes;
 	}
 
-	/**
-	 * @return the id
-	 */
 	public String getId() {
 		return id;
+	}
+	
+	public boolean isCDG() {
+		return isCDG;
+	}
+	
+	public void setCDG(boolean isCDG) {
+		this.isCDG = isCDG;
 	}
 }

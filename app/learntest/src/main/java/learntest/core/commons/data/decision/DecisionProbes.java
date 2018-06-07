@@ -367,7 +367,7 @@ public class DecisionProbes extends CfgCoverage {
 
 			/* update node dominatees */
 			for (DecisionNodeProbe nodeProbe : nodeProbeMap.values()) {
-				Set<CfgNode> nodeDominatees = nodeProbe.getNode().getDominatees();
+				Set<CfgNode> nodeDominatees = nodeProbe.getNode().getDominators();
 				List<DecisionNodeProbe> dominatees = new ArrayList<DecisionNodeProbe>(
 						CollectionUtils.getSize(nodeDominatees));
 				if (nodeDominatees != null) {

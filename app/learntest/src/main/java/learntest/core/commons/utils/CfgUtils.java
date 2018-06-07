@@ -16,7 +16,7 @@ import java.util.List;
 import cfg.BranchRelationship;
 import cfg.CFG;
 import cfg.CfgNode;
-import cfgcoverage.jacoco.utils.CfgConstructorUtils;
+import cfg.utils.CfgConstructorUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -32,11 +32,11 @@ public class CfgUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Collection<CfgNode> getPrecondInherentDominatee(CfgNode node) {
-		if (node.getDominatees() == null) {
+		if (node.getDominators() == null) {
 			return Collections.EMPTY_LIST;
 		}
-		List<CfgNode> result = new ArrayList<CfgNode>(node.getDominatees().size());
-		for (CfgNode dominatee : CollectionUtils.nullToEmpty(node.getDominatees())) {
+		List<CfgNode> result = new ArrayList<CfgNode>(node.getDominators().size());
+		for (CfgNode dominatee : CollectionUtils.nullToEmpty(node.getDominators())) {
 			BranchRelationship branchRelationship = node.getBranchRelationship(dominatee.getIdx());
 			if (branchRelationship != BranchRelationship.TRUE_FALSE) {
 				result.add(dominatee);
