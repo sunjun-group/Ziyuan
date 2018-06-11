@@ -21,9 +21,9 @@ import java.util.Set;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.commons.utils.CoverageUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.common.core.utils.StringUtils;

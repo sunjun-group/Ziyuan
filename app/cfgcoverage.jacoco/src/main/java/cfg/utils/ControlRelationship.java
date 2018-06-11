@@ -67,9 +67,6 @@ public class ControlRelationship {
 
 	public static short weakMerge(short thisRelationship, short thatRelationship) {
 		short newRelationship = (short) (thisRelationship | thatRelationship);
-		if (newRelationship == 11 || newRelationship == 10) {
-			System.out.println("");
-		}
 		return newRelationship; 
 	}
 

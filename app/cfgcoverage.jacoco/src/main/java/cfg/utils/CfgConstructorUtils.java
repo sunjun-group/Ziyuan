@@ -288,10 +288,6 @@ public class CfgConstructorUtils {
 						}
 					}
 				}
-				/* inloop condition and outerloop nodes */
-				
-				
-				
 				visited.add(lastNode);
 				visitStack.pop();
 			}
