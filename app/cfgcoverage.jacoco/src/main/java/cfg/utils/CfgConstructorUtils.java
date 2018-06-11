@@ -8,16 +8,22 @@
 
 package cfg.utils;
 
+import static cfg.utils.ControlRelationship.BPD_FALSE;
+import static cfg.utils.ControlRelationship.BPD_TRUE;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfg.BranchRelationship;
 import cfg.CFG;
 import cfg.CfgNode;
 import cfg.DecisionBranchType;
@@ -37,30 +43,9 @@ public class CfgConstructorUtils {
 		updateExitNodes(cfg);
 		updateDecisionNodes(cfg);
 		updateNodesInLoop(cfg);
-		reconcileLoopHeaderBranches(cfg);
 		computeControlDependency(cfg);
 	}
 	
-	/**
-	 * before this, if the decision node is a loop header,
-	 * the false branch is outside the loop, but not be reached by a jump,
-	 * so it is not distinguished with other normal next nodes which are treated as a TRUES branch of current node.
-	 * So we have to check again and in the case that the branch is outside loop, we treat it as a TRUE_FALSE branch.
-	 * @param cfg
-	 */
-	private static void reconcileLoopHeaderBranches(CFG cfg) {
-		for (CfgNode node : cfg.getDecisionNodes()) {
-			if (!node.isLoopHeader()) {
-				continue;
-			}
-			for (CfgNode branch : node.getBranches()) {
-				if (!node.isLoopHeaderOf(branch)) {
-					node.addBranchRelationship(branch, BranchRelationship.FALSE);
-				}
-			}
-		}
-	}
-
 	public static void updateExitNodes(CFG cfg) {
 		for (CfgNode node : cfg.getNodeList()) {
 			if (node.isLeaf()) {
@@ -78,12 +63,44 @@ public class CfgConstructorUtils {
 			/* if firstIdx is not valid meaning node is not a loop header, we move to another node */
 			if (firstIdxOfLoopBlk != CfgNode.INVALID_IDX) {
 				CfgNode loopHeader = getLoopHeader(cfg.getNodeList(), node);
+				CfgNode firstNested = getAnotherCondNodeOfNestedLoopCond(cfg, loopHeader.getIdx(), firstIdxOfLoopBlk);
+				if (firstNested != null) {
+					CfgNode anotherLoopHeaderCandidate = findLoopHeaderOfNestedCond(cfg, firstIdxOfLoopBlk, firstNested, loopHeader);
+					if (anotherLoopHeaderCandidate != null) {
+						loopHeader = anotherLoopHeaderCandidate;
+					}
+				}
 				/* this decision node is loop header */
 				for (int j = firstIdxOfLoopBlk; j <= node.getIdx(); j++) {
 					cfg.getNode(j).addLoopHeader(loopHeader);
 				}
 			}
 		}
+	}
+	
+	private static CfgNode findLoopHeaderOfNestedCond(CFG cfg, int firstIdxOfLoopBlk, CfgNode firstNested, CfgNode loopHeader) {
+		for (int i = firstIdxOfLoopBlk; i < firstNested.getIdx(); i++) {
+			CfgNode node = cfg.getNode(i);
+			if (node.isDecisionNode()) {
+				for (CfgNode branch : node.getBranches()) {
+					if (branch.getIdx() < loopHeader.getIdx() && branch.getIdx() > firstNested.getIdx()) {
+						return node;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private static CfgNode getAnotherCondNodeOfNestedLoopCond(CFG cfg, int lastIdx, int backwardJumpIdx) {
+		CfgNode firstNestedCondNode = null;
+		for (int i = lastIdx - 1; i > 0; i--) {
+			CfgNode node = cfg.getNode(i);
+			if (node.getBackwardJumpIdx() == backwardJumpIdx) {
+				firstNestedCondNode = node;
+			}
+		}
+		return firstNestedCondNode;
 	}
 	
 	/**
@@ -128,36 +145,63 @@ public class CfgConstructorUtils {
 			return;
 		}
 		/* update dominatte for nodes between each decision node and next decision node/leaf node (included) */
-		for (CfgNode node : decisionNodes) {
-			for (CfgNode branch : node.getBranches()) {
-				CfgNode child = branch;
-				BranchRelationship branchType = node.getBranchRelationship(branch.getIdx());
-				/* iterate when child is not a leaf node or at the end of the loop */
-				while (child != null && child != node) {
-					/* if the branch of node is actually its loop header, then add */
-					boolean childIsLoopHeaderOfNode = child.isLoopHeaderOf(node);
-					child.addDominator(node, childIsLoopHeaderOfNode, branchType);
-					if (child.isDecisionNode()) {
-						node.addDependentee(child, childIsLoopHeaderOfNode, branchType);
-						break;
-					}
-					CfgNode next = child.getNext();
-					if (next == null || next.getIdx() < child.getIdx()) {
-						break;
-					}
-					child = next;
-				}
-			}
-		}
-		
+		setDecisionNodeDependenteesAndDirectLevelRelationship(decisionNodes);
 		/* copy dominatees of parent node to each node */
 		CfgNode root = getVeryFirstDecisionNode(decisionNodes);
 		Assert.assertNotNull(root, "fail to look up the first decision node!");
-		updateDependentees(root);
-		updateDominators(cfg);
+		
+		calculateControlDominators(root, cfg);
 	}
 
-	private static void updateDependentees(CfgNode root) {
+	/**
+	 * @param decisionNodes
+	 */
+	private static void setDecisionNodeDependenteesAndDirectLevelRelationship(List<CfgNode> decisionNodes) {
+		for (CfgNode node : decisionNodes) {
+			for (Entry<DecisionBranchType, CfgNode> entry : node.getDecisionBranches().entrySet()) {
+				CfgNode child = entry.getValue();
+				short relationshipToDecisionNode = ControlRelationship.getRelationshipToDecisionPrecessor(entry.getKey());
+				boolean completed = false;
+				/* iterate when child is not a leaf node or at the end of the loop */
+				while (child != null && child != node && !completed) {
+					/* if the branch of node is actually its loop header, then add */
+					boolean childIsLoopHeaderOfNode = child.isLoopHeaderOf(node);
+					node.setDecisionControlRelationship(child.getIdx(), ControlRelationship
+							.mergeBPD(node.getDecisionControlRelationship(child.getIdx()), relationshipToDecisionNode));
+					child.addDominator(node, childIsLoopHeaderOfNode);
+					if (child.isDecisionNode()) {
+						node.addDependentee(child, childIsLoopHeaderOfNode);
+						if (!childIsLoopHeaderOfNode) {
+							break;
+						}
+						boolean foundOutloop = false;
+						/* add outloop dependentees */
+						for (CfgNode loopHeaderBranch : child.getBranches()) {
+							if (!child.isLoopHeaderOf(loopHeaderBranch)) {
+								if (loopHeaderBranch.getIdx() < child.getIdx()) {
+									completed = true;
+								}
+								child = loopHeaderBranch;
+								foundOutloop = true;
+								break;
+							}
+						}
+						if (!foundOutloop) {
+							completed = true;
+						}
+					} else {
+						CfgNode next = child.getNext();
+						if (next == null || next.getIdx() < child.getIdx()) {
+							break;
+						}
+						child = next;
+					}
+				}
+			}
+		}
+	}
+
+	private static void calculateControlDominators(CfgNode root, CFG cfg) {
 		Set<CfgNode> visited = new HashSet<CfgNode>();
 		Stack<CfgNode> visitStack = new Stack<CfgNode>();
 		visitStack.push(root);
@@ -176,7 +220,7 @@ public class CfgConstructorUtils {
 			}
 			boolean allDependenteesVisited = true;
 			
-			for (CfgNode dependentee : lastNode.getDependentees()) {
+			for (CfgNode dependentee : getDependenteeSortByLoopHeader(lastNode)) {
 				if (!visited.contains(dependentee)) {
 					allDependenteesVisited = false;
 					if (visitStack.contains(dependentee)) {
@@ -186,37 +230,109 @@ public class CfgConstructorUtils {
 					visitStack.push(dependentee);
 				}
 			}
+			
 			if (allDependenteesVisited) {
 				/* update dependentees from its dependentees and remove from stack */
-				List<CfgNode> directDependentees = CollectionUtils.copy(lastNode.getDependentees());
-				for (CfgNode dependentee : directDependentees) {
-					lastNode.addChildsDependentees(dependentee);
+				for (CfgNode directDependentee : lastNode.getDependentees()) {
+					// lastNode.addChildsDependentees(dependentee);
+					short relationshipOfDirectDependenteeOnLastNode = lastNode.getDecisionControlRelationship(directDependentee.getIdx());
+					if (ControlRelationship.isPostDominance(relationshipOfDirectDependenteeOnLastNode)) {
+						for (Entry<Integer, Short> entry : directDependentee.getDecisionControlRelationships().entrySet()) {
+							CfgNode entryNode = cfg.getNode(entry.getKey());
+							if (isLoopHeaderPrecessor(lastNode, entryNode)) {
+								continue;
+							}
+							short relationship = 0;
+							if (ControlRelationship.isPostDominance(entry.getValue())) {
+								relationship = ControlRelationship.PD;
+							} else {
+								relationship = ControlRelationship.CD_TRUE_FALSE;
+							}
+							lastNode.setDecisionControlRelationship(entry.getKey(), relationship);
+							entryNode.updateDominator(lastNode, relationship);
+						}
+					} else {
+						for (Entry<Integer, Short> entry : directDependentee.getDecisionControlRelationships().entrySet()) {
+							CfgNode entryNode = cfg.getNode(entry.getKey());
+							if (isLoopHeaderPrecessor(lastNode, entryNode)) {
+								continue;
+							}
+							short relationship = lastNode.getDecisionControlRelationship(entry.getKey());
+							if (ControlRelationship.isPostDominance(entry.getValue())) {
+								relationship = ControlRelationship.weakMerge(relationship, relationshipOfDirectDependenteeOnLastNode);
+							} else {
+								if (relationshipOfDirectDependenteeOnLastNode == BPD_TRUE) {
+									relationship = ControlRelationship.weakMerge(relationship, ControlRelationship.CD_TRUE);
+								} else if (relationshipOfDirectDependenteeOnLastNode == BPD_FALSE) {
+									relationship = ControlRelationship.weakMerge(relationship, ControlRelationship.CD_FALSE);
+								}
+							}
+							lastNode.setDecisionControlRelationship(entry.getKey(), relationship);
+							entryNode.updateDominator(lastNode, relationship);
+						}
+					}
+					if (lastNode.getLoopHeaders() != null) {
+						for (CfgNode loopHeader : lastNode.getLoopHeaders()) {
+							if (!loopHeader.isLoopHeaderOf(directDependentee)) {
+								CfgNode outloopNode = directDependentee;
+								while (outloopNode.getPredecessors().size() == 1
+										&& !outloopNode.getPredecessors().get(0).isDecisionNode()) {
+									outloopNode = outloopNode.getPredecessors().get(0);
+									if (lastNode.getDecisionControlRelationship(outloopNode.getIdx()) == 0) {
+										break;
+									}
+									lastNode.setDecisionControlRelationship(outloopNode.getIdx(), relationshipOfDirectDependenteeOnLastNode);
+									cfg.getNode(outloopNode.getIdx()).updateDominator(lastNode, relationshipOfDirectDependenteeOnLastNode);
+								}
+							}
+						}
+					}
 				}
+				/* inloop condition and outerloop nodes */
+				
+				
+				
 				visited.add(lastNode);
 				visitStack.pop();
 			}
 		}
 	}
 	
-	private static void updateDominators(CFG cfg) {
-		for (CfgNode node : cfg.getDecisionNodes()) {
-			if (node.getDependentees() == null) {
-				continue;
-			}
-			for (CfgNode dependentee : node.getDependentees()) {
-				dependentee.addDominator(node, false, node.getBranchRelationship(dependentee.getIdx()));
-			}
+	private static boolean isLoopHeaderPrecessor(CfgNode node, CfgNode entryNode) {
+		if (!node.isLoopHeader()) {
+			return false;
 		}
-		/* update branch relationship with decision node for not decision nodes */
-		for (CfgNode node : cfg.getNodeList()) {
-			if (!node.isDecisionNode()) {
-				for (CfgNode directDominator : CollectionUtils.nullToEmpty(node.getDominators())) {
-					for (CfgNode indirectDominator : CollectionUtils.nullToEmpty(directDominator.getDominators())) {
-						node.addBranchRelationship(indirectDominator, directDominator.getBranchRelationship(indirectDominator.getIdx()));
-					}
+		/* check if there is a direct path from entryNode to loopHeader node */
+		CfgNode nextNode = entryNode;
+		while (nextNode != null && !nextNode.isDecisionNode()) {
+			if (nextNode == node) {
+				return true;
+			}
+			nextNode = nextNode.getNext();
+		}
+		
+		return false;
+	}
+
+	private static Collection<CfgNode> getDependenteeSortByLoopHeader(CfgNode node) {
+		if (!node.isLoopHeader()) {
+			return node.getDependentees();
+		}
+		List<CfgNode> list = new ArrayList<CfgNode>(node.getDependentees());
+		Collections.sort(list, new Comparator<CfgNode>() {
+
+			@Override
+			public int compare(CfgNode o1, CfgNode o2) {
+				if (!node.isLoopHeaderOf(o1)) {
+					return 1;
 				}
+				if (!node.isLoopHeaderOf(o2)) {
+					return -1;
+				}
+ 				return 0;
 			}
-		}
+		});
+		return list;
 	}
 
 	/**
@@ -226,7 +342,7 @@ public class CfgConstructorUtils {
 	public static CfgNode getVeryFirstDecisionNode(List<CfgNode> decisionNodes) {
 		Assert.assertTrue(CollectionUtils.isNotEmpty(decisionNodes), "cfg has no decisionNode!");
 		CfgNode first = decisionNodes.get(0);
-		if (first.getDominators() == null) {
+		if (CollectionUtils.isEmpty(first.getDominators())) {
 			return first;
 		}
 		
@@ -235,42 +351,11 @@ public class CfgConstructorUtils {
 			throw new SavRtException("first decision node has dominatee but not inside a loop! " + first.toString());
 		}
 		for (CfgNode loopHeader : first.getLoopHeaders()) {
-			if (loopHeader.getDominators() == null) {
+			if (loopHeader.getDominators().isEmpty()) {
 				return loopHeader;
 			}
 		}
 		throw new SavRtException("could not find the very root node of cfg!");
 	}
 	
-	/**
-	 * control dependency graph. 
-	 * TODO LLT: this is just draft, so-called "branchRelationship" must be implemented correctly according to
-	 * control dependency concept. 
-	 */
-	public static void toCDG(CFG cfg) {
-		if (cfg.isCDG()) {
-			return;
-		}
-		for (CfgNode node : cfg.getNodeList()) {
-			/* dominator - dependentee */
-			Iterator<CfgNode> it = node.getDominators().iterator();
-			while (it.hasNext()) {
-				CfgNode dominator = it.next();
-				if (node.getBranchRelationship(dominator.getIdx()) == BranchRelationship.TRUE_FALSE) {
-					it.remove();
-					dominator.getDependentees().remove(node);
-				}
-			}
-			/* loopDominator - loopDependentee */
-			it = node.getLoopDominators().iterator();
-			while (it.hasNext()) {
-				CfgNode dominator = it.next();
-				if (node.getBranchRelationship(dominator.getIdx()) == BranchRelationship.TRUE_FALSE) {
-					it.remove();
-					dominator.getLoopDependentees().remove(node);
-				}
-			}
-		}
-		cfg.setCDG(true);
-	}
 }

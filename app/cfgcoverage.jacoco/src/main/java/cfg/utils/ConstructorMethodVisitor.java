@@ -1,7 +1,9 @@
 package cfg.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
@@ -11,7 +13,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 
-import cfg.BranchRelationship;
 import cfg.CFG;
 import cfg.CfgNode;
 import cfg.DecisionBranchType;
@@ -34,6 +35,8 @@ public class ConstructorMethodVisitor extends MethodVisitor {
 	private List<Label> currentLabels = new ArrayList<Label>();
 	private List<Jump> jumps = new ArrayList<ConstructorMethodVisitor.Jump>();
 	private AbstractInsnNode currentInstruction;
+	/* using map instead of using label.info directly to avoid wrongly modify existing label.info */
+	private Map<Label, CfgNode> labelInfos = new HashMap<Label, CfgNode>();
 	
 	public ConstructorMethodVisitor() {
 		super(Opcodes.ASM5);
@@ -43,6 +46,7 @@ public class ConstructorMethodVisitor extends MethodVisitor {
 		String fullMethodName = ClassUtils.toClassMethodStr(className, method.name);
 		String methodId = SignatureUtils.createMethodNameSign(fullMethodName, method.desc);
 		cfg = new CFG(methodId);
+		cfg.setMethodNode(method);
 		this.methodNode = method;
 
 		for (final TryCatchBlockNode n : methodNode.tryCatchBlocks) {
@@ -88,16 +92,15 @@ public class ConstructorMethodVisitor extends MethodVisitor {
 		
 		cfg.addNode(node);
 		if (lastNode != null) {
-			BranchRelationship branchRelationship = BranchRelationship.TRUE;
 			if (lastNode.isDecisionNode()) {
-				branchRelationship = BranchRelationship.FALSE;
 				lastNode.setDecisionBranch(node, DecisionBranchType.FALSE);
+			} else {
+				node.setPredecessor(lastNode);
 			}
-			node.setPredecessor(lastNode, branchRelationship);
 		}
 		if (!currentLabels.isEmpty()) {
 			for (Label label : currentLabels) {
-				label.info = node;
+				labelInfos.put(label, node);
 			}
 			currentLabels.clear();
 		}
@@ -206,12 +209,13 @@ public class ConstructorMethodVisitor extends MethodVisitor {
 	@Override
 	public void visitEnd() {
 		for (Jump jump : jumps) {
-			CfgNode target = (CfgNode) jump.target.info;
+			CfgNode target = (CfgNode) labelInfos.get(jump.target);
 			CfgNode source = jump.source;
 			if (source.isDecisionNode()) {
 				source.setDecisionBranch(target, jump.branchType);
-			} 
-			target.setPredecessor(source, BranchRelationship.valueOf(jump.branchType == DecisionBranchType.FALSE));
+			} else {
+				target.setPredecessor(source);
+			}
 			if (jump.isSwitchSource) {
 				if (source.getSwitchCases() == null) {
 					source.setSwitchCases(new ArrayList<SwitchCase>());

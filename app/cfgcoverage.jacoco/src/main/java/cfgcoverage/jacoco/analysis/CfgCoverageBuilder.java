@@ -22,10 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import cfg.CFG;
 import cfg.CfgNode;
-import cfg.utils.CfgConstructorUtils;
+import cfg.utils.CfgConstructor;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
-import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.utils.CfgJaCoCoUtils;
 import codecoverage.jacoco.agent.JaCoCoUtils;
 import sav.common.core.utils.Assert;
@@ -57,7 +56,6 @@ public class CfgCoverageBuilder {
 	 * list in cfgCoverage
 	 */
 	private int methodTestcaseIdx;
-	private boolean newCfg;
 	private State state;
 	private Map<String, Set<String>> duplicatedTcs;
 	private Set<CfgCoverage> updatedCfgCvgs = new HashSet<CfgCoverage>();
@@ -117,9 +115,7 @@ public class CfgCoverageBuilder {
 		methodId = createMethodId(methodNode);
 		cfgCoverage = methodCfgCoverageMap.get(methodId);
 		if (cfgCoverage == null) {
-			newCfg = true;
-			cfg = new CFG(methodId);
-			cfg.setMethodNode(methodNode);
+			cfg = CfgConstructor.constructCFG(className, methodNode);
 			cfgCoverage = new CfgCoverage(cfg);
 			methodCfgCoverageMap.put(methodId, cfgCoverage);
 		} else {
@@ -138,29 +134,18 @@ public class CfgCoverageBuilder {
 		/* look up for existing node */
 		CfgNode cfgNode = cfg.getNode(nodeIdx ++);
 		ExtInstruction extInstruction;
-		if (cfgNode == null) {
-			cfgNode = new CfgNode(node, line);
-			cfg.addNode(cfgNode);
-			NodeCoverage nodeCoverage = cfgCoverage.addCoverage(cfgNode);
-			extInstruction = new ExtInstruction(cfgNode, nodeCoverage, true);
-		} else {
-			extInstruction = new ExtInstruction(cfgNode, cfgCoverage.getCoverage(cfgNode), false);
-		}
+		extInstruction = new ExtInstruction(cfgNode, cfgCoverage.getCoverage(cfgNode));
 		extInstruction.setTestIdx(methodTestcaseIdx);
 		return extInstruction;
 	}
 
 	public void endMethod() {
 		Assert.assertTrue(state == State.METHOD, "expect state METHOD, get state ", state.toString());
-		if (newCfg) {
-			CfgConstructorUtils.completeCfg(cfg);
-		}
 		reset();
 		state = State.CLASS;
 	}
 	
 	private void reset() {
-		newCfg = false;
 		methodId = null;
 		nodeIdx = 0;
 		cfgCoverage = null;

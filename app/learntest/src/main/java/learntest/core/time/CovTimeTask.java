@@ -3,7 +3,7 @@ package learntest.core.time;
 import java.util.TimerTask;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import learntest.core.commons.utils.CoverageUtils;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import sav.common.core.Pair;
 import sav.settings.SAVTimer;
 

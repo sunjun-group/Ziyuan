@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import cfg.CfgNode;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.DecisionProbes;
-import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;

@@ -16,12 +16,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearningMediator;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.sampling.SamplingResult;
-import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;

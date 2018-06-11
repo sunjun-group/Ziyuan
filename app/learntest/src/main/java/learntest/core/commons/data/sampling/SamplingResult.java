@@ -14,13 +14,13 @@ import java.util.Map;
 
 import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.data.decision.IDecisionNode;
 import learntest.core.commons.data.decision.INodeCoveredData;
 import learntest.core.commons.data.decision.SampleNodeCoveredData;
-import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.machinelearning.iface.ISampleResult;
 
 /**

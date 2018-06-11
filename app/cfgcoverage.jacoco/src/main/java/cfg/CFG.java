@@ -9,9 +9,12 @@
 package cfg;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.objectweb.asm.tree.MethodNode;
+
+import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 
 /**
  * @author LLT
@@ -24,7 +27,6 @@ public class CFG {
 	private List<CfgNode> exitList;
 	
 	private MethodNode methodNode;
-	private boolean isCDG = false;
 	
 	public CFG(String methodId) {
 		this.id = methodId;
@@ -95,11 +97,7 @@ public class CFG {
 		return id;
 	}
 	
-	public boolean isCDG() {
-		return isCDG;
-	}
-	
-	public void setCDG(boolean isCDG) {
-		this.isCDG = isCDG;
+	public int size() {
+		return nodeList.size();
 	}
 }

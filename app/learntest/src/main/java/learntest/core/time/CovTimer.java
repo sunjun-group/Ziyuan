@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Timer;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import learntest.core.commons.utils.CoverageUtils;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import sav.common.core.Pair;
 
 public class CovTimer {

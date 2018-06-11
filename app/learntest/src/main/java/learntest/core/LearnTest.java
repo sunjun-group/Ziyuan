@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import cfg.CfgNode;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import cfgextractor.CFGBuilder;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.LearntestParamsUtils.GenTestPackage;
@@ -18,7 +19,6 @@ import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
 import learntest.core.commons.exception.LearnTestException;
 import learntest.core.commons.test.TestTools;
-import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.commons.utils.JavaFileCopier;
 import learntest.core.gentest.GentestParams;
 import learntest.core.machinelearning.FormulaInfo;

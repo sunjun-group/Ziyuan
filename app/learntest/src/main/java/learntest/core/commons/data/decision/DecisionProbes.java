@@ -9,6 +9,7 @@
 package learntest.core.commons.data.decision;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,7 +113,7 @@ public class DecisionProbes extends CfgCoverage {
 			int type = domPrecond.getType();
 			List<Divider> domDividers = domPrecond.getDividers();
 			boolean OR = domPrecond.getTrueFalse() == null ? false : domPrecond.getTrueFalse() instanceof OrFormula;
-			BranchRelationship branchRel = node.getBranchRelationship(dominator.getIdx());
+			BranchRelationship branchRel = dominator.getBranchRelationship(node.getIdx());
 			path.putAll(domPrecond.getPath());
 			if (CollectionUtils.isEmpty(domDividers)) {
 				precondition.addPreconditions(domPrecond.getPreconditions());
@@ -223,7 +224,7 @@ public class DecisionProbes extends CfgCoverage {
 			if (node == dominator) {
 				return true;
 			}else {
-				List<CfgNode> children =  node.getBranches();
+				Collection<CfgNode> children =  node.getBranches();
 				if (children != null) {
 					for (CfgNode cfgNode : children) {
 						if (!visited.containsKey(cfgNode)) {
@@ -370,7 +371,7 @@ public class DecisionProbes extends CfgCoverage {
 				Set<CfgNode> nodeDominatees = nodeProbe.getNode().getDominators();
 				List<DecisionNodeProbe> dominatees = new ArrayList<DecisionNodeProbe>(
 						CollectionUtils.getSize(nodeDominatees));
-				if (nodeDominatees != null) {
+				if (!nodeDominatees.isEmpty()) {
 					for (CfgNode node : nodeDominatees) {
 						dominatees.add(getNodeProbe(node));
 					}
@@ -444,7 +445,7 @@ public class DecisionProbes extends CfgCoverage {
 	
 	public static List<CfgNode> getChildDecision(CfgNode node) {
 		List<CfgNode> childDecisonNodes = new LinkedList<>();
-		List<CfgNode> children = node.getBranches();
+		Collection<CfgNode> children = node.getBranches();
 		for (CfgNode child : children) {
 			getChildDecision(child, childDecisonNodes);
 		}
@@ -452,11 +453,11 @@ public class DecisionProbes extends CfgCoverage {
 	}
 
 	private static void getChildDecision(CfgNode node, List<CfgNode> list) {
-		List<CfgNode> children = node.getBranches();
+		Collection<CfgNode> children = node.getBranches();
 		if (null == children || children.size() == 0) {
 			;
 		} else if (children.size() == 1) {
-			getChildDecision(children.get(0), list);
+			getChildDecision(children.iterator().next(), list);
 		} else if (children.size() >= 2) { /** branch node */
 			if (!list.contains(node)) {
 				list.add(node);

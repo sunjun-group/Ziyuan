@@ -88,7 +88,7 @@ public class MethodInfo {
 	private static AbstractInsnNode getNextNode(CfgNode node) {
 		Assert.assertNotNull(node.getBranches());
 		Assert.assertTrue(node.getBranches().size() == 1);
-		return node.getBranches().get(0).getInsnNode();
+		return node.getBranches().iterator().next().getInsnNode();
 	}
 
 	public String getMethodName() {

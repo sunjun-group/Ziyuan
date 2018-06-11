@@ -13,10 +13,8 @@ import java.util.Set;
 
 import org.jacoco.core.internal.flow.Instruction;
 
-import cfg.BranchRelationship;
 import cfg.CfgNode;
 import cfg.DecisionBranchType;
-import cfg.utils.OpcodeUtils;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -26,16 +24,14 @@ import sav.common.core.utils.CollectionUtils;
 public class ExtInstruction extends Instruction {
 	private CfgNode cfgNode;
 	private NodeCoverage nodeCoverage;
-	private boolean newCfg;
 	private int testIdx;
 	private ExtInstruction predecessor; // jacocoPredecessor
 	private ExtInstruction nextNode;
 	
-	public ExtInstruction(CfgNode cfgNode, NodeCoverage nodeCoverage, boolean newCfg) {
+	public ExtInstruction(CfgNode cfgNode, NodeCoverage nodeCoverage) {
 		super(cfgNode.getInsnNode(), cfgNode.getLine());
 		this.cfgNode = cfgNode;
 		this.nodeCoverage = nodeCoverage;
-		this.newCfg = newCfg;
 	}
 	
 	public void setCovered(int count, boolean multitargetJumpSource) {
@@ -76,11 +72,11 @@ public class ExtInstruction extends Instruction {
 	 * [sadly, we only can do as best as we can here]
 	 */
 	public void updateTargetBranchCvgInCaseMultitargetJumpSources() {
-		List<CfgNode> trueFalseBranches = cfgNode.findBranches(BranchRelationship.TRUE_FALSE);
+		List<CfgNode> trueFalseBranches = cfgNode.findTrueFalseBranches();
 		if (!nodeCoverage.isCovered(testIdx) || CollectionUtils.isEmpty(trueFalseBranches)) {
 			return;
 		}
-		CfgNode falseBranch = cfgNode.findBranch(BranchRelationship.FALSE);
+		CfgNode falseBranch = cfgNode.getDecisionBranch(DecisionBranchType.FALSE);
 		int falseCoveredFreq = getCoveredFreq(nodeCoverage.getCfgCoverage(), falseBranch, testIdx);
 		int nodeCoveredFreq = nodeCoverage.getCoveredFreq(testIdx);
 		for (CfgNode trueFalseBranch : trueFalseBranches) {
@@ -123,31 +119,10 @@ public class ExtInstruction extends Instruction {
 		this.predecessor = (ExtInstruction) predecessorInsn;
 	}
 
-	public void setNodePredecessor(ExtInstruction source, BranchRelationship branchRelationship) {
+	public void setNodePredecessor(ExtInstruction source) {
 		source.nextNode = this;
-		if (!newCfg) {
-			return;
-		}
-		cfgNode.setPredecessor(source.cfgNode, branchRelationship);
 	}
 	
-	public void setNodePredecessorForJump(ExtInstruction source, boolean multiTarget) {
-		if (!newCfg) {
-			return;
-		}
-		if (OpcodeUtils.isCondition(source.cfgNode.getInsnNode().getOpcode())) {
-			source.cfgNode.setDecisionBranch(cfgNode, DecisionBranchType.TRUE);
-		}
-		/* jump to a multitarget label */
-		if (multiTarget) {
-			cfgNode.setPredecessor(source.cfgNode, BranchRelationship.TRUE_FALSE);
-			return;
-		}
-		BranchRelationship branchRelationship = BranchRelationship.TRUE;
-		
-		cfgNode.setPredecessor(source.cfgNode, branchRelationship);
-	}
-
 	@Override
 	public String toString() {
 		return cfgNode.toString();

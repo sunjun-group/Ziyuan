@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import cfg.CFG;
 import cfg.CfgNode;
-import sav.common.core.SavRtException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
@@ -42,7 +41,10 @@ public class CfgCoverage {
 	
 	public CfgCoverage(CFG cfg) {
 		this.cfg = cfg;
-		nodeCoverages = new ArrayList<NodeCoverage>();
+		nodeCoverages = new ArrayList<NodeCoverage>(cfg.size());
+		for (CfgNode node : cfg.getNodeList()) {
+			nodeCoverages.add(new NodeCoverage(this, node));
+		}
 	}
 	
 	public void setTestcases(List<String> testcases) {

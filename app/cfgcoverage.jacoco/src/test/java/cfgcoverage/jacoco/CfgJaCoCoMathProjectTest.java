@@ -17,8 +17,8 @@ import java.util.Set;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories.ExcludeCategory;
 
-import cfg.BranchRelationship;
 import cfg.CfgNode;
+import cfg.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.test.utils.ProjClassLoader;
@@ -64,11 +64,10 @@ public class CfgJaCoCoMathProjectTest extends AbstractTest {
 		for (CfgNode node : cfgCoverage.getCfg().getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
-			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
+			Set<DecisionBranchType> coveredBranches = new HashSet<DecisionBranchType>(2);
 			for (int branchIdx : nodeCvg.getCoveredBranches()) {
-				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
-				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
-										BranchRelationship.FALSE);
+				DecisionBranchType branchRelationship = node.getDecisionBranchType(branchIdx);
+				coveredBranches.add(branchRelationship);
 			}
 			sb.append("NodeCoverage [").append(node).append(", coveredTcs=").append(nodeCvg.getCoveredTcsTotal())
 						.append(", coveredBranches=").append(nodeCvg.getCoveredBranches().size()).append(", ")

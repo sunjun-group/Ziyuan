@@ -9,7 +9,6 @@
 package learntest.core.commons.data.decision;
 
 import cfg.BranchCoveredType;
-import cfg.BranchRelationship;
 import sav.common.core.utils.Assert;
 
 /**
@@ -76,17 +75,4 @@ public enum CoveredBranches {
 		return type;
 	}
 
-	public BranchRelationship getMissingBranches() {
-		switch (this) {
-		case FALSE:
-			return BranchRelationship.TRUE;
-		case TRUE:
-			return BranchRelationship.FALSE;
-		case TRUE_AND_FALSE:
-			return null;
-		case NONE:
-			return BranchRelationship.TRUE_FALSE;
-		}
-		return null;
-	}
 }

@@ -28,7 +28,6 @@ public class CfgConstructor {
 	
 	public static CFG constructCDG(InputStream is, String className, String methodNameOrWithSign) throws IOException {
 		CFG cfg = constructCFG(is, className, methodNameOrWithSign);
-		CfgConstructorUtils.toCDG(cfg);
 		return cfg;
 	}
 
@@ -38,6 +37,14 @@ public class CfgConstructor {
 		classReader.accept(classVisitor, 0);
 		ConstructorMethodVisitor methodVisitor = new ConstructorMethodVisitor();
 		methodVisitor.visit(className, classVisitor.methodNode);
+		CFG cfg = methodVisitor.getCfg();
+		CfgConstructorUtils.completeCfg(cfg);
+		return cfg;
+	}
+	
+	public static CFG constructCFG(String className, MethodNode methodNode) {
+		ConstructorMethodVisitor methodVisitor = new ConstructorMethodVisitor();
+		methodVisitor.visit(className, methodNode);
 		CFG cfg = methodVisitor.getCfg();
 		CfgConstructorUtils.completeCfg(cfg);
 		return cfg;

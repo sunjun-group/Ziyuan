@@ -1,5 +1,6 @@
 package learntest.core.machinelearning;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -170,7 +171,7 @@ public class CfgDomain {
 		while (!stack.isEmpty()) {
 			CfgNode curNode = stack.pop();
 			dominationMap.get(curNode).postDomain.put(curNode, curNode.getLine());
-			List<CfgNode> children = curNode.getBranches();
+			Collection<CfgNode> children = curNode.getBranches();
 			if (children!=null && children.size() > 0) {
 				for (CfgNode node : children) {
 					if (!dominationMap.containsKey(node)) {
@@ -182,9 +183,5 @@ public class CfgDomain {
 			}
 		}
 	}
-	
-
-	
-
 
 }

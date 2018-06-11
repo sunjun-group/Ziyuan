@@ -22,13 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import gentest.core.data.Sequence;
 import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import learntest.core.commons.data.LineCoverageResult;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.LearntestJWriter;
 import sav.common.core.Pair;

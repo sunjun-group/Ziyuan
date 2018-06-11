@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.core.commons.utils;
+package cfgcoverage.jacoco.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;

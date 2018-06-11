@@ -11,7 +11,9 @@ package cfg;
 /**
  * @author LLT
  * the branchRelationship is at bytecode level, not sourcecode
+ * will be removed soon. 
  */
+@Deprecated
 public enum BranchRelationship {
 	FALSE,
 	TRUE,

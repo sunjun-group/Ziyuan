@@ -23,9 +23,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import cfg.BranchRelationship;
-import cfg.DecisionBranchType;
-import cfg.utils.OpcodeUtils;
 import cfgcoverage.jacoco.analysis.data.ExtInstruction;
 
 /**
@@ -73,13 +70,7 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		super.visitInsn();
 		if (thisLastInsn != null) {
 			ExtInstruction lastExtInsn = (ExtInstruction) lastInsn;
-			ExtInstruction thisLastExtInsn = (ExtInstruction) thisLastInsn;
-			BranchRelationship branchRelationship = BranchRelationship.TRUE;
-			if (OpcodeUtils.isCondition(thisLastInsn.getNode().getOpcode())) {
-				branchRelationship = BranchRelationship.FALSE;
-				thisLastExtInsn.getCfgNode().setDecisionBranch(lastExtInsn.getCfgNode(), DecisionBranchType.FALSE);
-			}
-			lastExtInsn.setNodePredecessor((ExtInstruction) thisLastInsn, branchRelationship);
+			lastExtInsn.setNodePredecessor((ExtInstruction) thisLastInsn);
 		}
 		this.thisLastInsn = lastInsn;
 	}
@@ -127,8 +118,6 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 		for (ExtInstruction insn : multitargetJumpSources) {
 			insn.updateNextBranchCvgInCaseMultitargetJumpSources();
 		}
-		createBranchFromJumps(jumps, false);
-		createBranchFromJumps(multitargetJumps, true);
 		/* update false branch coverage for multitaget jump source */
 		for (ExtInstruction insn : multitargetJumpSources) {
 			insn.updateTargetBranchCvgInCaseMultitargetJumpSources();
@@ -145,18 +134,6 @@ public class FreqProbesMethodAnalyzer extends AbstractMethodAnalyzer {
 			insns.add((ExtInstruction) jump.getSource());
 		}
 		return insns;
-	}
-
-	/**
-	 * @param jumps
-	 */
-	private void createBranchFromJumps(List<Jump> jumps, boolean multitarget) {
-		/* update predecessor and branches for nodes */
-		for (Jump j : jumps) {
-			ExtInstruction target = (ExtInstruction) LabelInfo.getInstruction(j.getTarget());
-			ExtInstruction source = (ExtInstruction) j.getSource();
-			target.setNodePredecessorForJump(source, multitarget);
-		}
 	}
 
 	@Override

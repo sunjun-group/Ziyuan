@@ -8,15 +8,22 @@
 
 package cfgcoverage.jacoco;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import cfg.CfgNode;
+import cfg.DecisionBranchType;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.analysis.data.NodeCoverage;
 import cfgcoverage.jacoco.testdata.ForSample;
 import cfgcoverage.jacoco.testdata.ForSampleTest;
 import cfgcoverage.jacoco.testdata.IfInLoop;
@@ -33,6 +40,9 @@ import cfgcoverage.jacoco.testdata.NestedLoopConditionSample;
 import cfgcoverage.jacoco.testdata.NestedLoopConditionSampleTest;
 import cfgcoverage.jacoco.testdata.SwitchSample;
 import cfgcoverage.jacoco.testdata.SwitchSampleTest;
+import cfgcoverage.jacoco.testdata.Testing;
+import cfgcoverage.jacoco.testdata.Testing_ESTest;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -96,6 +106,17 @@ public class CfgJaCoCoTest extends AbstractTest {
 				"NodeCoverage [node[16,IF_ICMPLE,line 18], decis{T=17,F=26}], coveredTcs={0=1, 1=1, 2=1, 3=1, 4=1}, coveredBranches={17=[1, 4], 26=[0, 2, 3]}]",
 				cfgCoverage.getCoverage(16).toString());
 		System.out.println();
+	}
+	
+
+	@Test
+	public void testTest() throws Exception {
+		runSimpleRunner = false;
+		appClasspath.setTarget(TestConfiguration.getTestTarget("cfgcoverage.jacoco"));
+		CfgCoverage cfgCoverage = runTest(Testing.class, Testing_ESTest.class, "test");
+		System.out.println();
+		System.out.println(CoverageUtils.getBranchCoverageDisplayText(cfgCoverage));
+		System.out.println("Coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));
 	}
 
 	@Test

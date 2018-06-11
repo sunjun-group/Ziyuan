@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cfg.BranchRelationship;
+import cfg.DecisionBranchType;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.ExecValueUtils;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
@@ -82,9 +82,9 @@ public class ProbesXmlConverter {
 		for (DecisionNodeProbe nodeProbe : nodeProbes) {
 			/* true branch */
 			CollectionUtils.addIfNotNull(branchEles, toBranchElement(nodeProbe, nodeProbe.getTrueValues(),
-					BranchRelationship.TRUE.name()));
+					DecisionBranchType.TRUE.name()));
 			CollectionUtils.addIfNotNull(branchEles, toBranchElement(nodeProbe, nodeProbe.getFalseValues(), 
-					BranchRelationship.FALSE.name()));
+					DecisionBranchType.FALSE.name()));
 		}
 		return new BranchesElement(branchEles);
 	}

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.core.AbstractLearntest;
 import learntest.core.BreakpointCreator;
@@ -17,7 +18,6 @@ import learntest.core.LearntestParamsUtils.GenTestPackage;
 import learntest.core.RunTimeInfo;
 import learntest.core.commons.data.classinfo.TargetMethod;
 import learntest.core.commons.data.decision.DecisionProbes;
-import learntest.core.commons.utils.CoverageUtils;
 import learntest.core.gentest.GentestParams;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
