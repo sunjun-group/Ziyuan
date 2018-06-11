@@ -12,8 +12,8 @@ import sav.common.core.utils.StringUtils;
 public class ControlRelationship {
 	public static final short BPD_TRUE = 0b1000;
 	public static final short BPD_FALSE = 0b0100;
-	public static final short PD = 0b1100;
-	public static final short CD_TRUE = 0b0010;
+	public static final short PD = 0b1100; // Post-Dominance
+	public static final short CD_TRUE = 0b0010; // Control dependence
 	public static final short CD_FALSE = 0b0001;
 	public static final short CD_TRUE_FALSE = 0b0011;
 	public static final short CD_TRUE_BPD_FALSE = 0b0110;
