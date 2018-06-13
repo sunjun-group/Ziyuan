@@ -6,7 +6,9 @@
  *  Version:  $Revision: 1 $
  */
 
-package cfg;
+package cfgcoverage.jacoco.analysis.data;
+
+import cfg.DecisionBranchType;
 
 /**
  * @author LLT

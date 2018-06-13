@@ -9,8 +9,6 @@
 package cfg;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,15 +36,13 @@ public class CfgNode {
 	private List<SwitchCase> switchCases; /* not null if node is a switch type node */
 	
 	private boolean isDecisionNode;
-	// TODO-NICE TO HAVE: implement for convenient if necessary
-	private boolean isNegated; // flag which indicates whether the logic of condition is negated by compiler.
-
+	
 	/* if node is inside a loop, keep that loop header (should be a decision node) */
 	private List<CfgNode> loopHeaders;
 
 	/* parent nodes */
 	private List<CfgNode> predecessors;
-	private List<CfgNode> children; /* direct children at only 1 level in CFG */
+	private List<CfgNode> branches;
 	
 	/* dominatees are decision nodes which controls this node, if this node is not a decision node,
 	 * then its dominatee will be the previous decision node */
@@ -71,18 +67,18 @@ public class CfgNode {
 	
 	public CfgNode(AbstractInsnNode insnNode, int line) {
 		predecessors = new ArrayList<CfgNode>(1);
-		children = new ArrayList<>(1);
+		branches = new ArrayList<>(1);
 		this.insnNode = insnNode;
 		this.line = line;
 	}
 
 	public void setPredecessor(CfgNode predecessor) {
-		predecessor.children.add(this);
+		predecessor.branches.add(this);
 		predecessors.add(predecessor);
 	}
 
-	public Collection<CfgNode> getBranches() {
-		return decisionBranches == null ? Collections.emptyList() : decisionBranches.values();
+	public List<CfgNode> getBranches() {
+		return branches;
 	}
 	
 	public Map<DecisionBranchType, CfgNode> getDecisionBranches() {
@@ -92,10 +88,10 @@ public class CfgNode {
 	public CfgNode getNext() {
 		if (switchCases != null) {
 			System.out.println("Switch case!");
-			return children.get(0);
+			return branches.get(0);
 		}
-		Assert.assertTrue(CollectionUtils.getSize(children) <= 1, "node has more than 1 branch");
-		return isLeaf() ? null : children.get(0);
+		Assert.assertTrue(CollectionUtils.getSize(branches) <= 1, "node has more than 1 branch");
+		return isLeaf() ? null : branches.get(0);
 	}
 
 	public List<CfgNode> getPredecessors() {
@@ -111,10 +107,10 @@ public class CfgNode {
 	}
 
 	public boolean isLeaf() {
-		return CollectionUtils.isEmpty(children);
+		return CollectionUtils.isEmpty(branches);
 	}
 
-	public void setIdx(int idx) {
+	void setIdx(int idx) {
 		this.idx = idx;
 	}
 	
@@ -140,9 +136,6 @@ public class CfgNode {
 		sb.append(String.format("node[%d,%s,line %d]", idx, OpcodeUtils.getCode(insnNode.getOpcode()), line));
 		if (isDecisionNode) {
 			sb.append(", decis");
-			if (isNegated) {
-				sb.append("(neg)");
-			}
 			if (decisionBranches != null) {
 				int trueBranchId = decisionBranches.get(DecisionBranchType.TRUE).idx;
 				int falseBranchId = decisionBranches.get(DecisionBranchType.FALSE).idx;
@@ -152,18 +145,37 @@ public class CfgNode {
 				sb.append("(").append(trueBranchId).append("=").append(ControlRelationship.toString(getDecisionControlRelationship(trueBranchId)))
 					.append(",").append(falseBranchId).append("=").append(ControlRelationship.toString(getDecisionControlRelationship(falseBranchId)))
 					.append(")");
-			} 
+			} else {
+				sb.append("{");
+				for (int i = 0; i < branches.size(); i++) {
+					CfgNode branch = branches.get(i);
+					sb.append(i).append("=").append(branch.getIdx());
+					if (i != branches.size() - 1) {
+						sb.append(", ");
+					}
+				}
+				sb.append("}, (");
+				for (int i = 0; i < branches.size(); i++) {
+					CfgNode branch = branches.get(i);
+					sb.append(branch.getIdx()).append("=").append(ControlRelationship
+							.toString(getDecisionControlRelationship(branch.getIdx()), getBranchTotal()));
+					if (i != branches.size() - 1) {
+						sb.append(", ");
+					}
+				}
+				sb.append(")");
+			}
 		} else if (insnNode instanceof JumpInsnNode) {
 			sb.append(", jumpTo {");
-			for (int i = 0; i < children.size(); i++) {
-				CfgNode branch = children.get(i);
+			for (int i = 0; i < branches.size(); i++) {
+				CfgNode branch = branches.get(i);
 				sb.append(branch.getIdx());
-				if (i != children.size() - 1) {
+				if (i != branches.size() - 1) {
 					sb.append(", ");
 				}
 			}
 			sb.append("}");
-		}
+		} 
 		if (isLoopHeader()) {
 			sb.append(", loopHeader");
 		} else if (isInLoop()) {
@@ -185,7 +197,7 @@ public class CfgNode {
 		if (isLeaf()) {
 			return INVALID_IDX;
 		}
-		for (CfgNode child : children) {
+		for (CfgNode child : branches) {
 			/* if the node try to jump backward, it might be a loop header */
 			if (child.idx < idx) {
 				return child.idx;
@@ -262,19 +274,6 @@ public class CfgNode {
 		return loopDependentees;
 	}
 
-	public List<CfgNode> findTrueFalseBranches() {
-		if (decisionBranches == null) {
-			return Collections.emptyList();
-		}
-		List<CfgNode> result = new ArrayList<CfgNode>(2);
-		for (CfgNode branch : decisionBranches.values()) {
-			if (ControlRelationship.isTrueFalseRelationship(getDecisionControlRelationship(branch.getIdx()))) {
-				result.add(branch);
-			}
-		}
-		return result;
-	}
-	
 	public void setDecisionBranch(CfgNode branch, DecisionBranchType type) {
 		if (this.idx == branch.idx) {
 			throw new IllegalArgumentException(String.format("invalid branch: %s, \n of node: %s", branch, this));
@@ -283,7 +282,15 @@ public class CfgNode {
 			decisionBranches = new HashMap<DecisionBranchType, CfgNode>();
 		}
 		decisionBranches.put(type, branch);
-		branch.setPredecessor(this);
+		/* set precessor */
+		branch.predecessors.add(this);
+		if (branches.isEmpty()) {
+			branches = new ArrayList<>(2);
+			for (int i = 0; i < 2; i++) {
+				branches.add(null);
+			}
+		}
+		branches.set(type.ordinal(), branch);
 		decisionControlRelationships.put(branch.idx, ControlRelationship.getRelationshipToDecisionPrecessor(type));
 	}
 	
@@ -332,19 +339,20 @@ public class CfgNode {
 	}
 
 	public void updateDominator(CfgNode dominator, short relationship) {
-		if (relationship == ControlRelationship.PD) {
+		if (ControlRelationship.isPostDominance(relationship, dominator.getBranchTotal())) {
 			dominators.remove(dominator);
 		} else {
 			dominators.add(dominator);
 		}
 	}
 
-	public List<CfgNode> getChildren() {
-		return children;
-	}
-
 	public BranchRelationship getBranchRelationship(int nodeIdx) {
 		short decisionControlRelationship = getDecisionControlRelationship(nodeIdx);
 		return ControlRelationship.getBranchRelationship(decisionControlRelationship);
 	}
+
+	public int getBranchTotal() {
+		return getBranches().size();
+	}
+
 }

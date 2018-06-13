@@ -78,7 +78,6 @@ public class CfgConstructorTest {
 		System.out.println();
 	}
 	
-	
 	@Test
 	public void testIfInLoop() throws Exception {
 		CFG cfg = constructCfg(IfInLoop.class, "run");

@@ -8,8 +8,6 @@
 
 package cfg.utils;
 
-import static cfg.utils.ControlRelationship.BPD_FALSE;
-import static cfg.utils.ControlRelationship.BPD_TRUE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,6 +135,7 @@ public class CfgConstructorUtils {
 	
 	/**
 	 * build up cfgNode dominatees and dependentees
+	 * using labeling.
 	 * @param cfg
 	 */
 	public static void computeControlDependency(CFG cfg) {
@@ -158,30 +157,29 @@ public class CfgConstructorUtils {
 	 */
 	private static void setDecisionNodeDependenteesAndDirectLevelRelationship(List<CfgNode> decisionNodes) {
 		for (CfgNode node : decisionNodes) {
-			for (Entry<DecisionBranchType, CfgNode> entry : node.getDecisionBranches().entrySet()) {
-				CfgNode child = entry.getValue();
-				short relationshipToDecisionNode = ControlRelationship.getRelationshipToDecisionPrecessor(entry.getKey());
+			for (CfgNode branch : node.getBranches()) {
+				short relationshipToDecisionNode = ControlRelationship.getRelationshipToDecisionPrecessor(getBranchIdx(node, branch));
 				boolean completed = false;
 				/* iterate when child is not a leaf node or at the end of the loop */
-				while (child != null && child != node && !completed) {
+				while (branch != null && branch != node && !completed) {
 					/* if the branch of node is actually its loop header, then add */
-					boolean childIsLoopHeaderOfNode = child.isLoopHeaderOf(node);
-					node.setDecisionControlRelationship(child.getIdx(), ControlRelationship
-							.mergeBPD(node.getDecisionControlRelationship(child.getIdx()), relationshipToDecisionNode));
-					child.addDominator(node, childIsLoopHeaderOfNode);
-					if (child.isDecisionNode()) {
-						node.addDependentee(child, childIsLoopHeaderOfNode);
+					boolean childIsLoopHeaderOfNode = branch.isLoopHeaderOf(node);
+					node.setDecisionControlRelationship(branch.getIdx(), ControlRelationship
+							.mergeBPD(node.getDecisionControlRelationship(branch.getIdx()), relationshipToDecisionNode));
+					branch.addDominator(node, childIsLoopHeaderOfNode);
+					if (branch.isDecisionNode()) {
+						node.addDependentee(branch, childIsLoopHeaderOfNode);
 						if (!childIsLoopHeaderOfNode) {
 							break;
 						}
 						boolean foundOutloop = false;
 						/* add outloop dependentees */
-						for (CfgNode loopHeaderBranch : child.getBranches()) {
-							if (!child.isLoopHeaderOf(loopHeaderBranch)) {
-								if (loopHeaderBranch.getIdx() < child.getIdx()) {
+						for (CfgNode loopHeaderBranch : branch.getBranches()) {
+							if (!branch.isLoopHeaderOf(loopHeaderBranch)) {
+								if (loopHeaderBranch.getIdx() < branch.getIdx()) {
 									completed = true;
 								}
-								child = loopHeaderBranch;
+								branch = loopHeaderBranch;
 								foundOutloop = true;
 								break;
 							}
@@ -190,15 +188,26 @@ public class CfgConstructorUtils {
 							completed = true;
 						}
 					} else {
-						CfgNode next = child.getNext();
-						if (next == null || next.getIdx() < child.getIdx()) {
+						CfgNode next = branch.getNext();
+						if (next == null || next.getIdx() < branch.getIdx()) {
 							break;
 						}
-						child = next;
+						branch = next;
 					}
 				}
 			}
 		}
+	}
+	
+	private static int getBranchIdx(CfgNode node, CfgNode branch) {
+		if (node.getDecisionBranches() != null) {
+			for (Entry<DecisionBranchType, CfgNode> entry : node.getDecisionBranches().entrySet()) {
+				if (entry.getValue() == branch) {
+					return entry.getKey().ordinal();
+				}
+			}
+		}
+		return node.getBranches().indexOf(branch);
 	}
 
 	private static void calculateControlDominators(CfgNode root, CFG cfg) {
@@ -207,12 +216,10 @@ public class CfgConstructorUtils {
 		visitStack.push(root);
 		while (!visitStack.isEmpty()) {
 			CfgNode lastNode = visitStack.lastElement();
-			/* if node already visit, remove from stack */
 			if (visited.contains(lastNode)) {
 				visitStack.pop();
 				continue;
 			}
-			/* if node has no dependentee, mark visited and remove from stack */
 			if (lastNode.getDependentees() == null) {
 				visited.add(lastNode);
 				visitStack.pop();
@@ -231,22 +238,21 @@ public class CfgConstructorUtils {
 				}
 			}
 			
+			/* we update backward, calculate post-dominator of a node based on control dependency relationship of its sub decisionnode */
 			if (allDependenteesVisited) {
-				/* update dependentees from its dependentees and remove from stack */
 				for (CfgNode directDependentee : lastNode.getDependentees()) {
-					// lastNode.addChildsDependentees(dependentee);
 					short relationshipOfDirectDependenteeOnLastNode = lastNode.getDecisionControlRelationship(directDependentee.getIdx());
-					if (ControlRelationship.isPostDominance(relationshipOfDirectDependenteeOnLastNode)) {
+					if (ControlRelationship.isPostDominance(relationshipOfDirectDependenteeOnLastNode, lastNode.getBranchTotal())) {
 						for (Entry<Integer, Short> entry : directDependentee.getDecisionControlRelationships().entrySet()) {
 							CfgNode entryNode = cfg.getNode(entry.getKey());
 							if (isLoopHeaderPrecessor(lastNode, entryNode)) {
 								continue;
 							}
 							short relationship = 0;
-							if (ControlRelationship.isPostDominance(entry.getValue())) {
-								relationship = ControlRelationship.PD;
+							if (ControlRelationship.isPostDominance(entry.getValue(), directDependentee.getBranchTotal())) {
+								relationship = ControlRelationship.postDominance(lastNode.getBranchTotal());
 							} else {
-								relationship = ControlRelationship.CD_TRUE_FALSE;
+								relationship = ControlRelationship.fullControlDependency(lastNode.getBranchTotal());
 							}
 							lastNode.setDecisionControlRelationship(entry.getKey(), relationship);
 							entryNode.updateDominator(lastNode, relationship);
@@ -258,14 +264,12 @@ public class CfgConstructorUtils {
 								continue;
 							}
 							short relationship = lastNode.getDecisionControlRelationship(entry.getKey());
-							if (ControlRelationship.isPostDominance(entry.getValue())) {
+							if (ControlRelationship.isPostDominance(entry.getValue(), directDependentee.getBranchTotal())) {
 								relationship = ControlRelationship.weakMerge(relationship, relationshipOfDirectDependenteeOnLastNode);
 							} else {
-								if (relationshipOfDirectDependenteeOnLastNode == BPD_TRUE) {
-									relationship = ControlRelationship.weakMerge(relationship, ControlRelationship.CD_TRUE);
-								} else if (relationshipOfDirectDependenteeOnLastNode == BPD_FALSE) {
-									relationship = ControlRelationship.weakMerge(relationship, ControlRelationship.CD_FALSE);
-								}
+								relationship = ControlRelationship.weakMerge(relationship,
+										ControlRelationship.toControlDependency(
+												relationshipOfDirectDependenteeOnLastNode, lastNode.getBranchTotal()));
 							}
 							lastNode.setDecisionControlRelationship(entry.getKey(), relationship);
 							entryNode.updateDominator(lastNode, relationship);

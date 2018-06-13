@@ -91,6 +91,9 @@ public class CfgJaCoCoTest extends AbstractTest {
 		CfgCoverage values = result.values().iterator().next();
 		System.out.println(values);
 		System.out.println(timer.getResults());
+		System.out.println();
+		System.out.println(CoverageUtils.getBranchCoverageDisplayText(values));
+		System.out.println("Coverage: " + CoverageUtils.calculateCoverageByBranch(values));
 		return values;
 	}
 
@@ -115,8 +118,6 @@ public class CfgJaCoCoTest extends AbstractTest {
 		appClasspath.setTarget(TestConfiguration.getTestTarget("cfgcoverage.jacoco"));
 		CfgCoverage cfgCoverage = runTest(Testing.class, Testing_ESTest.class, "test");
 		System.out.println();
-		System.out.println(CoverageUtils.getBranchCoverageDisplayText(cfgCoverage));
-		System.out.println("Coverage: " + CoverageUtils.calculateCoverageByBranch(cfgCoverage));
 	}
 
 	@Test

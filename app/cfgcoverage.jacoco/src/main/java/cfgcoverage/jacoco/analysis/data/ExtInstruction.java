@@ -8,6 +8,8 @@
 
 package cfgcoverage.jacoco.analysis.data;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +17,7 @@ import org.jacoco.core.internal.flow.Instruction;
 
 import cfg.CfgNode;
 import cfg.DecisionBranchType;
+import cfg.utils.ControlRelationship;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -72,7 +75,7 @@ public class ExtInstruction extends Instruction {
 	 * [sadly, we only can do as best as we can here]
 	 */
 	public void updateTargetBranchCvgInCaseMultitargetJumpSources() {
-		List<CfgNode> trueFalseBranches = cfgNode.findTrueFalseBranches();
+		List<CfgNode> trueFalseBranches = findTrueFalseBranches(cfgNode);
 		if (!nodeCoverage.isCovered(testIdx) || CollectionUtils.isEmpty(trueFalseBranches)) {
 			return;
 		}
@@ -85,6 +88,19 @@ public class ExtInstruction extends Instruction {
 				nodeCoverage.updateCoveredBranchesForTc(trueFalseBranch, testIdx);
 			}
 		}
+	}
+	
+	private List<CfgNode> findTrueFalseBranches(CfgNode node) {
+		if (node.getBranches() == null) {
+			return Collections.emptyList();
+		}
+		List<CfgNode> result = new ArrayList<CfgNode>(2);
+		for (CfgNode branch : node.getBranches()) {
+			if (ControlRelationship.isTrueFalseRelationship(node.getDecisionControlRelationship(branch.getIdx()))) {
+				result.add(branch);
+			}
+		}
+		return result;
 	}
 	
 	private static int getCoveredFreq(CfgCoverage cfgCoverage, CfgNode branch, int testIdx) {
