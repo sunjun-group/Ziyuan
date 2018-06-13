@@ -93,9 +93,9 @@ public class CfgConstructorTest {
 	@Test
 	public void testIfMultiCondOr() throws Exception {
 		CFG cfg = constructCfg(IfSample.class, "multiCondOr");
-		Assert.assertEquals("node[2,IF_ICMPEQ,line 30], decis{T=8,F=3}(8=CD_FALSE_BPD_TRUE,3=BPD_FALSE)]",
+		Assert.assertEquals("node[2,IF_ICMPEQ,line 30], decis{T=8,F=3}(8=BPD_TRUE_CD_FALSE,3=BPD_FALSE)]",
 				cfg.getNode(2).toString());
-		Assert.assertEquals("node[4,IFGT,line 30], decis{T=8,F=5}(8=CD_FALSE_BPD_TRUE,5=BPD_FALSE)]", 
+		Assert.assertEquals("node[4,IFGT,line 30], decis{T=8,F=5}(8=BPD_TRUE_CD_FALSE,5=BPD_FALSE)]", 
 				cfg.getNode(4).toString());
 		Assert.assertEquals("node[7,IF_ICMPLE,line 30], decis{T=15,F=8}(15=PD,8=BPD_FALSE)]",
 				cfg.getNode(7).toString());
@@ -121,7 +121,7 @@ public class CfgConstructorTest {
 	@Test
 	public void testIfMultiCondAndOr() throws Exception {
 		CFG cfg = constructCfg(IfSample.class, "multiCondAndOr");
-		Assert.assertEquals("node[2,IF_ICMPEQ,line 50], decis{T=5,F=3}(5=CD_FALSE_BPD_TRUE,3=BPD_FALSE)]",
+		Assert.assertEquals("node[2,IF_ICMPEQ,line 50], decis{T=5,F=3}(5=BPD_TRUE_CD_FALSE,3=BPD_FALSE)]",
 				cfg.getNode(2).toString());
 		Assert.assertEquals("node[4,IFLE,line 50], decis{T=15,F=5}(15=PD,5=BPD_FALSE)]",
 				cfg.getNode(4).toString());

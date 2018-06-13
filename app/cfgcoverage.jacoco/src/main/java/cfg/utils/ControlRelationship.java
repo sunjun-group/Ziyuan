@@ -2,7 +2,6 @@ package cfg.utils;
 
 import cfg.BranchRelationship;
 import cfg.DecisionBranchType;
-import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
@@ -56,25 +55,10 @@ public class ControlRelationship {
 	}
 	
 	public static String toString(short decisionControlRelationship) {
-		switch (decisionControlRelationship) {
-		case 0b11:
-			return "BPD_TRUE";
-		case 0b1100:
-			return "BPD_FALSE";
-		case 0b1111:
-			return "PD";
-		case 0b0100:
-			return "CD_FALSE";
-		case 0b0001:
-			return "CD_TRUE";
-		case 0b0101:
-			return "CD_TRUE_FALSE";
-		case 0b0111:
-			return "CD_FALSE_BPD_TRUE";
-		case 0b1101:
-			return "CD_TRUE_BPD_FALSE";
-		}
-		throw new IllegalArgumentException("Invalid decision control relationship: " + decisionControlRelationship);
+		String str = toString(decisionControlRelationship, 2);
+		str = str.replace("_0", "_TRUE");
+		str = str.replace("_1", "_FALSE");
+		return str;
 	}
 	
 	public static String toString(short relationship, int branchTotal) {
@@ -106,29 +90,23 @@ public class ControlRelationship {
 		return newRelationship; 
 	}
 
-	private static final short BPD_TRUE = 0b11;
-	private static final short BPD_FALSE = 0b1100;
-	private static final short PD = 0b1111; // Post-Dominance
-	private static final short CD_TRUE = 0b0001; // Control dependence
-	private static final short CD_FALSE = 0b0100;
-	private static final short CD_TRUE_FALSE = 0b0101;
-	private static final short CD_TRUE_BPD_FALSE = 0b1101;
-	private static final short CD_FALSE_BPD_TRUE = 0b0111;
-	
 	@Deprecated
-	public static BranchRelationship getBranchRelationship(short decisionControlRelationship) {
-		if (CollectionUtils.existIn(decisionControlRelationship, BPD_TRUE, CD_TRUE)) {
+	public static BranchRelationship getBranchRelationship(short relationship) {
+		if ((relationship & 0b0101) == 0b0101) {
+			return BranchRelationship.TRUE_FALSE;
+		}
+		if ((relationship & 0b01) == 0b01) {
 			return BranchRelationship.TRUE;
-		} 
-		if (CollectionUtils.existIn(decisionControlRelationship, BPD_FALSE, CD_FALSE)) {
+		}
+		if ((relationship & 0b0100) == 0b0100) {
 			return BranchRelationship.FALSE;
 		}
-		return BranchRelationship.TRUE_FALSE;
+		return null;
 	}
 
 	@Deprecated
-	public static boolean isTrueFalseRelationship(short decisionControlRelationship) {
-		return CollectionUtils.existIn(decisionControlRelationship, PD, CD_TRUE_FALSE, CD_FALSE_BPD_TRUE, CD_TRUE_BPD_FALSE);
+	public static boolean isTrueFalseRelationship(short relationship) {
+		return (relationship & 0b0101) == 0b0101;
 	}
 
 }
