@@ -34,11 +34,6 @@ public class ControlDependencyConstructor {
 	private static final Logger log = LoggerFactory.getLogger(ControlDependencyConstructor.class);
 	private ControlDependencyConstructor() {}
 	
-	/**
-	 * build up cfgNode dominatees and dependentees
-	 * using labeling.
-	 * @param cfg
-	 */
 	public static void computeControlDependency(CFG cfg) {
 		List<CfgNode> decisionNodes = cfg.getDecisionNodes();
 		if (decisionNodes.isEmpty()) {
@@ -52,9 +47,6 @@ public class ControlDependencyConstructor {
 		calculateControlDominators(root, cfg);
 	}
 
-	/**
-	 * @param decisionNodes
-	 */
 	private static void setDecisionNodeDependenteesAndDirectLevelRelationship(List<CfgNode> decisionNodes) {
 		for (CfgNode node : decisionNodes) {
 			for (int branchIdx = 0; branchIdx < node.getBranchTotal(); branchIdx++) {

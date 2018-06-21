@@ -5,7 +5,15 @@ import cfg.DecisionBranchType;
 
 /**
  * @author LLT
- *
+ * for each branch, we use 2 bit to mark control relationship. 
+ * the first bit is to identify if there is a control relationship.
+ * the second bit is to identify whether the control relationship is branch control dependency (CD) or branch post-dominance (BPD).
+ * a has b as branch post-dominance (BPD) on branch r of a if all paths come from branch r go through b;
+ * a has b as branch control dependency on branch r of a if there is a path come from branch r go through b and b is not BPD of a on r; 
+ * 00 : no control relationship
+ * 01 : BCD
+ * 11 : BPD
+ * a has b as PD if for all branch r of a, a has b as BPD on r.
  */
 public class ControlRelationship {
 	
