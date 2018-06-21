@@ -26,7 +26,6 @@ import learntest.core.LearningMediator;
 import learntest.core.commons.data.decision.CoveredBranches;
 import learntest.core.commons.data.decision.DecisionNodeProbe;
 import learntest.core.commons.data.decision.DecisionProbes;
-import learntest.core.commons.utils.CfgUtils;
 import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -50,7 +49,7 @@ public abstract class AbstractDecisionLearner extends AbstractLearningComponent 
 		List<CfgNode> decisionNodes = inputProbes.getCfg().getDecisionNodes();
 		DecisionProbes probes = inputProbes;
 
-		dominationMap = new CfgDomain().constructDominationMap(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()),
+		dominationMap = new CfgDomain().constructDominationMap(probes.getCfg().getFirstDecisionNode(),
 				inputProbes.getCfg().getDecisionNodes());
 
 		HashMap<Integer, List<CfgNode>> indexMap = new HashMap<>();
@@ -66,7 +65,7 @@ public abstract class AbstractDecisionLearner extends AbstractLearningComponent 
 		}
 		try {
 			prepareDataBeforeLearn(inputProbes, relevantVarMap);
-			learn(CfgUtils.getVeryFirstDecisionNode(probes.getCfg()), probes, new ArrayList<Integer>(decisionNodes.size()),
+			learn(probes.getCfg().getFirstDecisionNode(), probes, new ArrayList<Integer>(decisionNodes.size()),
 					indexMap);
 		} catch(Exception e) {
 			e.printStackTrace();

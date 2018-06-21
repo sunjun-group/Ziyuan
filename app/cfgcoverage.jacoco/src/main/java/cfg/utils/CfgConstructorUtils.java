@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import cfg.CFG;
 import cfg.CfgNode;
 import cfg.DecisionBranchType;
-import sav.common.core.SavRtException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 
@@ -130,7 +129,7 @@ public class CfgConstructorUtils {
 		}
 		/* update dominatte for nodes between each decision node and next decision node/leaf node (included) */
 		setDecisionNodeDependenteesAndDirectLevelRelationship(decisionNodes);
-		CfgNode root = getVeryFirstDecisionNode(decisionNodes);
+		CfgNode root = cfg.getFirstDecisionNode();
 		Assert.assertNotNull(root, "fail to look up the first decision node!");
 		
 		calculateControlDominators(root, cfg);
@@ -277,29 +276,6 @@ public class CfgConstructorUtils {
 			}
 		});
 		return list;
-	}
-
-	/**
-	 * @param decisionNodes
-	 * @return
-	 */
-	public static CfgNode getVeryFirstDecisionNode(List<CfgNode> decisionNodes) {
-		Assert.assertTrue(CollectionUtils.isNotEmpty(decisionNodes), "cfg has no decisionNode!");
-		CfgNode first = decisionNodes.get(0);
-		if (CollectionUtils.isEmpty(first.getDominators())) {
-			return first;
-		}
-		
-		/* if first node is inside a loop, then lookup its loopheader */
-		if (!first.isInLoop()) {
-			throw new SavRtException("first decision node has dominatee but not inside a loop! " + first.toString());
-		}
-		for (CfgNode loopHeader : first.getLoopHeaders()) {
-			if (loopHeader.getDominators().isEmpty()) {
-				return loopHeader;
-			}
-		}
-		throw new SavRtException("could not find the very root node of cfg!");
 	}
 	
 }

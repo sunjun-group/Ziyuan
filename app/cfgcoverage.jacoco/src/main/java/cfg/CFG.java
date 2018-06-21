@@ -25,6 +25,8 @@ public class CFG {
 	private CfgNode startNode;
 	private List<CfgNode> exitList;
 	
+	private CfgNode firstDeisionNode;
+	
 	private MethodNode methodNode;
 	
 	public CFG(String methodId) {
@@ -106,4 +108,19 @@ public class CFG {
 		}
 		return exitList;
 	}
+	
+	public CfgNode getFirstDecisionNode() {
+		if (!getDecisionNodes().isEmpty() && firstDeisionNode == null) {
+			CfgNode node = startNode;
+			while (node != null) {
+				if (node.isDecisionNode()) {
+					firstDeisionNode = node;
+					break;
+				}
+				node = node.getNext();
+			}
+		}
+		return firstDeisionNode;
+	}
+	
 }
