@@ -36,4 +36,8 @@ public class NumberUtils {
 	public static double round(double val, int fraction) {
 		return Math.round(val * fraction) / fraction;
 	}
+	
+	public static boolean isInRange(int num, int min, int max) {
+		return num >= min && num <= max;
+	}
 }

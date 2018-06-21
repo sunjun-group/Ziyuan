@@ -115,7 +115,7 @@ public class CfgCoverageBuilder {
 		methodId = createMethodId(methodNode);
 		cfgCoverage = methodCfgCoverageMap.get(methodId);
 		if (cfgCoverage == null) {
-			cfg = CfgConstructor.constructCFG(className, methodNode);
+			cfg = new CfgConstructor().constructCFG(className, methodNode);
 			cfgCoverage = new CfgCoverage(cfg);
 			methodCfgCoverageMap.put(methodId, cfgCoverage);
 		} else {

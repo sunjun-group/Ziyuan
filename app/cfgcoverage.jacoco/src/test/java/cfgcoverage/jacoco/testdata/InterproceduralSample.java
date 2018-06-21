@@ -1,6 +1,8 @@
 package cfgcoverage.jacoco.testdata;
 
-public class SamplePrograms {
+import sav.common.core.SavRtException;
+
+public class InterproceduralSample {
 	
 	public int Max(int a, int b, int c)
 	{
@@ -11,6 +13,7 @@ public class SamplePrograms {
 		{
 			//result = b;
 			x += 6;
+			method1(b, c);
 			x *= 3;
 			result = a; //wrong assignment
 		}
@@ -30,5 +33,14 @@ public class SamplePrograms {
 			return false;
 		}
 		return true;
+	}
+	
+	private void method1(int x, int y) {
+		if (x == 0) {
+			throw new IllegalArgumentException();
+		} else if (y == 0) {
+			throw new SavRtException("");
+		}
+		System.out.println();
 	}
 }

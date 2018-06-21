@@ -64,6 +64,18 @@ public class LoopHeaderSample {
 		System.out.println(x);
 	}
 	
+	public void forLoop2() {
+		int x = 1;
+		int y = 3;
+		for (int i = 0; i < 10; i++) {
+			if (i == 2) {
+				continue;
+			}
+			x += y * i;
+		}
+		System.out.println(x);
+	}
+	
 	public void doWhileMultiCond() {
 		int x = 1;
 		int y = 3;
@@ -82,5 +94,40 @@ public class LoopHeaderSample {
 				return;
 			}
 		} while (y < 5);
+	}
+	
+	public void innerLoop() {
+		int[][] a = new int[2][10];
+		int val = 0;
+		for (int i = 0; i < 2; i++) {
+			System.out.println(i);
+			for (int j = 0; j < 10; j++) {
+				a[i][j] = val++;
+				if (val == 10) {
+					val = 0;
+				}
+			}
+		}
+	}
+	
+	public void innerLoop2(int x, int y) {
+		int[][] a = new int[2][10];
+		int val = 0;
+		for (int i = 0; i < 2; i++) {
+			System.out.println(i);
+			do {
+				x += y;
+				if (x >= 4) {
+					return;
+				} else {
+					for (int j = 0; j < 10; j++) {
+						a[i][j] = val++;
+						if (val == 10) {
+							val = 0;
+						}
+					}
+				}
+			} while (y < 5);
+		}
 	}
 }

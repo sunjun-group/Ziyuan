@@ -9,12 +9,11 @@
 package cfg;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.objectweb.asm.tree.MethodNode;
 
-import cfgcoverage.jacoco.analysis.data.NodeCoverage;
+import sav.common.core.utils.TextFormatUtils;
 
 /**
  * @author LLT
@@ -31,7 +30,6 @@ public class CFG {
 	public CFG(String methodId) {
 		this.id = methodId;
 		nodeList = new ArrayList<CfgNode>();
-		exitList = new ArrayList<CfgNode>();
 	}
 	
 	public void setStartNode(CfgNode startNode) {
@@ -70,13 +68,9 @@ public class CFG {
 		return nodeList;
 	}
 	
-	public void addExitNode(CfgNode node) {
-		exitList.add(node);
-	}
-
 	@Override
 	public String toString () {
-		return "Cfg[nodeList=" + nodeList + ", \nstartNode=" + startNode + ",\n exitList=" + exitList
+		return "Cfg[nodeList=" + TextFormatUtils.printCol(nodeList, "\n") + ", \nstartNode=" + startNode + ",\n exitList=" + exitList
 				+ ", \nmethodNode=" + methodNode + "]";
 	}
 
@@ -99,5 +93,17 @@ public class CFG {
 	
 	public int size() {
 		return nodeList.size();
+	}
+	
+	public List<CfgNode> getExitList() {
+		if (exitList == null) {
+			exitList = new ArrayList<>();
+			for (CfgNode node : getNodeList()) {
+				if (node.isLeaf()) {
+					exitList.add(node);
+				}
+			}
+		}
+		return exitList;
 	}
 }

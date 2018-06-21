@@ -1,26 +1,24 @@
 package cfg.analysis;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 import cfg.CFG;
+import cfg.CfgNode;
 import cfg.utils.CfgConstructor;
 import cfgcoverage.jacoco.testdata.ForSample;
 import cfgcoverage.jacoco.testdata.IfInLoop;
 import cfgcoverage.jacoco.testdata.IfSample;
+import cfgcoverage.jacoco.testdata.InterproceduralSample;
 import cfgcoverage.jacoco.testdata.LoopHeaderSample;
 import cfgcoverage.jacoco.testdata.LoopSample;
 import cfgcoverage.jacoco.testdata.MultiLevelLoopSample;
 import cfgcoverage.jacoco.testdata.NestedLoopConditionSample;
+import cfgcoverage.jacoco.testdata.SamplePrograms;
 import cfgcoverage.jacoco.testdata.SwitchSample;
-import sav.common.core.utils.ClassUtils;
-import sav.common.core.utils.TextFormatUtils;
+import cfgcoverage.jacoco.testdata.ThrowSample;
 import sav.commons.TestConfiguration;
-import sav.commons.testdata.SamplePrograms;
+import sav.strategies.dto.AppJavaClassPath;
 
 /**
  * @author LLT
@@ -29,21 +27,35 @@ import sav.commons.testdata.SamplePrograms;
 public class CfgConstructorTest {
 	
 	private CFG constructCfg(Class<?> clazz, String method) throws Exception {
-		String classFilePath = ClassUtils.getClassFilePath(TestConfiguration.getTestTarget("cfgcoverage.jacoco"), clazz.getName());
-		File file = new File(classFilePath);
-		if (!file.exists()) {
-			classFilePath = ClassUtils.getClassFilePath(TestConfiguration.getTestTarget("sav.commons"), clazz.getName());
-			file = new File(classFilePath);
-		}
-		InputStream is = new FileInputStream(file);
-		CFG cfg = CfgConstructor.constructCFG(is, clazz.getName(), method);
-		System.out.println(TextFormatUtils.printCol(cfg.getNodeList(), "\n"));
+		AppJavaClassPath appClasspath = new AppJavaClassPath();
+		appClasspath.setTarget(TestConfiguration.getTestTarget("cfgcoverage.jacoco"));
+		CFG cfg = new CfgConstructor().constructCFG(appClasspath, clazz.getName(), method, 2);
+		printCfg(cfg);
 		return cfg;
+	}
+	
+	private void printCfg(CFG cfg) {
+		for (CfgNode cfgNode : cfg.getNodeList()) {
+			System.out.println(cfgNode.getFullString());
+			if (cfgNode.getSubCfg() != null) {
+				printCfg(cfgNode.getSubCfg());
+			}
+		}
 	}
 	
 	@Test
 	public void testSampleProgram() throws Exception {
 		CFG cfg = constructCfg(SamplePrograms.class, "Max");
+		Assert.assertEquals("node[6,IF_ICMPLE,line 10], decis{T=14,F=7}(14=PD,7=BPD_FALSE)]",
+				cfg.getNode(6).toString());
+		Assert.assertEquals("node[16,IF_ICMPLE,line 18], decis{T=26,F=17}(26=PD,17=BPD_FALSE)]",
+				cfg.getNode(16).toString());
+		System.out.println();
+	}
+	
+	@Test
+	public void testInterproduceralProgram() throws Exception {
+		CFG cfg = constructCfg(InterproceduralSample.class, "Max");
 		Assert.assertEquals("node[6,IF_ICMPLE,line 10], decis{T=14,F=7}(14=PD,7=BPD_FALSE)]",
 				cfg.getNode(6).toString());
 		Assert.assertEquals("node[16,IF_ICMPLE,line 18], decis{T=26,F=17}(26=PD,17=BPD_FALSE)]",
@@ -60,9 +72,6 @@ public class CfgConstructorTest {
 	}
 	
 	@Test
-	/**
-	 * TODO: How should we handle switch case?
-	 */
 	public void testSwitch() throws Exception {
 		CFG cfg = constructCfg(SwitchSample.class, "getName");
 		System.out.println();
@@ -134,8 +143,9 @@ public class CfgConstructorTest {
 	
 	@Test
 	public void testLoopHeader() throws Exception {
+		CFG cfg = null;
 		System.out.println("multiLoopCond");
-		CFG cfg = constructCfg(LoopHeaderSample.class, "multiLoopCond");
+		cfg = constructCfg(LoopHeaderSample.class, "multiLoopCond");
 		System.out.println("\n");
 		System.out.println("multiLoopCondNeg");
 		cfg = constructCfg(LoopHeaderSample.class, "multiLoopCondNeg");
@@ -146,12 +156,24 @@ public class CfgConstructorTest {
 		System.out.println("forLoop");
 		cfg = constructCfg(LoopHeaderSample.class, "forLoop");
 		System.out.println("\n"); 
+		System.out.println("forLoop2");
+		cfg = constructCfg(LoopHeaderSample.class, "forLoop2");
+		System.out.println("\n"); 
 		System.out.println("doWhileMultiCond");
 		cfg = constructCfg(LoopHeaderSample.class, "doWhileMultiCond");
 		System.out.println("\n"); 
 		System.out.println("doWhileSingleCondWithInLoopCond");
 		cfg = constructCfg(LoopHeaderSample.class, "doWhileSingleCondWithInLoopCond");
+		System.out.println("\n"); 
 	}
+	
+	@Test
+	public void testInnerLoop2() throws Exception {
+		System.out.println("innerLoop2");
+		CFG cfg = constructCfg(LoopHeaderSample.class, "innerLoop2");
+		System.out.println("\n");
+	}
+	
 	
 	@Test
 	public void testMultiLevelLoop() throws Exception {
@@ -176,6 +198,12 @@ public class CfgConstructorTest {
 //		Assert.assertEquals(
 //				"NodeCoverage [node[30,IF_ICMPNE,line 29], decis{T=34,F=31}], coveredTcs={0=1}, coveredBranches={34=[0]}]", 
 //				cfg.getNode(30).toString());
+		System.out.println();
+	}
+	
+	@Test
+	public void testThrow() throws Exception {
+		CFG cfg = constructCfg(ThrowSample.class, "run");
 		System.out.println();
 	}
 }

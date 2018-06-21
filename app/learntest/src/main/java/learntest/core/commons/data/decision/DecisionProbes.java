@@ -113,7 +113,7 @@ public class DecisionProbes extends CfgCoverage {
 			int type = domPrecond.getType();
 			List<Divider> domDividers = domPrecond.getDividers();
 			boolean OR = domPrecond.getTrueFalse() == null ? false : domPrecond.getTrueFalse() instanceof OrFormula;
-			BranchRelationship branchRel = dominator.getBranchRelationship(node.getIdx());
+			BranchRelationship branchRel = dominator.getBranchRelationship(node);
 			path.putAll(domPrecond.getPath());
 			if (CollectionUtils.isEmpty(domDividers)) {
 				precondition.addPreconditions(domPrecond.getPreconditions());
@@ -168,11 +168,11 @@ public class DecisionProbes extends CfgCoverage {
 				 *   
 				 *  */
 				for (CfgNode branch : dominator.getBranches()) {
-					if (dominator.getBranchRelationship(branch.getIdx()) == BranchRelationship.TRUE) {
+					if (dominator.getBranchRelationship(branch) == BranchRelationship.TRUE) {
 						branchRel = BranchRelationship.FALSE;
 						path.put(dominator, branchRel);
 						break;
-					}else if (dominator.getBranchRelationship(branch.getIdx()) == BranchRelationship.FALSE) {
+					}else if (dominator.getBranchRelationship(branch) == BranchRelationship.FALSE) {
 						branchRel = BranchRelationship.TRUE;
 						path.put(dominator, branchRel);
 						break;

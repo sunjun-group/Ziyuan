@@ -103,7 +103,7 @@ public class CoverageUtils {
 			NodeCoverage nodeCvg = cfgCoverage.getCoverage(node);
 			Set<BranchRelationship> coveredBranches = new HashSet<BranchRelationship>(2);
 			for (int branchIdx : getCoveredBranches(testIdx, nodeCvg)) {
-				BranchRelationship branchRelationship = node.getBranchRelationship(branchIdx);
+				BranchRelationship branchRelationship = node.getBranchRelationship(cfgCoverage.getCfg().getNode(branchIdx));
 				coveredBranches.add(branchRelationship == BranchRelationship.TRUE ? branchRelationship : 
 										BranchRelationship.FALSE);
 			}

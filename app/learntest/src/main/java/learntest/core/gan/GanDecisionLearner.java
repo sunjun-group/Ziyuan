@@ -110,12 +110,8 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 			train(node, nodeProbe, trainingVars);
 			// sampling
 			BranchRelationship type = getSamplingBranches(nodeProbe);
-//			if (CfgUtils.implyTrueBranch(type)) {
-				sampling(nodeProbe, trainingVars, DecisionBranchType.TRUE);
-//			}
-//			if (CfgUtils.implyFalseBranch(type)) {
-				sampling(nodeProbe, trainingVars, DecisionBranchType.FALSE);
-//			}
+			sampling(nodeProbe, trainingVars, DecisionBranchType.TRUE);
+			sampling(nodeProbe, trainingVars, DecisionBranchType.FALSE);
 		} 
 		return null;
 	}
@@ -137,7 +133,7 @@ public class GanDecisionLearner extends AbstractDecisionLearner implements IInpu
 				continue;
 			}
 			if (dependenteeProbe.hasUncoveredBranch()) {
-				type = BranchRelationship.merge(type, node.getBranchRelationship(dependentee.getIdx()));
+				type = BranchRelationship.merge(type, node.getBranchRelationship(dependentee));
 			}
 		}
 		return type;

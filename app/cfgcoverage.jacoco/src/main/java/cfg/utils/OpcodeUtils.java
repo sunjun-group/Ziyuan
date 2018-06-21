@@ -10,6 +10,8 @@ package cfg.utils;
 
 import org.objectweb.asm.Opcodes;
 
+import sav.common.core.utils.CollectionUtils;
+
 /**
  * @author LLT
  *
@@ -234,5 +236,11 @@ public final class OpcodeUtils {
 	public static boolean isCondition(int opcode) {
 		return (opcode >= Opcodes.IFEQ  && opcode <= Opcodes.IF_ACMPNE) || 
 				( opcode >= Opcodes.IFNULL && opcode <= Opcodes.IFNONNULL);
+	}
+	
+	public static boolean isReturnInsn(int opCode) {
+		return CollectionUtils.existIn(opCode, Opcodes.IRETURN,
+				Opcodes.LRETURN, Opcodes.FRETURN, Opcodes.DRETURN, Opcodes.ARETURN,
+				Opcodes.RETURN);
 	}
 }

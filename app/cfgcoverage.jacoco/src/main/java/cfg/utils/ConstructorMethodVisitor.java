@@ -1,6 +1,7 @@
 package cfg.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,10 @@ import cfg.CFG;
 import cfg.CfgNode;
 import cfg.DecisionBranchType;
 import cfg.SwitchCase;
+import cfg.utils.CfgLoopFinder.Loop;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.NumberUtils;
 import sav.common.core.utils.SignatureUtils;
 
 /**
@@ -88,6 +91,7 @@ public class ConstructorMethodVisitor extends MethodVisitor {
 
 	protected void visitInsn() {
 		CfgNode node = new CfgNode(currentInstruction, currentLine);
+		node.setCfg(cfg);
 		node.setDecisionNode(OpcodeUtils.isCondition(node.getInsnNode().getOpcode()));
 		
 		cfg.addNode(node);
@@ -230,14 +234,73 @@ public class ConstructorMethodVisitor extends MethodVisitor {
 				}
 			}
 		}
+		CfgConstructorUtils.updateDecisionNodes(cfg);
+		CfgConstructorUtils.updateNodesInLoop(cfg);
+//		List<Loop> loops = identifyLoopHeader();
+//		for (Loop loop : loops) {
+//			CfgNode node = loop.loopHeader;
+//			node.setLoopHeader(true);
+//			while (!node.isDecisionNode()) {
+//				node = node.getNext();
+//			}
+//			/* make first decision node be the loopHeader */
+//			node.setLoopHeader(true);
+//			for (CfgNode inLoopNode : loop.nodesInLoop) {
+//				inLoopNode.addLoopHeader(node);
+//			}
+//		}
 	}
-
+	
+	/**
+	 * A node H is a loop header if:
+	 * - node H is inside a loop, means there is a path a --> b -->...> a.
+	 * - there is a single edge from outside of the loop to H.
+	 * - all other nodes inside a loop does not have any predecessor outside of the loop.
+	 * @return 
+	 */
+	private List<Loop> identifyLoopHeader() {
+		/* for each jumpback instruction, we consider as a candidate scope to detect a loop */
+		Map<Integer, Integer> loopScopeCandidates = new HashMap<>();
+		for (Jump jump : jumps) {
+			CfgNode target = (CfgNode) labelInfos.get(jump.target);
+			CfgNode source = jump.source;
+			/* only take into account backward jump */
+			if (target.getIdx() > source.getIdx()) {
+				continue;
+			}
+			Integer maxIdx = loopScopeCandidates.get(target.getIdx());
+			if (maxIdx == null) {
+				loopScopeCandidates.put(target.getIdx(), source.getIdx());
+			} else {
+				loopScopeCandidates.put(target.getIdx(), Math.max(source.getIdx(), maxIdx));
+			}
+		}
+		List<Loop> loops = new ArrayList<>();
+		List<Integer> scopeMins = new ArrayList<>(loopScopeCandidates.keySet());
+		Collections.sort(scopeMins);
+		for (int scopeMin : scopeMins) {
+			int scopeMax = loopScopeCandidates.get(scopeMin);
+			CfgNode entryNode = cfg.getNode(scopeMin);
+			boolean detected = false;
+			for (Loop loop : loops) {
+				if (NumberUtils.isInRange(loop.loopHeader.getIdx(), scopeMin, scopeMax)
+						&& loop.nodesInLoop.contains(entryNode)) {
+					detected = true;
+					break;
+				}
+			}
+			if (detected) {
+				continue;
+			}
+			loops.addAll(CfgLoopFinder.findLoops(entryNode, scopeMin, scopeMax));
+		}
+		System.out.println(loops);
+		return loops;
+	}
+	
 	protected static class Jump {
 		final CfgNode source;
 		final Label target;
-		/* branchRelationship in general, but here, to make it 
-		 * strictly only have TRUE & FALSE value, & be coincident with decision node, we use DecisionBranchType.
-		 * */
 		DecisionBranchType branchType = DecisionBranchType.TRUE; 
 		boolean isSwitchSource;
 		Integer switchCaseKey;

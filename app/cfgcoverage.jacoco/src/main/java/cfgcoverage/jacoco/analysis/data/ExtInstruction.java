@@ -96,7 +96,7 @@ public class ExtInstruction extends Instruction {
 		}
 		List<CfgNode> result = new ArrayList<CfgNode>(2);
 		for (CfgNode branch : node.getBranches()) {
-			if (ControlRelationship.isTrueFalseRelationship(node.getDecisionControlRelationship(branch.getIdx()))) {
+			if (ControlRelationship.isTrueFalseRelationship(node.getDecisionControlRelationship(branch))) {
 				result.add(branch);
 			}
 		}

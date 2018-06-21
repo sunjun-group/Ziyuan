@@ -55,7 +55,6 @@ public class CfgNode {
 	/*
 	 * dependentees is only not null if node is a decision node, dependentees
 	 * are decision nodes which under control of this node.
-	 * 
 	 */
 	private Set<CfgNode> dependentees = new HashSet<>();
 	private Set<CfgNode> loopDependentees = new HashSet<>();
@@ -63,7 +62,12 @@ public class CfgNode {
 	/* keep type of relationship between this node with all of its 
 	 * either direct or indirect children.
 	 * */
-	private Map<Integer, Short> decisionControlRelationships = new HashMap<>();
+	private Map<CfgNode, Short> decisionControlRelationships = new HashMap<>();
+	private CFG subCfg;
+	private CFG cfg;
+	
+	
+	private boolean isLoopHeader;
 	
 	public CfgNode(AbstractInsnNode insnNode, int line) {
 		predecessors = new ArrayList<CfgNode>(1);
@@ -137,13 +141,13 @@ public class CfgNode {
 		if (isDecisionNode) {
 			sb.append(", decis");
 			if (decisionBranches != null) {
-				int trueBranchId = decisionBranches.get(DecisionBranchType.TRUE).idx;
-				int falseBranchId = decisionBranches.get(DecisionBranchType.FALSE).idx;
-				sb.append("{T=").append(trueBranchId)
-					.append(",F=").append(falseBranchId)
+				CfgNode trueBranch = decisionBranches.get(DecisionBranchType.TRUE);
+				CfgNode falseBranch = decisionBranches.get(DecisionBranchType.FALSE);
+				sb.append("{T=").append(trueBranch.idx)
+					.append(",F=").append(falseBranch.idx)
 					.append("}");
-				sb.append("(").append(trueBranchId).append("=").append(ControlRelationship.toString(getDecisionControlRelationship(trueBranchId)))
-					.append(",").append(falseBranchId).append("=").append(ControlRelationship.toString(getDecisionControlRelationship(falseBranchId)))
+				sb.append("(").append(trueBranch.idx).append("=").append(ControlRelationship.toString(getDecisionControlRelationship(trueBranch)))
+					.append(",").append(falseBranch.idx).append("=").append(ControlRelationship.toString(getDecisionControlRelationship(falseBranch)))
 					.append(")");
 			} else {
 				sb.append("{");
@@ -158,7 +162,7 @@ public class CfgNode {
 				for (int i = 0; i < branches.size(); i++) {
 					CfgNode branch = branches.get(i);
 					sb.append(branch.getIdx()).append("=").append(ControlRelationship
-							.toString(getDecisionControlRelationship(branch.getIdx()), getBranchTotal()));
+							.toString(getDecisionControlRelationship(branch), getBranchTotal()));
 					if (i != branches.size() - 1) {
 						sb.append(", ");
 					}
@@ -175,13 +179,37 @@ public class CfgNode {
 				}
 			}
 			sb.append("}");
-		} 
+		} else if (getNext() != null){
+			sb.append(", nextNode {").append(getNext().idx).append("}");
+		}
 		if (isLoopHeader()) {
 			sb.append(", loopHeader");
 		} else if (isInLoop()) {
 			sb.append(", inloop");
 		}
 		sb.append("]");
+		return sb.toString();
+	}
+	
+	public String getFullString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(toString());
+		sb.append(", dominators: {");
+		int i = 0;
+		for (CfgNode dominator : dominators) {
+			sb.append(dominator.idx);
+			if (++i != dominators.size()) {
+				sb.append(", ");
+			}
+		}
+		sb.append("}");
+		if (isLoopHeader) {
+			sb.append(", isLoopHeader");
+		}
+//		if (isLoopHeader) {
+//			sb.append(", isLoopHeaderOf { ");
+//			sb.append(StringUtils.join(inLoopNode, ", ")).append("}");
+//		}
 		return sb.toString();
 	}
 	
@@ -273,6 +301,10 @@ public class CfgNode {
 	public Set<CfgNode> getLoopDependentees() {
 		return loopDependentees;
 	}
+	
+	public void addBranch(CfgNode branch) {
+		branch.setPredecessor(this);
+	}
 
 	public void setDecisionBranch(CfgNode branch, DecisionBranchType type) {
 		if (this.idx == branch.idx) {
@@ -291,7 +323,7 @@ public class CfgNode {
 			}
 		}
 		branches.set(type.ordinal(), branch);
-		decisionControlRelationships.put(branch.idx, ControlRelationship.getRelationshipToDecisionPrecessor(type));
+		decisionControlRelationships.put(branch, ControlRelationship.getRelationshipToDecisionPrecessor(type));
 	}
 	
 	public CfgNode getDecisionBranch(DecisionBranchType type) {
@@ -314,19 +346,19 @@ public class CfgNode {
 		return null;
 	}
 	
-	public short getDecisionControlRelationship(int nodeIdx) {
-		Short value = decisionControlRelationships.get(nodeIdx);
+	public short getDecisionControlRelationship(CfgNode node) {
+		Short value = decisionControlRelationships.get(node);
 		return value == null ? 0 : value;
 	}
 	
-	public void setDecisionControlRelationship(int nodeIdx, short relationship) {
-		if (this.idx == nodeIdx) {
+	public void setDecisionControlRelationship(CfgNode node, short relationship) {
+		if (this.idx == node.idx) {
 			return;
 		}
-		decisionControlRelationships.put(nodeIdx, relationship);
+		decisionControlRelationships.put(node, relationship);
 	}
 	
-	public Map<Integer, Short> getDecisionControlRelationships() {
+	public Map<CfgNode, Short> getDecisionControlRelationships() {
 		return decisionControlRelationships;
 	}
 
@@ -346,8 +378,8 @@ public class CfgNode {
 		}
 	}
 
-	public BranchRelationship getBranchRelationship(int nodeIdx) {
-		short decisionControlRelationship = getDecisionControlRelationship(nodeIdx);
+	public BranchRelationship getBranchRelationship(CfgNode node) {
+		short decisionControlRelationship = getDecisionControlRelationship(node);
 		return ControlRelationship.getBranchRelationship(decisionControlRelationship);
 	}
 
@@ -355,4 +387,23 @@ public class CfgNode {
 		return getBranches().size();
 	}
 
+	public void setSubCfg(CFG subCfg) {
+		this.subCfg = subCfg;
+	}
+	
+	public CFG getSubCfg() {
+		return subCfg;
+	}
+
+	public void setLoopHeader(boolean isLoopHeader) {
+		this.isLoopHeader = isLoopHeader;
+	}
+
+	public CFG getCfg() {
+		return cfg;
+	}
+
+	public void setCfg(CFG cfg) {
+		this.cfg = cfg;
+	}
 }
