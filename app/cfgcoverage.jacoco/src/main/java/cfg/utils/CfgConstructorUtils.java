@@ -130,7 +130,6 @@ public class CfgConstructorUtils {
 		}
 		/* update dominatte for nodes between each decision node and next decision node/leaf node (included) */
 		setDecisionNodeDependenteesAndDirectLevelRelationship(decisionNodes);
-		/* copy dominatees of parent node to each node */
 		CfgNode root = getVeryFirstDecisionNode(decisionNodes);
 		Assert.assertNotNull(root, "fail to look up the first decision node!");
 		
@@ -158,21 +157,7 @@ public class CfgConstructorUtils {
 						if (!childIsLoopHeaderOfNode) {
 							break;
 						}
-						boolean foundOutloop = false;
-						/* add outloop dependentees */
-						for (CfgNode loopHeaderBranch : branch.getBranches()) {
-							if (!branch.isLoopHeaderOf(loopHeaderBranch)) {
-								if (loopHeaderBranch.getIdx() < branch.getIdx()) {
-									completed = true;
-								}
-								branch = loopHeaderBranch;
-								foundOutloop = true;
-								break;
-							}
-						}
-						if (!foundOutloop) {
-							completed = true;
-						}
+						break;
 					} else {
 						CfgNode next = branch.getNext();
 						if (next == null) {
@@ -248,22 +233,6 @@ public class CfgConstructorUtils {
 							}
 							lastNode.setDecisionControlRelationship(entry.getKey(), relationship);
 							entryNode.updateDominator(lastNode, relationship);
-						}
-					}
-					if (lastNode.getLoopHeaders() != null) {
-						for (CfgNode loopHeader : lastNode.getLoopHeaders()) {
-							if (!loopHeader.isLoopHeaderOf(directDependentee)) {
-								CfgNode outloopNode = directDependentee;
-								while (outloopNode.getPredecessors().size() == 1
-										&& !outloopNode.getPredecessors().get(0).isDecisionNode()) {
-									outloopNode = outloopNode.getPredecessors().get(0);
-									if (lastNode.getDecisionControlRelationship(outloopNode) == 0) {
-										break;
-									}
-									lastNode.setDecisionControlRelationship(outloopNode, relationshipOfDirectDependenteeOnLastNode);
-									cfg.getNode(outloopNode.getIdx()).updateDominator(lastNode, relationshipOfDirectDependenteeOnLastNode);
-								}
-							}
 						}
 					}
 				}

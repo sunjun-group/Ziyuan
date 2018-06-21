@@ -82,7 +82,7 @@ public class CfgConstructorTest {
 		CFG cfg = constructCfg(ForSample.class, "run");
 		Assert.assertEquals("node[5,IF_ICMPNE,line 19], decis{T=11,F=6}(11=BPD_TRUE,6=BPD_FALSE), inloop]",
 				cfg.getNode(5).toString());
-		Assert.assertEquals("node[14,IF_ICMPLT,line 18], decis{T=3,F=15}(3=BPD_TRUE,15=CD_TRUE_BPD_FALSE), loopHeader]",
+		Assert.assertEquals("node[14,IF_ICMPLT,line 18], decis{T=3,F=15}(3=BPD_TRUE,15=BPD_FALSE), loopHeader]",
 				cfg.getNode(14).toString());
 		System.out.println();
 	}
@@ -92,7 +92,7 @@ public class CfgConstructorTest {
 		CFG cfg = constructCfg(IfInLoop.class, "run");
 		Assert.assertEquals("node[5,IF_ICMPNE,line 19], decis{T=9,F=6}(9=PD,6=BPD_FALSE), inloop]",
 				cfg.getNode(5).toString());
-		Assert.assertEquals("node[17,IF_ICMPLT,line 18], decis{T=3,F=18}(3=BPD_TRUE,18=PD), loopHeader]",
+		Assert.assertEquals("node[17,IF_ICMPLT,line 18], decis{T=3,F=18}(3=BPD_TRUE,18=BPD_FALSE), loopHeader]",
 				cfg.getNode(17).toString());
 		Assert.assertEquals("node[19,IFLE,line 25], decis{T=23,F=20}(23=PD,20=BPD_FALSE)]",
 				cfg.getNode(19).toString());
