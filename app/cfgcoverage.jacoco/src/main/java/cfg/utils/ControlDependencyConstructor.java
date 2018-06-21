@@ -24,98 +24,15 @@ import org.slf4j.LoggerFactory;
 
 import cfg.CFG;
 import cfg.CfgNode;
-import cfg.DecisionBranchType;
 import sav.common.core.utils.Assert;
-import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
  *
  */
-public class CfgConstructorUtils {
-	private static final Logger log = LoggerFactory.getLogger(CfgConstructorUtils.class);
-	private CfgConstructorUtils() {}
-	
-	public static void updateNodesInLoop(CFG cfg) {
-		int size = cfg.getNodeList().size();
-		int i = size - 1;
-		for (i = size - 1; i > 0; i--) {
-			CfgNode node = cfg.getNodeList().get(i);
-			int firstIdxOfLoopBlk = node.getBackwardJumpIdx();
-			/* if firstIdx is not valid meaning node is not a loop header, we move to another node */
-			if (firstIdxOfLoopBlk != CfgNode.INVALID_IDX) {
-				CfgNode loopHeader = getLoopHeader(cfg.getNodeList(), node);
-				CfgNode firstNested = getAnotherCondNodeOfNestedLoopCond(cfg, loopHeader.getIdx(), firstIdxOfLoopBlk);
-				if (firstNested != null) {
-					CfgNode anotherLoopHeaderCandidate = findLoopHeaderOfNestedCond(cfg, firstIdxOfLoopBlk, firstNested, loopHeader);
-					if (anotherLoopHeaderCandidate != null) {
-						loopHeader = anotherLoopHeaderCandidate;
-					}
-				}
-				/* this decision node is loop header */
-				for (int j = firstIdxOfLoopBlk; j <= node.getIdx(); j++) {
-					cfg.getNode(j).addLoopHeader(loopHeader);
-				}
-			}
-		}
-	}
-	
-	private static CfgNode findLoopHeaderOfNestedCond(CFG cfg, int firstIdxOfLoopBlk, CfgNode firstNested, CfgNode loopHeader) {
-		for (int i = firstIdxOfLoopBlk; i < firstNested.getIdx(); i++) {
-			CfgNode node = cfg.getNode(i);
-			if (node.isDecisionNode()) {
-				for (CfgNode branch : node.getBranches()) {
-					if (branch.getIdx() < loopHeader.getIdx() && branch.getIdx() > firstNested.getIdx()) {
-						return node;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	private static CfgNode getAnotherCondNodeOfNestedLoopCond(CFG cfg, int lastIdx, int backwardJumpIdx) {
-		CfgNode firstNestedCondNode = null;
-		for (int i = lastIdx - 1; i > 0; i--) {
-			CfgNode node = cfg.getNode(i);
-			if (node.getBackwardJumpIdx() == backwardJumpIdx) {
-				firstNestedCondNode = node;
-			}
-		}
-		return firstNestedCondNode;
-	}
-	
-	/**
-	 * in a simple case which only contain one loop condition, the 
-	 * the node which has backward jump is also a loop header,
-	 * but in case there are more than one loop condition, we should consider the first condition
-	 * as the loop header.
-	 * @param list 
-	 * */
-	private static CfgNode getLoopHeader(List<CfgNode> nodeList, CfgNode hasBackwardJumpNode) {
-		for (int j = hasBackwardJumpNode.getBackwardJumpIdx(); j < hasBackwardJumpNode.getIdx(); j++) {
-			CfgNode inLoopNode = nodeList.get(j);
-			/* if hasBackwardJumpNode is on the false branch of this inLoop decision node,
-			 * this must be the correct loop header. 
-			 * */
-			if (inLoopNode.isDecisionNode()) {
-				/* in case of a loop condition, the true branch will be out of the loop */
-				CfgNode trueBranch = inLoopNode.getDecisionBranch(DecisionBranchType.TRUE);
-				if (trueBranch != null && trueBranch.getIdx() > hasBackwardJumpNode.getIdx()) {
-					return inLoopNode;
-				}
-			}
-		}
-		return hasBackwardJumpNode;
-	}
-
-	public static void updateDecisionNodes(CFG cfg) {
-		for (CfgNode node : cfg.getNodeList()) {
-			if (CollectionUtils.getSize(node.getBranches()) > 1) {
-				node.setDecisionNode(true);	
-			}
-		}
-	}
+public class ControlDependencyConstructor {
+	private static final Logger log = LoggerFactory.getLogger(ControlDependencyConstructor.class);
+	private ControlDependencyConstructor() {}
 	
 	/**
 	 * build up cfgNode dominatees and dependentees

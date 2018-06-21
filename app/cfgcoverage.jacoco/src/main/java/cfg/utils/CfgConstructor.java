@@ -39,7 +39,7 @@ public class CfgConstructor {
 	public CFG constructCFG(AppJavaClassPath appClasspath, String className, String methodNameOrWithSign, int maxLevel)
 			throws IOException {
 		CFG cfg = constructCFG(appClasspath, className, methodNameOrWithSign, 1, maxLevel);
-		CfgConstructorUtils.computeControlDependency(cfg);
+		ControlDependencyConstructor.computeControlDependency(cfg);
 		return cfg;
 	}
 	
@@ -128,7 +128,7 @@ public class CfgConstructor {
 		ConstructorMethodVisitor methodVisitor = new ConstructorMethodVisitor();
 		methodVisitor.visit(className, methodNode);
 		CFG cfg = methodVisitor.getCfg();
-		CfgConstructorUtils.computeControlDependency(cfg);
+		ControlDependencyConstructor.computeControlDependency(cfg);
 		return cfg;
 	}
 	
