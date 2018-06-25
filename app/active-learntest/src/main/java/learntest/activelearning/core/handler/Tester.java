@@ -6,7 +6,6 @@ import java.util.Map;
 
 import cfg.CFG;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
-import gentest.junit.JWriter;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.variable.TestcasesExecutor;

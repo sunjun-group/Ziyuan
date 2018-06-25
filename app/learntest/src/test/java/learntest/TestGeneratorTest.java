@@ -15,7 +15,7 @@ public class TestGeneratorTest extends AbstractTest {
 		AppJavaClassPath appClasspath = new AppJavaClassPath();
 		appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, null);
 		GentestParams params = new GentestParams();
-		new TestGenerator(null).genTest(params);
+		new TestGenerator(null).generateRandomTestcases(params);
 	}
 	
 }
