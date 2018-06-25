@@ -25,6 +25,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import cfg.CFG;
 import cfg.CfgNode;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
@@ -37,14 +38,14 @@ import sav.strategies.dto.AppJavaClassPath;
 public class CfgConstructor {
 	
 	public CFG constructCFG(AppJavaClassPath appClasspath, String className, String methodNameOrWithSign, int maxLevel)
-			throws IOException {
-		CFG cfg = constructCFG(appClasspath, className, methodNameOrWithSign, 1, maxLevel);
+			throws SavRtException {
+		CFG cfg = buildCFG(appClasspath, className, methodNameOrWithSign, 1, maxLevel);
 		ControlDependencyConstructor.computeControlDependency(cfg);
 		return cfg;
 	}
 	
-	private CFG constructCFG(AppJavaClassPath appClasspath, String className, String methodNameOrWithSign, int level, int maxLevel)
-			throws IOException {
+	private CFG buildCFG(AppJavaClassPath appClasspath, String className, String methodNameOrWithSign, int level,
+			int maxLevel) throws SavRtException {
 		try {
 			InputStream is = getClassInputStream(appClasspath, className);
 			CFG cfg = initCFG(is, className, methodNameOrWithSign);
@@ -53,7 +54,7 @@ public class CfgConstructor {
 				for (CfgNode node : nodeList) {
 					if (node.getInsnNode() instanceof MethodInsnNode) {
 						MethodInsnNode methodInsn = (MethodInsnNode) node.getInsnNode();
-						CFG subCfg = constructCFG(appClasspath, methodInsn.owner.replace("/", "."),
+						CFG subCfg = buildCFG(appClasspath, methodInsn.owner.replace("/", "."),
 								SignatureUtils.createMethodNameSign(methodInsn.name, methodInsn.desc), level + 1,
 								maxLevel);
 						glueCfg(cfg, node, subCfg);
@@ -114,14 +115,20 @@ public class CfgConstructor {
 		return is;
 	}
 	
-	private CFG initCFG(InputStream is, String className, String methodNameOrWithSign) throws IOException {
-		ClassReader classReader = new ClassReader(is);
-		ConstructorClassVisitor classVisitor = new ConstructorClassVisitor(className, methodNameOrWithSign);
-		classReader.accept(classVisitor, 0);
-		ConstructorMethodVisitor methodVisitor = new ConstructorMethodVisitor();
-		methodVisitor.visit(className, classVisitor.methodNode);
-		CFG cfg = methodVisitor.getCfg();
-		return cfg;
+	private CFG initCFG(InputStream is, String className, String methodNameOrWithSign) throws SavRtException {
+		try {
+			ClassReader classReader;
+			classReader = new ClassReader(is);
+
+			ConstructorClassVisitor classVisitor = new ConstructorClassVisitor(className, methodNameOrWithSign);
+			classReader.accept(classVisitor, 0);
+			ConstructorMethodVisitor methodVisitor = new ConstructorMethodVisitor();
+			methodVisitor.visit(className, classVisitor.methodNode);
+			CFG cfg = methodVisitor.getCfg();
+			return cfg;
+		} catch (IOException e) {
+			throw new SavRtException(e);
+		}
 	}
 	
 	public CFG constructCFG(String className, MethodNode methodNode) {

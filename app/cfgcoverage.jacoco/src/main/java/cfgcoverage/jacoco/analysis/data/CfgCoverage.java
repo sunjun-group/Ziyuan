@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import cfg.CFG;
 import cfg.CfgNode;
+import cfgcoverage.jacoco.utils.CoverageUtils;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.TextFormatUtils;
@@ -181,5 +182,9 @@ public class CfgCoverage {
 	
 	public boolean isPass(int tcIdx) {
 		return passTests.contains(tcIdx);
+	}
+	
+	public double getBranchCoverage() {
+		return CoverageUtils.calculateCoverage(this);
 	}
 }

@@ -13,7 +13,10 @@ import java.util.List;
 
 import org.objectweb.asm.tree.MethodNode;
 
+import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.TextFormatUtils;
+import sav.strategies.dto.BreakPoint;
 
 /**
  * @author LLT
@@ -28,8 +31,14 @@ public class CFG {
 	private CfgNode firstDeisionNode;
 	
 	private MethodNode methodNode;
+	private String className;
+	private BreakPoint entryPoint;
 	
-	public CFG(String methodId) {
+	public CFG(String className, MethodNode methodNode) {
+		this.methodNode = methodNode;
+		this.className = className;
+		String fullMethodName = ClassUtils.toClassMethodStr(className, methodNode.name);
+		String methodId = SignatureUtils.createMethodNameSign(fullMethodName, methodNode.desc);
 		this.id = methodId;
 		nodeList = new ArrayList<CfgNode>();
 	}
@@ -123,4 +132,10 @@ public class CFG {
 		return firstDeisionNode;
 	}
 	
+	public BreakPoint getEntryPoint() {
+		if (entryPoint == null) {
+			entryPoint = new BreakPoint(className, startNode.getLine());
+		}
+		return entryPoint;
+	}
 }

@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import cfg.CFG;
 import cfg.CfgNode;
-import sav.common.core.utils.Assert;
 
 /**
  * @author LLT
@@ -42,7 +41,6 @@ public class ControlDependencyConstructor {
 		/* update dominatte for nodes between each decision node and next decision node/leaf node (included) */
 		setDecisionNodeDependenteesAndDirectLevelRelationship(decisionNodes);
 		CfgNode root = cfg.getFirstDecisionNode();
-		Assert.assertNotNull(root, "fail to look up the first decision node!");
 		
 		calculateControlDominators(root, cfg);
 	}

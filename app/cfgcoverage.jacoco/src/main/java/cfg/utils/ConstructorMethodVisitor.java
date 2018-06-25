@@ -43,10 +43,7 @@ public class ConstructorMethodVisitor extends MethodVisitor {
 	}
 	
 	public void visit(String className, MethodNode method) {
-		String fullMethodName = ClassUtils.toClassMethodStr(className, method.name);
-		String methodId = SignatureUtils.createMethodNameSign(fullMethodName, method.desc);
-		cfg = new CFG(methodId);
-		cfg.setMethodNode(method);
+		cfg = new CFG(className, method);
 		this.methodNode = method;
 
 		for (final TryCatchBlockNode n : methodNode.tryCatchBlocks) {
