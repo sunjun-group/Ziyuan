@@ -92,7 +92,7 @@ public class LearnTestUtil {
 		IProject[] projects = root.getProjects();
 		
 		for(int i=0; i<projects.length; i++){
-			if(LearnTestConfig.getINSTANCE().getProjectName().equals(projects[i].getName())){
+			if(LearnTestConfig.getInstance().getProjectName().equals(projects[i].getName())){
 				return projects[i];
 				//return JavaCore.create(projects[i]);
 			}

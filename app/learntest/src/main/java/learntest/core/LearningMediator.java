@@ -178,7 +178,7 @@ public class LearningMediator {
 	
 	public GentestResult randomGentestAndCompile(GentestParams params) {
 		try {
-			GentestResult result = getTestGenerator().genTest(params);
+			GentestResult result = getTestGenerator().generateRandomTestcases(params);
 			compileAndLogTestSequences(result);
 			return result;
 		} catch (Exception e) {

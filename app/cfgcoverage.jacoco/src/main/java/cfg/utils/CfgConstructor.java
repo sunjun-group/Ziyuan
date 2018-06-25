@@ -58,8 +58,6 @@ public class CfgConstructor {
 								SignatureUtils.createMethodNameSign(methodInsn.name, methodInsn.desc), level + 1,
 								maxLevel);
 						glueCfg(cfg, node, subCfg);
-						System.out.println(methodInsn);
-						// methodInsn.
 					}
 				}
 			}

@@ -38,6 +38,7 @@ public class CfgCoverage {
 	protected List<NodeCoverage> nodeCoverages;
 	protected List<String> testcases;
 	protected Map<Integer, Set<Integer>> dupTcMap;
+	@SuppressWarnings("unchecked")
 	private Set<Integer> passTests = Collections.EMPTY_SET;
 	
 	public CfgCoverage(CFG cfg) {
@@ -186,5 +187,43 @@ public class CfgCoverage {
 	
 	public double getBranchCoverage() {
 		return CoverageUtils.calculateCoverage(this);
+	}
+
+	public void merge(CfgCoverage newCoverage) {
+		int fid = testcases.size();
+		testcases.addAll(newCoverage.testcases);
+		if (newCoverage.passTests != Collections.EMPTY_SET) {
+			if (passTests == Collections.EMPTY_SET) {
+				passTests = new HashSet<>();
+			}
+			for (int tc : newCoverage.passTests) {
+				passTests.add(tc + fid);
+			}
+		}
+		if (newCoverage.dupTcMap != null) {
+			if (dupTcMap == null) {
+				dupTcMap = new HashMap<>();
+			}
+			for (Entry<Integer, Set<Integer>> entry : newCoverage.dupTcMap.entrySet()) {
+				Set<Integer> newDupSet = new HashSet<>();
+				for (Integer dupTc : entry.getValue()) {
+					newDupSet.add(dupTc + fid);
+				}
+				dupTcMap.put(entry.getKey() + fid, newDupSet);
+			}
+		}
+		for (int i = 0; i < nodeCoverages.size(); i++) {
+			NodeCoverage node = nodeCoverages.get(i);
+			NodeCoverage newNode = newCoverage.getNodeCoverages().get(i);
+			for (Entry<Integer, Integer> tc : newNode.getUndupCoveredTcs().entrySet()) {
+				node.coveredTcs.put(tc.getKey() + fid, tc.getValue() + fid);
+			}
+			for (int branch : node.getCoveredBranchesMap().keySet()) {
+				List<Integer> tcs = node.getCoveredBranchesMap().get(branch);
+				for (int coveredTc : newNode.getCoveredBranchesMap().get(branch)) {
+					tcs.add(coveredTc + fid);
+				}
+			}
+		}
 	}
 }

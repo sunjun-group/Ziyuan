@@ -35,7 +35,7 @@ public class CodeCoverageHandler extends AbstractLearntestHandler {
 			GentestParams gentestParams = LearntestParamsUtils.createGentestParams(getAppClasspath(), params,
 					GenTestPackage.INIT);
 			gentestParams.setNumberOfTcs(20);
-			GentestResult gentestResult = new TestGenerator(getAppClasspath()).genTest(gentestParams);
+			GentestResult gentestResult = new TestGenerator(getAppClasspath()).generateRandomTestcases(gentestParams);
 			List<File> newTests = gentestResult.getJunitfiles();
 			JavaCompiler jcompiler = new JavaCompiler(new VMConfiguration(getAppClasspath()));
 			jcompiler.compile(getAppClasspath().getTestTarget(), newTests);

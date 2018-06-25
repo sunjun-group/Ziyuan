@@ -126,7 +126,7 @@ public class NodeCoverage {
 		return total;
 	}
 	
-	Map<Integer, Integer> getUndupCoveredTcs() {
+	public Map<Integer, Integer> getUndupCoveredTcs() {
 		return coveredTcs;
 	}
 	
@@ -182,6 +182,10 @@ public class NodeCoverage {
 			type = BranchCoveredType.append(type, cfgNode.getDecisionBranchType(branchIdx));
 		}
 		return type;
+	}
+	
+	public Map<Integer, List<Integer>> getCoveredBranchesMap() {
+		return coveredBranches;
 	}
 	
 	@SuppressWarnings("unchecked")

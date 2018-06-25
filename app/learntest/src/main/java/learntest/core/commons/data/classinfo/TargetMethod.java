@@ -99,90 +99,46 @@ public class TargetMethod {
 		return methodEntryBkp;
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getTargetClazz()
-	 */
 	public ClassInfo getTargetClazz() {
 		return methodInfo.getTargetClazz();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getParams()
-	 */
 	public List<String> getParams() {
 		return methodInfo.getParams();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodName()
-	 */
 	public String getMethodName() {
 		return methodInfo.getMethodName();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodSignature()
-	 */
 	public String getMethodSignature() {
-		return methodInfo.getMethodSignature();
+		return methodInfo.getSignature();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getLineNum()
-	 */
 	public int getLineNum() {
 		return methodInfo.getLineNum();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodFullName()
-	 */
 	public String getMethodFullName() {
 		return methodInfo.getMethodFullName();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getClassName()
-	 */
 	public String getClassName() {
 		return methodInfo.getClassName();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#createClassMethodMap()
-	 */
 	public Map<String, List<String>> createClassMethodMap() {
 		return methodInfo.createClassMethodMap();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getParamTypes()
-	 */
 	public List<String> getParamTypes() {
 		return methodInfo.getParamTypes();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#getMethodLength()
-	 */
 	public int getMethodLength() {
 		return methodInfo.getMethodLength();
 	}
 
-	/**
-	 * @return
-	 * @see learntest.core.commons.data.classinfo.MethodInfo#toString()
-	 */
 	public String toString() {
 		return methodInfo.toString();
 	}
@@ -194,6 +150,5 @@ public class TargetMethod {
 	public String getMethodId() {
 		return methodInfo.getMethodId();
 	}
-	
 	
 }

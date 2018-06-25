@@ -58,7 +58,7 @@ public class RunAllJDartHandler extends AbstractLearntestHandler {
 
 		SingleTimer timer = SingleTimer.start("Evaluation all methods");
 		curMethodIdx = 0;
-		String projectName = LearnTestConfig.getINSTANCE().getProjectName();
+		String projectName = LearnTestConfig.getInstance().getProjectName();
 		final List<IPackageFragmentRoot> roots = IProjectUtils
 				.getSourcePkgRoots(IProjectUtils.getJavaProject(projectName));
 		TrialExcelHandler excelHandler = null;

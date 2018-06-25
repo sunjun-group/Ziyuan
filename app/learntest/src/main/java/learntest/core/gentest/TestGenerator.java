@@ -34,7 +34,6 @@ import gentest.junit.TestsPrinter;
 import learntest.core.commons.LearntestExceptionType;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.gentest.generator.TestSeqGenerator;
-import learntest.core.time.CovTimer;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.SystemVariables;
@@ -56,7 +55,7 @@ public class TestGenerator {
 		this.prjClassLoader = appClasspath.getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
 	}
 	
-	public GentestResult genTest(GentestParams params) throws ClassNotFoundException, SavException {
+	public GentestResult generateRandomTestcases(GentestParams params) throws ClassNotFoundException, SavException {
 		PrinterParams printerParams = params.getPrinterParams();
 		TestsPrinter printer = new TestsPrinter(printerParams);
 		if (!params.generateMainClass()) {

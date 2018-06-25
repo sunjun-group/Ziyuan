@@ -8,26 +8,13 @@
 
 package learntest.core.commons.data.classinfo;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.LocalVariableNode;
-import org.objectweb.asm.tree.VarInsnNode;
-
-import cfg.CFG;
-import cfg.CfgNode;
-import cfg.utils.OpcodeUtils;
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -59,38 +46,6 @@ public class MethodInfo {
 		return params;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static Collection<String> getAccessedFields(CFG cfg) {
-		if (cfg == null) {
-			return Collections.EMPTY_LIST;
-		}
-		Set<String> fields = new HashSet<String>();
-		for (CfgNode node : cfg.getNodeList()) {
-			AbstractInsnNode asmNode = node.getInsnNode();
-			if (OpcodeUtils.isLoadInst(asmNode.getOpcode())) {
-				VarInsnNode varNode = (VarInsnNode) asmNode;
-				List<LocalVariableNode> localVariables = cfg.getMethodNode().localVariables;
-				if (localVariables == null || varNode.var >= localVariables.size()) {
-					continue;
-				}
-				LocalVariableNode accessedVar = localVariables.get(varNode.var);
-				if ("this".equals(accessedVar.name)) {
-					AbstractInsnNode nextNode = getNextNode(node);
-					if (nextNode.getOpcode() == Opcodes.GETFIELD) {
-						fields.add(((FieldInsnNode) nextNode).name);
-					}
-				}
-			}
-		}
-		return fields;
-	}
-
-	private static AbstractInsnNode getNextNode(CfgNode node) {
-		Assert.assertNotNull(node.getBranches());
-		Assert.assertTrue(node.getBranches().size() == 1);
-		return node.getBranches().iterator().next().getInsnNode();
-	}
-
 	public String getMethodName() {
 		return methodName;
 	}
@@ -98,8 +53,12 @@ public class MethodInfo {
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
 	}
-
+	
 	public String getMethodSignature() {
+		return SignatureUtils.createMethodNameSign(methodName, methodSignature);
+	}
+
+	public String getSignature() {
 		return methodSignature;
 	}
 
@@ -117,6 +76,10 @@ public class MethodInfo {
 
 	public String getMethodFullName() {
 		return ClassUtils.toClassMethodStr(getClassName(), methodName);
+	}
+	
+	public String getMethodWithSignature() {
+		return SignatureUtils.createMethodNameSign(methodName, methodSignature);
 	}
 
 	public String getClassName() {

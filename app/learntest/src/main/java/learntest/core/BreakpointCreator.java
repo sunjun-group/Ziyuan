@@ -70,7 +70,7 @@ public class BreakpointCreator {
 		return bkp;
 	}
 
-	private static List<Variable> toBkpVariables(Map<Integer, List<variable.Variable>> relevantVarMap) {
+	public static List<Variable> toBkpVariables(Map<Integer, List<variable.Variable>> relevantVarMap) {
 		List<variable.Variable> relevantVars = new ArrayList<variable.Variable>();
 		for (List<variable.Variable> relVars : relevantVarMap.values()) {
 			CollectionUtils.addIfNotNullNotExist(relevantVars, relVars);

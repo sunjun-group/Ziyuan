@@ -66,7 +66,7 @@ public class EvaluationHandler extends AbstractLearntestHandler {
 	protected IStatus execute(IProgressMonitor monitor) {
 		SingleTimer timer = SingleTimer.start("Evaluation all methods");
 		curMethodIdx = 0;
-		String projectName = LearnTestConfig.getINSTANCE().getProjectName();
+		String projectName = LearnTestConfig.getInstance().getProjectName();
 		final List<IPackageFragmentRoot> roots = IProjectUtils
 				.getSourcePkgRoots(IProjectUtils.getJavaProject(projectName));
 		TrialExcelHandler excelHandler = null;

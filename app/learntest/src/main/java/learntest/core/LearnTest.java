@@ -24,7 +24,6 @@ import learntest.core.gentest.GentestParams;
 import learntest.core.machinelearning.FormulaInfo;
 import learntest.core.machinelearning.IInputLearner;
 import learntest.core.machinelearning.PrecondDecisionLearner;
-import learntest.core.time.CovTimer;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
 import sav.settings.SAVExecutionTimeOutException;

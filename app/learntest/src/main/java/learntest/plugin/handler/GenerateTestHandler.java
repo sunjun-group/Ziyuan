@@ -98,7 +98,7 @@ public class GenerateTestHandler extends AbstractLearntestHandler {
 	
 	private CompilationUnit constructCu(String className) {
 
-		String projectName = LearnTestConfig.getINSTANCE().getProjectName();
+		String projectName = LearnTestConfig.getInstance().getProjectName();
 		final List<IPackageFragmentRoot> roots = IProjectUtils
 				.getSourcePkgRoots(IProjectUtils.getJavaProject(projectName));
 		try {

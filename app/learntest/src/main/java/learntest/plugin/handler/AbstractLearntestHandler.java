@@ -8,14 +8,10 @@
 
 package learntest.plugin.handler;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +95,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					setup(LearnTestConfig.getINSTANCE().getProjectName());
+					setup(LearnTestConfig.getInstance().getProjectName());
 					prepareData();
 					return execute(selection, monitor);
 				} catch (CoreException e) {
@@ -134,7 +130,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	public void refreshProject() {
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.getINSTANCE().getProjectName());
+		IProject iProject = myWorkspaceRoot.getProject(LearnTestConfig.getInstance().getProjectName());
 
 		try {
 			iProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
@@ -154,7 +150,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 
 	public AppJavaClassPath getAppClasspath() {
 		if (appClasspath == null) {
-			IProject project = IProjectUtils.getProject(LearnTestConfig.getINSTANCE().getProjectName());
+			IProject project = IProjectUtils.getProject(LearnTestConfig.getInstance().getProjectName());
 			IJavaProject javaProject = IProjectUtils.getJavaProject(project);
 			appClasspath = GentestSettings.initAppJavaClassPath(javaProject);
 		}
@@ -162,7 +158,7 @@ public abstract class AbstractLearntestHandler extends AbstractHandler {
 	}
 
 	protected LearnTestParams initLearntestParamsFromPreference() throws CoreException {
-		return initLearntestParams(LearnTestConfig.getINSTANCE());
+		return initLearntestParams(LearnTestConfig.getInstance());
 	}
 
 	protected LearnTestParams initLearntestParams(LearnTestConfig config) throws CoreException {

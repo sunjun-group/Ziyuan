@@ -40,7 +40,7 @@ public class LearnTestConfig {
 		return lineNumber;
 	}
 
-	public static LearnTestConfig getINSTANCE() {
+	public static LearnTestConfig getInstance() {
 		return INSTANCE;
 	}
 

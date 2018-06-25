@@ -33,6 +33,10 @@ public class InputDatapointMapping {
 	public void clear() {
 		dpMap.clear();
 	}
+	
+	public List<double[]> getDatapoints(List<BreakpointValue> values) {
+		return getDatapoints(values, orgVars);
+	}
 
 	public List<double[]> getDatapoints(List<BreakpointValue> values, List<ExecVar> execVars) {
 		if (!CollectionUtils.isEqualList(orgVars, execVars)) {

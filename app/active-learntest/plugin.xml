@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="learntest.activelearning.plugin.handler.GenerateTestcasesHandler"
+            id="active-learntest.plugin.commands.gentest"
+            name="Generate Testcases">
+         <commandParameter
+               id="learntest.approach"
+               name="L2T"
+               optional="false">
+         </commandParameter>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               label="ActiveLearnTest">
+            <command
+                  commandId="active-learntest.plugin.commands.gentest"
+                  label="Generate Test"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+</plugin>

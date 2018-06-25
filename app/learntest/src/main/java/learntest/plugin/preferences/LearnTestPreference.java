@@ -164,11 +164,11 @@ public class LearnTestPreference extends PreferencePage implements IWorkbenchPre
 	}
 	
 	private void confirmChanges(){
-		LearnTestConfig.getINSTANCE().setProjectName(this.projectCombo.getText());
-		LearnTestConfig.getINSTANCE().setTargetClassName(this.testClassText.getText());
-		LearnTestConfig.getINSTANCE().setTargetMethodName(this.testMethodText.getText());
-		LearnTestConfig.getINSTANCE().setL2TApproach(this.isL2TButton.getSelection());
-		LearnTestConfig.getINSTANCE().setTargetMethodLineNum(this.methodLineNumberText.getText());
+		LearnTestConfig.getInstance().setProjectName(this.projectCombo.getText());
+		LearnTestConfig.getInstance().setTargetClassName(this.testClassText.getText());
+		LearnTestConfig.getInstance().setTargetMethodName(this.testMethodText.getText());
+		LearnTestConfig.getInstance().setL2TApproach(this.isL2TButton.getSelection());
+		LearnTestConfig.getInstance().setTargetMethodLineNum(this.methodLineNumberText.getText());
 	}
 	
 	

@@ -10,6 +10,7 @@ package learntest.plugin.handler.gentest;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -18,6 +19,7 @@ import learntest.core.ILearnTestSolution;
 import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
+import learntest.plugin.LearnTestConfig;
 import learntest.plugin.commons.PluginException;
 import learntest.plugin.utils.IProjectUtils;
 import learntest.plugin.utils.IResourceUtils;
@@ -34,6 +36,12 @@ import sav.strategies.dto.SystemPreferences;
  *
  */
 public class GentestSettings {
+	
+	public static AppJavaClassPath getConfigAppClassPath(LearnTestConfig config) {
+		IProject project = IProjectUtils.getProject(config.getProjectName());
+		IJavaProject javaProject = IProjectUtils.getJavaProject(project);
+		return GentestSettings.initAppJavaClassPath(javaProject);
+	}
 	
 	public static AppJavaClassPath initAppJavaClassPath(IJavaProject javaProject) {
 		try {
