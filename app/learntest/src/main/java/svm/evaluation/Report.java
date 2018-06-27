@@ -35,7 +35,9 @@ public class Report {
 					" " + activeSvmInfo.classifier,
 					activeSvmInfo.acc,
 					activeSvmInfo.inputAcc,
-					activeSvmInfo.iterations);
+					activeSvmInfo.iterations,
+					activeSvmInfo.acc - svmInfo.acc,
+					activeSvmInfo.inputAcc - svmInfo.inputAcc);
 
 			csvPrinter.flush();
 		} catch (IOException e) {
@@ -53,7 +55,9 @@ public class Report {
 		ACTIVE_SVM_CLASIFIER,
 		ACTIVE_SVM_ACC,
 		ACTIVE_SVM_INPUT_ACC,
-		ACTIVE_SVM_ITERATIONS;
+		ACTIVE_SVM_ITERATIONS,
+		EFFECTIVE_ACC,
+		EFFECTIVE_INPUT_ACC;
 		
 		public static String[] allColumns() {
 			Column[] values = values();

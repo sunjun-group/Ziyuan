@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import libsvm.extension.ByDistanceNegativePointSelection;
 import sav.common.core.SavException;
 import sav.common.core.formula.Formula;
 import sav.common.core.utils.FileUtils;
+import sav.common.core.utils.RandomUtils;
 import sav.common.core.utils.Randomness;
 import sav.common.core.utils.StringUtils;
 import sav.settings.SAVExecutionTimeOutException;
@@ -44,34 +46,27 @@ public class SvmEvaluator {
 		FileUtils.deleteFileByName(svmEvaluationCsv);
 		
 		List<PolynomialFunction> functions = loadPolynomialFunctions();
+//		List<PolynomialFunction> functions = Arrays.asList(new PolynomialFunction(new double[]{175, -83}));
 		SvmEvaluator evaluator = new SvmEvaluator();
 		for (int fi = 0; fi < functions.size(); fi++) {
 			PolynomialFunction f = functions.get(fi);
 			log.info("f: " + f.toString());
-			List<DataPoint> svmDataset = new ArrayList<>();
+			List<DataPoint> alldataset = new ArrayList<>();
+			for (int i = 0; i < 100000; i++) {
+				double[] x = generateDatapoint(f.n);
+				DataPoint datapoint = new DataPoint(f.n);
+				datapoint.setValues(x);
+				datapoint.setCategory(f.getCategory(x));
+				alldataset.add(datapoint);
+			}
+			
 			int datasetSize = 100;
-			for (int i = 0; i < datasetSize; i++) {
-				double[] x = generateDatapoint(f.n);
-				DataPoint datapoint = new DataPoint(f.n);
-				datapoint.setValues(x);
-				datapoint.setCategory(f.getCategory(x));
-				svmDataset.add(datapoint);
-			}
-
-			List<DataPoint> activeSvmDataset = new ArrayList<>();
-			for (int i = 0; i < 20; i++) {
-				double[] x = generateDatapoint(f.n);
-				DataPoint datapoint = new DataPoint(f.n);
-				datapoint.setValues(x);
-				datapoint.setCategory(f.getCategory(x));
-				activeSvmDataset.add(datapoint);
-			}
-
+		
 			List<String> dataLabels = new ArrayList<>();
 			for (int i = 0; i < f.n; i++) {
 				dataLabels.add("x" + i);
 			}
-			evaluator.evaluate(f, activeSvmDataset, dataLabels, fi, datasetSize);
+			evaluator.evaluate(f, dataLabels, fi, datasetSize);
 		}
 	}
 
@@ -99,7 +94,10 @@ public class SvmEvaluator {
 			while(true) {
 				int idx = str.indexOf("*");
 				if (idx < 0) {
-					break;
+					idx = str.indexOf(">");
+					if (idx < 0) {
+						break;
+					}
 				}
 				double ai = Double.valueOf(str.substring(0, idx).trim());
 				a.add(ai);
@@ -134,14 +132,58 @@ public class SvmEvaluator {
 	public static double[] generateDatapoint(int n) {
 		double[] x = new double[n];
 		for (int j = 0; j < n; j++) {
-			x[j] = Randomness.nextInt(-1000, 1000);
+			x[j] = RandomUtils.nextInt(-1000, 1000, new Random());
 		}
 		return x;
 	}
 	
-	public void evaluate(PolynomialFunction f, List<DataPoint> dataset, List<String> dataLabels, int fi, int datasetSize) {
+	public void evaluate(PolynomialFunction f, List<String> dataLabels, int fi, int datasetSize) {
 		int total = 100000;
-		log.info(String.format("Generate %d datapoints: ", total));
+		log.info(String.format("Generate %d verification datapoints: ", total));
+		List<DataPoint> verificationDps = generateRandomDatapoints(f, total);
+		LearnInfo svmInfo = new LearnInfo();
+		int i = 0;
+		int max = 10;
+		while (svmInfo.acc == 0.0 && i++ < max) {
+			List<DataPoint> svmDataset = generateRandomDatapoints(f, 100);
+			svmInfo = basicLearn(f, svmDataset, dataLabels, verificationDps);
+		}
+		
+		LearnInfo activeSvmInfo = new LearnInfo();
+		i = 0;
+		while (activeSvmInfo.acc == 0.0 && i++ < max) {
+			List<DataPoint> activeSvmDataset = generateRandomDatapoints(f, 20);
+			activeSvmInfo = activeLearn(f, activeSvmDataset, dataLabels, verificationDps, datasetSize);
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("f").append(fi).append(":   ").append(f.toString()).append("\n");
+		sb.append("svm: ").append("\n")
+		.append(svmInfo.classifier).append("\n")
+		.append("acc: ").append(svmInfo.acc).append("\n");
+		sb.append("active_svm: ").append("\n")
+		.append(activeSvmInfo.classifier).append("\n")
+		.append("acc: ").append(activeSvmInfo.acc).append("\n\n");
+		FileUtils.appendFile(svmEvaluationFile, sb.toString());
+		sb = new StringBuilder();
+		sb.append("f").append(fi).append(":   ").append(f.toString()).append("\n");
+		sb.append("svm: ").append("\nInput: \n")
+		.append(svmInfo.inputDps).append("\n\n").append("\n\n");
+		sb.append("active_svm: ").append("\nInput: \n")
+		.append(activeSvmInfo.inputDps).append("\n\n")
+		.append("verificationDps: \n").append(verificationDps)
+		.append("\n\n");
+		FileUtils.appendFile(svmDpsFile, sb.toString());
+		Report report = new Report();
+		report.storeCsv(svmEvaluationCsv, f, svmInfo, activeSvmInfo);
+	}
+
+	/**
+	 * @param f
+	 * @param total
+	 * @return
+	 */
+	private List<DataPoint> generateRandomDatapoints(PolynomialFunction f, int total) {
 		List<DataPoint> verificationDps = new ArrayList<>();
 		for (int i = 0; i < total; i++) {
 			double[] x = generateDatapoint(f.n);
@@ -150,29 +192,7 @@ public class SvmEvaluator {
 			datapoint.setCategory(f.getCategory(x));
 			verificationDps.add(datapoint);
 		}
-		
-		LearnInfo svmInfo = basicLearn(f, dataset, dataLabels, verificationDps);
-		LearnInfo activeSvmInfo = activeLearn(f, dataset, dataLabels, verificationDps, datasetSize);
-		StringBuilder sb = new StringBuilder();
-		sb.append("f").append(fi).append(":   ").append(f.toString()).append("\n");
-		sb.append("svm: ").append("\n")
-			.append(svmInfo.classifier).append("\n")
-			.append("acc: ").append(svmInfo.acc).append("\n");
-		sb.append("active_svm: ").append("\n")
-			.append(activeSvmInfo.classifier).append("\n")
-			.append("acc: ").append(activeSvmInfo.acc).append("\n\n");
-		FileUtils.appendFile(svmEvaluationFile, sb.toString());
-		sb = new StringBuilder();
-		sb.append("f").append(fi).append(":   ").append(f.toString()).append("\n");
-		sb.append("svm: ").append("\nInput: \n")
-			.append(svmInfo.inputDps).append("\n\n").append("\n\n");
-		sb.append("active_svm: ").append("\nInput: \n")
-			.append(activeSvmInfo.inputDps).append("\n\n")
-			.append("verificationDps: \n").append(verificationDps)
-			.append("\n\n");
-		FileUtils.appendFile(svmDpsFile, sb.toString());
-		Report report = new Report();
-		report.storeCsv(svmEvaluationCsv, f, svmInfo, activeSvmInfo);
+		return verificationDps;
 	}
 	
 	private LearnInfo activeLearn(PolynomialFunction f, List<DataPoint> dataset,
@@ -222,10 +242,22 @@ public class SvmEvaluator {
 					log.debug("empty samples!");
 					continue;
 				}
-				samples = Randomness.randomSequence(samples, datasetSize - sampleSize);
-				sampleSize += samples.size();
+//				samples = Randomness.randomSequence(samples, datasetSize - sampleSize);
+//				sampleSize += samples.size();
 				svm.getLearnedModels().clear();
-				for (double[] sample : samples) {
+				log.debug("all samples size = " + samples.size());
+				List<double[]> selectedSamples = samples;
+				int remainSize = datasetSize - sampleSize;
+				if (selectedSamples.size() > Math.min(remainSize, 10)) {
+					selectedSamples = Randomness.randomSubList(selectedSamples, Math.min(remainSize, 10));
+					remainSize -= selectedSamples.size();
+				}
+				for (int i = selectedSamples.size(); i < Randomness.nextInt(0, Math.min(remainSize, 20)); i++) {
+					selectedSamples.add(generateDatapoint(f.n));
+				}
+				log.debug("selected samples size = " + selectedSamples.size());
+				sampleSize += selectedSamples.size();
+				for (double[] sample : selectedSamples) {
 					svm.addDataPoint(f.getCategory(sample), sample);
 				}
 				
@@ -243,10 +275,11 @@ public class SvmEvaluator {
 					dividers = svm.getFullLearnedDividers(svm.getDataLabels(), vars);
 					acc = accTmp;
 				} else {
+					log.info("learnedFormula is unchanged, stop learning.");
 					break;
 				}
 			}
-			log.info("Sample size = " + sampleSize);
+			log.info("Sample size = " + svm.getDataPoints().size());
 			info.iterations = time;
 			info.classifier = svm.getLearnedLogic(true);
 			acc = svm.getModelAccuracy(verificationDps, svm.getLearnedModels());
@@ -324,14 +357,15 @@ public class SvmEvaluator {
 
 		public PolynomialFunction(double[] a) {
 			this.a = a;
-			n = a.length;
+			n = a.length - 1;
 		}
 		
 		public Category getCategory(double[] x) {
 			double y = 0;
 			for (int i = 0; i < n; i++) {
-				y += a[i] * Math.pow(x[i], (n - 1) - i);
+				y += a[i] * Math.pow(x[i], (n - i));
 			}
+			y += a[n];
 			return y > 0 ? Category.POSITIVE : Category.NEGATIVE;
 		}
 		
@@ -342,8 +376,12 @@ public class SvmEvaluator {
 				if (i != 0 && a[i] >= 0) {
 					sb.append(" + ");
 				}
-				sb.append(" ").append(a[i]).append("* x" + i).append("^").append((n - 1) - i);
+				sb.append(" ").append(a[i]).append("* x" + i).append("^").append(n - i);
 			}
+			if (a[n] >= 0) {
+				sb.append(" + ");
+			}
+			sb.append(" ").append(a[n]);
 			sb.append(" > 0");
 			return sb.toString();
 		}
