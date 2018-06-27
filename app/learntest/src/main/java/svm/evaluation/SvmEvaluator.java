@@ -46,7 +46,7 @@ public class SvmEvaluator {
 		List<PolynomialFunction> functions = new ArrayList<PolynomialFunction>();
 		int size = 20;
 		for (int i = 0; i < size; i++) {
-			int n = Randomness.nextInt(0, 20);
+			int n = Randomness.nextInt(2, 10);
 			double[] a = new double[n];
 			for (int idx = 0; idx < n; idx++) {
 				a[idx] = Randomness.nextInt(-1000, 1000);
