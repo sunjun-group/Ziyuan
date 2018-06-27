@@ -29,10 +29,13 @@ public class Report {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile, true));
 			csvPrinter = new CSVPrinter(writer, format);
 			csvPrinter.printRecord(f.toString(),
-					svmInfo.classifier, 
+					" " + svmInfo.classifier, 
 					svmInfo.acc,
-					activeSvmInfo.classifier,
-					activeSvmInfo.acc);
+					svmInfo.inputAcc,
+					" " + activeSvmInfo.classifier,
+					activeSvmInfo.acc,
+					activeSvmInfo.inputAcc,
+					activeSvmInfo.iterations);
 
 			csvPrinter.flush();
 		} catch (IOException e) {
@@ -46,8 +49,11 @@ public class Report {
 		FUNCTION,
 		SVM_CLASIFIER,
 		SVM_ACC,
+		SVM_INPUT_ACC,
 		ACTIVE_SVM_CLASIFIER,
-		ACTIVE_SVM_ACC;
+		ACTIVE_SVM_ACC,
+		ACTIVE_SVM_INPUT_ACC,
+		ACTIVE_SVM_ITERATIONS;
 		
 		public static String[] allColumns() {
 			Column[] values = values();
