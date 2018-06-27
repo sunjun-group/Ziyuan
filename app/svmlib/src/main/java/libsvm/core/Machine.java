@@ -362,7 +362,7 @@ public class Machine {
 				.get(0).getNumberOfFeatures());
 	}
 
-	protected List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
+	public List<DataPoint> getWrongClassifiedDataPoints(final List<DataPoint> dataPoints) {
 		return getWrongClassifiedDataPoints(dataPoints, new ModelBasedCategoryCalculator(model));
 	}
 
@@ -378,10 +378,14 @@ public class Machine {
 	}
 
 	public double getModelAccuracy() {
+		return getModelAccuracy(model, data);
+	}
+	
+	public double getModelAccuracy(svm_model model, List<DataPoint> dps) {
 		if (model == null) {
 			return 0.0;
 		}
-		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
+		return 1.0 - ((double) getWrongClassifiedDataPoints(dps).size() / dps.size());
 	}
 
 	/**

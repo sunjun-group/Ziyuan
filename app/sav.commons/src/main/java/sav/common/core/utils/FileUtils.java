@@ -102,8 +102,6 @@ public class FileUtils {
 		return targetFolder;
 	}
 	
-	
-
 	public static void copyFilesSilently(List<File> files, String folderPath) {
 		try {
 			copyFiles(files, folderPath);

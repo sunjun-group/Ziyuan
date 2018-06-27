@@ -9,12 +9,9 @@
 package learntest.core.machinelearning;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +24,6 @@ import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
-import libsvm.core.Machine.DataPoint;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import libsvm.extension.MultiOrDividerBasedCategoryCalculator;
 import libsvm.extension.NegativePointSelection;
@@ -234,20 +230,18 @@ public class LearningMachine extends PositiveSeparationMachine {
 	
 	@Override
 	public double getModelAccuracy() {
-		if (learnedModels == null || learnedModels.size() == 0) {
-			return 0.0;
-		}
-		return getModelAccuracy(learnedModels);
+		return getModelAccuracy(data, learnedModels);
 	}
 	
 	public double getModelAccuracy(List<svm_model> models) {
+		return getModelAccuracy(data, models);
+	}
+	
+	public double getModelAccuracy(List<DataPoint> dataPoints, List<svm_model> models) {
 		if (models == null || models.size() == 0) {
 			return 0.0;
 		}
-		return 1.0 - ((double) getWrongClassifiedDataPoints(data, models).size() / data.size());
-	}
-	
-	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints, List<svm_model> models) {
+		
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (svm_model learnModel : models) {
 			if (learnModel != null) {
@@ -265,7 +259,8 @@ public class LearningMachine extends PositiveSeparationMachine {
 
 		CategoryCalculator calculator = majorCategory == Category.NEGATIVE ?
 				new MultiDividerBasedCategoryCalculator(roundDividers) : new MultiOrDividerBasedCategoryCalculator(roundDividers);
-		return getWrongClassifiedDataPoints(dataPoints, calculator);
+		List<DataPoint> wrongLabelDps = getWrongClassifiedDataPoints(dataPoints, calculator);
+		return 1.0 - ((double) wrongLabelDps.size() / dataPoints.size());
 	}
 
 	private void updatePreviousModel() {

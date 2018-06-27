@@ -127,7 +127,7 @@ public class MultiCutMachine extends Machine {
 	}
 
 	@Override
-	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
+	public List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
 		return getWrongClassifiedDataPoints(dataPoints, new LearnedDataBasedCategoryCalculator(
 				learnedDatas));
 	}

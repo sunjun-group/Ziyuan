@@ -93,7 +93,7 @@ public class MultiAttemptMachine extends MultiCutMachine {
 	}
 
 	@Override
-	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
+	public List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
 		// If no wrong point then 100% accuracy
 		return wrongPoints;
 	}

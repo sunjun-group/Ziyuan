@@ -116,7 +116,7 @@ public class MyPositiveSeparationMachine extends Machine {
 	}
 	
 	@Override
-	protected List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
+	public List<DataPoint> getWrongClassifiedDataPoints(List<DataPoint> dataPoints) {
 		List<Divider> roundDividers = new ArrayList<Divider>();
 		for (svm_model learnModel : this.learnedModels) {
 			if (learnModel != null) {
