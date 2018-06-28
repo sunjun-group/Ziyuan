@@ -378,10 +378,10 @@ public class Machine {
 	}
 
 	public double getModelAccuracy() {
-		return getModelAccuracy(model, data);
+		return getModelAccuracyOnDataset(data);
 	}
 	
-	public double getModelAccuracy(svm_model model, List<DataPoint> dps) {
+	public double getModelAccuracyOnDataset(List<DataPoint> dps) {
 		if (model == null) {
 			return 0.0;
 		}

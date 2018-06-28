@@ -18,7 +18,7 @@ import svm.evaluation.SvmEvaluator.PolynomialFunction;
  */
 public class Report {
 	
-	public void storeCsv(String csvFilePath, PolynomialFunction f, LearnInfo svmInfo, LearnInfo activeSvmInfo) {
+	public void storeCsv(String csvFilePath, PolynomialFunction f, LearnInfo svmInfo, LearnInfo posSvmInfo, LearnInfo activeSvmInfo) {
 		CSVPrinter csvPrinter = null;
 		try {
 			File csvFile = new File(csvFilePath);
@@ -32,12 +32,15 @@ public class Report {
 					" " + svmInfo.classifier, 
 					svmInfo.acc,
 					svmInfo.inputAcc,
+					" " + posSvmInfo.classifier, 
+					posSvmInfo.acc,
+					posSvmInfo.inputAcc,
 					" " + activeSvmInfo.classifier,
 					activeSvmInfo.acc,
 					activeSvmInfo.inputAcc,
 					activeSvmInfo.iterations,
-					activeSvmInfo.acc - svmInfo.acc,
-					activeSvmInfo.inputAcc - svmInfo.inputAcc);
+					activeSvmInfo.acc - posSvmInfo.acc,
+					activeSvmInfo.inputAcc - posSvmInfo.inputAcc);
 
 			csvPrinter.flush();
 		} catch (IOException e) {
@@ -52,6 +55,9 @@ public class Report {
 		SVM_CLASIFIER,
 		SVM_ACC,
 		SVM_INPUT_ACC,
+		POS_SVM_CLASIFIER,
+		POS_SVM_ACC,
+		POS_SVM_INPUT_ACC,
 		ACTIVE_SVM_CLASIFIER,
 		ACTIVE_SVM_ACC,
 		ACTIVE_SVM_INPUT_ACC,

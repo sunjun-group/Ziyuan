@@ -340,6 +340,13 @@ public class PositiveSeparationMachine extends Machine {
 		return 1.0 - ((double) getWrongClassifiedDataPoints(data).size() / data.size());
 	}
 	
+	public double getModelAccuracyOnDataset(List<DataPoint> dataset) {
+		if (learnedModels == null || learnedModels.size() == 0) {
+			return 0.0;
+		}
+		return 1.0 - ((double) getWrongClassifiedDataPoints(dataset).size() / dataset.size());
+	}
+	
 	@Override
 	public String getLearnedLogic(boolean round) {
 		return getLearnedLogic(round, learnedModels);
