@@ -21,7 +21,7 @@ public abstract class ServerInputWriter extends AbstractStatefulStream {
 	public final void write() {
 		synchronized (this) {
 			if (!isReady()) {
-				throw new IllegalStateException("GanInputWriter is not ready!");
+				throw new IllegalStateException("ServerInputWriter is not ready!");
 			}
 			writeData();
 			waiting(); // wait for new data
