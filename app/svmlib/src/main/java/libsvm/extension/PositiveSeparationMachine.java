@@ -97,7 +97,7 @@ public class PositiveSeparationMachine extends Machine {
 		return this;
 	}
 
-	private boolean isModelEqual(svm_model m1, svm_model m2) {
+	protected boolean isModelEqual(svm_model m1, svm_model m2) {
 		final int numberOfFeatures = getRandomData().getNumberOfFeatures();
 		if (numberOfFeatures > 0) {
 			Divider d1 = new Model(m1, numberOfFeatures).getExplicitDivider();
