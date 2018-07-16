@@ -52,7 +52,7 @@ public class SvmEvaluator {
 //		FileUtils.deleteFileByName(svmVerificationDpsFile);
 //		FileUtils.deleteFileByName(svmEvaluationCsv);
 		
-		List<PolynomialFunction> functions = genreatePolynomialFunctions(100);
+		List<PolynomialFunction> functions = genreatePolynomialFunctions(1000);
 //		List<PolynomialFunction> functions = loadPolynomialFunctions();
 //		List<PolynomialFunction> functions = Arrays.asList(new PolynomialFunction(new double[]{175, -83}));
 		SvmEvaluator evaluator = new SvmEvaluator();
@@ -354,6 +354,7 @@ public class SvmEvaluator {
 		
 		List<ExecVar> vars = toExecVars(dataLabels);
 		IlpSelectiveSampling sampling = new IlpSelectiveSampling(vars, toDoubleArrayList(dataset));
+		sampling.setMaxSamplesPerSelect(20);
 		LearnInfo info = new LearnInfo();
 		info.inputDps = dataset;
 		int sampleSize = dataset.size();
@@ -530,7 +531,7 @@ public class SvmEvaluator {
 			svm.addDataPoints(dataset);
 			svm.train();
 			log.info("Clasifier: " + svm.getLearnedLogic(true));
-			info.classifier = svm.getLearnedLogic(true) + (positiveSeparationMachine ? ((LearningMachine) svm).getConjuntionType() : "");
+			info.classifier = svm.getLearnedLogic(true) + ("and");
 			if (StringUtils.isEmpty(info.classifier)) {
 				return info;
 			}

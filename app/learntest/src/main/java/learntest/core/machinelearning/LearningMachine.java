@@ -9,6 +9,7 @@
 package learntest.core.machinelearning;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import libsvm.core.Divider;
 import libsvm.core.FormulaProcessor;
 import libsvm.core.Machine;
 import libsvm.core.Model;
+import libsvm.extension.ByDistanceNegativePointSelection;
 import libsvm.extension.MultiDividerBasedCategoryCalculator;
 import libsvm.extension.MultiOrDividerBasedCategoryCalculator;
 import libsvm.extension.NegativePointSelection;
@@ -40,8 +42,6 @@ import sav.strategies.dto.execute.value.ExecVar;
 
 /**
  * @author LLT
- * temporary class for some extend functions from PositiveSeparationMachine.
- * just temporary to workaround. The best way I think is merging FeatureSelectionMachine to PositiveSeparationMachine.
  */
 public class LearningMachine extends PositiveSeparationMachine {
 	private static final Logger log = LoggerFactory.getLogger(LearningMachine.class);
@@ -70,8 +70,10 @@ public class LearningMachine extends PositiveSeparationMachine {
 		int attemptCount = 0;
 		double bestAccuracy = 0.0;
 		List<svm_model> bestLearnedModels = new ArrayList<svm_model>();
+		boolean isConsistent = false;
 		while (Double.compare(bestAccuracy, 1.0) < 0
-				&& (attemptCount == 0 || !this.negativePointSelection.isConsistent())
+				/* && (attemptCount == 0 || !this.negativePointSelection.isConsistent()) */
+				&& !isConsistent
 				&& attemptCount < MAXIMUM_ATTEMPT_COUNT) {
 			attemptCount++;
 			learnedModels = new ArrayList<svm_model>();
@@ -79,6 +81,14 @@ public class LearningMachine extends PositiveSeparationMachine {
 			majorCategory = null;
 			attemptTraining(dataPoints);
 			double currentAccuracy = getModelAccuracy();
+			if ((currentAccuracy == bestAccuracy) && (bestLearnedModels.size() == learnedModels.size())) {
+				isConsistent = true;
+				for (int i = 0; i < learnedModels.size(); i++) {
+					if (!isModelEqual(learnedModels.get(i), bestLearnedModels.get(i))) {
+						isConsistent = false;
+					}
+				}
+			}
 			if (bestAccuracy <= currentAccuracy) {
 				bestAccuracy = currentAccuracy;
 				bestLearnedModels = learnedModels;
@@ -118,11 +128,11 @@ public class LearningMachine extends PositiveSeparationMachine {
 					
 //					List<DataPoint> selectedPoints = select(selectNum, selectionData, trainingData);					
 					List<DataPoint> list = new ArrayList<DataPoint>();
-
+//					DataPoint selectedPositivePoint = selectAveragePoint(trainingData);
 					int index = (int)(Math.random() * trainingData.size());
-					DataPoint randomPositive = trainingData.get(index);
+					DataPoint selectedPositivePoint = trainingData.get(index);
 					List<DataPoint> referenceDatas = new LinkedList<>();
-					referenceDatas.add(randomPositive);
+					referenceDatas.add(selectedPositivePoint);
 					
 					if(selectionData.isEmpty()){
 						break learnLoop;
@@ -159,6 +169,7 @@ public class LearningMachine extends PositiveSeparationMachine {
 							log.info("Lin Yun: learn " + str);
 							
 							pairList.add(new Pair<DataPoint, DataPoint>(referenceDatas.get(0), nearestDp));
+//							pairList.add(new Pair<DataPoint, DataPoint>(selectedPositivePoint, nearestDp));
 							modelSize++;
 							if (modelSize > modelLimit) {
 								break learnLoop;
@@ -178,6 +189,25 @@ public class LearningMachine extends PositiveSeparationMachine {
 		return this;
 	}
 	
+	private DataPoint selectAveragePoint(List<DataPoint> trainingData) {
+		double[] midlePoint = new double[trainingData.get(0).getNumberOfFeatures()];
+		for (int i = 0; i < midlePoint.length; i++) {
+			midlePoint[i] = 0;
+		}
+		for (DataPoint dp : trainingData) {
+			for (int i = 0; i < dp.getNumberOfFeatures(); i++) {
+				midlePoint[i] += dp.getValue(i);
+			}
+		}
+		for (int i = 0; i < midlePoint.length; i++) {
+			midlePoint[i] /= trainingData.size();
+		}
+		ByDistanceNegativePointSelection selection = new ByDistanceNegativePointSelection();
+		DataPoint dp = new DataPoint(midlePoint.length);
+		dp.setValues(midlePoint);
+		return selection.select(Arrays.asList(dp), trainingData);
+	}
+
 	private void removeClassifiedTruePoints(final List<DataPoint> selectionData, Category majorCategory) {
 		if (model == null) {
 			return;
@@ -266,7 +296,8 @@ public class LearningMachine extends PositiveSeparationMachine {
 	private void updatePreviousModel() {
 		List<svm_model> curModels = learnedModels;
 		if (!previousModels.isEmpty()) {
-			double maxAcc = getModelAccuracy();
+			double thisModelsAcc = getModelAccuracy();
+			double maxAcc = thisModelsAcc;
 			List<svm_model> bestModels = learnedModels;
 			for (List<svm_model> preModels : previousModels ) {
 				double preAcc = getModelAccuracy(preModels);				
@@ -274,15 +305,15 @@ public class LearningMachine extends PositiveSeparationMachine {
 					log.debug("previous model: \n{}, \nacc:{} <= new acc:{}", getLearnedLogic(true, preModels),
 							preAcc, maxAcc);
 				} else {
-					bestModels = preModels;
 					maxAcc = preAcc;
 					log.debug("previous model: \n{}, \nacc:{} > new acc:{}, mark!!! ",  getLearnedLogic(true, preModels),
 							preAcc, maxAcc);
+					bestModels = preModels;
 				}
 			}
-//			learnedModels = bestModels;
 			log.debug("best model : \n{}, \nacc:{}", getLearnedLogic(true, bestModels), maxAcc);
-			log.debug("learned model : \n{}, \nacc:{}", getLearnedLogic(true, learnedModels), maxAcc);
+			log.debug("learned model : \n{}, \nacc:{}", getLearnedLogic(true, learnedModels), thisModelsAcc);
+//			learnedModels = bestModels;
 		}
 		if (keepPotentialModel) {
 			if (!isContain(previousModels, curModels)) {
@@ -365,7 +396,7 @@ public class LearningMachine extends PositiveSeparationMachine {
 		LIAAtom a = (LIAAtom) formula;
 		LIATerm aTerm = a.getSingleTerm();
 		if (aTerm != null) {
-			return new Pair(aTerm.getCoefficient(), (ExecVar)aTerm.getVariable());
+			return Pair.of(aTerm.getCoefficient(), (ExecVar)aTerm.getVariable());
 		}
 		return null;
 	}
@@ -374,9 +405,6 @@ public class LearningMachine extends PositiveSeparationMachine {
 		Formula formula;
 		Model model;
 		double accuracy;
-		public LearnedModel() {
-			
-		}
 		
 		public LearnedModel(Model model, Formula formula, double accuracy) {
 			this.formula = formula;
