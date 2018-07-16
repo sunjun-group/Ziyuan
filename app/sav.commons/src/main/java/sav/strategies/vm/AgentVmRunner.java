@@ -8,6 +8,7 @@
 
 package sav.strategies.vm;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,9 +25,24 @@ import sav.common.core.utils.StringUtils;
  *
  */
 public class AgentVmRunner extends VMRunner {
+	private String agentOptionSeparator = "=";
+	private String agentParamsSeparator = ",";
+	private String agentParamsMultiValueSeparator = File.pathSeparator;
 	protected String agentJarPath;
 	private Map<String, String> agentParams;
 	private List<String> programArgs;
+	
+	public AgentVmRunner(String agentJarPath, String agentOptionSeparator, String agentParamsSeparator, 
+			String agentParamsMultiValueSeparator) {
+		this(agentJarPath, agentOptionSeparator, agentParamsSeparator);
+		this.agentParamsMultiValueSeparator = agentParamsMultiValueSeparator;
+	}
+	
+	public AgentVmRunner(String agentJarPath, String agentOptionSeparator, String agentParamsSeparator) {
+		this(agentJarPath);
+		this.agentOptionSeparator = agentOptionSeparator;
+		this.agentParamsSeparator = agentParamsSeparator;
+	}
 
 	public AgentVmRunner(String agentJarPath) {
 		this.agentJarPath = agentJarPath;
@@ -42,9 +58,13 @@ public class AgentVmRunner extends VMRunner {
 		List<String> agentParams = getAgentParams();
 		if (agentParams != null) {
 			sb.append("=")
-				.append(StringUtils.join(agentParams, ","));
+				.append(StringUtils.join(agentParams, getAgentParamsSeparator()));
 		}
 		builder.append(sb.toString());
+	}
+
+	protected String getAgentParamsSeparator() {
+		return agentParamsSeparator;
 	}
 	
 	@Override
@@ -57,7 +77,26 @@ public class AgentVmRunner extends VMRunner {
 	}
 	
 	public void addAgentParam(String opt, String value) {
+		if (value == null || value.isEmpty()) {
+			return;
+		}
 		agentParams.put(opt, value);
+	}
+	
+	public void removeAgentParam(String opt) {
+		agentParams.remove(opt);
+	}
+	
+	public void addAgentParam(String opt, boolean value) {
+		agentParams.put(opt, String.valueOf(value));
+	}
+	
+	public void addAgentParam(String opt, int value) {
+		agentParams.put(opt, String.valueOf(value));
+	}
+	
+	public void addAgentParams(String opt, Collection<?> values) {
+		agentParams.put(opt, StringUtils.join(values, agentParamsMultiValueSeparator));
 	}
 	
 	public List<String> getProgramArgs() {
@@ -99,6 +138,14 @@ public class AgentVmRunner extends VMRunner {
 	}
 
 	protected String getAgentOptionSeparator() {
-		return "=";
+		return agentOptionSeparator;
+	}
+
+	public void setAgentOptionSeparator(String agentOptionSeparator) {
+		this.agentOptionSeparator = agentOptionSeparator;
+	}
+
+	public void setAgentParamsSeparator(String agentParamsSeparator) {
+		this.agentParamsSeparator = agentParamsSeparator;
 	}
 }

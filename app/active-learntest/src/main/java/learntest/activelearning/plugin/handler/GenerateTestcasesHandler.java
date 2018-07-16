@@ -14,11 +14,14 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import learntest.activelearning.core.NeuralActiveLearnTest;
+import learntest.activelearning.core.settings.LearnTestResources;
 import learntest.activelearning.core.settings.LearntestSettings;
+import learntest.activelearning.plugin.ActiveLearntestPlugin;
 import learntest.core.commons.data.classinfo.ClassInfo;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.handler.gentest.GentestSettings;
+import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.LearnTestUtil;
 import sav.common.core.SavException;
@@ -54,7 +57,10 @@ public class GenerateTestcasesHandler extends AbstractHandler implements IHandle
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(config);
 		MethodInfo methodInfo = initTargetMethod(config);
 		NeuralActiveLearnTest learntest = new NeuralActiveLearnTest();
-		learntest.generateTestcase(appClasspath, methodInfo, new LearntestSettings());
+		LearnTestResources resources = new LearnTestResources();
+		resources.setMicrobatInstrumentationJarPath(IResourceUtils.getResourceAbsolutePath(ActiveLearntestPlugin.PLUGIN_ID, 
+				"microbat_instrumentator.jar"));
+		learntest.generateTestcase(appClasspath, methodInfo, new LearntestSettings(resources));
 	}
 	
 	private MethodInfo initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {

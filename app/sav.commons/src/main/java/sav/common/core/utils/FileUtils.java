@@ -172,4 +172,28 @@ public class FileUtils {
 			file.getParentFile().mkdirs();
 		}
 	}
+	
+	public static File getFileCreateIfNotExist(String path) {
+		File file = new File(path);
+		if (!file.exists()) {
+			File folder = file.getParentFile();
+			if (!folder.exists()) {
+				folder.mkdirs();
+			}
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				throw new SavRtException(e);
+			}
+		}
+		return file;
+	}
+
+	public static File createTempFile(String prefix, String suffix) {
+		try {
+			return File.createTempFile(prefix, suffix);
+		} catch (IOException e) {
+			throw new SavRtException(e);
+		}
+	}
 }

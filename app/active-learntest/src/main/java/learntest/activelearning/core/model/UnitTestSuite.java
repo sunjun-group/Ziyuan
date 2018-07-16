@@ -11,6 +11,7 @@ import gentest.core.data.Sequence;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.gan.InputDatapointMapping;
+import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
@@ -29,6 +30,7 @@ public class UnitTestSuite {
 	private Map<String, Sequence> testcaseSequenceMap;
 	private CfgCoverage coverage;
 	private InputDatapointMapping inputDpMapping;
+	private CoverageSFlowGraph coverageGraph;
 
 	public void addInputData(BreakpointValue value) {
 		if (inputData == null) {
@@ -79,6 +81,14 @@ public class UnitTestSuite {
 
 	public void setCoverage(CfgCoverage coverage) {
 		this.coverage = coverage;
+	}
+	
+	public void setCoverageGraph(CoverageSFlowGraph coverageGraph) {
+		this.coverageGraph = coverageGraph;
+	}
+	
+	public CoverageSFlowGraph getCoverageGraph() {
+		return coverageGraph;
 	}
 	
 	public List<String> getJunitClassNames() {

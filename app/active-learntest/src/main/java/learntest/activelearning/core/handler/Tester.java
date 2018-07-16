@@ -17,6 +17,7 @@ import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.LearntestJWriter;
 import learntest.core.gentest.TestGenerator;
+import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
@@ -31,7 +32,11 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class Tester {
-	private CoverageCounter coverageCounter = new CoverageCounter();
+	private CoverageCounter coverageCounter;
+
+	public Tester(LearntestSettings settings) {
+		coverageCounter = new CoverageCounter(settings.getResources().getMicrobatInstrumentationJarPath(), settings.getCdgLayer());
+	}
 
 	/**
 	 * create random testcases and count coverage,
@@ -57,11 +62,15 @@ public class Tester {
 		testSuite.setJunitClassNames(testCases.getJunitClassNames(), appClasspath.getClassLoader());
 		testSuite.setJunitfiles(testCases.getJunitfiles());
 		testSuite.setTestcaseSequenceMap(testCases.getTestcaseSequenceMap());
+		// LLT: test coverage agent.
+//		CoverageOutput coverageOutput = coverageCounter.runCoverage(targetMethod, testCases.getJunitClassNames(), cfg, appClasspath);
+//		testSuite.setCoverageGraph(coverageOutput.getCoverageGraph());
+		//
 		CfgCoverage coverage = coverageCounter.countCoverage(targetMethod, testCases.getJunitClassNames(), cfg, appClasspath);
 		testSuite.setCoverage(coverage);
 		if (coverage.getBranchCoverage() > 0) {
 			JunitTestsInfo junitTestsInfo = new JunitTestsInfo(testCases, appClasspath.getClassLoader());
-			TestcasesExecutor testcaseExecutor = new TestcasesExecutor(settings.inputValueExtractLevel);
+			TestcasesExecutor testcaseExecutor = new TestcasesExecutor(settings.getInputValueExtractLevel());
 			List<String> junitCases = junitTestsInfo.getJunitTestcases();
 			testcaseExecutor.setup(appClasspath, junitCases);
 			testcaseExecutor.run(CollectionUtils.listOf(cfg.getEntryPoint(), 1));
@@ -92,10 +101,10 @@ public class Tester {
 	private GentestParams initGentestParams(MethodInfo targetMethod, LearntestSettings settings,
 			AppJavaClassPath appClasspath) {
 		GentestParams params = new GentestParams();
-		params.setMethodExecTimeout(settings.methodExecTimeout);
+		params.setMethodExecTimeout(settings.getMethodExecTimeout());
 		params.setMethodSignature(targetMethod.getMethodSignature());
 		params.setTargetClassName(targetMethod.getClassName());
-		params.setNumberOfTcs(settings.initRandomTestNumber);
+		params.setNumberOfTcs(settings.getInitRandomTestNumber());
 		params.setTestPerQuery(1);
 		params.setTestSrcFolder(appClasspath.getTestSrc());
 		

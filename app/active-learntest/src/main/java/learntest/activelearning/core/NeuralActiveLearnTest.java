@@ -14,6 +14,7 @@ import cfg.utils.CfgConstructor;
 import cfgextractor.CFGBuilder;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
+import learntest.activelearning.core.python.NeuralNetworkLearner;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.BreakpointCreator;
 import learntest.core.commons.data.classinfo.MethodInfo;
@@ -31,7 +32,7 @@ public class NeuralActiveLearnTest {
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		CfgConstructor cfgConstructor = new CfgConstructor();
 		CFG cfg = cfgConstructor.constructCFG(appClasspath, targetMethod.getClassName(),
-				targetMethod.getMethodSignature(), 2);
+				targetMethod.getMethodSignature(), settings.getCdgLayer());
 		/* <offset, relevant variables> */
 		Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(appClasspath,
 				targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum(), targetMethod.getMethodSignature())
@@ -39,7 +40,7 @@ public class NeuralActiveLearnTest {
 		cfg.getEntryPoint().setVars(BreakpointCreator.toBkpVariables(relevantVarMap));
 		
 		/* generate random test */
-		Tester tester = new Tester();
+		Tester tester = new Tester(settings);
 		int mx = 3;
 		UnitTestSuite testsuite = null;
 		for (int i = 0; i < mx; i++) {
@@ -54,10 +55,12 @@ public class NeuralActiveLearnTest {
 			throw new SavRtException("Fail to generate random test!");
 		}
 		
+		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner();
 		/* learn */
 		Queue<CfgNode> queue = new LinkedList<>();
 		queue.add(cfg.getFirstDecisionNode());
 		Set<Integer> visited = new HashSet<>();
+		
 		while (!queue.isEmpty()) {
 			CfgNode node = queue.poll();
 			if (visited.contains(node.getIdx())) {
@@ -76,7 +79,8 @@ public class NeuralActiveLearnTest {
 				List<double[]> coveredInput = testsuite.getCoveredInputData(branch);
 				List<double[]> uncoveredInput = testsuite.getUnCoveredInputData(branch);
 				int i = 0;
-				while ((coveredInput.isEmpty() || uncoveredInput.isEmpty()) && i++ < settings.nnLearningThreshold) {
+				while ((coveredInput.isEmpty() || uncoveredInput.isEmpty()) && i++ < settings.getNnLearningThreshold()) {
+//					List<double[]> generatedInput = nnLearner.boundaryRemaining(coveredInput, uncoveredInput, branch);
 					List<double[]> generatedInput = fake_boundary_remaining(coveredInput, uncoveredInput, branch);
 					UnitTestSuite newTestCases = tester.createTest(targetMethod, settings, cfg, appClasspath,
 							generatedInput, testsuite.getInputVars());
