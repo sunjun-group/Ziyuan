@@ -6,6 +6,7 @@ package learntest.activelearning.core.settings;
  */
 public class LearnTestResources {
 	private String microbatInstrumentationJarPath;
+	private String savJunitRunnerJarPath;
 
 	public String getMicrobatInstrumentationJarPath() {
 		return microbatInstrumentationJarPath;
@@ -15,4 +16,12 @@ public class LearnTestResources {
 		this.microbatInstrumentationJarPath = microbatInstrumentationJarPath;
 	}
 
+	public String getSavJunitRunnerJarPath() {
+		return savJunitRunnerJarPath;
+	}
+
+	public void setSavJunitRunnerJarPath(String savJunitRunnerJarPath) {
+		this.savJunitRunnerJarPath = savJunitRunnerJarPath;
+	}
+	
 }

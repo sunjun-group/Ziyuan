@@ -1,5 +1,6 @@
 package learntest.activelearning.core.handler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,12 @@ import microbat.instrumentation.cfgcoverage.CoverageAgentParams;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import microbat.model.ClassLocation;
 import sav.common.core.SavException;
+import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.JunitUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
@@ -31,12 +33,16 @@ import sav.strategies.vm.VMConfiguration;
  */
 public class CoverageCounter {
 	private String agentJarPath;
+	private String savJunitRunnerJarPath;
 	private int cdgLayer;
 	private Logger log = LoggerFactory.getLogger(CoverageCounter.class);
+	private long methodExecTimeout;
 
-	public CoverageCounter(String agentJarPath, int cdgLayer) {
-		this.agentJarPath = agentJarPath;
-		this.cdgLayer = cdgLayer;
+	public CoverageCounter(LearntestSettings settings) {
+		this.agentJarPath = settings.getResources().getMicrobatInstrumentationJarPath();
+		this.cdgLayer = settings.getCdgLayer();
+		this.methodExecTimeout = settings.getMethodExecTimeout();
+		this.savJunitRunnerJarPath = settings.getResources().getSavJunitRunnerJarPath();
 	}
 	
 	public CfgCoverage countCoverage(MethodInfo targetMethod, List<String> junitClassNames, CFG cfg, AppJavaClassPath appClasspath)
@@ -64,15 +70,19 @@ public class CoverageCounter {
 	}
 
 	public CoverageOutput runCoverage(MethodInfo targetMethod, List<String> junitClassNames, CFG cfg,
-			AppJavaClassPath appClasspath) throws SavException {
+			AppJavaClassPath appClasspath) throws SavException, SavRtException {
 		log.debug("calculate coverage..");
 		SingleTimer timer = SingleTimer.start("cfg-coverage");
-		CoverageAgentRunner coverageAgent = new CoverageAgentRunner(agentJarPath, new VMConfiguration(appClasspath));
+		CoverageAgentRunner coverageAgent = new CoverageAgentRunner(agentJarPath, savJunitRunnerJarPath, appClasspath);
+		/* for building program params */
+		List<String> junitMethods = JunitUtils.extractTestMethods(junitClassNames, appClasspath.getClassLoader());
+		/* build agent params */
 		CoverageAgentParams agentParams = new CoverageAgentParams();
 		agentParams.setCdgLayer(cdgLayer);
 		agentParams.setClassPaths(appClasspath.getClasspaths());
 		agentParams.setTargetMethodLoc(new ClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature(), -1));
-		CoverageOutput coverageOutput = coverageAgent.run(agentParams);
+		agentParams.setInclusiveMethodIds(new ArrayList<String>(cfg.getInclusiveMethods()));
+		CoverageOutput coverageOutput = coverageAgent.run(agentParams, methodExecTimeout, junitMethods);
 		timer.logResults(log);
 		return coverageOutput;
 	}

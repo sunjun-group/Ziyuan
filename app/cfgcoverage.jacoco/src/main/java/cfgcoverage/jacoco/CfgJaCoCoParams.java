@@ -99,11 +99,7 @@ public class CfgJaCoCoParams {
 
 	public void setJunitClassNames(List<String> junitClassNames, ClassLoader classLoader) {
 		this.junitClassNames = junitClassNames;
-		try {
-			junitMethods = JunitUtils.extractTestMethods(junitClassNames, classLoader);
-		} catch (ClassNotFoundException e) {
-			throw new SavRtException(e);
-		}
+		junitMethods = JunitUtils.extractTestMethods(junitClassNames, classLoader);
 	}
 
 	public boolean isDuplicateFilter() {

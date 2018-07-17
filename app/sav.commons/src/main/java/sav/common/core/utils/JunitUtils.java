@@ -24,6 +24,7 @@ import org.junit.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import sav.common.core.Pair;
+import sav.common.core.SavRtException;
 
 /**
  * @author LLT
@@ -33,10 +34,14 @@ public class JunitUtils {
 	private static final String JUNIT_TEST_METHOD_PREFIX = "test";
 	private static final String JUNIT_TEST_SUITE_PREFIX = "suite";
 	
-	public static List<String> extractTestMethods(List<String> junitClassNames, ClassLoader classLoader) throws ClassNotFoundException {
+	public static List<String> extractTestMethods(List<String> junitClassNames, ClassLoader classLoader) throws SavRtException {
 		List<String> result = new ArrayList<String>();
-		for (String className : junitClassNames) {
-			extractTestMethodsForClass(result, className, classLoader);
+		try {
+			for (String className : junitClassNames) {
+				extractTestMethodsForClass(result, className, classLoader);
+			}
+		} catch (ClassNotFoundException e) {
+			throw new SavRtException(e);
 		}
 		return result;
 	}

@@ -66,12 +66,8 @@ public class JunitTestsInfo {
 	}
 
 	private void addJunitClass(List<String> junitClasses, ClassLoader classLoader) {
-		try {
-			CollectionUtils.addIfNotNullNotExist(this.junitClasses, junitClasses);
-			CollectionUtils.addIfNotNullNotExist(this.junitTestcases, JunitUtils.extractTestMethods(junitClasses, classLoader));
-		} catch (ClassNotFoundException e) {
-			throw new SavRtException(e);
-		}
+		CollectionUtils.addIfNotNullNotExist(this.junitClasses, junitClasses);
+		CollectionUtils.addIfNotNullNotExist(this.junitTestcases, JunitUtils.extractTestMethods(junitClasses, classLoader));
 	}
 	
 	public void addJunitClass(String junitClasses, ClassLoader classLoader) {

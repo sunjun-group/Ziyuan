@@ -35,7 +35,7 @@ public class Tester {
 	private CoverageCounter coverageCounter;
 
 	public Tester(LearntestSettings settings) {
-		coverageCounter = new CoverageCounter(settings.getResources().getMicrobatInstrumentationJarPath(), settings.getCdgLayer());
+		coverageCounter = new CoverageCounter(settings);
 	}
 
 	/**

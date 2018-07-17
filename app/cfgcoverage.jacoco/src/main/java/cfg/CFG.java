@@ -9,7 +9,9 @@
 package cfg;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.objectweb.asm.tree.MethodNode;
 
@@ -33,6 +35,7 @@ public class CFG {
 	private MethodNode methodNode;
 	private String className;
 	private BreakPoint entryPoint;
+	private Set<String> inclusiveMethods = new HashSet<>();
 	
 	public CFG(String className, MethodNode methodNode) {
 		this.methodNode = methodNode;
@@ -41,6 +44,7 @@ public class CFG {
 		String methodId = SignatureUtils.createMethodNameSign(fullMethodName, methodNode.desc);
 		this.id = methodId;
 		nodeList = new ArrayList<CfgNode>();
+		inclusiveMethods.add(methodId);
 	}
 	
 	public void setStartNode(CfgNode startNode) {
@@ -137,5 +141,13 @@ public class CFG {
 			entryPoint = new BreakPoint(className, startNode.getLine());
 		}
 		return entryPoint;
+	}
+	
+	public void addInclusiveMethod(Set<String> methodIds) {
+		this.inclusiveMethods.addAll(methodIds);
+	}
+	
+	public Set<String> getInclusiveMethods() {
+		return inclusiveMethods;
 	}
 }

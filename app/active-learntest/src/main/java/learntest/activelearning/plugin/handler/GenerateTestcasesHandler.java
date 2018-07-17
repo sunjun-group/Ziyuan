@@ -60,6 +60,8 @@ public class GenerateTestcasesHandler extends AbstractHandler implements IHandle
 		LearnTestResources resources = new LearnTestResources();
 		resources.setMicrobatInstrumentationJarPath(IResourceUtils.getResourceAbsolutePath(ActiveLearntestPlugin.PLUGIN_ID, 
 				"microbat_instrumentator.jar"));
+		resources.setSavJunitRunnerJarPath(IResourceUtils.getResourceAbsolutePath(ActiveLearntestPlugin.PLUGIN_ID, 
+				"sav.testrunner.jar"));
 		learntest.generateTestcase(appClasspath, methodInfo, new LearntestSettings(resources));
 	}
 	

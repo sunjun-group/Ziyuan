@@ -100,6 +100,7 @@ public class CfgConstructor {
 				subNode.addLoopHeader(loopHeader);
 			}
 		}
+		cfg.addInclusiveMethod(subCfg.getInclusiveMethods());
 	}
 
 	private InputStream getClassInputStream(AppJavaClassPath appClasspath, String className)

@@ -12,7 +12,6 @@ import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.gan.InputDatapointMapping;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
-import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -97,11 +96,7 @@ public class UnitTestSuite {
 
 	public void setJunitClassNames(List<String> junitClasses, ClassLoader classLoader) {
 		this.junitClassNames = junitClasses;
-		try {
-			this.junitTestcases = JunitUtils.extractTestMethods(junitClasses, classLoader);
-		} catch (ClassNotFoundException e) {
-			throw new SavRtException(e);
-		}
+		this.junitTestcases = JunitUtils.extractTestMethods(junitClasses, classLoader);
 	}
 
 	public List<File> getJunitfiles() {
