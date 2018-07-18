@@ -25,6 +25,7 @@ public class CoverageAgentRunner extends AgentVmRunner {
 	public CoverageAgentRunner(String agentJarPath, String savJunitRunnerJarPath, AppJavaClassPath appClasspath) {
 		super(agentJarPath);
 		this.vmConfig = new VMConfiguration(appClasspath);
+		vmConfig.setNoVerify(true);
 		vmConfig.setLaunchClass("sav.junit.SavJunitRunner");
 		List<String> classpaths = new ArrayList<String>(vmConfig.getClasspaths());
 		classpaths.add(savJunitRunnerJarPath);

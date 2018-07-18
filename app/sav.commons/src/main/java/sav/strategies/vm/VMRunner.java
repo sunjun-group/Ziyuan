@@ -47,6 +47,7 @@ public class VMRunner {
 	 */
 	protected static final String debugToken = "-agentlib:jdwp=transport=dt_socket,suspend=y,address=%s";
 	protected static final String enableAssertionToken = "-ea";
+	protected static final String noVerifyToken = "-noverify";
 	/* timeout in millisecond */
 	private long timeout = NO_TIME_OUT;
 	private boolean isLog = true;
@@ -120,6 +121,7 @@ public class VMRunner {
 
 	protected void buildVmOption(CollectionBuilder<String, ?> builder, VMConfiguration config) {
 		builder.appendIf(String.format(debugToken, config.getPort()), config.isDebug())
+				.appendIf(noVerifyToken, config.isNoVerify())
 				.appendIf(enableAssertionToken, config.isEnableAssertion());
 	}
 

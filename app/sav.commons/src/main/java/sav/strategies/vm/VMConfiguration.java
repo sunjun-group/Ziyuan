@@ -34,6 +34,7 @@ public class VMConfiguration implements IDebuggerConfig {
 	// for internal use only
 	private List<String> programArgs;
 	private boolean vmLog = true;
+	private boolean noVerify = false;
 	
 	public VMConfiguration(VMConfiguration config) {
 		this.javaHome = config.getJavaHome();
@@ -172,5 +173,13 @@ public class VMConfiguration implements IDebuggerConfig {
 
 	public void resetPort() {
 		port = INVALID_PORT;
+	}
+
+	public boolean isNoVerify() {
+		return noVerify;
+	}
+
+	public void setNoVerify(boolean noVerify) {
+		this.noVerify = noVerify;
 	}
 }
