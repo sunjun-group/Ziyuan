@@ -82,6 +82,7 @@ public class CoverageCounter {
 		agentParams.setClassPaths(appClasspath.getClasspaths());
 		agentParams.setTargetMethodLoc(new ClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature(), -1));
 		agentParams.setInclusiveMethodIds(new ArrayList<String>(cfg.getInclusiveMethods()));
+		agentParams.setWorkingDirectory(appClasspath.getWorkingDir());
 		CoverageOutput coverageOutput = coverageAgent.run(agentParams, methodExecTimeout, junitMethods);
 		timer.logResults(log);
 		return coverageOutput;

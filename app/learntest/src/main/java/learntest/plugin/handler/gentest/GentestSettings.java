@@ -20,14 +20,14 @@ import learntest.core.JDartLearntest;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.plugin.LearnTestConfig;
-import learntest.plugin.commons.PluginException;
 import learntest.plugin.utils.IProjectUtils;
-import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import sav.common.core.Constants;
 import sav.common.core.SavRtException;
 import sav.common.core.SystemVariables;
+import sav.eclipse.plugin.IResourceUtils;
+import sav.eclipse.plugin.PluginException;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.SystemPreferences;
 
@@ -54,6 +54,8 @@ public class GentestSettings {
 			String testSrc = IProjectUtils.createSourceFolder(javaProject, "l2t_test");
 			appClasspath.setTestSrc(testSrc);
 			appClasspath.addClasspaths(IProjectUtils.getPrjectClasspath(javaProject));
+			String projectPath = IResourceUtils.relativeToAbsolute(javaProject.getPath()).toOSString();
+			appClasspath.setWorkingDir(projectPath);
 			GentestSettings.configureSystemPreferences(appClasspath.getPreferences(), javaProject);
 			return appClasspath;
 		} catch (CoreException ex) {

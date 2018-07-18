@@ -19,7 +19,8 @@ public class CommandLine {
 		Map<String, Object> argumentMap = cmd.argMap;
 		String curOpt = null;
 		for (String arg : args) {
-			if (arg.startsWith("-")) {
+			boolean isNumber = isNumber(arg);
+			if (!isNumber && arg.startsWith("-")) {
 				if (curOpt != null && !argumentMap.containsKey(curOpt)) {
 					argumentMap.put(curOpt, "TRUE");
 				}
@@ -36,6 +37,15 @@ public class CommandLine {
 		}
 		
 		return cmd;
+	}
+
+	private static boolean isNumber(String arg) {
+		try {
+			Long.valueOf(arg);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

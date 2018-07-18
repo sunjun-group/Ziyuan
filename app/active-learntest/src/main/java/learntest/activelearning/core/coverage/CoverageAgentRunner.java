@@ -2,8 +2,10 @@ package learntest.activelearning.core.coverage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import microbat.instrumentation.AgentParams.LogType;
 import microbat.instrumentation.cfgcoverage.CoverageAgentParams;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.SavException;
@@ -35,6 +37,10 @@ public class CoverageAgentRunner extends AgentVmRunner {
 		addAgentParams(CoverageAgentParams.OPT_CLASS_PATH, agentParams.getClassPaths());
 		addAgentParam(CoverageAgentParams.OPT_CDG_LAYER, agentParams.getCdgLayer());
 		addAgentParams(CoverageAgentParams.OPT_INCLUSIVE_METHOD_IDS, agentParams.getInclusiveMethodIds());
+		addAgentParams(CoverageAgentParams.OPT_LOG, Arrays.asList(LogType.info,
+															LogType.debug, 
+															LogType.error));
+		addAgentParam(CoverageAgentParams.OPT_WORKING_DIR, agentParams.getWorkingDirectory());
 		File dumpFile;
 		String dumpFilePath = agentParams.getDumpFile();
 		boolean toDeleteDumpFile = false;
@@ -45,7 +51,7 @@ public class CoverageAgentRunner extends AgentVmRunner {
 			dumpFile = FileUtils.getFileCreateIfNotExist(dumpFilePath);
 		}
 		dumpFilePath = dumpFile.getAbsolutePath();
-		addAgentParam(CoverageAgentParams.OPT_DUMP_FILE, agentParams.getDumpFile());
+		addAgentParam(CoverageAgentParams.OPT_DUMP_FILE, dumpFilePath);
 		/* check param options in sav.junit.JunitRunnerParamters class */
 		List<String> programArgs = new ProgramArgumentBuilder()
 						.addArgument("tc_timeout", methodTimeout)	

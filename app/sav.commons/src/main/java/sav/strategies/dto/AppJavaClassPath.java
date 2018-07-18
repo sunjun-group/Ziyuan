@@ -28,6 +28,7 @@ public class AppJavaClassPath {
 	private String testSrc;
 	private String target;
 	private String testTarget;
+	private String workingDir; // project folder
 	private SystemPreferences preferences;
 
 	public AppJavaClassPath() {
@@ -110,4 +111,13 @@ public class AppJavaClassPath {
 	public void clearClasspath() {
 		classpaths.clear();
 	}
+
+	public String getWorkingDir() {
+		return workingDir;
+	}
+
+	public void setWorkingDir(String workingDir) {
+		this.workingDir = workingDir;
+	}
+	
 }
