@@ -20,6 +20,7 @@ import learntest.activelearning.plugin.ActiveLearntestPlugin;
 import learntest.core.commons.data.classinfo.ClassInfo;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.LearnTestConfig;
+import learntest.plugin.LearntestLogger;
 import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
@@ -55,6 +56,7 @@ public class GenerateTestcasesHandler extends AbstractHandler implements IHandle
 	protected void execute() throws Exception {
 		LearnTestConfig config = LearnTestConfig.getInstance();
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(config);
+		LearntestLogger.initLog4j(config.getProjectName());
 		MethodInfo methodInfo = initTargetMethod(config);
 		NeuralActiveLearnTest learntest = new NeuralActiveLearnTest();
 		LearnTestResources resources = new LearnTestResources();
