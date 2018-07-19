@@ -14,6 +14,7 @@ import java.util.Map;
 public class CommandLine {
 	private Map<String, Object> argMap = new HashMap<>();
 	
+	@SuppressWarnings("unchecked")
 	public static CommandLine parse(String[] args) {
 		CommandLine cmd = new CommandLine();
 		Map<String, Object> argumentMap = cmd.argMap;
@@ -27,8 +28,15 @@ public class CommandLine {
 				curOpt = arg.substring(1, arg.length());
 			} else {
 				if (argumentMap.containsKey(curOpt)) {
-					List<String> multiValues = new ArrayList<>();
-					multiValues.add((String) argumentMap.get(curOpt));
+					List<String> multiValues = null;
+					Object value = argumentMap.get(curOpt);
+					if (value instanceof String) {
+						multiValues = new ArrayList<>();
+						multiValues.add((String) value);
+					} else if (value instanceof List) {
+						multiValues = (List<String>) value;
+					}
+					multiValues.add(arg);
 					argumentMap.put(curOpt, multiValues);
 				} else {
 					argumentMap.put(curOpt, arg);
