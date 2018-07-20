@@ -27,6 +27,7 @@ public class UnitTestSuite {
 	private List<BreakpointValue> inputData;
 	private List<ExecVar> inputVars;
 	private Map<String, Sequence> testcaseSequenceMap;
+	@Deprecated
 	private CfgCoverage coverage;
 	private InputDatapointMapping inputDpMapping;
 	private CoverageSFlowGraph coverageGraph;

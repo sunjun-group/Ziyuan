@@ -53,6 +53,7 @@ public class Tester {
 		}
 	}
 
+	boolean test = true;
 	private UnitTestSuite executeTest(MethodInfo targetMethod, LearntestSettings settings, CFG cfg,
 			AppJavaClassPath appClasspath, GentestResult testCases) throws SavException, SAVExecutionTimeOutException {
 		JavaCompiler javaCompiler = new JavaCompiler(new VMConfiguration(appClasspath));
@@ -63,8 +64,11 @@ public class Tester {
 		testSuite.setJunitfiles(testCases.getJunitfiles());
 		testSuite.setTestcaseSequenceMap(testCases.getTestcaseSequenceMap());
 		// LLT: test coverage agent.
-//		CoverageOutput coverageOutput = coverageCounter.runCoverage(targetMethod, testCases.getJunitClassNames(), cfg, appClasspath);
-//		testSuite.setCoverageGraph(coverageOutput.getCoverageGraph());
+		if (test) {
+			CoverageOutput coverageOutput = coverageCounter.runCoverage(targetMethod, testCases.getJunitClassNames(), cfg, appClasspath);
+			testSuite.setCoverageGraph(coverageOutput.getCoverageGraph());
+			throw new SavRtException("Finish Test!!!!");
+		}
 		//
 		CfgCoverage coverage = coverageCounter.countCoverage(targetMethod, testCases.getJunitClassNames(), cfg, appClasspath);
 		testSuite.setCoverage(coverage);

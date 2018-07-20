@@ -87,4 +87,9 @@ public class CoverageCounter {
 		timer.logResults(log);
 		return coverageOutput;
 	}
+	
+	@Deprecated
+	public void setMethodExecTimeout(long methodExecTimeout) {
+		this.methodExecTimeout = methodExecTimeout;
+	}
 }
