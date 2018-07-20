@@ -9,7 +9,7 @@ public class LearntestSettings {
 	private int initRandomTestNumber = 1;
 	private int inputValueExtractLevel = 3;
 	private int nnLearningThreshold = 3;
-	private int cdgLayer = 2;
+	private int cfgExtensionLayer = 2;
 	private LearnTestResources resources;
 	
 	public LearntestSettings(LearnTestResources resources) {
@@ -48,12 +48,12 @@ public class LearntestSettings {
 		this.nnLearningThreshold = nnLearningThreshold;
 	}
 
-	public int getCdgLayer() {
-		return cdgLayer;
+	public int getCfgExtensionLayer() {
+		return cfgExtensionLayer;
 	}
 
-	public void setCdgLayer(int cdgLayer) {
-		this.cdgLayer = cdgLayer;
+	public void setCfgExtensionLayer(int cdgLayer) {
+		this.cfgExtensionLayer = cdgLayer;
 	}
 
 	public LearnTestResources getResources() {

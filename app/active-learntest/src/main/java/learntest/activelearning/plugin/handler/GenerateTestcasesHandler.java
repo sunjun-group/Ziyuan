@@ -64,7 +64,8 @@ public class GenerateTestcasesHandler extends AbstractHandler implements IHandle
 				"microbat_instrumentator.jar"));
 		resources.setSavJunitRunnerJarPath(IResourceUtils.getResourceAbsolutePath(ActiveLearntestPlugin.PLUGIN_ID, 
 				"sav.testrunner.jar"));
-		learntest.generateTestcase(appClasspath, methodInfo, new LearntestSettings(resources));
+		LearntestSettings learntestSettings = new LearntestSettings(resources);
+		learntest.generateTestcase(appClasspath, methodInfo, learntestSettings);
 	}
 	
 	private MethodInfo initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {

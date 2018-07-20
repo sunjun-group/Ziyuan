@@ -40,7 +40,7 @@ public class CoverageCounter {
 
 	public CoverageCounter(LearntestSettings settings) {
 		this.agentJarPath = settings.getResources().getMicrobatInstrumentationJarPath();
-		this.cdgLayer = settings.getCdgLayer();
+		this.cdgLayer = settings.getCfgExtensionLayer();
 		this.methodExecTimeout = settings.getMethodExecTimeout();
 		this.savJunitRunnerJarPath = settings.getResources().getSavJunitRunnerJarPath();
 	}

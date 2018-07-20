@@ -32,7 +32,7 @@ public class NeuralActiveLearnTest {
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		CfgConstructor cfgConstructor = new CfgConstructor();
 		CFG cfg = cfgConstructor.constructCFG(appClasspath, targetMethod.getClassName(),
-				targetMethod.getMethodSignature(), settings.getCdgLayer());
+				targetMethod.getMethodSignature(), settings.getCfgExtensionLayer());
 		/* <offset, relevant variables> */
 		Map<Integer, List<Variable>> relevantVarMap = new CFGBuilder().parsingCFG(appClasspath,
 				targetMethod.getClassName(), targetMethod.getMethodFullName(), targetMethod.getLineNum(), targetMethod.getMethodSignature())
