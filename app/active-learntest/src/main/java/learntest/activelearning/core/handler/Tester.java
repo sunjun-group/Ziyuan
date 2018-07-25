@@ -37,6 +37,31 @@ public class Tester {
 	public Tester(LearntestSettings settings) {
 		coverageCounter = new CoverageCounter(settings);
 	}
+	
+	/**
+	 * create random testcases and count coverage,
+	 * if generated test covers at least first branch, then execute to get input value.
+	 */
+	public UnitTestSuite createRandomTestForDistribution(MethodInfo targetMethod, LearntestSettings settings, CFG cfg, AppJavaClassPath appClasspath) throws SavRtException {
+		GentestParams params = initGentestParams(targetMethod, settings, appClasspath);
+		TestGenerator testGenerator = new TestGenerator(appClasspath);
+		try {
+			GentestResult testCases = testGenerator.generateRandomTestcases(params);
+			JavaCompiler javaCompiler = new JavaCompiler(new VMConfiguration(appClasspath));
+			javaCompiler.compile(appClasspath.getTestTarget(), testCases.getAllFiles());
+			
+			UnitTestSuite testSuite = new UnitTestSuite();
+			testSuite.setJunitClassNames(testCases.getJunitClassNames(), appClasspath.getClassLoader());
+			testSuite.setJunitfiles(testCases.getJunitfiles());
+			testSuite.setTestcaseSequenceMap(testCases.getTestcaseSequenceMap());
+			
+			CoverageOutput coverageOutput = coverageCounter.runCoverage(targetMethod, testCases.getJunitClassNames(), cfg, appClasspath);
+			testSuite.setCoverageGraph(coverageOutput.getCoverageGraph());
+			return testSuite;
+		} catch (Exception e) {
+			throw new SavRtException(e);
+		}
+	}
 
 	/**
 	 * create random testcases and count coverage,

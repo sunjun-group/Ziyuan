@@ -18,6 +18,11 @@
             id="active-learntest.plugin.commands.testcaseDistribution"
             name="Run Random Testcase For Distribution">
       </command>
+      <command
+            defaultHandler="learntest.activelearning.plugin.handler.OneTestcaseDistributionHandler"
+            id="active-learntest.plugin.commands.onetestcaseDistribution"
+            name="Run One Random Testcase For Distribution">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -34,6 +39,11 @@
             <command
                   commandId="active-learntest.plugin.commands.testcaseDistribution"
                   label="Run Random Testcase For Distribution"
+                  style="push">
+            </command>
+            <command
+                  commandId="active-learntest.plugin.commands.onetestcaseDistribution"
+                  label="Run One Random Testcase For Distribution"
                   style="push">
             </command>
          </menu>

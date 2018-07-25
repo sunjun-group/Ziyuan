@@ -92,8 +92,8 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 				"sav.testrunner.jar"));
 		LearntestSettings learntestSettings = new LearntestSettings(resources);
 		IJavaProject project = IProjectUtils.getJavaProject(config.getProjectName());
-		SAVTimer.enableExecutionTimeout = true;
-		SAVTimer.exeuctionTimeout = 300000;
+//		SAVTimer.enableExecutionTimeout = true;
+		SAVTimer.exeuctionTimeout = 50000000;
 		run(project, appClasspath, learntestSettings, monitor);
 	}
 	
@@ -143,7 +143,12 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 			LearntestSettings learntestSettings, IProgressMonitor monitor) {
 		for (MethodInfo method : validMethods) {
 			RandomTestDistributionRunner distributionRunner = new RandomTestDistributionRunner();
-			distributionRunner.run(appClasspath, method, learntestSettings);
+			try {
+				distributionRunner.run(appClasspath, method, learntestSettings);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

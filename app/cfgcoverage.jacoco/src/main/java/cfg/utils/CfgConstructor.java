@@ -147,13 +147,16 @@ public class CfgConstructor {
 			super(Opcodes.ASM5);
 			this.methodName = SignatureUtils.extractMethodName(methodNameOrWithSign);
 			this.methodSignature = SignatureUtils.extractSignature(methodNameOrWithSign);
+			if (ClassUtils.getSimpleName(className).equals(methodName)) {
+				this.methodName = "<init>";
+			}
 		}
 
 		@Override
 		public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 			if (methodName.equals(name) && (methodSignature.isEmpty() || methodSignature.equals(desc))) {
 				methodNode = new MethodNode(access, name, desc, signature, exceptions);
-				return methodNode;
+				return null;
 			}
 			return null;
 		}
