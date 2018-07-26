@@ -55,7 +55,7 @@ public class GentestSettings {
 			appClasspath.setTestSrc(testSrc);
 			appClasspath.addClasspaths(IProjectUtils.getPrjectClasspath(javaProject));
 			String projectPath = IResourceUtils.relativeToAbsolute(javaProject.getPath()).toOSString();
-			appClasspath.setWorkingDir(projectPath);
+			appClasspath.setWorkingDirectory(projectPath);
 			GentestSettings.configureSystemPreferences(appClasspath.getPreferences(), javaProject);
 			return appClasspath;
 		} catch (CoreException ex) {

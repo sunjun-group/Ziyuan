@@ -203,6 +203,15 @@ public class CfgNode {
 			}
 		}
 		sb.append("}");
+		sb.append(", dependentees: {");
+		i = 0;
+		for (CfgNode dependentee : CollectionUtils.nullToEmpty(dependentees)) {
+			sb.append(dependentee.idx);
+			if (++i != dependentees.size()) {
+				sb.append(", ");
+			}
+		}
+		sb.append("}");
 		if (isLoopHeader) {
 			sb.append(", isLoopHeader");
 		}

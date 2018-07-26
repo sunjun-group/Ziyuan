@@ -314,8 +314,12 @@ public class CollectionUtils {
 		return true;
 	}
 
-	public static int getSize(Collection<?> list) {
+	public static int getSize(List<?> list) {
 		return list == null ? 0 : list.size();
+	}
+	
+	public static int getSize(Set<?> col) {
+		return col == null ? 0 : col.size();
 	}
 
 	public static <T> List<T> nullToEmpty(List<T> list) {

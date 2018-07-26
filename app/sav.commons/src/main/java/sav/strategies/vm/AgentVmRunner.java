@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import sav.common.core.utils.CollectionBuilder;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -96,7 +97,9 @@ public class AgentVmRunner extends VMRunner {
 	}
 	
 	public void addAgentParams(String opt, Collection<?> values) {
-		agentParams.put(opt, StringUtils.join(values, agentParamsMultiValueSeparator));
+		if (!CollectionUtils.isEmpty(values)) {
+			agentParams.put(opt, StringUtils.join(values, agentParamsMultiValueSeparator));
+		}
 	}
 	
 	public List<String> getProgramArgs() {

@@ -42,6 +42,9 @@ public class CoverageAgentRunner extends AgentVmRunner {
 															LogType.debug, 
 															LogType.error));
 		addAgentParam(CoverageAgentParams.OPT_WORKING_DIR, agentParams.getWorkingDirectory());
+		if (agentParams.getVarLayer() > 0) {
+			addAgentParam(CoverageAgentParams.OPT_VARIABLE_LAYER, agentParams.getVarLayer());
+		}
 		File dumpFile;
 		String dumpFilePath = agentParams.getDumpFile();
 		boolean toDeleteDumpFile = false;

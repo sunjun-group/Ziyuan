@@ -24,11 +24,17 @@ import sav.common.core.utils.StringUtils;
 public class AppJavaClassPath {
 	private String javaHome;
 	private Set<String> classpaths;
+	private String workingDirectory; // project folder
+	/*
+	 * Note [AppJavaClassPath incompatible issue]: those three fields above
+	 * match with the implementation of AppJavaClassPath in microbat, so can be
+	 * used when calling microbat, other than that, must check
+	 */
+	
 	private String src;
 	private String testSrc;
 	private String target;
 	private String testTarget;
-	private String workingDir; // project folder
 	private SystemPreferences preferences;
 
 	public AppJavaClassPath() {
@@ -112,12 +118,12 @@ public class AppJavaClassPath {
 		classpaths.clear();
 	}
 
-	public String getWorkingDir() {
-		return workingDir;
+	public String getWorkingDirectory() {
+		return workingDirectory;
 	}
 
-	public void setWorkingDir(String workingDir) {
-		this.workingDir = workingDir;
+	public void setWorkingDirectory(String workingDir) {
+		this.workingDirectory = workingDir;
 	}
 	
 }

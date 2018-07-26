@@ -35,7 +35,7 @@ public class RandomTestDistributionRunner {
 		/* generate random test */
 		Tester tester = new Tester(settings);
 		settings.setInitRandomTestNumber(100);
-		UnitTestSuite testsuite = tester.createRandomTestForDistribution(targetMethod, settings, cfg, appClasspath);
+		UnitTestSuite testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
 			
 		if (testsuite == null) {
 			throw new SavRtException("Fail to generate random test!");
