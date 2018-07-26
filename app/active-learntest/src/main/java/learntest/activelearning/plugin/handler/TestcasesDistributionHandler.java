@@ -100,6 +100,9 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 	private void run(IJavaProject project, AppJavaClassPath appClasspath, LearntestSettings learntestSettings, IProgressMonitor monitor) {
 		final List<IPackageFragmentRoot> roots = IProjectUtils.getSourcePkgRoots(project);
 		try {
+			if (monitor.isCanceled()) {
+				return;
+			}
 			for (IPackageFragmentRoot root : roots) {
 				for (IJavaElement element : root.getChildren()) {
 					if (element instanceof IPackageFragment) {
@@ -115,6 +118,9 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 	private void run(IPackageFragment pkg, AppJavaClassPath appClasspath, LearntestSettings learntestSettings, IProgressMonitor monitor)
 			throws JavaModelException {
 		for (IJavaElement javaElement : pkg.getChildren()) {
+			if (monitor.isCanceled()) {
+				return;
+			}
 			if (javaElement instanceof IPackageFragment) {
 				run((IPackageFragment) javaElement, appClasspath, learntestSettings, monitor);
 			} else if (javaElement instanceof ICompilationUnit) {
@@ -141,10 +147,16 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 
 	private void run(List<MethodInfo> validMethods, CompilationUnit cu, AppJavaClassPath appClasspath,
 			LearntestSettings learntestSettings, IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			return;
+		}
 		for (MethodInfo method : validMethods) {
 			RandomTestDistributionRunner distributionRunner = new RandomTestDistributionRunner();
 			try {
 				distributionRunner.run(appClasspath, method, learntestSettings);
+				if (monitor.isCanceled()) {
+					return;
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
