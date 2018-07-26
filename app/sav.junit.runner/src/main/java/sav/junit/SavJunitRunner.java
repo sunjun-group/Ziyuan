@@ -19,17 +19,20 @@ import org.junit.runner.notification.RunListener;
 
 import sav.common.core.utils.CountDownExecutionTimer;
 import sav.common.core.utils.IExecutionTimer;
+import sav.common.core.utils.TestRunner;
 
 /**
  * @author LLT
  *
  */
-public class SavJunitRunner implements Runnable {
+public class SavJunitRunner implements TestRunner {
+	private static final String SUCCESS_MSG = "no fail";
 	private boolean successful = false;
-	private String failureMessage = "no fail";
+	private String failureMessage = SUCCESS_MSG;
 	private JUnitCore jUnitCore;
 	private String className;
 	private String methodName;
+	private long curThreadId = -1;
 	
 	public SavJunitRunner(){
 		jUnitCore = new JUnitCore();
@@ -53,7 +56,7 @@ public class SavJunitRunner implements Runnable {
 			timer = new IExecutionTimer() {
 				
 				@Override
-				public boolean run(Runnable target, long timeout) {
+				public boolean run(TestRunner target, long timeout) {
 					target.run();
 					return true;
 				}
@@ -63,10 +66,14 @@ public class SavJunitRunner implements Runnable {
 		}
 		SavJunitRunner junitRunner = new SavJunitRunner();
 		for (String[] tc : params.getTestcases()) {
+			junitRunner.curThreadId = -1;
 			junitRunner.className = tc[0];
 			junitRunner.methodName = tc[1];
 			timer.run(junitRunner, params.getTimeout());
-			junitRunner.$testFinished(junitRunner.className, junitRunner.methodName);
+			System.out.println("is successful? " + junitRunner.successful);
+			System.out.println(junitRunner.failureMessage);
+			junitRunner.$exitTest(junitRunner.successful + ";" + junitRunner.failureMessage, junitRunner.className,
+					junitRunner.methodName, junitRunner.curThreadId);
 		}
 		junitRunner.$exitProgram("SavJunitRunner finished!");
 	}
@@ -75,6 +82,7 @@ public class SavJunitRunner implements Runnable {
 	public void run() {
 		Request request;
 		try {
+			curThreadId = Thread.currentThread().getId();
 			request = Request.method(Class.forName(className), methodName);
 			Result result = jUnitCore.run(request);
 			successful = result.wasSuccessful();
@@ -90,9 +98,11 @@ public class SavJunitRunner implements Runnable {
 		}
 		
 		System.currentTimeMillis();
-		System.out.println("is successful? " + successful);
-		System.out.println(this.failureMessage);
-		$exitTest(className, methodName, successful + ";" + this.failureMessage);
+	}
+	
+	@Override
+	public void onTimeout() {
+		this.failureMessage = "time out!";
 	}
 	
 	private void $testFinished(String className, String methodName) {
@@ -107,7 +117,8 @@ public class SavJunitRunner implements Runnable {
 		// for agent part.
 	}
 
-	private void $exitTest(String className, String methodName, String testResultMsg) {
+	private void $exitTest(String className, String methodName, String testResultMsg, Long curThreadId) {
 		// for agent part.
 	}
+
 }

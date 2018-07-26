@@ -22,7 +22,7 @@ public class NeuralActiveLearnTest {
 
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		settings.setInitRandomTestNumber(10);
-		settings.setMethodExecTimeout(-1);
+		//settings.setMethodExecTimeout(100);
 		CFGUtility cfgUtility = new CFGUtility();
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 				InstrumentationUtils.getClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature()),
@@ -32,7 +32,7 @@ public class NeuralActiveLearnTest {
 		
 		/* generate random test */
 		Tester tester = new Tester(settings);
-		int mx = 3;
+		int mx = 1;
 		UnitTestSuite testsuite = null;
 		for (int i = 0; i < mx; i++) {
 			try {
@@ -41,6 +41,7 @@ public class NeuralActiveLearnTest {
 //				testsuite = initTest;
 //				break;
 //			}
+				testsuite = initTest;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

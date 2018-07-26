@@ -22,7 +22,7 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 	private static Timer timer = new Timer();
 
 	@Override
-	public boolean run(final Runnable target, long timeout) {
+	public boolean run(final TestRunner target, long timeout) {
 		final Executor executor = new Executor(target);
 		final Thread thread = new Thread(executor);
 		timer.schedule(new TimerTask() {
@@ -40,6 +40,7 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 					/* allow the thread to run for a while, if after concession time,
 					 * it is still alive, we have to force to kill it */
 					timer.schedule(stopAliveInterruptedThread(thread), CONCESSION_TIME);
+					target.onTimeout();
 				}
 			}
 		}, timeout);

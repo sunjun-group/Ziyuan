@@ -6,6 +6,6 @@ package sav.common.core.utils;
  */
 public interface IExecutionTimer {
 
-	boolean run(Runnable target, long timeout);
+	boolean run(TestRunner target, long timeout);
 
 }
