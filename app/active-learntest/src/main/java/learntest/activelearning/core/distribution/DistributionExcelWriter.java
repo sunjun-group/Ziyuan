@@ -5,11 +5,7 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Row;
 
-import learntest.plugin.export.io.excel.common.ExcelHeader;
-import learntest.plugin.export.io.excel.common.ExcelWriter;
 import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
-
-import learntest.activelearning.core.distribution.DistributionHeader;
 
 public class DistributionExcelWriter extends SimpleExcelWriter<DistributionRow> {
 

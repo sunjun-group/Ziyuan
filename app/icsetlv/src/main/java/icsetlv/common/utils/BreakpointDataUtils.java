@@ -44,7 +44,9 @@ public class BreakpointDataUtils {
 		Set<ExecVar> allVars = new HashSet<ExecVar>();
 		for (List<BreakpointValue> bkpVals : bkpValsList) {
 			for (ExecValue bkpVal : bkpVals) {
-				collectExecVar(bkpVal.getChildren(), allVars);
+				if (bkpVal != null) {
+					collectExecVar(bkpVal.getChildren(), allVars);
+				}
 			}
 		}
 		return new ArrayList<ExecVar>(allVars);
