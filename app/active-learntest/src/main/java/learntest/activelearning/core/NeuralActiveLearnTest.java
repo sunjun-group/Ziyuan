@@ -14,6 +14,8 @@ import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
 import microbat.instrumentation.cfgcoverage.graph.CoverageGraphConstructor;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
+import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
+import microbat.instrumentation.cfgcoverage.graph.cdg.CDGConstructor;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.Randomness;
 import sav.strategies.dto.AppJavaClassPath;
@@ -27,8 +29,11 @@ public class NeuralActiveLearnTest {
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 				InstrumentationUtils.getClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature()),
 				settings.getCfgExtensionLayer());
+		cfgUtility.breakCircle(cfgInstance);
 		CoverageGraphConstructor constructor = new CoverageGraphConstructor();
 		CoverageSFlowGraph coverageSFlowGraph = constructor.buildCoverageGraph(cfgInstance);
+		CDGConstructor cdgConstructor = new CDGConstructor();
+		CDG cdg = cdgConstructor.construct(coverageSFlowGraph);
 		
 		/* generate random test */
 		Tester tester = new Tester(settings);
