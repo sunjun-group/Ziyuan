@@ -164,7 +164,7 @@ public class ControlDependencyConstructor {
 		return false;
 	}
 
-	private static Collection<CfgNode> getDependenteeSortByLoopHeader(CfgNode node) {
+	private static Collection<CfgNode> getDependenteeSortByLoopHeader(final CfgNode node) {
 		if (!node.isLoopHeader()) {
 			return node.getDependentees();
 		}

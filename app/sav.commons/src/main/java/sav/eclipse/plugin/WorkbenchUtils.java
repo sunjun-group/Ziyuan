@@ -22,7 +22,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class WorkbenchUtils {
 	
-	 public static IWorkbenchWindow getActiveWorkbenchWindow(AbstractUIPlugin plugin) {
+	 public static IWorkbenchWindow getActiveWorkbenchWindow(final AbstractUIPlugin plugin) {
 	        if (Display.getCurrent() != null) {
 	            return plugin.getWorkbench().getActiveWorkbenchWindow();
 	        }
