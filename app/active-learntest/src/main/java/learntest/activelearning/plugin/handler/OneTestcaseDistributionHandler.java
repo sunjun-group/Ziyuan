@@ -86,8 +86,16 @@ public class OneTestcaseDistributionHandler extends AbstractHandler implements I
 		/*----------*/
 
 		RandomTestDistributionRunner distributionRunner = new RandomTestDistributionRunner();
+
 		try {
+			learntestSettings.setInitRandomTestNumber(10);
+			long startTime = System.currentTimeMillis();
+			long endTime;
+			while(true) {
 			distributionRunner.run(appClasspath, method, learntestSettings);
+			endTime = System.currentTimeMillis();
+			if((endTime - startTime)>=180000)break;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
