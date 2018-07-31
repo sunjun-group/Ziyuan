@@ -1,8 +1,10 @@
 package learntest.activelearning.core.distribution;
 
 import java.io.File;
+import java.util.Queue;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -26,11 +28,13 @@ import sav.strategies.dto.AppJavaClassPath;
 
 public class RandomTestDistributionRunner {
 	private Logger log = LoggerFactory.getLogger(RandomTestDistributionRunner.class);
-	
+	private List<CoveragePath> allPath = new ArrayList<CoveragePath>();
+	private CoveragePath newPath = new CoveragePath();
+	private Stack<CoverageSFNode> stack = new Stack<CoverageSFNode>();
 	public void run(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		log.info("Run method: " + targetMethod.toString());
 		Tester tester = new Tester(settings);
-		settings.setInitRandomTestNumber(100);
+		//settings.setInitRandomTestNumber(1);
 		
 		/*filter out method without branches*/
 		/*CFGUtility cfgUtility = new CFGUtility();
@@ -50,20 +54,20 @@ public class RandomTestDistributionRunner {
 		
 		/* extract and order the distribution of cases*/
 		List<CoveragePath> distributionPath = testsuite.getCoverageGraph().getCoveragePaths();
-		List<CoveragePath> allPaths = new ArrayList<CoveragePath>();
-		allPaths = findAllPathInSFlowGraph(testsuite.getCoverageGraph());
-		System.out.println(allPaths.size());
+		//findAllPathInSFlowGraphDfs(testsuite.getCoverageGraph(),testsuite.getCoverageGraph().getStartNode());
+		findAllPathInSFlowGraphBfs(testsuite.getCoverageGraph(),testsuite.getCoverageGraph().getStartNode());
+		System.out.println(allPath.size());
 		/*merge two lists of paths*/
 		for(int l = 0; l < distributionPath.size(); l ++){
-			for(int m = 0; m < allPaths.size(); m ++){
-				if(pathEqual(allPaths.get(m).getPath(), distributionPath.get(l).getPath())) {
-					allPaths.remove(m);
+			for(int m = 0; m < allPath.size(); m ++){
+				if(pathEqual(allPath.get(m).getPath(), distributionPath.get(l).getPath())) {
+					allPath.remove(m);
 					m --;
 				}
 			}
 		}
 		//System.out.println(allPaths.size());
-		distributionPath.addAll(allPaths);
+		distributionPath.addAll(allPath);
 		/*----------------------*/
 		Integer[] distribution = new Integer[distributionPath.size()];
 		for(int j = 0; j < distributionPath.size(); j++)    {   
@@ -85,6 +89,44 @@ public class RandomTestDistributionRunner {
 
 	}
 
+	private void findAllPathInSFlowGraphBfs(CoverageSFlowGraph coverageGraph, CoverageSFNode startNode) {
+		List<Integer> Testcases = new ArrayList<Integer>();
+		class BfsNode {
+			public BfsNode(CoverageSFNode node) {
+				this.bfsNode = node;
+				this.prePath = new ArrayList<Integer>();
+			}
+			public BfsNode(CoverageSFNode node,List<Integer> path) {
+				this.bfsNode = node;
+				this.prePath = path;
+			}
+			 CoverageSFNode bfsNode;
+			 List<Integer> prePath;
+		}
+		Queue<BfsNode> queue = new LinkedList<BfsNode>();
+		BfsNode startnode = new BfsNode(startNode);
+		queue.offer(startnode);
+		BfsNode nodeProcessing;
+		do {
+            nodeProcessing = queue.poll();
+			if(nodeProcessing.bfsNode.getBranches().size() == 0) {
+				nodeProcessing.prePath.add(nodeProcessing.bfsNode.getCvgIdx());
+				newPath.setPath(nodeProcessing.prePath);
+				newPath.setCoveredTcs(Testcases);
+				allPath.add(newPath);
+			}
+			else {
+				for(CoverageSFNode node3 : nodeProcessing.bfsNode.getBranches()) {
+					List<Integer> newPrepath = nodeProcessing.prePath;
+					newPrepath.add(node3.getCvgIdx());
+					BfsNode newnode = new BfsNode(node3,newPrepath);
+					queue.offer(newnode);
+				}
+			}
+		}while(!queue.isEmpty());
+		
+	}
+
 	private boolean pathEqual(List<Integer> path, List<Integer> path2) {
 		if(path.size()!=path2.size()) {
 			return false;
@@ -100,59 +142,31 @@ public class RandomTestDistributionRunner {
 		return true;
 	}
 
-	private List<CoveragePath> findAllPathInSFlowGraph(CoverageSFlowGraph coverageGraph) {
-		List<CoveragePath> allpath = new ArrayList<CoveragePath>();
-		Stack<CoverageSFNode> stack = new Stack<CoverageSFNode>();
-		stack.push(coverageGraph.getStartNode());
-		//System.out.println("startnode:");
-		//System.out.println(stack.peek().getCvgIdx());
+	private void findAllPathInSFlowGraphDfs(CoverageSFlowGraph coverageGraph,CoverageSFNode nextnode ) {
+
 		List<Integer> path = new ArrayList<Integer>();
 		List<Integer> Testcases = new ArrayList<Integer>();
 		CoveragePath newPath = new CoveragePath();
-		boolean noBranch = false;
-		boolean[] visited = new boolean[coverageGraph.getNodeList().size()];
-		for(int j = 0; j < visited.length; j++) {
-			visited[j] = false;
-		}
-		visited[0] = true;
-		do {
-			if(stack.peek().getBranches().size() == 0) {
-				path.clear();
-				System.out.println(stack.size());
-				for(int i = 0; i < stack.size(); i++) {
-					path.add(stack.elementAt(i).getCvgIdx());
-				}
-				System.out.println(path.size());
-                newPath.setPath(path);
-                newPath.setCoveredTcs(Testcases);
-				allpath.add(newPath);
-				stack.pop();
-				continue;
+		stack.push(nextnode);
+		if(nextnode.getBranches().size() == 0) {
+			path.clear();
+			for(int i = 0; i < stack.size(); i++) {
+				path.add(stack.elementAt(i).getCvgIdx());
+            
 			}
-
-			noBranch = true;
-			for(CoverageSFNode node1 : stack.peek().getBranches()) {
-				if (!visited[node1.getCvgIdx()]) {
-					//System.out.println("001");
-					//System.out.println(node1.getCvgIdx());
-					visited[node1.getCvgIdx()] =  true;
-					stack.push(node1);
-					noBranch = false;
-					break;
-				}
-			}
-			if(noBranch) stack.pop();
-			
-		}while(!stack.empty());
-		return allpath;
-	}
-
-	private boolean containNode(List<CoverageSFNode> exitList, CoverageSFNode peek) {
-		for(CoverageSFNode exitnode : exitList) {
-			if(exitnode.getCvgIdx() == peek.getCvgIdx())return true;
+            newPath.setPath(path);
+            newPath.setCoveredTcs(Testcases);
+			allPath.add(newPath);
+			stack.pop();
+			return;
 		}
-		return false;
-	}
+		else {
+			for(CoverageSFNode node2 : nextnode.getBranches()) {
+				findAllPathInSFlowGraphDfs(coverageGraph, node2);
+			}
+			stack.pop();
+		}
 
+	}
 	
 }

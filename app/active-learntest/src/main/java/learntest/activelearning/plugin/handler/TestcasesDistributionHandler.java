@@ -1,6 +1,7 @@
 package learntest.activelearning.plugin.handler;
 
 import java.util.ArrayList;
+import learntest.activelearning.core.settings.LearntestSettings;
 import java.util.Arrays;
 import java.util.List;
 
@@ -151,6 +152,7 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 			return;
 		}
 		for (MethodInfo method : validMethods) {
+			learntestSettings.setInitRandomTestNumber(100);
 			RandomTestDistributionRunner distributionRunner = new RandomTestDistributionRunner();
 			try {
 				distributionRunner.run(appClasspath, method, learntestSettings);
