@@ -41,6 +41,7 @@ public class RandomTestDistributionRunner {
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 				InstrumentationUtils.getClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature()),
 				settings.getCfgExtensionLayer());
+		cfgUtility.breakCircle(cfgInstance);
 		CoverageGraphConstructor constructor = new CoverageGraphConstructor();
 		CoverageSFlowGraph coverageSFlowGraph = constructor.buildCoverageGraph(cfgInstance);
 		if(coverageSFlowGraph.getNodeList().size() == 1) return;*/
