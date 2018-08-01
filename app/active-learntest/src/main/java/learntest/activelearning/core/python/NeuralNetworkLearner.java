@@ -2,7 +2,6 @@ package learntest.activelearning.core.python;
 
 import java.util.List;
 
-import cfg.CfgNode;
 import sav.common.core.SavException;
 import sav.strategies.vm.interprocess.InputDataWriter;
 import sav.strategies.vm.interprocess.python.PythonVmConfiguration;
@@ -35,6 +34,10 @@ public class NeuralNetworkLearner {
 		vmRunner.start(vmConfig);
 	}
 	
+	public void startTrainingMethod(String methodName) {
+		inputWriter.request(InputData.createStartMethodRequest(methodName));
+	}
+	
 	public void stop() {
 		vmRunner.stop();
 	}
@@ -43,10 +46,9 @@ public class NeuralNetworkLearner {
 		this.timeout = timeout;
 	}
 	
-	public List<double[]> boundaryRemaining(List<double[]> coveredInput, List<double[]> uncoveredInput,
-			CfgNode branch) {
-		inputWriter.request(InputData.forBoundaryRemaining(coveredInput, uncoveredInput));
+	public List<double[]> boundaryRemaining(Dataset pathCoverage) {
+		inputWriter.request(InputData.forBoundaryRemaining(pathCoverage));
 		OutputData output = outputReader.readOutput();
-		return output.getGeneratedDataSet().getAllDatapoints();
+		return output.getDataSet().getCoveredData();
 	}
 }

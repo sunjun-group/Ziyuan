@@ -1,13 +1,11 @@
 package learntest.activelearning.core.python;
 
 import java.io.PrintWriter;
-import java.util.List;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import learntest.activelearning.core.python.BranchDataSet.Category;
 import sav.strategies.vm.interprocess.InputDataWriter.IInputData;
 
 /**
@@ -17,26 +15,31 @@ import sav.strategies.vm.interprocess.InputDataWriter.IInputData;
 public class InputData implements IInputData {
 	private Logger log = LoggerFactory.getLogger(InputData.class);
 	private RequestType requestType;
-	private BranchDataSet dataset;
+	private JSONObject obj;
 
 	@Override
 	public void writeData(PrintWriter pw) {
-		if (dataset == null) {
+		if (obj == null) {
 			return;
 		}
+		log.debug("write data: {}, {}", requestType, obj);
 		pw.println(String.valueOf(requestType));
-		JSONObject jsObj = new JSONObject();
-		jsObj.append(JsLabels.DATASET, dataset.getDataset());
-		pw.print(jsObj);
-		log.debug("write data: {}, {}", requestType, jsObj);
+		pw.println(obj);
 	}
-
-	public static IInputData forBoundaryRemaining(List<double[]> coveredInput, List<double[]> uncoveredInput) {
+	
+	public static IInputData forBoundaryRemaining(Dataset pathCoverage) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.BOUNDARY_REMAINING;
-		inputData.dataset = new BranchDataSet();
-		inputData.dataset.setDatapoints(Category.TRUE, coveredInput);
-		inputData.dataset.setDatapoints(Category.FALSE, uncoveredInput);
+		inputData.obj.put(JsLabels.PATH_ID, pathCoverage.getId());
+		inputData.obj.put(JsLabels.COVERED_DATA_POINTS, pathCoverage.getCoveredData());
+		inputData.obj.put(JsLabels.UNCOVERED_DATA_POINTS, pathCoverage.getUncoveredData());
+		return inputData;
+	}
+
+	public static IInputData createStartMethodRequest(String methodId) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.START_TRAINING_FOR_METHOD;
+		inputData.obj.put(JsLabels.METHOD_ID, methodId);
 		return inputData;
 	}
 

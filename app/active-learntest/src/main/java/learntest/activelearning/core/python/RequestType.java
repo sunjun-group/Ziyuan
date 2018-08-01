@@ -5,5 +5,6 @@ package learntest.activelearning.core.python;
  *
  */
 public enum RequestType {
+	START_TRAINING_FOR_METHOD,
 	BOUNDARY_REMAINING
 }
