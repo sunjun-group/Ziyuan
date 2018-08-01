@@ -44,6 +44,7 @@ public class RandomTestDistributionRunner {
 		cfgUtility.breakCircle(cfgInstance);
 		CoverageGraphConstructor constructor = new CoverageGraphConstructor();
 		CoverageSFlowGraph coverageSFlowGraph = constructor.buildCoverageGraph(cfgInstance);
+		
 		if(coverageSFlowGraph.getNodeList().size() == 1) return;*/
 		/*----------------------------------*/
 			
@@ -56,7 +57,7 @@ public class RandomTestDistributionRunner {
 		/* extract and order the distribution of cases*/
 		List<CoveragePath> distributionPath = testsuite.getCoverageGraph().getCoveragePaths();
 		//findAllPathInSFlowGraphDfs(testsuite.getCoverageGraph(),testsuite.getCoverageGraph().getStartNode());
-		findAllPathInSFlowGraphBfs(testsuite.getCoverageGraph(),testsuite.getCoverageGraph().getStartNode());
+		allPath = findAllPathInSFlowGraphBfs(testsuite.getCoverageGraph(),testsuite.getCoverageGraph().getStartNode());
 		System.out.println(allPath.size());
 		/*merge two lists of paths*/
 		for(int l = 0; l < distributionPath.size(); l ++){
@@ -90,8 +91,9 @@ public class RandomTestDistributionRunner {
 
 	}
 
-	private void findAllPathInSFlowGraphBfs(CoverageSFlowGraph coverageGraph, CoverageSFNode startNode) {
+	private List<CoveragePath> findAllPathInSFlowGraphBfs(CoverageSFlowGraph coverageGraph, CoverageSFNode startNode) {
 		List<Integer> Testcases = new ArrayList<Integer>();
+		List<CoveragePath> allpath = new ArrayList<CoveragePath>();
 		class BfsNode {
 			public BfsNode(CoverageSFNode node) {
 				this.bfsNode = node;
@@ -114,7 +116,7 @@ public class RandomTestDistributionRunner {
 				nodeProcessing.prePath.add(nodeProcessing.bfsNode.getCvgIdx());
 				newPath.setPath(nodeProcessing.prePath);
 				newPath.setCoveredTcs(Testcases);
-				allPath.add(newPath);
+				allpath.add(newPath);
 			}
 			else {
 				for(CoverageSFNode node3 : nodeProcessing.bfsNode.getBranches()) {
@@ -125,6 +127,7 @@ public class RandomTestDistributionRunner {
 				}
 			}
 		}while(!queue.isEmpty());
+		return allpath;
 		
 	}
 
