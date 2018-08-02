@@ -38,7 +38,11 @@ import sav.strategies.dto.SystemPreferences;
 public class GentestSettings {
 	
 	public static AppJavaClassPath getConfigAppClassPath(LearnTestConfig config) {
-		IProject project = IProjectUtils.getProject(config.getProjectName());
+		return getConfigAppClassPath(config.getProjectName());
+	}
+	
+	public static AppJavaClassPath getConfigAppClassPath(String projectName) {
+		IProject project = IProjectUtils.getProject(projectName);
 		IJavaProject javaProject = IProjectUtils.getJavaProject(project);
 		return GentestSettings.initAppJavaClassPath(javaProject);
 	}
@@ -113,4 +117,5 @@ public class GentestSettings {
 			return new learntest.core.LearnTest(params.getAppClasspath());
 		}
 	}
+
 }

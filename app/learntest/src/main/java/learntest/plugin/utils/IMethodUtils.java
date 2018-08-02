@@ -8,16 +8,21 @@
 
 package learntest.plugin.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import learntest.core.commons.data.classinfo.ClassInfo;
 import learntest.core.commons.data.classinfo.MethodInfo;
+import learntest.plugin.LearnTestConfig;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
+import sav.common.core.SavException;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
@@ -83,6 +88,28 @@ public class IMethodUtils {
 		MethodInfo method = new MethodInfo(targetClass);
 		method.setMethodName(classMethod.b);
 		method.setLineNum(lineNumber);
+		return method;
+	}
+	
+	public static MethodInfo initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
+		ClassInfo targetClass = new ClassInfo(config.getTargetClassName());
+		MethodInfo method = new MethodInfo(targetClass);
+		method.setMethodName(config.getTargetMethodName());
+		method.setLineNum(config.getMethodLineNumber());
+		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(config.getProjectName(),
+				method.getClassName(), method.getMethodName(), method.getLineNum());
+		method.setMethodSignature(LearnTestUtil.getMethodSignature(methodDeclaration));
+		List<String> paramNames = new ArrayList<String>(CollectionUtils.getSize(methodDeclaration.parameters()));
+		List<String> paramTypes = new ArrayList<String>(paramNames.size());
+		for (Object obj : methodDeclaration.parameters()) {
+			if (obj instanceof SingleVariableDeclaration) {
+				SingleVariableDeclaration svd = (SingleVariableDeclaration) obj;
+				paramNames.add(svd.getName().getIdentifier());
+				paramTypes.add(svd.getType().toString());
+			}
+		}
+		method.setParams(paramNames);
+		method.setParamTypes(paramTypes);
 		return method;
 	}
 }

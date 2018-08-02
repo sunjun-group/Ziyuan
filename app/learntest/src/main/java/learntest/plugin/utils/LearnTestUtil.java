@@ -33,9 +33,9 @@ import sav.common.core.SavRtException;
 public class LearnTestUtil {
 	private LearnTestUtil(){}
 	
-	public static CompilationUnit findCompilationUnitInProject(String qualifiedName){
+	public static CompilationUnit findCompilationUnitInProject(String projectName, String qualifiedName){
 		try{
-			ICompilationUnit icu = findICompilationUnitInProject(qualifiedName);
+			ICompilationUnit icu = findICompilationUnitInProject(projectName, qualifiedName);
 			CompilationUnit cu = convertICompilationUnitToASTNode(icu);	
 			return cu;
 		}
@@ -46,8 +46,8 @@ public class LearnTestUtil {
 		return null;
 	} 
 	
-	public static ICompilationUnit findICompilationUnitInProject(String qualifiedName){
-		IJavaProject project = getJavaProject();
+	public static ICompilationUnit findICompilationUnitInProject(String projectName, String qualifiedName) {
+		IJavaProject project = getJavaProject(projectName);
 		try {
 			IType type = project.findType(qualifiedName);
 			if(type == null){
@@ -87,12 +87,16 @@ public class LearnTestUtil {
 	}
 	
 	public static IProject getSpecificJavaProjectInWorkspace(){
+		return getSpecificJavaProjectInWorkspace(LearnTestConfig.getInstance().getProjectName());
+	}
+	
+	public static IProject getSpecificJavaProjectInWorkspace(String projectName){
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject[] projects = root.getProjects();
 		
 		for(int i=0; i<projects.length; i++){
-			if(LearnTestConfig.getInstance().getProjectName().equals(projects[i].getName())){
+			if(projectName.equals(projects[i].getName())){
 				return projects[i];
 				//return JavaCore.create(projects[i]);
 			}
@@ -102,7 +106,11 @@ public class LearnTestUtil {
 	}
 	
 	public static MethodDeclaration findSpecificMethod(String className, String methodName, int lineNumber) {
-		CompilationUnit cu = findCompilationUnitInProject(className);
+		return findSpecificMethod(LearnTestConfig.getInstance().getProjectName(), className, methodName, lineNumber);
+	}
+	
+	public static MethodDeclaration findSpecificMethod(String projectName, String className, String methodName, int lineNumber) {
+		CompilationUnit cu = findCompilationUnitInProject(projectName, className);
 		MethodFinder finder = new MethodFinder(cu, methodName, lineNumber);
 		cu.accept(finder);
 		return finder.getResult();
@@ -234,9 +242,13 @@ public class LearnTestUtil {
 		}
 		
 	}
-
+	
 	public static IJavaProject getJavaProject() {
-		return JavaCore.create(getSpecificJavaProjectInWorkspace());
+		return getJavaProject(LearnTestConfig.getInstance().getProjectName());
+	}
+
+	public static IJavaProject getJavaProject(String projectName) {
+		return JavaCore.create(getSpecificJavaProjectInWorkspace(projectName));
 	}
 
 	public static String getMethodSignature(MethodDeclaration methodDecl) {

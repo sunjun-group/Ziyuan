@@ -1,4 +1,6 @@
-package learntest.activelearning.plugin.handler;
+package learntest.evaluation.plugin.handler;
+
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -6,19 +8,25 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.JavaModelException;
 
 import learntest.activelearning.core.NeuralActiveLearnTest;
 import learntest.activelearning.core.settings.LearntestSettings;
+import learntest.activelearning.plugin.ValidMethodsLoader;
+import learntest.activelearning.plugin.handler.ActiveLearntestUtils;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.LearntestLogger;
+import learntest.plugin.commons.PluginException;
 import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IStatusUtils;
+import learntest.plugin.utils.WorkbenchUtils;
+import sav.common.core.SavException;
 import sav.strategies.dto.AppJavaClassPath;
 
-public class GenerateTestcasesHandler extends AbstractHandler implements IHandler {
-
+public class ProjectRandomGenTestHandler extends AbstractHandler implements IHandler {
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
 		Job job = new Job("GenerateTestcases") {
@@ -42,13 +50,22 @@ public class GenerateTestcasesHandler extends AbstractHandler implements IHandle
 	}
 
 	protected void execute() throws Exception {
-		LearnTestConfig config = LearnTestConfig.getInstance();
-		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(config);
-		LearntestLogger.initLog4j(config.getProjectName());
-		MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
-		NeuralActiveLearnTest learntest = new NeuralActiveLearnTest();
-		LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
-		learntest.generateTestcase(appClasspath, methodInfo, learntestSettings);
+		List<String> projects = WorkbenchUtils.getAllProjects();
+		for (String project : projects) {
+			runProject(project);
+		}
 	}
-	
+
+	private void runProject(String project) throws Exception {
+		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(project);
+		LearntestLogger.initLog4j(project);
+		ValidMethodsLoader methodLoader = new ValidMethodsLoader();
+		List<LearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
+		for (LearnTestConfig config : validMethods) {
+			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
+			LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
+			// TODO Guanji
+			
+		}
+	}
 }

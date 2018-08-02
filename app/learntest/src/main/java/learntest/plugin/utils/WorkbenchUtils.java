@@ -8,6 +8,13 @@
 
 package learntest.plugin.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.ui.JavaUI;
@@ -51,5 +58,16 @@ public class WorkbenchUtils {
 			throw PluginException.wrapEx(e);
 		}
 		return null;
+	}
+	
+	public static List<String> getAllProjects(){
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject[] projects = root.getProjects();
+		List<String> projectNames = new ArrayList<>();
+		for (int i = 0; i < projects.length; i++) {
+			projectNames.add(projects[i].getName());
+		}
+		return projectNames;
 	}
 }
