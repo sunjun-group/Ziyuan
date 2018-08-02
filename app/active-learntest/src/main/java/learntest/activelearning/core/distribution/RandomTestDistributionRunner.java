@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +28,6 @@ import sav.strategies.dto.AppJavaClassPath;
 public class RandomTestDistributionRunner {
 	private Logger log = LoggerFactory.getLogger(RandomTestDistributionRunner.class);
 	private List<CoveragePath> allPath = new ArrayList<CoveragePath>();
-	private CoveragePath newPath = new CoveragePath();
-	private Stack<CoverageSFNode> stack = new Stack<CoverageSFNode>();
 	public void run(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		log.info("Run method: " + targetMethod.toString());
 		Tester tester = new Tester(settings);
@@ -56,9 +53,8 @@ public class RandomTestDistributionRunner {
 		
 		/* extract and order the distribution of cases*/
 		List<CoveragePath> distributionPath = testsuite.getCoverageGraph().getCoveragePaths();
-		//findAllPathInSFlowGraphDfs(testsuite.getCoverageGraph(),testsuite.getCoverageGraph().getStartNode());
+
 		allPath = findAllPathInSFlowGraphBfs(testsuite.getCoverageGraph(),testsuite.getCoverageGraph().getStartNode());
-		System.out.println(allPath.size());
 		/*merge two lists of paths*/
 		for(int l = 0; l < distributionPath.size(); l ++){
 			for(int m = 0; m < allPath.size(); m ++){
@@ -68,7 +64,6 @@ public class RandomTestDistributionRunner {
 				}
 			}
 		}
-		//System.out.println(allPaths.size());
 		distributionPath.addAll(allPath);
 		/*----------------------*/
 		Integer[] distribution = new Integer[distributionPath.size()];
@@ -92,8 +87,10 @@ public class RandomTestDistributionRunner {
 	}
 
 	private List<CoveragePath> findAllPathInSFlowGraphBfs(CoverageSFlowGraph coverageGraph, CoverageSFNode startNode) {
-		List<Integer> Testcases = new ArrayList<Integer>();
+		if(startNode == null) return null;
+		List<Integer> Testcases = new ArrayList<Integer>(1);
 		List<CoveragePath> allpath = new ArrayList<CoveragePath>();
+		CoveragePath newpath = new CoveragePath();
 		class BfsNode {
 			public BfsNode(CoverageSFNode node) {
 				this.bfsNode = node;
@@ -103,32 +100,44 @@ public class RandomTestDistributionRunner {
 				this.bfsNode = node;
 				this.prePath = path;
 			}
-			 CoverageSFNode bfsNode;
-			 List<Integer> prePath;
+            CoverageSFNode bfsNode;
+			List<Integer> prePath;
 		}
 		Queue<BfsNode> queue = new LinkedList<BfsNode>();
 		BfsNode startnode = new BfsNode(startNode);
 		queue.offer(startnode);
-		BfsNode nodeProcessing;
+		BfsNode nodeProcessing = new BfsNode(null);
+		BfsNode newnode = new BfsNode(null);
+		List<Integer> tPath = new ArrayList<Integer>();
 		do {
             nodeProcessing = queue.poll();
-			if(nodeProcessing.bfsNode.getBranches().size() == 0) {
-				nodeProcessing.prePath.add(nodeProcessing.bfsNode.getCvgIdx());
-				newPath.setPath(nodeProcessing.prePath);
-				newPath.setCoveredTcs(Testcases);
-				allpath.add(newPath);
+            nodeProcessing.prePath.add(new Integer(nodeProcessing.bfsNode.getCvgIdx()));
+
+			if((nodeProcessing.bfsNode.getBranches().isEmpty())||nodeProcessing.bfsNode.getBranches() == null) {
+				tPath = listDeepCopy(nodeProcessing.prePath);
+                newpath = new CoveragePath();
+				newpath.setPath(tPath);
+				newpath.setCoveredTcs(Testcases);
+				allpath.add(newpath);
 			}
 			else {
-				for(CoverageSFNode node3 : nodeProcessing.bfsNode.getBranches()) {
-					List<Integer> newPrepath = nodeProcessing.prePath;
-					newPrepath.add(node3.getCvgIdx());
-					BfsNode newnode = new BfsNode(node3,newPrepath);
+				for(int j = 0; j < nodeProcessing.bfsNode.getBranches().size(); j++ ) {
+					tPath = listDeepCopy(nodeProcessing.prePath);
+					newnode = new BfsNode(nodeProcessing.bfsNode.getBranches().get(j),tPath);
 					queue.offer(newnode);
 				}
 			}
 		}while(!queue.isEmpty());
 		return allpath;
-		
+	
+	}
+
+	private List<Integer> listDeepCopy(List<Integer> prePath) {
+		List<Integer> toList = new ArrayList<Integer>();
+		for(int i = 0; i < prePath.size(); i++) {
+			toList.add(new Integer(prePath.get(i).intValue()));
+		}
+		return toList;
 	}
 
 	private boolean pathEqual(List<Integer> path, List<Integer> path2) {
@@ -146,31 +155,6 @@ public class RandomTestDistributionRunner {
 		return true;
 	}
 
-	private void findAllPathInSFlowGraphDfs(CoverageSFlowGraph coverageGraph,CoverageSFNode nextnode ) {
 
-		List<Integer> path = new ArrayList<Integer>();
-		List<Integer> Testcases = new ArrayList<Integer>();
-		CoveragePath newPath = new CoveragePath();
-		stack.push(nextnode);
-		if(nextnode.getBranches().size() == 0) {
-			path.clear();
-			for(int i = 0; i < stack.size(); i++) {
-				path.add(stack.elementAt(i).getCvgIdx());
-            
-			}
-            newPath.setPath(path);
-            newPath.setCoveredTcs(Testcases);
-			allPath.add(newPath);
-			stack.pop();
-			return;
-		}
-		else {
-			for(CoverageSFNode node2 : nextnode.getBranches()) {
-				findAllPathInSFlowGraphDfs(coverageGraph, node2);
-			}
-			stack.pop();
-		}
-
-	}
 	
 }
