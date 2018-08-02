@@ -33,7 +33,7 @@ public class RandomTestDistributionRunner {
 	private Stack<CoverageSFNode> stack = new Stack<CoverageSFNode>();
 	public void run(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		log.info("Run method: " + targetMethod.toString());
-		Tester tester = new Tester(settings);
+		Tester tester = new Tester(settings, false);
 		//settings.setInitRandomTestNumber(1);
 		
 		/*filter out method without branches*/

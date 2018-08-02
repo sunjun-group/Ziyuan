@@ -45,6 +45,7 @@ public class CoverageAgentRunner extends AgentVmRunner {
 		if (agentParams.getVarLayer() > 0) {
 			addAgentParam(CoverageAgentParams.OPT_VARIABLE_LAYER, agentParams.getVarLayer());
 		}
+		addAgentParam(CoverageAgentParams.OPT_COLLECT_CONDITION_VARIATION, agentParams.collectConditionVariation());
 		File dumpFile;
 		String dumpFilePath = agentParams.getDumpFile();
 		boolean toDeleteDumpFile = false;

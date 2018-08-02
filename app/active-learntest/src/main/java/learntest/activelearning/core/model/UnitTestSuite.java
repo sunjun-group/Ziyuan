@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import cfg.CfgNode;
-import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import gentest.core.data.Sequence;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.core.gan.InputDatapointMapping;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -24,45 +21,20 @@ public class UnitTestSuite {
 	private List<String> junitClassNames;
 	private List<File> junitfiles;
 	private List<String> junitTestcases;
-	private List<BreakpointValue> inputData;
+	private List<TestInputData> inputData;
 	private List<ExecVar> inputVars;
 	private Map<String, Sequence> testcaseSequenceMap;
-	@Deprecated
-	private CfgCoverage coverage;
 	private InputDatapointMapping inputDpMapping;
 	private CoverageSFlowGraph coverageGraph;
 
-	public void addInputData(BreakpointValue value) {
-		if (inputData == null) {
-			inputData = new ArrayList<BreakpointValue>();
-		}
-		inputData.add(value);
-	}
-	
-	public List<double[]> getUnCoveredInputData(CfgNode branch) {
-		List<Integer> coveredTcs = coverage.getCoverage(branch).getAllCoveredTcs();
-		List<BreakpointValue> inputValue = new ArrayList<>(inputData.size() - CollectionUtils.getSize(coveredTcs));
-		for (int tcIdx = 0; tcIdx < inputData.size(); tcIdx++) {
-			if (!coveredTcs.contains(tcIdx)) {
-				inputValue.add(inputData.get(tcIdx));
-			}
-		}
-		return inputDpMapping.getDatapoints(inputValue);
-	}
-
-	public List<double[]> getCoveredInputData(CfgNode branch) {
-		List<Integer> coveredTcs = coverage.getCoverage(branch).getAllCoveredTcs();
-		List<BreakpointValue> inputValue = new ArrayList<>(CollectionUtils.getSize(coveredTcs));
-		for (int tcIdx : coveredTcs) {
-			inputValue.add(inputData.get(tcIdx));
-		}
-		return inputDpMapping.getDatapoints(inputValue);
-	}
-
-	public void setInputData(List<BreakpointValue> inputData) {
+	public void setInputData(List<TestInputData> inputData) {
 		this.inputData = inputData;
 		if (inputDpMapping == null) {
-			inputVars = BreakpointDataUtils.collectAllVars(inputData);
+			List<BreakpointValue> bkpValues = new ArrayList<>(inputData.size());
+			for (TestInputData input : inputData) {
+				bkpValues.add(input.getInputValue());
+			}
+			inputVars = BreakpointDataUtils.collectAllVars(bkpValues);
 			inputDpMapping = new InputDatapointMapping(inputVars);
 		}
 	}
@@ -73,14 +45,6 @@ public class UnitTestSuite {
 
 	public void setTestcaseSequenceMap(Map<String, Sequence> testcaseSequenceMap) {
 		this.testcaseSequenceMap = testcaseSequenceMap;
-	}
-
-	public CfgCoverage getCoverage() {
-		return coverage;
-	}
-
-	public void setCoverage(CfgCoverage coverage) {
-		this.coverage = coverage;
 	}
 	
 	public void setCoverageGraph(CoverageSFlowGraph coverageGraph) {
@@ -126,6 +90,7 @@ public class UnitTestSuite {
 		} else if (newTestSuite.testcaseSequenceMap != null) {
 			this.testcaseSequenceMap.putAll(newTestSuite.testcaseSequenceMap);
 		}
-		this.coverage.merge(newTestSuite.coverage);
+		// TODO-LLT: Merge coverage.
+//		this.coverage.merge(newTestSuite.coverage);
 	}
 }
