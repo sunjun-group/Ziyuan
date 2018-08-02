@@ -11,6 +11,8 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.xml.internal.xsom.impl.ListSimpleTypeImpl;
+
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
@@ -42,35 +44,80 @@ public class RandomTestProgressRunner {
 
 	public void run(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		log.info("Run method: " + targetMethod.toString());
-		Tester tester = new Tester(settings, false);
 		settings.setInitRandomTestNumber(1);
-		
+		Tester tester = new Tester(settings, false);
 		UnitTestSuite testsuite = null;
 		long startTime = 0;
 		long endTime = 0; 
-		int interval = 15000;
-		int numInterval = 12;
+		int interval = 10000;
+		int numInterval = 9;
+		double allBranches = 0.00001;
+		double coveredBranches = 0;
 		double[] progress = new double[numInterval];
-		List<CoverageSFNode> cvgNodeList = null;
-		List<CoverageSFNode> newNodeList = null;
+		CoverageSFlowGraph graph = new CoverageSFlowGraph(0);
+		testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
+		graph = testsuite.getCoverageGraph();
+		for(CoverageSFNode node0 : graph.getNodeList()) {
+			if(node0.getBranches().size() > 1)allBranches += node0.getBranches().size();
+		}
+
+		int[][] branchTable = new int[testsuite.getCoverageGraph().getNodeList().size()][testsuite.getCoverageGraph().getNodeList().size()];
+		int s = testsuite.getCoverageGraph().getNodeList().size();
+		for(int a=0; a< s; a++) {
+			for(int b=0; b < s; b ++) {
+				branchTable[a][b] = 0;
+			}
+		}
+		
 		
 		startTime = System.currentTimeMillis();
 		do {
 			testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
 			endTime = System.currentTimeMillis();
+            for(CoveragePath path : testsuite.getCoverageGraph().getCoveragePaths()) {
+            	for(int c=0; c < path.getPath().size() - 1; c++) {
+            		if(graph.getNodeList().get(path.getPath().get(c).intValue()).getBranches().size() > 1)
+            		branchTable[path.getPath().get(c).intValue()][path.getPath().get(c+1).intValue()] = 1;
+            	}
+            }
+
 			if(endTime - startTime>=interval)break;
 		}while(true);	
-		cvgNodeList = testsuite.getCoverageGraph().getNodeList();
+		
+		coveredBranches = 0;
+		for (int a = 0; a < s; a++) {
+			for(int b = 0; b < s; b++) {
+				if(branchTable[a][b]==1)
+					coveredBranches = coveredBranches + 1;
+			}
+		}
+		System.out.println(coveredBranches);
+		progress[0] = coveredBranches / allBranches;
+		System.out.println(progress[0]);
 		
 		for(int i = 1; i < numInterval; i++) {
 			startTime = System.currentTimeMillis();
 			do {
 				testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
-				newNodeList = testsuite.getCoverageGraph().getNodeList();
 				endTime = System.currentTimeMillis();
-				cvgNodeList = branchCvgMerge(cvgNodeList, newNodeList);
+				for(CoveragePath path : testsuite.getCoverageGraph().getCoveragePaths()) {
+	            	for(int c=0; c < path.getPath().size() - 1; c++) {
+	            		if(graph.getNodeList().get(path.getPath().get(c).intValue()).getBranches().size() > 1)
+	            		branchTable[path.getPath().get(c).intValue()][path.getPath().get(c+1).intValue()] = 1;
+	            	}
+	            }
+
 				if(endTime - startTime>=interval)break;
 			}while(true);
+			coveredBranches = 0;
+			for (int a = 0; a < s; a ++) {
+				for(int b = 0; b < s; b ++) {
+					if(branchTable[a][b] == 1)
+						coveredBranches = coveredBranches + 1;
+				}
+			}
+			progress[i] = coveredBranches / allBranches;
+			System.out.println(progress[i]);
 			
 		}
 
@@ -83,10 +130,5 @@ public class RandomTestProgressRunner {
 
 	}
 
-	private List<CoverageSFNode> branchCvgMerge(List<CoverageSFNode> cvgNodeList, List<CoverageSFNode> newNodeList) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 
 }
