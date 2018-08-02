@@ -32,7 +32,9 @@ public class UnitTestSuite {
 		if (inputDpMapping == null) {
 			List<BreakpointValue> bkpValues = new ArrayList<>(inputData.size());
 			for (TestInputData input : inputData) {
-				bkpValues.add(input.getInputValue());
+				if (input != null) {
+					bkpValues.add(input.getInputValue());
+				}
 			}
 			inputVars = BreakpointDataUtils.collectAllVars(bkpValues);
 			inputDpMapping = new InputDatapointMapping(inputVars);
