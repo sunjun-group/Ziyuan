@@ -51,28 +51,41 @@ public class RandomTestProgressRunner {
 		int interval = 15000;
 		int numInterval = 12;
 		double[] progress = new double[numInterval];
-		for(int i = 0; i < 12; i++) {
+		List<CoverageSFNode> cvgNodeList = null;
+		List<CoverageSFNode> newNodeList = null;
+		
+		startTime = System.currentTimeMillis();
+		do {
+			testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
+			endTime = System.currentTimeMillis();
+			if(endTime - startTime>=interval)break;
+		}while(true);	
+		cvgNodeList = testsuite.getCoverageGraph().getNodeList();
+		
+		for(int i = 1; i < numInterval; i++) {
 			startTime = System.currentTimeMillis();
 			do {
 				testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
+				newNodeList = testsuite.getCoverageGraph().getNodeList();
 				endTime = System.currentTimeMillis();
+				cvgNodeList = branchCvgMerge(cvgNodeList, newNodeList);
 				if(endTime - startTime>=interval)break;
 			}while(true);
 			
 		}
 
 			
-		if (testsuite == null) {
-			throw new SavRtException("Fail to generate random test!");
-		}
-					
-       
 		ProgressExcelWriter writer = new ProgressExcelWriter(new File("D:/progress.xlsx"));
 		ProgressRow trial = new ProgressRow();
 		trial.setMethodName(targetMethod.getMethodFullName());
 		trial.setProgress(progress);
 		writer.addRowData(trial);
 
+	}
+
+	private List<CoverageSFNode> branchCvgMerge(List<CoverageSFNode> cvgNodeList, List<CoverageSFNode> newNodeList) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 
