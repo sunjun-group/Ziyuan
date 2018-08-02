@@ -27,12 +27,14 @@ public class CoverageCounter {
 	private int cdgLayer;
 	private Logger log = LoggerFactory.getLogger(CoverageCounter.class);
 	private long methodExecTimeout;
+	private boolean collectConditionVariation;
 
-	public CoverageCounter(LearntestSettings settings) {
+	public CoverageCounter(LearntestSettings settings, boolean collectConditionVariation) {
 		this.agentJarPath = settings.getResources().getMicrobatInstrumentationJarPath();
 		this.cdgLayer = settings.getCfgExtensionLayer();
 		this.methodExecTimeout = settings.getMethodExecTimeout();
 		this.savJunitRunnerJarPath = settings.getResources().getSavJunitRunnerJarPath();
+		this.collectConditionVariation = collectConditionVariation;
 	}
 
 	public CoverageOutput runCoverage(MethodInfo targetMethod, List<String> junitMethods,
@@ -49,6 +51,7 @@ public class CoverageCounter {
 		agentParams.setInclusiveMethodIds(new ArrayList<String>());
 		agentParams.setWorkingDirectory(appClasspath.getWorkingDirectory());
 		agentParams.setVarLayer(inputValueExtractLevel);
+		agentParams.setCollectConditionVariation(collectConditionVariation);
 		CoverageOutput coverageOutput = coverageAgent.run(agentParams, methodExecTimeout, junitMethods);
 		timer.logResults(log);
 		return coverageOutput;

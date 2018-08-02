@@ -7,6 +7,7 @@ import java.util.Map;
 
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
+import learntest.activelearning.core.model.TestInputData;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.commons.data.classinfo.MethodInfo;
@@ -38,8 +39,8 @@ import sav.strategies.vm.VMConfiguration;
 public class Tester {
 	private CoverageCounter coverageCounter;
 
-	public Tester(LearntestSettings settings) {
-		coverageCounter = new CoverageCounter(settings);
+	public Tester(LearntestSettings settings, boolean collectConditionVariation) {
+		coverageCounter = new CoverageCounter(settings, collectConditionVariation);
 	}
 
 	/**
@@ -73,8 +74,8 @@ public class Tester {
 		testSuite.setCoverageGraph(coverageOutput.getCoverageGraph());
 		
 		/* transfer input data */
-		Map<Integer, BreakpointValue> inputDataMap = transferInputData(coverageOutput.getInputData());
-		List<BreakpointValue> inputData = new ArrayList<>(testSuite.getJunitTestcases().size());
+		Map<Integer, TestInputData> inputDataMap = transferInputData(coverageOutput.getInputData());
+		List<TestInputData> inputData = new ArrayList<>(testSuite.getJunitTestcases().size());
 		for (int i = 0; i < testSuite.getJunitTestcases().size(); i++) {
 			inputData.add(inputDataMap.get(i));
 		}
@@ -82,15 +83,16 @@ public class Tester {
 		return testSuite;
 	}
 	
-	private Map<Integer, BreakpointValue> transferInputData(Map<Integer, BreakPointValue> inputData) {
-		Map<Integer, BreakpointValue> resultMap = new HashMap<>();
+	private Map<Integer, TestInputData> transferInputData(Map<Integer, microbat.instrumentation.cfgcoverage.runtime.TestInputData> inputData) {
+		Map<Integer, TestInputData> resultMap = new HashMap<>();
 		for (Integer testIdx : inputData.keySet()) {
-			BreakPointValue bkpValue = inputData.get(testIdx);
-			BreakpointValue inputValue = new BreakpointValue(bkpValue.getName());
-			for (VarValue value : bkpValue.getChildren()) {
+			microbat.instrumentation.cfgcoverage.runtime.TestInputData testInputs = inputData.get(testIdx);
+			BreakPointValue methodInputValue = testInputs.getMethodInputValue();
+			BreakpointValue inputValue = new BreakpointValue(methodInputValue.getName());
+			for (VarValue value : methodInputValue.getChildren()) {
 				inputValue.add(transfer(value));
 			}
-			resultMap.put(testIdx, inputValue);
+			resultMap.put(testIdx, new TestInputData(inputValue, testInputs.getConditionVariationMap()));
 		}
 		return resultMap;
 	}

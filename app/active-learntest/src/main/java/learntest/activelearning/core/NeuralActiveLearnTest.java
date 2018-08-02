@@ -36,7 +36,7 @@ public class NeuralActiveLearnTest {
 		CDG cdg = cdgConstructor.construct(coverageSFlowGraph);
 		
 		/* generate random test */
-		Tester tester = new Tester(settings);
+		Tester tester = new Tester(settings, true);
 		int mx = 1;
 		UnitTestSuite testsuite = null;
 		for (int i = 0; i < mx; i++) {
