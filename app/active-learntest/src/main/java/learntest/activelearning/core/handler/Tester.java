@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
-import learntest.activelearning.core.commons.TimeControler;
 import learntest.activelearning.core.model.TestInputData;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
@@ -43,7 +42,6 @@ import sav.strategies.vm.VMConfiguration;
 public class Tester {
 	private Logger log = LoggerFactory.getLogger(Tester.class);
 	private CoverageCounter coverageCounter;
-	private TimeControler timeControler;
 
 	public Tester(LearntestSettings settings, boolean collectConditionVariation) {
 		coverageCounter = new CoverageCounter(settings, collectConditionVariation);
