@@ -1,4 +1,4 @@
-package sav.common.core.utils;
+package sav.utils;
 
 public interface TestRunner extends Runnable {
 

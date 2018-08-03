@@ -5,8 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
+import learntest.activelearning.core.commons.TimeControler;
 import learntest.activelearning.core.model.TestInputData;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
@@ -37,7 +41,9 @@ import sav.strategies.vm.VMConfiguration;
  *
  */
 public class Tester {
+	private Logger log = LoggerFactory.getLogger(Tester.class);
 	private CoverageCounter coverageCounter;
+	private TimeControler timeControler;
 
 	public Tester(LearntestSettings settings, boolean collectConditionVariation) {
 		coverageCounter = new CoverageCounter(settings, collectConditionVariation);
@@ -55,6 +61,7 @@ public class Tester {
 			GentestResult testCases = testGenerator.generateRandomTestcases(params);
 			return executeTest(targetMethod, settings, appClasspath, testCases);
 		} catch (Exception e) {
+			log.error(e.getStackTrace().toString());
 			throw new SavRtException(e);
 		}
 	}
@@ -77,7 +84,8 @@ public class Tester {
 		Map<Integer, TestInputData> inputDataMap = transferInputData(coverageOutput.getInputData());
 		List<TestInputData> inputData = new ArrayList<>(testSuite.getJunitTestcases().size());
 		for (int i = 0; i < testSuite.getJunitTestcases().size(); i++) {
-			inputData.add(inputDataMap.get(i));
+			TestInputData input = inputDataMap.get(i);
+			inputData.add(input);
 		}
 		testSuite.setInputData(inputData);
 		return testSuite;

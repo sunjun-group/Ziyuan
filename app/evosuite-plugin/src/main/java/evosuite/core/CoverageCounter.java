@@ -8,51 +8,42 @@
 
 package evosuite.core;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import cfgcoverage.jacoco.CfgJaCoCo;
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
-import sav.common.core.SavException;
+import evosuite.core.EvosuiteTestcasesHandler.FilesInfo;
+import learntest.activelearning.core.settings.LearntestSettings;
+import learntest.core.commons.data.classinfo.ClassInfo;
+import learntest.core.commons.data.classinfo.MethodInfo;
+import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.SavRtException;
-import sav.common.core.utils.ClassUtils;
-import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.FileUtils;
-import sav.common.core.utils.JavaFileUtils;
+import sav.common.core.utils.JunitUtils;
+import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.vm.JavaCompiler;
-import sav.strategies.vm.VMConfiguration;
 
 /**
  * @author LLT
  *
  */
 public class CoverageCounter {
-	private JavaCompiler jCompiler;
 	private AppJavaClassPath appClasspath;
 	
 	public CoverageCounter(AppJavaClassPath appClassPath) {
-		
-		jCompiler = new JavaCompiler(new VMConfiguration(appClassPath));
 		this.appClasspath = appClassPath;
 	}
 	
-	public CfgCoverage calculateCoverage(Configuration config, String newPkg, EvosuiteResult result) {
+	public CfgCoverage calculateCoverage(EvosuiteResult result, FilesInfo junitFilesInfo) {
 		try {
-			System.out.println();
 			CfgJaCoCo cfgJacoco = new CfgJaCoCo(appClasspath);
 			cfgJacoco.setTimeout(5000l);
-			FilesInfo info = lookupJunitClasses(config, newPkg);
-			Map<String, CfgCoverage> cfgCoverage = cfgJacoco.runBySimpleRunner(extractTargetMethod(result),
-					extractTargetClass(result), info.junitClasses);
+			Map<String, CfgCoverage> cfgCoverage = cfgJacoco.runBySimpleRunner(
+					result.getTargetMethodAsList(),
+					result.getTargetClassAsList(),
+					junitFilesInfo.junitClasses);
 			System.out.println(TextFormatUtils.printMap(cfgCoverage));
 			return cfgCoverage.values().iterator().next();
 		} catch (Exception e) {
@@ -61,92 +52,20 @@ public class CoverageCounter {
 		}
 	}
 	
-	private List<String> extractTargetClass(EvosuiteResult result) {
-		return Arrays.asList(result.targetClass);
-	}
-
-	private List<String> extractTargetMethod(EvosuiteResult result) {
-		return Arrays.asList(result.targetMethod);
-	}
-
-	public FilesInfo lookupJunitClasses(Configuration config, String newPkg)
-			throws FileNotFoundException, IOException, SavException {
-		String folder = config.getEvoBaseDir() + "/evosuite-tests";
-		Collection<?> files = getAllJavaFiles(folder);
-		FilesInfo info = new FilesInfo();
-		for (Object obj : files) {
-			File file = (File) obj;
-			if (!file.getName().contains("ESTest_scaffolding")) {
-				info.junitClasses.add(ClassUtils.getCanonicalName(newPkg, file.getName().replace(".java", "")));
-			}
-			info.allFiles.add(file);
-		}
-		/* copy all files to source folder */
-		String pkgDecl = new StringBuilder("package ").append(newPkg).append(";").toString();
-		FileUtils.mkDirs(config.getEvosuitSrcFolder());
-		String junitNewFolder = JavaFileUtils.getClassFolder(config.getEvosuitSrcFolder(), newPkg);
-		FileUtils.deleteAllFiles(junitNewFolder);
-		FileUtils.copyFiles(info.allFiles, junitNewFolder);
-		/* update new files */
-		info.allFiles = CollectionUtils.toArrayList((File[])(new File(junitNewFolder)).listFiles());
-		/* modify package */
-		for (File file : info.allFiles) {
-			modifyJavaFile(file, pkgDecl);
-		}
-		/* compile */
-		jCompiler.compile(appClasspath.getTestTarget(), getAllJavaFiles(junitNewFolder));
-		return info;
-	}
-
-	private Collection<File> getAllJavaFiles(String folder) {
-		return org.apache.commons.io.FileUtils.listFiles(new File(folder), new String[] { "java" }, true);
-	}
-	
-	private void modifyJavaFile(File file, String newPkgDecl) {
+	public CoverageOutput calculateCfgCoverage(EvosuiteResult result, FilesInfo junitFilesInfo,
+			LearntestSettings learntestSettings) throws Exception {
 		try {
-			List<String> lines = org.apache.commons.io.FileUtils.readLines(file);
-			modifyPackage(lines, newPkgDecl);
-			modifyClassDeclaration(lines);
-			org.apache.commons.io.FileUtils.writeLines(file, lines);
-		} catch (IOException e) {
+			learntest.activelearning.core.handler.CoverageCounter cvgCounter = new learntest.activelearning.core.handler.CoverageCounter(
+					learntestSettings, false);
+			MethodInfo targetMethod = new MethodInfo(new ClassInfo(result.targetClass));
+			targetMethod.setMethodName(SignatureUtils.extractMethodName(result.targetMethod));
+			targetMethod.setMethodSignature(SignatureUtils.extractSignature(result.targetMethod));
+			List<String> testMethods = JunitUtils.extractTestMethods(junitFilesInfo.junitClasses,
+					appClasspath.getClassLoader());
+			return cvgCounter.runCoverage(targetMethod, testMethods, appClasspath, learntestSettings.getInputValueExtractLevel());
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SavRtException(e);
 		}
-	}
-	
-	private void modifyPackage(List<String> lines, String newPkgDecl) {
-		int i = 0;
-		String newPkgLine = null;
-		for (; i < lines.size(); i++) {
-			String line = lines.get(i);
-			if (line.startsWith("package ")) {
-				int endDeclIdx = line.indexOf(";");
-				if (endDeclIdx == (line.length() - 1)) {
-					newPkgLine = newPkgDecl;
-				} else {
-					newPkgLine = new StringBuilder(newPkgDecl).append(line.substring(endDeclIdx + 1, line.length() - 1)).toString();
-				}
-				break;
-			}
-		}
-		lines.set(i, newPkgLine);
-	}
-	
-	private void modifyClassDeclaration(List<String> lines) {
-		int i = 0;
-		String newLine = null;
-		for (; i < lines.size(); i++) {
-			String line = lines.get(i);
-			if (line.startsWith("public class ")) {
-				newLine = new StringBuilder("@SuppressWarnings(\"deprecation\")   ").append(line).toString();
-				break;
-			}
-		}
-		lines.set(i, newLine);
-	}
-
-	private static class FilesInfo {
-		List<File> allFiles = new ArrayList<File>();
-		List<String> junitClasses = new ArrayList<String>();
 	}
 }

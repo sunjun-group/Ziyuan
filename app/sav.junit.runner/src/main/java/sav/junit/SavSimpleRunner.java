@@ -8,15 +8,10 @@
 
 package sav.junit;
 
-import java.util.List;
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
 
-import org.junit.runner.Description;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
-
+import sav.utils.ClassUtils;
 import sav.utils.CountDownExecutionTimer;
 import sav.utils.IExecutionTimer;
 import sav.utils.TestRunner;
@@ -25,31 +20,22 @@ import sav.utils.TestRunner;
  * @author LLT
  *
  */
-public class SavJunitRunner implements TestRunner {
+public class SavSimpleRunner implements TestRunner {
 	private static final String SUCCESS_MSG = "no fail";
 	private boolean successful = false;
 	private String failureMessage = SUCCESS_MSG;
-	private JUnitCore jUnitCore;
 	private String className;
 	private String methodName;
 	private long curThreadId = -1;
 	
-	public SavJunitRunner(){
-		jUnitCore = new JUnitCore();
-		jUnitCore.addListener(new RunListener() {
-			@Override
-			public void testStarted(Description description) throws Exception {
-				$testStarted(description.getClassName(), description.getMethodName());
-			}
-			
-			@Override
-			public void testFinished(Description description) throws Exception {
-				$testFinished(description.getClassName(), description.getMethodName());
-			}
-		});
+	public SavSimpleRunner(){
+		
 	}
 	
 	public static void main(String[] args){
+		long currentTime = System.currentTimeMillis();
+        long vmStartTime = ManagementFactory.getRuntimeMXBean().getStartTime();
+        System.out.println("Startup time: " + (currentTime - vmStartTime));
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
 		IExecutionTimer timer;
 		if (params.getTimeout() <= 0) {
@@ -64,7 +50,7 @@ public class SavJunitRunner implements TestRunner {
 		} else {
 			timer = new CountDownExecutionTimer();
 		}
-		SavJunitRunner junitRunner = new SavJunitRunner();
+		SavSimpleRunner junitRunner = new SavSimpleRunner();
 		for (String[] tc : params.getTestcases()) {
 			junitRunner.curThreadId = -1;
 			junitRunner.className = tc[0];
@@ -80,24 +66,16 @@ public class SavJunitRunner implements TestRunner {
 	
 	@Override
 	public void run() {
-		Request request;
 		try {
 			curThreadId = Thread.currentThread().getId();
-			request = Request.method(Class.forName(className), methodName);
-			Result result = jUnitCore.run(request);
-			successful = result.wasSuccessful();
-			
-			List<Failure> failures = result.getFailures();
-			for(Failure failure: failures){
-				Throwable exception = failure.getException();
-				this.failureMessage = exception.getMessage();
-			}
-			
-		} catch (ClassNotFoundException e) {
+			final Class<?> clazz = Class.forName(className);
+			final Method method = ClassUtils.loockupMethod(clazz, methodName);
+			$testStarted(className, methodName);
+			method.invoke(clazz.newInstance());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		System.currentTimeMillis();
+		$testFinished(className, methodName);
 	}
 	
 	@Override

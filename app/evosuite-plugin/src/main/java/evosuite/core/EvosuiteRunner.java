@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +29,7 @@ import org.evosuite.result.BranchInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import evosuite.core.process.ByteConverter;
 import evosuite.core.process.EvosuiteInvoker;
 import evosuite.core.process.EvosuiteTestResult;
@@ -171,6 +173,12 @@ public class EvosuiteRunner {
 		public double branchCoverage;
 		public List<String> coverageInfo;
 		
-		
+		public List<String> getTargetClassAsList() {
+			return Arrays.asList(targetClass);
+		}
+
+		public List<String> getTargetMethodAsList() {
+			return Arrays.asList(targetMethod);
+		}
 	}
 }

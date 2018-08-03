@@ -23,7 +23,7 @@ public class CoverageAgentTest {
 		appClasspath.addClasspath("E:/lyly/eclipse-java-mars-clean/eclipse/plugins/org.hamcrest.core_1.3.0.v201303031735.jar");
 		appClasspath.addClasspath("E:/lyly/eclipse-java-mars-clean/eclipse/plugins/org.junit_4.12.0.v201504281640/junit.jar");
 		int cdgLayer = 2;
-		CoverageAgentRunner coverageAgent = new CoverageAgentRunner(agentJarPath, savJunitRunnerJarPath, appClasspath);
+		CoverageAgentRunner coverageAgent = new CoverageAgentRunner(agentJarPath, savJunitRunnerJarPath, appClasspath, false);
 		/* for building program params */
 		List<String> junitMethods = Arrays.asList("testdata.learntest.program.max.Program2.test1");
 		/* build agent params */

@@ -11,6 +11,7 @@ public class LearntestSettings {
 	private int nnLearningThreshold = 3;
 	private int cfgExtensionLayer = 2;
 	private LearnTestResources resources;
+	private boolean runCoverageAsMethodInvoke = false;
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
@@ -64,4 +65,12 @@ public class LearntestSettings {
 		this.resources = resources;
 	}
 
+	public boolean isRunCoverageAsMethodInvoke() {
+		return runCoverageAsMethodInvoke;
+	}
+
+	public void setRunCoverageAsMethodInvoke(boolean runCoverageAsMethodInvoke) {
+		this.runCoverageAsMethodInvoke = runCoverageAsMethodInvoke;
+	}
+	
 }

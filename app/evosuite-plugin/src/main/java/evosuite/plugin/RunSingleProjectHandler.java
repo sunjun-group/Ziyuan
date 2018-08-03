@@ -1,5 +1,8 @@
 package evosuite.plugin;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -13,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import evosuite.core.Configuration;
 import evosuite.core.EvosuitEvaluation;
+import learntest.activelearning.core.settings.LearntestSettings;
+import learntest.activelearning.plugin.handler.ActiveLearntestUtils;
 import sav.common.core.SavRtException;
 import sav.common.core.SystemVariables;
 import sav.common.core.utils.FileUtils;
@@ -49,15 +54,17 @@ public class RunSingleProjectHandler extends AbstractHandler {
 
 	protected void runEvosuite() throws Exception {
 		EvosuitePreferenceData data = EvosuitePreference.getEvosuitePreferenceData();
-		AppJavaClassPath appClasspath = initAppClasspath(data.getProjectName());
+		String evosuiteStandaloneRtJar = IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite-standalone-runtime-1.0.5.jar");
+		AppJavaClassPath appClasspath = initAppClasspath(data.getProjectName(), Arrays.asList(evosuiteStandaloneRtJar));
 		String excelReport = FileUtils.getFilePath(data.getEvosuiteWorkingDir(), "evosuite.xlsx");
-		Configuration config = new Configuration(excelReport);
+		String graphCoverageReport = FileUtils.getFilePath(data.getEvosuiteWorkingDir(), "evosuite_graphCoverage.csv");
+		Configuration config = new Configuration(excelReport, graphCoverageReport);
 		config.setEvosuitSrcFolder(FileUtils.getFilePath(data.getEvosuiteWorkingDir(), "generated_tests"));
 		config.setCoverageInfoLogFile(FileUtils.getFilePath(data.getEvosuiteWorkingDir(), "evosuite.log"));
 		config.setEvoBaseDir(data.getEvosuiteWorkingDir());
 		config.setMethodListFile(data.getTargetMethodListFile());
 		if (!hasLib(appClasspath, "evosuite-standalone-runtime")) {
-			appClasspath.addClasspath(IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite-standalone-runtime-1.0.5.jar"));
+			appClasspath.addClasspath(evosuiteStandaloneRtJar);
 		}
 		if (!hasLib(appClasspath, "junit")) {
 			appClasspath.addClasspath(IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/junit-4.12.jar"));
@@ -66,10 +73,13 @@ public class RunSingleProjectHandler extends AbstractHandler {
 		evosuiteConfig.addClasspath(IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite-generated-1.0.5.jar"));
 		evosuiteConfig.addClasspath(IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite-master-1.0.5.jar"));
 		evosuiteConfig.addClasspath(IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite-shaded-1.0.5.jar"));
-		evosuiteConfig.addClasspath(IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite-standalone-runtime-1.0.5.jar"));
+		evosuiteConfig.addClasspath(evosuiteStandaloneRtJar);
 		evosuiteConfig.addClasspath(IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite.runner.jar"));
 		evosuiteConfig.setJavaHome(appClasspath.getJavaHome());
-		EvosuitEvaluation evosuite = new EvosuitEvaluation(evosuiteConfig);
+		
+		LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
+		learntestSettings.setRunCoverageAsMethodInvoke(true);
+		EvosuitEvaluation evosuite = new EvosuitEvaluation(evosuiteConfig, learntestSettings);
 		evosuite.run(appClasspath, config);
 	}
 	
@@ -82,7 +92,7 @@ public class RunSingleProjectHandler extends AbstractHandler {
 		return false;
 	}
 
-	private AppJavaClassPath initAppClasspath(String projectName) {
+	private AppJavaClassPath initAppClasspath(String projectName, List<String> extJars) {
 		try {
 			IJavaProject javaProject = IProjectUtils.getJavaProject(projectName);
 			AppJavaClassPath appClasspath = new AppJavaClassPath();
@@ -93,7 +103,9 @@ public class RunSingleProjectHandler extends AbstractHandler {
 			appClasspath.setSrc(IProjectUtils.getSourceFolder(javaProject));
 			appClasspath.setTestSrc(IProjectUtils.getTestSourceFolder(javaProject));
 			appClasspath.addClasspaths(IProjectUtils.getPrjectClasspath(javaProject));
-			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, IProjectUtils.getPrjClassLoader(javaProject));
+			appClasspath.getPreferences().set(SystemVariables.PROJECT_CLASSLOADER, IProjectUtils.getPrjClassLoader(javaProject, extJars));
+			String projectPath = IResourceUtils.relativeToAbsolute(javaProject.getPath()).toOSString();
+			appClasspath.setWorkingDirectory(projectPath);
 			return appClasspath;
 		} catch (Exception ex) {
 			throw new SavRtException(ex);

@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.common.core.utils;
+package sav.utils;
 
 import java.util.Timer;
 import java.util.TimerTask;

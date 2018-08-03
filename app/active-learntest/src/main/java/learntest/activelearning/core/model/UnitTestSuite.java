@@ -21,7 +21,7 @@ public class UnitTestSuite {
 	private List<String> junitClassNames;
 	private List<File> junitfiles;
 	private List<String> junitTestcases;
-	private List<TestInputData> inputData;
+	private List<TestInputData> inputData; //inputData.get(i) might be null in case target method isn't even reached. 
 	private List<ExecVar> inputVars;
 	private Map<String, Sequence> testcaseSequenceMap;
 	private InputDatapointMapping inputDpMapping;

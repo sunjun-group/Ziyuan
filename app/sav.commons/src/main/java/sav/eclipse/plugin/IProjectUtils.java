@@ -187,10 +187,11 @@ public class IProjectUtils {
 		}
 	}
 
-	public static ClassLoader getPrjClassLoader(IJavaProject javaProject) {
+	public static ClassLoader getPrjClassLoader(IJavaProject javaProject, List<String> externalJars) {
 		try {
 			List<URL> urlList = new ArrayList<URL>();
-			List<String> classPathEntries = getPrjectClasspath(javaProject);
+			List<String> classPathEntries = new ArrayList<>(getPrjectClasspath(javaProject));
+			classPathEntries.addAll(externalJars);
 			for (String cpEntry : classPathEntries) {
 				IPath path = new Path(cpEntry);
 				URL url = path.toFile().toURI().toURL();

@@ -99,8 +99,8 @@ public class SignatureUtils {
 		}
 		String fullMethodName = methodNameOrSign.substring(0, endNameIdx);
 		if (fullMethodName.contains(".")) {
-			return fullMethodName.substring(fullMethodName.lastIndexOf("."),
-					fullMethodName.length() - 1);
+			return fullMethodName.substring(fullMethodName.lastIndexOf(".") + 1,
+					fullMethodName.length());
 		}
 		return fullMethodName;
 	}

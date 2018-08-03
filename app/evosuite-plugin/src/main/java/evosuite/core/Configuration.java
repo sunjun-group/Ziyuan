@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
+import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 
@@ -28,9 +29,11 @@ public class Configuration {
 	private String evosuitSrcFolder;
 	private EvosuiteNewExcelWriter excelWriter;
 	private String coverageInfoLogFile;
+	private GraphCoverageCsvRecorder recorder;
 
-	public Configuration(String excelFilePath) throws Exception {
+	public Configuration(String excelFilePath, String graphCoverageFilePath) throws Exception {
 		excelWriter = new EvosuiteNewExcelWriter(new File(excelFilePath));
+		recorder = new GraphCoverageCsvRecorder(graphCoverageFilePath);
 	}
 
 	public String getTestMethodListFile() {
@@ -85,8 +88,11 @@ public class Configuration {
 		this.evosuitSrcFolder = evosuitSrcFolder;
 	}
 
-	public void updateResult(String classMethod, int line, EvosuiteResult result) {
+	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage) {
 		writeToExcel(classMethod, line, result);
+		if (graphCoverage != null && graphCoverage.getCoverageGraph() != null) {
+			recorder.record(classMethod, line, graphCoverage);
+		}
 		writeToCoverageInfoLog(classMethod, line, result);
 	}
 
@@ -123,6 +129,6 @@ public class Configuration {
 	}
 
 	public void logError(String methodFullName, int line) {
-		updateResult(methodFullName, line, null);
+		updateResult(methodFullName, line, null, null);
 	}
 }

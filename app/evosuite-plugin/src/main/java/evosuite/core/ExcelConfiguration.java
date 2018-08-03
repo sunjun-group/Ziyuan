@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
+import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.utils.StringUtils;
-import sav.strategies.dto.AppJavaClassPath;
 
 /**
  * @author LLT
@@ -29,7 +29,7 @@ public class ExcelConfiguration extends Configuration {
 	private boolean rerun; // whether or not to rerun if evosuite's coverage is already existed.
 
 	public ExcelConfiguration(String excelFilePath) throws Exception {
-		super(excelFilePath);
+		super(excelFilePath, null);
 		excelHandler = new EvosuiteExcelHandler(excelFilePath);
 		exportData = excelHandler.readData();
 	}
@@ -50,7 +50,7 @@ public class ExcelConfiguration extends Configuration {
 	}
 
 	@Override
-	public void updateResult(String classMethod, int line, EvosuiteResult result) {
+	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage) {
 		ExportData data = methodDataMap.get(StringUtils.dotJoin(classMethod, line));
 		data.setEvoResult(result);
 		try {

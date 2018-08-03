@@ -22,11 +22,15 @@ import sav.strategies.vm.VMConfiguration;
 public class CoverageAgentRunner extends AgentVmRunner {
 	private VMConfiguration vmConfig;
 
-	public CoverageAgentRunner(String agentJarPath, String savJunitRunnerJarPath, AppJavaClassPath appClasspath) {
+	public CoverageAgentRunner(String agentJarPath, String savJunitRunnerJarPath, AppJavaClassPath appClasspath, boolean runCoverageAsMethodInvoke) {
 		super(agentJarPath);
 		this.vmConfig = new VMConfiguration(appClasspath);
 		vmConfig.setNoVerify(true);
-		vmConfig.setLaunchClass("sav.junit.SavJunitRunner");
+		if (runCoverageAsMethodInvoke) {
+			vmConfig.setLaunchClass("sav.junit.SavSimpleRunner");
+		} else {
+			vmConfig.setLaunchClass("sav.junit.SavJunitRunner");
+		}
 		List<String> classpaths = new ArrayList<String>(vmConfig.getClasspaths());
 		classpaths.add(savJunitRunnerJarPath);
 		vmConfig.setClasspath(classpaths);
@@ -63,7 +67,6 @@ public class CoverageAgentRunner extends AgentVmRunner {
 						.addArgument("testcases", junitMethods)
 						.build();
 		vmConfig.setProgramArgs(programArgs);
-		
 		startAndWaitUntilStop(vmConfig);
 		CoverageOutput coverageOutput = CoverageOutput.readFromFile(dumpFilePath);
 		if (toDeleteDumpFile) {

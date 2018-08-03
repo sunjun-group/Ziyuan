@@ -32,6 +32,7 @@ import gentest.junit.ICompilationUnitWriter;
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
 import learntest.core.commons.LearntestExceptionType;
+import learntest.core.commons.TimeController;
 import learntest.core.commons.utils.DomainUtils;
 import learntest.core.gentest.generator.TestSeqGenerator;
 import sav.common.core.Pair;
@@ -50,6 +51,7 @@ import sav.strategies.dto.execute.value.ExecVar;
 public class TestGenerator {
 	private static Logger log = LoggerFactory.getLogger(TestGenerator.class);
 	protected ClassLoader prjClassLoader;
+	private TimeController timeController = TimeController.getInstance();
 	
 	public TestGenerator(AppJavaClassPath appClasspath) {
 		this.prjClassLoader = appClasspath.getPreferences().get(SystemVariables.PROJECT_CLASSLOADER);
@@ -94,7 +96,9 @@ public class TestGenerator {
 		result.setJunitClassNames(printer.printTests(pair));
 		result.setJunitfiles(((FileCompilationUnitPrinter) printer.getCuPrinter()).getGeneratedFiles());
 		log.info("Generated junit classes: {}", result.getJunitClassNames());
+		timer.captureExecutionTime();
 		log.debug(timer.getResult());
+		timeController.logGenTestRunningTime(params, timer.getExecutionTime());
 		return result;
 	}
 

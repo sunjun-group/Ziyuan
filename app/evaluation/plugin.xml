@@ -8,6 +8,16 @@
             id="evaluation.plugin.commands.gentest.random"
             name="Random Gentest">
       </command>
+      <command
+            defaultHandler="learntest.evaluation.plugin.handler.ProjectRandomGenTestHandler"
+            id="evaluation.plugin.commands.gentest.random"
+            name="Evosuite Gentest">
+      </command>
+      <command
+            defaultHandler="learntest.evaluation.plugin.handler.ProjectRandomGenTestHandler"
+            id="evaluation.plugin.commands.gentest.random"
+            name="Random Gentest">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

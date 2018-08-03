@@ -15,6 +15,7 @@ package sav.common.core.utils;
 public class SingleTimer {
 	private long start;
 	private String taskName;
+	private long exectionTime = -1;
 
 	public SingleTimer(String taskName, long start) {
 		this.taskName = taskName;
@@ -31,7 +32,18 @@ public class SingleTimer {
 	}
 
 	public long getExecutionTime() {
+		if (exectionTime > 0) {
+			return exectionTime;
+		}
 		return currentTime() - start;
+	}
+	
+	public void captureExecutionTime() {
+		exectionTime = getExecutionTime();
+	}
+	
+	public void clearExecutionTime() {
+		exectionTime = -1;
 	}
 
 	public void logResults(org.slf4j.Logger log) {

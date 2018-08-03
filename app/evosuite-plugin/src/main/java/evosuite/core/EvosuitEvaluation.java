@@ -18,10 +18,14 @@ import org.slf4j.LoggerFactory;
 
 import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
+import evosuite.core.EvosuiteTestcasesHandler.FilesInfo;
 import evosuite.core.commons.CoverageUtils;
+import learntest.activelearning.core.settings.LearntestSettings;
+import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.FileUtils;
 import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
@@ -38,16 +42,20 @@ public class EvosuitEvaluation {
 	private AppJavaClassPath appClasspath;
 	private JavaCompiler javaCompiler;
 	private CoverageCounter coverageCounter;
+	private EvosuiteTestcasesHandler evosuiteTcHandler;
 	private VMConfiguration evosuiteConfig;
+	private LearntestSettings learntestSettings;
 	
-	public EvosuitEvaluation(VMConfiguration evosuiteConfig) {
+	public EvosuitEvaluation(VMConfiguration evosuiteConfig, LearntestSettings learntestSettings) {
 		this.evosuiteConfig = evosuiteConfig;
+		this.learntestSettings = learntestSettings;
 	}
 
 	public void run(AppJavaClassPath appClasspath, Configuration config){
 		this.appClasspath = appClasspath;
 		javaCompiler = new JavaCompiler(new VMConfiguration(appClasspath));
 		coverageCounter = new CoverageCounter(appClasspath);
+		evosuiteTcHandler = new EvosuiteTestcasesHandler(appClasspath);
 		List<String> methods = config.loadValidMethods();
 		run(config, methods);
 	}
@@ -62,7 +70,8 @@ public class EvosuitEvaluation {
 				for (int i = 0; i < targetClass.getMethods().size(); i++) {
 					try {
 						/* clean up base dir */
-						org.apache.commons.io.FileUtils.deleteDirectory(new File(config.getEvoBaseDir() + EVO_TEST));
+						String evoTestFolder = config.getEvoBaseDir() + EVO_TEST;
+						org.apache.commons.io.FileUtils.deleteDirectory(new File(evoTestFolder));
 
 						/* modify java file */
 						line = targetClass.getMethodStartLines().get(i);
@@ -80,14 +89,17 @@ public class EvosuitEvaluation {
 						params.setMethodPosition(adaptor.getStartLine(line), adaptor.getEndLine(line));
 						params.setBaseDir(config.getEvoBaseDir());
 						EvosuiteResult result = EvosuiteRunner.run(evosuiteConfig, params);
+						CoverageOutput graphCoverage = null;
 						if (result.targetMethod != null) {
-							CfgCoverage coverage = coverageCounter.calculateCoverage(config, targetClass.generatePackage(i), result);
+							FilesInfo junitFilesInfo = evosuiteTcHandler.getEvosuiteTestcases(config, targetClass.generatePackage(i), result);
+							CfgCoverage coverage = coverageCounter.calculateCoverage(result, junitFilesInfo);
 							result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
 							System.out.println("Coverage calculated by Ziyuan: " + result.branchCoverage);
 							result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
 							System.out.println(StringUtils.newLineJoin(result.coverageInfo));
+							graphCoverage = coverageCounter.calculateCfgCoverage(result, junitFilesInfo, learntestSettings);
 						}
-						config.updateResult(targetClass.getMethodFullName(i), line, result);
+						config.updateResult(targetClass.getMethodFullName(i), line, result, graphCoverage);
 					} catch (Exception e) {
 						revert(adaptor);
 						log.debug(e.getMessage());

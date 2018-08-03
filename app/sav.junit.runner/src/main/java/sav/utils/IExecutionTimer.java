@@ -1,4 +1,4 @@
-package sav.common.core.utils;
+package sav.utils;
 
 /**
  * @author LLT
