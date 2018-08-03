@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaModelException;
 
+import learntest.evaluation.core.RandomGentest;
 import learntest.activelearning.core.NeuralActiveLearnTest;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.ValidMethodsLoader;
@@ -29,6 +30,7 @@ public class ProjectRandomGenTestHandler extends AbstractHandler implements IHan
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+		
 		Job job = new Job("GenerateTestcases") {
 
 			@Override
@@ -65,7 +67,10 @@ public class ProjectRandomGenTestHandler extends AbstractHandler implements IHan
 			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
 			LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
 			// TODO Guanji
+			RandomGentest rtest = new RandomGentest();
+			rtest.generateTestcase(appClasspath, methodInfo, learntestSettings);
 			
 		}
 	}
+
 }

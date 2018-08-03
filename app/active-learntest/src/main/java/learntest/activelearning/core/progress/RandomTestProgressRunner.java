@@ -1,46 +1,27 @@
 package learntest.activelearning.core.progress;
 
 import java.io.File;
-import java.util.Queue;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.xml.internal.xsom.impl.ListSimpleTypeImpl;
 
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
-import learntest.activelearning.core.coverage.CoverageUtils;
-import learntest.activelearning.core.distribution.DistributionExcelWriter;
-import learntest.activelearning.core.distribution.DistributionRow;
-import learntest.activelearning.core.distribution.RandomTestDistributionRunner;
 
-import learntest.activelearning.core.progress.ProgressHeader;
 import learntest.activelearning.core.progress.ProgressRow;
 import learntest.activelearning.core.progress.ProgressExcelWriter;
 
 
 
 import learntest.core.commons.data.classinfo.MethodInfo;
-import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
-import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
-import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
-import microbat.instrumentation.cfgcoverage.graph.CoverageGraphConstructor;
 import microbat.instrumentation.cfgcoverage.graph.CoveragePath;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
-import sav.common.core.SavRtException;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class RandomTestProgressRunner {
 
-	private Logger log = LoggerFactory.getLogger(RandomTestDistributionRunner.class);
+	private Logger log = LoggerFactory.getLogger(RandomTestProgressRunner.class);
 
 	public void run(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		log.info("Run method: " + targetMethod.toString());

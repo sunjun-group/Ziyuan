@@ -19,6 +19,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  libs/microbat_instrumentator.jar
 Export-Package: learntest.activelearning.core,
+ learntest.activelearning.core.handler,
+ learntest.activelearning.core.model,
+ learntest.activelearning.core.progress,
  learntest.activelearning.core.settings,
  learntest.activelearning.plugin,
- learntest.activelearning.plugin.handler
+ learntest.activelearning.plugin.handler,
+ microbat.instrumentation.cfgcoverage.graph
