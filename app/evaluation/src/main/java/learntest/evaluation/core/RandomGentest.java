@@ -52,8 +52,9 @@ public class RandomGentest {
 				endTime = System.currentTimeMillis();
 	            for(CoveragePath path : testsuite.getCoverageGraph().getCoveragePaths()) {
 	            	for(int c=0; c < path.getPath().size() - 1; c++) {
-	            		if(graph.getNodeList().get(path.getPath().get(c).intValue()).getBranches().size() > 1)
-	            		branchTable[path.getPath().get(c).intValue()][path.getPath().get(c+1).intValue()] = 1;
+	            		CoverageSFNode node = path.getPath().get(c);
+						if(node.getBranches().size() > 1)
+	            		branchTable[node.getCvgIdx()][path.getPath().get(c+1).getId()] = 1;
 	            	}
 	            }
 
@@ -78,8 +79,9 @@ public class RandomGentest {
 					endTime = System.currentTimeMillis();
 					for(CoveragePath path : testsuite.getCoverageGraph().getCoveragePaths()) {
 		            	for(int c=0; c < path.getPath().size() - 1; c++) {
-		            		if(graph.getNodeList().get(path.getPath().get(c).intValue()).getBranches().size() > 1)
-		            		branchTable[path.getPath().get(c).intValue()][path.getPath().get(c+1).intValue()] = 1;
+		            		CoverageSFNode node = path.getPath().get(c);
+							if(node.getBranches().size() > 1)
+		            		branchTable[node.getCvgIdx()][path.getPath().get(c+1).getId()] = 1;
 		            	}
 		            }
 
