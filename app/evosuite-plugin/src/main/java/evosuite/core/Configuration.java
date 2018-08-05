@@ -16,6 +16,7 @@ import java.util.List;
 
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
+import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.FileUtils;
 
@@ -88,7 +89,7 @@ public class Configuration {
 		this.evosuitSrcFolder = evosuitSrcFolder;
 	}
 
-	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage) {
+	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage, CFGInstance cfgInstance) {
 		writeToExcel(classMethod, line, result);
 		if (graphCoverage != null && graphCoverage.getCoverageGraph() != null) {
 			recorder.record(classMethod, line, graphCoverage);
@@ -129,6 +130,6 @@ public class Configuration {
 	}
 
 	public void logError(String methodFullName, int line) {
-		updateResult(methodFullName, line, null, null);
+		updateResult(methodFullName, line, null, null, null);
 	}
 }

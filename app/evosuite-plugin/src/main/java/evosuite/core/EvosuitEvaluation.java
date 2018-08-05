@@ -20,8 +20,12 @@ import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import evosuite.core.EvosuiteTestcasesHandler.FilesInfo;
 import evosuite.core.commons.CoverageUtils;
+import evosuite.core.commons.IProgressMonitor;
 import learntest.activelearning.core.settings.LearntestSettings;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
+import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
+import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
+import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
@@ -51,23 +55,29 @@ public class EvosuitEvaluation {
 		this.learntestSettings = learntestSettings;
 	}
 
-	public void run(AppJavaClassPath appClasspath, Configuration config){
+	public void run(AppJavaClassPath appClasspath, Configuration config, IProgressMonitor monitor){
 		this.appClasspath = appClasspath;
 		javaCompiler = new JavaCompiler(new VMConfiguration(appClasspath));
 		coverageCounter = new CoverageCounter(appClasspath);
 		evosuiteTcHandler = new EvosuiteTestcasesHandler(appClasspath);
 		List<String> methods = config.loadValidMethods();
-		run(config, methods);
+		run(config, methods, monitor);
 	}
 	
-	public void run(Configuration config, List<String> methods) {
+	public void run(Configuration config, List<String> methods, IProgressMonitor monitor) {
 		Map<String, TargetClass> targetClassMap = toTargetClass(methods);
 		for (TargetClass targetClass : targetClassMap.values()) {
 			EvoJavaFileAdaptor adaptor = null;
+			if (monitor.isCanceled()) {
+				return;
+			}
 			try {
 				adaptor = new EvoJavaFileAdaptor(appClasspath.getSrc(), targetClass);
 				int line = 0;
 				for (int i = 0; i < targetClass.getMethods().size(); i++) {
+					if (monitor.isCanceled()) {
+						return;
+					}
 					try {
 						/* clean up base dir */
 						String evoTestFolder = config.getEvoBaseDir() + EVO_TEST;
@@ -90,6 +100,8 @@ public class EvosuitEvaluation {
 						params.setBaseDir(config.getEvoBaseDir());
 						EvosuiteResult result = EvosuiteRunner.run(evosuiteConfig, params);
 						CoverageOutput graphCoverage = null;
+						CFGInstance cfgInstance = null;
+						System.out.println();
 						if (result.targetMethod != null) {
 							FilesInfo junitFilesInfo = evosuiteTcHandler.getEvosuiteTestcases(config, targetClass.generatePackage(i), result);
 							CfgCoverage coverage = coverageCounter.calculateCoverage(result, junitFilesInfo);
@@ -98,8 +110,14 @@ public class EvosuitEvaluation {
 							result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
 							System.out.println(StringUtils.newLineJoin(result.coverageInfo));
 							graphCoverage = coverageCounter.calculateCfgCoverage(result, junitFilesInfo, learntestSettings);
+							CFGUtility cfgUtility = new CFGUtility();
+							cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
+									InstrumentationUtils.getClassLocation(result.targetClass, result.targetMethod),
+									learntestSettings.getCfgExtensionLayer());
+							cfgUtility.breakCircle(cfgInstance);
 						}
-						config.updateResult(targetClass.getMethodFullName(i), line, result, graphCoverage);
+						
+						config.updateResult(targetClass.getMethodFullName(i), line, result, graphCoverage, cfgInstance);
 					} catch (Exception e) {
 						revert(adaptor);
 						log.debug(e.getMessage());

@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import org.eclipse.core.runtime.CoreException;
-
 import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.graph.CoveragePath;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
@@ -26,7 +24,7 @@ public class CoverageDistributionRecorder {
 		/*merge two lists of paths*/
 		for(int l = 0; l < distributionPath.size(); l ++){
 			for(int m = 0; m < allPath.size(); m ++){
-				if(pathEqual(allPath.get(m).getPath(), distributionPath.get(l).getPath())) {
+				if(pathEqual(allPath.get(m).getIdPath(), distributionPath.get(l).getIdPath())) {
 					allPath.remove(m);
 					m --;
 				}
@@ -84,7 +82,11 @@ public class CoverageDistributionRecorder {
 			if((nodeProcessing.bfsNode.getBranches().isEmpty())||nodeProcessing.bfsNode.getBranches() == null) {
 				tPath = listDeepCopy(nodeProcessing.prePath);
                 newpath = new CoveragePath();
-				newpath.setPath(tPath);
+                List<CoverageSFNode> nodePath = new ArrayList<>(tPath.size());
+                for (int nodeId : tPath) {
+                	nodePath.add(coverageGraph.getNodeList().get(nodeId));
+                }
+				newpath.setPath(nodePath);
 				newpath.setCoveredTcs(Testcases);
 				allpath.add(newpath);
 			}
@@ -103,7 +105,7 @@ public class CoverageDistributionRecorder {
 	private List<Integer> listDeepCopy(List<Integer> prePath) {
 		List<Integer> toList = new ArrayList<Integer>();
 		for(int i = 0; i < prePath.size(); i++) {
-			toList.add(new Integer(prePath.get(i).intValue()));
+			toList.add(prePath.get(i));
 		}
 		return toList;
 	}

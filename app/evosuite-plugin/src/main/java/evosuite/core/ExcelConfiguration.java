@@ -16,6 +16,7 @@ import java.util.Map;
 
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
+import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -50,7 +51,8 @@ public class ExcelConfiguration extends Configuration {
 	}
 
 	@Override
-	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage) {
+	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage,
+			CFGInstance cfgInstance) {
 		ExportData data = methodDataMap.get(StringUtils.dotJoin(classMethod, line));
 		data.setEvoResult(result);
 		try {

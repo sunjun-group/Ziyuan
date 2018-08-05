@@ -36,7 +36,7 @@ public class RunSingleProjectHandler extends AbstractHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					runEvosuite();
+					runEvosuite(monitor);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
@@ -52,7 +52,7 @@ public class RunSingleProjectHandler extends AbstractHandler {
 		return null;
 	}
 
-	protected void runEvosuite() throws Exception {
+	protected void runEvosuite(final IProgressMonitor monitor) throws Exception {
 		EvosuitePreferenceData data = EvosuitePreference.getEvosuitePreferenceData();
 		String evosuiteStandaloneRtJar = IResourceUtils.getResourceAbsolutePath(EvosuitePlugin.PLUGIN_ID, "libs/evosuite-standalone-runtime-1.0.5.jar");
 		AppJavaClassPath appClasspath = initAppClasspath(data.getProjectName(), Arrays.asList(evosuiteStandaloneRtJar));
@@ -80,7 +80,13 @@ public class RunSingleProjectHandler extends AbstractHandler {
 		LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
 		learntestSettings.setRunCoverageAsMethodInvoke(true);
 		EvosuitEvaluation evosuite = new EvosuitEvaluation(evosuiteConfig, learntestSettings);
-		evosuite.run(appClasspath, config);
+		evosuite.run(appClasspath, config, new evosuite.core.commons.IProgressMonitor() {
+			
+			@Override
+			public boolean isCanceled() {
+				return monitor.isCanceled();
+			}
+		});
 	}
 	
 	private boolean hasLib(AppJavaClassPath appClasspath, String jarPrefix) {

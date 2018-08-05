@@ -1,18 +1,13 @@
 package learntest.activelearning.core.progress;
 
 import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
-
-import learntest.activelearning.core.progress.ProgressRow;
-import learntest.activelearning.core.progress.ProgressExcelWriter;
-
-
-
 import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.graph.CoveragePath;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
@@ -56,9 +51,10 @@ public class RandomTestProgressRunner {
 			testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
 			endTime = System.currentTimeMillis();
             for(CoveragePath path : testsuite.getCoverageGraph().getCoveragePaths()) {
-            	for(int c=0; c < path.getPath().size() - 1; c++) {
-            		if(graph.getNodeList().get(path.getPath().get(c).intValue()).getBranches().size() > 1)
-            		branchTable[path.getPath().get(c).intValue()][path.getPath().get(c+1).intValue()] = 1;
+				for(int c=0; c < path.getPath().size() - 1; c++) {
+					CoverageSFNode node = path.getPath().get(c);
+            		if(node.getBranches().size() > 1)
+            		branchTable[node.getCvgIdx()][path.getPath().get(c+1).getCvgIdx()] = 1;
             	}
             }
 
@@ -83,8 +79,9 @@ public class RandomTestProgressRunner {
 				endTime = System.currentTimeMillis();
 				for(CoveragePath path : testsuite.getCoverageGraph().getCoveragePaths()) {
 	            	for(int c=0; c < path.getPath().size() - 1; c++) {
-	            		if(graph.getNodeList().get(path.getPath().get(c).intValue()).getBranches().size() > 1)
-	            		branchTable[path.getPath().get(c).intValue()][path.getPath().get(c+1).intValue()] = 1;
+	            		CoverageSFNode node = path.getPath().get(c);
+	            		if(node.getBranches().size() > 1)
+	            		branchTable[node.getCvgIdx()][path.getPath().get(c+1).getCvgIdx()] = 1;
 	            	}
 	            }
 

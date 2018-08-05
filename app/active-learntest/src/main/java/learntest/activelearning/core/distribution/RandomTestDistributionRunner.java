@@ -1,11 +1,11 @@
 package learntest.activelearning.core.distribution;
 
 import java.io.File;
-import java.util.Queue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +14,6 @@ import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.commons.data.classinfo.MethodInfo;
-import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
-import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
-import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
-import microbat.instrumentation.cfgcoverage.graph.CoverageGraphConstructor;
 import microbat.instrumentation.cfgcoverage.graph.CoveragePath;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
@@ -58,7 +54,7 @@ public class RandomTestDistributionRunner {
 		/*merge two lists of paths*/
 		for(int l = 0; l < distributionPath.size(); l ++){
 			for(int m = 0; m < allPath.size(); m ++){
-				if(pathEqual(allPath.get(m).getPath(), distributionPath.get(l).getPath())) {
+				if(pathEqual(allPath.get(m).getIdPath(), distributionPath.get(l).getIdPath())) {
 					allPath.remove(m);
 					m --;
 				}
@@ -116,7 +112,11 @@ public class RandomTestDistributionRunner {
 			if((nodeProcessing.bfsNode.getBranches().isEmpty())||nodeProcessing.bfsNode.getBranches() == null) {
 				tPath = listDeepCopy(nodeProcessing.prePath);
                 newpath = new CoveragePath();
-				newpath.setPath(tPath);
+                List<CoverageSFNode> nodePath = new ArrayList<>(tPath.size());
+                for (int nodeId : tPath) {
+                	nodePath.add(coverageGraph.getNodeList().get(nodeId));
+                }
+				newpath.setPath(nodePath);
 				newpath.setCoveredTcs(Testcases);
 				allpath.add(newpath);
 			}
