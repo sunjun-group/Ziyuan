@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.progress.ProgressExcelWriter;
 import learntest.activelearning.core.progress.ProgressRow;
@@ -14,6 +17,7 @@ import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 
 public class CoverageProgressRecorder {
+	private Logger log = LoggerFactory.getLogger(CoverageProgressRecorder.class);
 	private MethodInfo targetMethod;
 	private Set<Branch> currentCoveredBranch = new HashSet<>();
 	private Set<Branch> allBranches;
@@ -31,7 +35,9 @@ public class CoverageProgressRecorder {
 	public void updateNewCoverage(CoverageSFlowGraph newCoverage) {
 		Set<Branch> coveredBranches = CoverageUtils.getCoveredBranches(newCoverage, targetMethod.getMethodId());
 		currentCoveredBranch.addAll(coveredBranches);
-		progressCoverages.add(coveredBranches.size() / (double) allBranches.size());
+		double coverage = coveredBranches.size() / (double) allBranches.size();
+		log.debug("coverage = " + coverage);
+		progressCoverages.add(coverage);
 	}
 	
 	public void store() throws Exception {
