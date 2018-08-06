@@ -3,7 +3,11 @@ package learntest.activelearning.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cfg.CfgNode;
+import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.python.NeuralNetworkLearner;
@@ -18,9 +22,11 @@ import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGConstructor;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.Randomness;
+import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class NeuralActiveLearnTest {
+	private static Logger log = LoggerFactory.getLogger(NeuralActiveLearnTest.class);
 
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		settings.setInitRandomTestNumber(10);
@@ -42,10 +48,14 @@ public class NeuralActiveLearnTest {
 		for (int i = 0; i < mx; i++) {
 			try {
 				UnitTestSuite initTest = tester.createRandomTest(targetMethod, settings, appClasspath);
-//			if (initTest.getCoverage().getBranchCoverage() > 0) {
-//				testsuite = initTest;
-//				break;
-//			}
+				CoverageSFlowGraph coverageGraph = initTest.getCoverageGraph();
+				if (CoverageUtils.getBranchCoverage(coverageGraph,
+						coverageSFlowGraph.getStartNode().getStartNodeId().getMethodId()) > 0) {
+					log.debug(TextFormatUtils
+							.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageGraph, cfgInstance), "\n"));
+					testsuite = initTest;
+					break;
+				}
 				testsuite = initTest;
 			} catch (Exception e) {
 				e.printStackTrace();
