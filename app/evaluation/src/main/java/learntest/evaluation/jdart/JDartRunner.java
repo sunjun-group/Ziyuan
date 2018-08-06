@@ -30,7 +30,7 @@ import sav.strategies.dto.AppJavaClassPath;
 
 /**
  * @author LLT
- *
+ * Duplicate from Learntest with the intention to replace the old one.
  */
 public class JDartRunner {
 	private static Logger log = LoggerFactory.getLogger(JDartRunner.class);

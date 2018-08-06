@@ -17,7 +17,6 @@ import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
-import learntest.core.gentest.LearntestJWriter;
 import learntest.core.gentest.TestGenerator;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
@@ -158,8 +157,7 @@ public class Tester {
 		GentestParams params = initGentestParams(targetMethod, settings, appClasspath);
 		TestGenerator testGenerator = new TestGenerator(appClasspath);
 		try {
-			GentestResult testCases = testGenerator.genTestAccordingToSolutions(params, inputData, vars,
-					new LearntestJWriter(params.extractTestcaseSequenceMap()));
+			GentestResult testCases = testGenerator.genTestAccordingToSolutions(params, inputData, vars);
 			return executeTest(targetMethod, settings, appClasspath, testCases);
 		} catch (Exception e) {
 			throw new SavRtException(e);
@@ -190,7 +188,7 @@ public class Tester {
 		params.setTestMethodPrefix("test");
 		params.setExtractTestcaseSequenceMap(true);
 		params.setPrintOption(PrintOption.APPEND);
-		params.setGenerateMainClass(settings.isInitTestGenerateMainClass());
+		params.setGenerateMainClass(settings.isAddMainClassWhenGeneratingTest());
 		return params;
 	}
 	

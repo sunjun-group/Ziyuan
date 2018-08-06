@@ -133,10 +133,10 @@ public class JDartProcessOnDemand {
 		} finally {
 			log.info("kill pid : " + pid);
 //			LLT: it is too dangerous to kill process using task manager, we should only destroy process instead.
-//			if (process != null && process.isAlive()) {
-//				process.destroyForcibly();
-//			}
-			TaskManager.kill(pid);
+			if (process != null && process.isAlive()) {
+				process.destroyForcibly();
+			}
+//			TaskManager.kill(pid);
 			log.info("IntraServer Close.....");
 			try {
 				if (socket != null) {

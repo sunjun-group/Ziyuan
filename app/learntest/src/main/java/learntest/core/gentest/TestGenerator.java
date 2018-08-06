@@ -69,7 +69,7 @@ public class TestGenerator {
 		} 
 		/* if main class is required to be generated, we need to do a little more */
 		MainClassJWriter cuWriter = new MainClassJWriter(printerParams.getPkg(),
-				printerParams.getClassPrefix());
+				printerParams.getClassPrefix(), params.extractTestcaseSequenceMap());
 		printer.setCuWriter(cuWriter);
 		GentestResult result = gentest(params, printer);
 		/* add main class */
@@ -77,6 +77,7 @@ public class TestGenerator {
 		FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(printerParams.getSrcPath());
 		cuPrinter.print(CollectionUtils.listOf(cuWriter.getMainClass(), 1));
 		result.setMainClassFile(CollectionUtils.getFirstElement(cuPrinter.getGeneratedFiles()));
+		result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
 		return result;
 	}
 	
@@ -99,6 +100,32 @@ public class TestGenerator {
 		timer.captureExecutionTime();
 		log.debug(timer.getResult());
 		timeController.logGenTestRunningTime(params, timer.getExecutionTime());
+		return result;
+	}
+	
+	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars)
+			throws SavException {
+		PrinterParams printerParams = params.getPrinterParams();
+		TestsPrinter printer = new TestsPrinter(printerParams);
+		if (!params.generateMainClass()) {
+			LearntestJWriter cuWriter = new LearntestJWriter(params.extractTestcaseSequenceMap());
+			printer.setCuWriter(cuWriter);
+			GentestResult result = genTestAccordingToSolutions(params, solutions, vars, cuWriter);
+			result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
+			return result;
+		} 
+		/* if main class is required to be generated, we need to do a little more */
+		MainClassJWriter cuWriter = new MainClassJWriter(printerParams.getPkg(),
+				printerParams.getClassPrefix(), params.extractTestcaseSequenceMap());
+		printer.setCuWriter(cuWriter);
+		GentestResult result = genTestAccordingToSolutions(params, solutions, vars, cuWriter);
+		
+		/* add main class */
+		result.setMainClassName(TestsPrinter.getJunitClassName(cuWriter.getMainClass()));
+		FileCompilationUnitPrinter cuPrinter = new FileCompilationUnitPrinter(printerParams.getSrcPath());
+		cuPrinter.print(CollectionUtils.listOf(cuWriter.getMainClass(), 1));
+		result.setMainClassFile(CollectionUtils.getFirstElement(cuPrinter.getGeneratedFiles()));
+		result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
 		return result;
 	}
 

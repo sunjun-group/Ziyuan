@@ -9,22 +9,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
-import learntest.activelearning.core.handler.Tester;
-import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.ValidMethodsLoader;
 import learntest.activelearning.plugin.handler.ActiveLearntestUtils;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.LearntestLogger;
+import learntest.plugin.ProjectSetting;
 import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import learntest.plugin.utils.WorkbenchUtils;
-import sav.common.core.utils.Randomness;
-import sav.common.core.utils.SingleTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class JDartGentestHandler extends AbstractHandler implements IHandler {
@@ -66,24 +63,19 @@ public class JDartGentestHandler extends AbstractHandler implements IHandler {
 		LearntestLogger.initLog4j(project);
 		ValidMethodsLoader methodLoader = new ValidMethodsLoader();
 		List<LearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
-		validMethods = Randomness.randomSubList1(validMethods, 10);
+		String jdartFolder = ProjectSetting.getLearntestOutputFolder(project) + "/jdart";
 		JDartGentest jdartGentest = new JDartGentest(
 				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"),
-				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"));
-		
+				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"),
+				jdartFolder);
 		for (LearnTestConfig config : validMethods) {
-			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
-			SingleTimer timer = SingleTimer.start("Run " + methodInfo.getMethodId());
-			while (timer.getExecutionTime() < 60000) {
-				LearntestSettings settings = ActiveLearntestUtils.getDefaultLearntestSettings();
-				settings.setInitRandomTestNumber(1);
-				try {
-					Tester tester = new Tester(settings, false);
-					UnitTestSuite testsuite = tester.createRandomTest(methodInfo, settings, appClasspath);
-				} catch(Exception e) {
-					// ignore
-				}
+			if (monitor.isCanceled()) {
+				return;
 			}
+			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
+			LearntestSettings settings = ActiveLearntestUtils.getDefaultLearntestSettings();
+			settings.setMethodExecTimeout(500l);
+			jdartGentest.generateTestcase(appClasspath, methodInfo, settings);
 		}
 	}
 

@@ -15,6 +15,7 @@ import learntest.activelearning.core.progress.ProgressRow;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
+import sav.common.core.SavException;
 
 public class CoverageProgressRecorder {
 	private Logger log = LoggerFactory.getLogger(CoverageProgressRecorder.class);
@@ -45,16 +46,20 @@ public class CoverageProgressRecorder {
 		progressCoverages.add(coverage);
 	}
 	
-	public void store() throws Exception {
-		ProgressExcelWriter writer = new ProgressExcelWriter(new File(filePath));
-		ProgressRow trial = new ProgressRow();
-		trial.setMethodName(targetMethod.getMethodFullName() + '.' + targetMethod.getLineNum());
-		double[] progress = new double[progressCoverages.size()];
-		int i = 0;
-		for (Double cvg : progressCoverages) {
-			progress[i++] = cvg;
+	public void store() throws SavException {
+		try {
+			ProgressExcelWriter writer = new ProgressExcelWriter(new File(filePath));
+			ProgressRow trial = new ProgressRow();
+			trial.setMethodName(targetMethod.getMethodFullName() + '.' + targetMethod.getLineNum());
+			double[] progress = new double[progressCoverages.size()];
+			int i = 0;
+			for (Double cvg : progressCoverages) {
+				progress[i++] = cvg;
+			}
+			trial.setProgress(progress);
+			writer.addRowData(trial);
+		} catch(Exception ex) {
+			throw new SavException(ex);
 		}
-		trial.setProgress(progress);
-		writer.addRowData(trial);
 	}
 }

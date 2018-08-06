@@ -16,6 +16,7 @@ public class SingleTimer {
 	private long start;
 	private String taskName;
 	private long exectionTime = -1;
+	private long timeLimit;
 
 	public SingleTimer(String taskName, long start) {
 		this.taskName = taskName;
@@ -25,6 +26,10 @@ public class SingleTimer {
 	public static SingleTimer start(String taskName) {
 		SingleTimer timer = new SingleTimer(taskName, currentTime());
 		return timer;
+	}
+	
+	public void restart() {
+		start = currentTime();
 	}
 
 	private static long currentTime() {
@@ -44,6 +49,14 @@ public class SingleTimer {
 	
 	public void clearExecutionTime() {
 		exectionTime = -1;
+	}
+	
+	public boolean isTimeout() {
+		return getExecutionTime() > timeLimit;
+	}
+	
+	public void setTimeLimit(long timeLimit) {
+		this.timeLimit = timeLimit;
 	}
 
 	public void logResults(org.slf4j.Logger log) {

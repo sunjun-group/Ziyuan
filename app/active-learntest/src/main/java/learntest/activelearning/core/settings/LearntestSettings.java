@@ -12,7 +12,9 @@ public class LearntestSettings {
 	private int cfgExtensionLayer = 2;
 	private LearnTestResources resources;
 	private boolean runCoverageAsMethodInvoke = false;
-	private boolean initTestGenerateMainClass = false;
+	private boolean addMainClassWhenGeneratingTest = false;
+	private long runtimeForEachRound = 60000l;
+	private int testingIteration = 10;
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
@@ -74,11 +76,28 @@ public class LearntestSettings {
 		this.runCoverageAsMethodInvoke = runCoverageAsMethodInvoke;
 	}
 
-	public boolean isInitTestGenerateMainClass() {
-		return initTestGenerateMainClass;
+	public boolean isAddMainClassWhenGeneratingTest() {
+		return addMainClassWhenGeneratingTest;
 	}
 
-	public void setInitTestGenerateMainClass(boolean initTestGenerateMainClass) {
-		this.initTestGenerateMainClass = initTestGenerateMainClass;
+	public void setAddMainClassWhenGeneratingTest(boolean addMainClassWhenGeneratingTest) {
+		this.addMainClassWhenGeneratingTest = addMainClassWhenGeneratingTest;
 	}
+
+	public long getRuntimeForEachRound() {
+		return runtimeForEachRound;
+	}
+
+	public void setRuntimeForEachRound(long runtimeForEachRound) {
+		this.runtimeForEachRound = runtimeForEachRound;
+	}
+
+	public int getTestingIteration() {
+		return testingIteration;
+	}
+
+	public void setTestingIteration(int testingIteration) {
+		this.testingIteration = testingIteration;
+	}
+	
 }

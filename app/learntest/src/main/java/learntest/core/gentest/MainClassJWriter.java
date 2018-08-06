@@ -17,7 +17,6 @@ import gentest.core.data.Sequence;
 import gentest.junit.CompilationUnitBuilder;
 import gentest.junit.CompilationUnitBuilder.MethodBuilder;
 import gentest.junit.ICompilationUnitWriter;
-import gentest.junit.JWriter;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
@@ -45,7 +44,7 @@ import sav.common.core.utils.ClassUtils;
  * @author LLT
  *
  */
-public class MainClassJWriter extends JWriter implements ICompilationUnitWriter {
+public class MainClassJWriter extends LearntestJWriter implements ICompilationUnitWriter {
 	private static final String CLASS_SUFFIX = "Main";
 	private static final String TEST_OBJ_VAR_PREFIX = "obj";
 	private MethodBuilder mainMethod;
@@ -53,7 +52,8 @@ public class MainClassJWriter extends JWriter implements ICompilationUnitWriter 
 	private int idx;
 	private CompilationUnit result;
 	
-	public MainClassJWriter(String pkgName, String classPrefix) {
+	public MainClassJWriter(String pkgName, String classPrefix, boolean extractTestcaseSequenceMap) {
+		super(extractTestcaseSequenceMap);
 		reset(pkgName, classPrefix);
 	}
 
