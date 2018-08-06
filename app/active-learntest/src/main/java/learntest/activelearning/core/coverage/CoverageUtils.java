@@ -1,10 +1,13 @@
 package learntest.activelearning.core.coverage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cfg.utils.OpcodeUtils;
 import microbat.codeanalysis.bytecode.CFGNode;
+import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
@@ -16,10 +19,7 @@ public class CoverageUtils {
 	public static double getBranchCoverage(CoverageSFlowGraph coverageSFlowGraph, String methodId) {
 	  int allBranches = 0;
 	  int coveredBranches = 0;
-	  for(CoverageSFNode node : coverageSFlowGraph.getNodeList()) {
-			if (!node.isConditionalNode()) {
-				continue;
-			}
+	  for(CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
 			for (CoverageSFNode branchNode : node.getBranches()) {
 				allBranches++;
 				if (!CollectionUtils.isEmpty(node.getCoveredTestcasesOnBranches().get(branchNode))) {
@@ -32,6 +32,28 @@ public class CoverageUtils {
 	  }
 	  double coverage = coveredBranches / (double)allBranches;
 	  return coverage;
+	}
+	
+	public static Set<Branch> getCoveredBranches(CoverageSFlowGraph coverageSFlowGraph, String methodId) {
+		Set<Branch> branches = new HashSet<>();
+		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
+			for (CoverageSFNode branchNode : node.getBranches()) {
+				if (!CollectionUtils.isEmpty(node.getCoveredTestcasesOnBranches().get(branchNode))) {
+					branches.add(new Branch(node.getCvgIdx(), branchNode.getCvgIdx()));
+				}
+			}
+		}
+		return branches;
+	}
+
+	public static Set<Branch> getAllBranches(CoverageSFlowGraph coverageSFlowGraph) {
+		Set<Branch> branches = new HashSet<>();
+		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
+			for (CoverageSFNode branchNode : node.getBranches()) {
+				branches.add(new Branch(node.getCvgIdx(), branchNode.getCvgIdx()));
+			}
+		}
+		return branches;
 	}
 	
 	public static List<String> getBranchCoverageDisplayTexts(CoverageSFlowGraph coverageSFlowGraph, CFGInstance cfg) {

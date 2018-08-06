@@ -4,17 +4,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="learntest.evaluation.plugin.handler.ProjectRandomGenTestHandler"
-            id="evaluation.plugin.commands.gentest.random"
-            name="Random Gentest">
-      </command>
-      <command
-            defaultHandler="learntest.evaluation.plugin.handler.ProjectRandomGenTestHandler"
-            id="evaluation.plugin.commands.gentest.random"
-            name="Evosuite Gentest">
-      </command>
-      <command
-            defaultHandler="learntest.evaluation.plugin.handler.ProjectRandomGenTestHandler"
+            defaultHandler="learntest.evaluation.random.RandomGenTestHandler"
             id="evaluation.plugin.commands.gentest.random"
             name="Random Gentest">
       </command>
