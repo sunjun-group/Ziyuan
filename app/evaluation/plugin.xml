@@ -11,7 +11,7 @@
       <command
             defaultHandler="learntest.evaluation.jdart.JDartGentestHandler"
             id="evaluation.plugin.commands.gentest.jdart"
-            name="Random Gentest">
+            name="JDart Gentest">
       </command>
    </extension>
    <extension
@@ -20,7 +20,7 @@
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu">
          <menu
-               label="LearntestEvaluation">
+               label="Evaluation">
             <command
                   commandId="evaluation.plugin.commands.gentest.random"
                   label="Run Random Gentest"
@@ -28,11 +28,6 @@
             </command>
             <command
                   commandId="evaluation.plugin.commands.gentest.jdart"
-                  label="Run Jdart Gentest"
-                  style="push">
-            </command>
-            <command
-                  commandId="evaluation.plugin.commands.gentest.random"
                   label="Run Jdart Gentest"
                   style="push">
             </command>
