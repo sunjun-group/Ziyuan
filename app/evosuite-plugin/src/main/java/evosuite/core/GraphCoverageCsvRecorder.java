@@ -31,8 +31,10 @@ public class GraphCoverageCsvRecorder {
 			writer = new BufferedWriter(new FileWriter(csvFile, true));
 			csvPrinter = new CSVPrinter(writer, format);
 			String methodId = String.format("%s.%s", classMethod, line);
+			double branchCoverage = CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), methodId);
+			System.out.println("New Ziyuan coverage: " + branchCoverage);
 			csvPrinter.printRecord(methodId,
-					CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), methodId));
+					branchCoverage);
 			csvPrinter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
