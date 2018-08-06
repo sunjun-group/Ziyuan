@@ -39,7 +39,7 @@ public class RandomGentest {
 		long endTime = 0;
 		int interval = 10000;
 		int numInterval = 9;
-		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod);
+		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, "D:/progress.xlsx");
 		log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageSFlowGraph, cfgInstance), "\n"));
 		progressRecorder.setCoverageGraph(coverageSFlowGraph);
 		for (int i = 0; i < numInterval; i++) {
@@ -51,6 +51,7 @@ public class RandomGentest {
 				newCoverageGraph = testsuite.getCoverageGraph();
 				progressRecorder.updateNewCoverage(newCoverageGraph);
 			} while (endTime - startTime >= interval);
+			progressRecorder.updateProgress();
 		}
 		progressRecorder.store();
 	}

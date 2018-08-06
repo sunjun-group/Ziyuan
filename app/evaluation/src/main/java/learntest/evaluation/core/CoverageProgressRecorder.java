@@ -18,13 +18,15 @@ import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 
 public class CoverageProgressRecorder {
 	private Logger log = LoggerFactory.getLogger(CoverageProgressRecorder.class);
+	private String filePath;
 	private MethodInfo targetMethod;
 	private Set<Branch> currentCoveredBranch = new HashSet<>();
 	private Set<Branch> allBranches;
 	private List<Double> progressCoverages;
 	
-	public CoverageProgressRecorder(MethodInfo targetMethod) {
+	public CoverageProgressRecorder(MethodInfo targetMethod, String filePath) {
 		this.targetMethod = targetMethod;
+		this.filePath = filePath;
 		this.progressCoverages = new ArrayList<>();
 	}
 	
@@ -35,13 +37,16 @@ public class CoverageProgressRecorder {
 	public void updateNewCoverage(CoverageSFlowGraph newCoverage) {
 		Set<Branch> coveredBranches = CoverageUtils.getCoveredBranches(newCoverage, targetMethod.getMethodId());
 		currentCoveredBranch.addAll(coveredBranches);
-		double coverage = coveredBranches.size() / (double) allBranches.size();
+	}
+	
+	public void updateProgress() {
+		double coverage = currentCoveredBranch.size() / (double) allBranches.size();
 		log.debug("coverage = " + coverage);
 		progressCoverages.add(coverage);
 	}
 	
 	public void store() throws Exception {
-		ProgressExcelWriter writer = new ProgressExcelWriter(new File("D:/progress.xlsx"));
+		ProgressExcelWriter writer = new ProgressExcelWriter(new File(filePath));
 		ProgressRow trial = new ProgressRow();
 		trial.setMethodName(targetMethod.getMethodFullName() + '.' + targetMethod.getLineNum());
 		double[] progress = new double[progressCoverages.size()];
