@@ -43,25 +43,7 @@ public class NeuralActiveLearnTest {
 		
 		/* generate random test */
 		Tester tester = new Tester(settings, true);
-		int mx = 1;
-		UnitTestSuite testsuite = null;
-		for (int i = 0; i < mx; i++) {
-			try {
-				UnitTestSuite initTest = tester.createRandomTest(targetMethod, settings, appClasspath);
-				CoverageSFlowGraph coverageGraph = initTest.getCoverageGraph();
-				if (CoverageUtils.getBranchCoverage(coverageGraph,
-						coverageSFlowGraph.getStartNode().getStartNodeId().getMethodId()) > 0) {
-					log.debug(TextFormatUtils
-							.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageGraph, cfgInstance), "\n"));
-					testsuite = initTest;
-					break;
-				}
-				testsuite = initTest;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
+		UnitTestSuite testsuite = tester.createInitRandomTest(targetMethod, settings, appClasspath, 3, cfgInstance);
 		if (testsuite == null) {
 			throw new SavRtException("Fail to generate random test!");
 		}

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
+import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.model.TestInputData;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
@@ -19,6 +20,8 @@ import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.LearntestJWriter;
 import learntest.core.gentest.TestGenerator;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
+import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
+import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import microbat.model.BreakPointValue;
 import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
@@ -28,6 +31,7 @@ import microbat.model.value.VarValue;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -45,6 +49,28 @@ public class Tester {
 
 	public Tester(LearntestSettings settings, boolean collectConditionVariation) {
 		coverageCounter = new CoverageCounter(settings, collectConditionVariation);
+	}
+	
+	public UnitTestSuite createInitRandomTest(MethodInfo targetMethod, LearntestSettings settings,
+			AppJavaClassPath appClasspath, int maxTry, CFGInstance cfg) {
+		UnitTestSuite testsuite = null;
+		for (int i = 0; i < maxTry; i++) {
+			try {
+				UnitTestSuite initTest = createRandomTest(targetMethod, settings, appClasspath);
+				CoverageSFlowGraph coverageGraph = initTest.getCoverageGraph();
+				if (CoverageUtils.getBranchCoverage(coverageGraph, targetMethod.getMethodId()) > 0) {
+					log.debug(TextFormatUtils
+							.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageGraph, cfg), "\n"));
+					testsuite = initTest;
+					break;
+				}
+				testsuite = initTest;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return testsuite;
 	}
 
 	/**
@@ -72,6 +98,7 @@ public class Tester {
 		UnitTestSuite testSuite = new UnitTestSuite();
 		testSuite.setJunitClassNames(testCases.getJunitClassNames(), appClasspath.getClassLoader());
 		testSuite.setJunitfiles(testCases.getJunitfiles());
+		testSuite.setMainClass(testCases.getMainClassName());
 		testSuite.setTestcaseSequenceMap(testCases.getTestcaseSequenceMap());
 		
 		CoverageOutput coverageOutput = coverageCounter.runCoverage(targetMethod, testSuite.getJunitTestcases(),
@@ -163,6 +190,7 @@ public class Tester {
 		params.setTestMethodPrefix("test");
 		params.setExtractTestcaseSequenceMap(true);
 		params.setPrintOption(PrintOption.APPEND);
+		params.setGenerateMainClass(settings.isInitTestGenerateMainClass());
 		return params;
 	}
 	

@@ -12,6 +12,7 @@ public class LearntestSettings {
 	private int cfgExtensionLayer = 2;
 	private LearnTestResources resources;
 	private boolean runCoverageAsMethodInvoke = false;
+	private boolean initTestGenerateMainClass = false;
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
@@ -72,5 +73,12 @@ public class LearntestSettings {
 	public void setRunCoverageAsMethodInvoke(boolean runCoverageAsMethodInvoke) {
 		this.runCoverageAsMethodInvoke = runCoverageAsMethodInvoke;
 	}
-	
+
+	public boolean isInitTestGenerateMainClass() {
+		return initTestGenerateMainClass;
+	}
+
+	public void setInitTestGenerateMainClass(boolean initTestGenerateMainClass) {
+		this.initTestGenerateMainClass = initTestGenerateMainClass;
+	}
 }

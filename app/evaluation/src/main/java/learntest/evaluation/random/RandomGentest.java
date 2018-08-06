@@ -1,7 +1,5 @@
 package learntest.evaluation.random;
 
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +10,6 @@ import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.evaluation.core.CoverageProgressRecorder;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
-import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
 import microbat.instrumentation.cfgcoverage.graph.CoverageGraphConstructor;
@@ -42,11 +39,9 @@ public class RandomGentest {
 		long endTime = 0;
 		int interval = 10000;
 		int numInterval = 9;
-		double[] progress = new double[numInterval];
+		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod);
 		log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageSFlowGraph, cfgInstance), "\n"));
-		
-		Set<Branch> allBranches = CoverageUtils.getAllBranches(coverageSFlowGraph);
-		Set<Branch> coveredBranches = CoverageUtils.getCoveredBranches(coverageSFlowGraph, targetMethod.getMethodId());
+		progressRecorder.setCoverageGraph(coverageSFlowGraph);
 		for (int i = 0; i < numInterval; i++) {
 			startTime = System.currentTimeMillis();
 			CoverageSFlowGraph newCoverageGraph;
@@ -54,13 +49,10 @@ public class RandomGentest {
 				testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
 				endTime = System.currentTimeMillis();
 				newCoverageGraph = testsuite.getCoverageGraph();
-				coveredBranches.addAll(CoverageUtils.getCoveredBranches(newCoverageGraph, targetMethod.getMethodId()));
+				progressRecorder.updateNewCoverage(newCoverageGraph);
 			} while (endTime - startTime >= interval);
-			progress[i] = coveredBranches.size() / (double) allBranches.size();
-			System.out.println(progress[i]);
 		}
-		CoverageProgressRecorder recoreder = new CoverageProgressRecorder();
-		recoreder.record(targetMethod, progress);
+		progressRecorder.store();
 	}
 
 }

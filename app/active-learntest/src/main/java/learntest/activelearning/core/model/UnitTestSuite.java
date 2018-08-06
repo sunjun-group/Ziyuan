@@ -19,6 +19,7 @@ import sav.strategies.dto.execute.value.ExecVar;
  */
 public class UnitTestSuite {
 	private List<String> junitClassNames;
+	private String mainClass;
 	private List<File> junitfiles;
 	private List<String> junitTestcases;
 	private List<TestInputData> inputData; //inputData.get(i) might be null in case target method isn't even reached. 
@@ -95,4 +96,13 @@ public class UnitTestSuite {
 		// TODO-LLT: Merge coverage.
 //		this.coverage.merge(newTestSuite.coverage);
 	}
+
+	public String getMainClass() {
+		return mainClass;
+	}
+
+	public void setMainClass(String mainClass) {
+		this.mainClass = mainClass;
+	}
+	
 }
