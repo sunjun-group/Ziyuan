@@ -69,7 +69,7 @@ public class JDartGentest {
 		JDartRunner jdartRunner = new JDartRunner(appClasspath);
 		CoverageProgressRecorder recorder = new CoverageProgressRecorder(targetMethod, jdartOutputFolder + "/coverage_progress.xlsx");
 		recorder.setCoverageGraph(initTestsuite.getCoverageGraph());
-		recorder.updateNewCoverage(initTestsuite.getCoverageGraph());
+		recorder.updateNewCoverage(initTestsuite.getCoverageGraph(), initTestsuite.getJunitTestcases().size());
 		MainClassGenerator mainClassGenerator = new MainClassGenerator(appClasspath);
 		String mainSrcFolder = jdartOutputFolder + "/generate_classes";
 		FileUtils.mkDirs(mainSrcFolder);
@@ -101,7 +101,7 @@ public class JDartGentest {
 						List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
 						UnitTestSuite testsuite = tester.createTest(targetMethod, settings, appClasspath, solutions,
 								vars);
-						recorder.updateNewCoverage(testsuite.getCoverageGraph());
+						recorder.updateNewCoverage(testsuite.getCoverageGraph(), testsuite.getJunitTestcases().size());
 						initTestsuite = testsuite;
 						junitMethods.addAll(testsuite.getJunitTestcases());
 					} catch (Exception e) {

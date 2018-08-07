@@ -25,6 +25,7 @@ public class CoverageProgressRecorder {
 	private Set<Branch> allBranches;
 	private List<Double> progressCoverages;
 	private List<Integer> tcsNum;
+	private int curNumberOfTcs;
 	
 	public CoverageProgressRecorder(MethodInfo targetMethod, String filePath) {
 		this.targetMethod = targetMethod;
@@ -37,18 +38,17 @@ public class CoverageProgressRecorder {
 		allBranches = CoverageUtils.getAllBranches(graph);
 	}
 	
-	public void updateNewCoverage(CoverageSFlowGraph newCoverage) {
+	public void updateNewCoverage(CoverageSFlowGraph newCoverage, int numberOfTestcases) {
 		Set<Branch> coveredBranches = CoverageUtils.getCoveredBranches(newCoverage, targetMethod.getMethodId());
 		currentCoveredBranch.addAll(coveredBranches);
+		curNumberOfTcs += numberOfTestcases;
 	}
 	
 	public void updateProgress() {
 		double coverage = currentCoveredBranch.size() / (double) allBranches.size();
 		log.debug("coverage = " + coverage);
 		progressCoverages.add(coverage);
-	}
-	public void updateTcsNum(Integer e) {
-		tcsNum.add(e);
+		tcsNum.add(curNumberOfTcs);
 	}
 	
 	public void store() throws SavException {
