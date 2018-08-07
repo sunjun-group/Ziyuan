@@ -24,11 +24,13 @@ public class CoverageProgressRecorder {
 	private Set<Branch> currentCoveredBranch = new HashSet<>();
 	private Set<Branch> allBranches;
 	private List<Double> progressCoverages;
+	private List<Integer> tcsNum;
 	
 	public CoverageProgressRecorder(MethodInfo targetMethod, String filePath) {
 		this.targetMethod = targetMethod;
 		this.filePath = filePath;
 		this.progressCoverages = new ArrayList<>();
+		this.tcsNum = new ArrayList<>();
 	}
 	
 	public void setCoverageGraph(CoverageSFlowGraph graph) {
@@ -45,6 +47,9 @@ public class CoverageProgressRecorder {
 		log.debug("coverage = " + coverage);
 		progressCoverages.add(coverage);
 	}
+	public void updateTcsNum(Integer e) {
+		tcsNum.add(e);
+	}
 	
 	public void store() throws SavException {
 		try {
@@ -58,6 +63,16 @@ public class CoverageProgressRecorder {
 			}
 			trial.setProgress(progress);
 			writer.addRowData(trial);
+			
+			trial.setMethodName("TestCasesNumber");
+			double[] tcsnum = new double[tcsNum.size()];
+			i = 0;
+			for (Integer num : tcsNum) {
+				tcsnum[i++] = (double)(num.intValue()); 
+			}
+			trial.setProgress(tcsnum);
+			writer.addRowData(trial);
+			
 		} catch(Exception ex) {
 			throw new SavException(ex);
 		}
