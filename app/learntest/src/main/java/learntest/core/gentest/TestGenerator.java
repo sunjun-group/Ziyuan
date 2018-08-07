@@ -10,6 +10,7 @@ package learntest.core.gentest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -155,9 +156,14 @@ public class TestGenerator {
 		for (int i = 0; i < solutions.size(); i++) {
 			double[] solution = solutions.get(i);
 //			result.addInputData(DomainUtils.toBreakpointValue(solution, vars, i));
-			Sequence seq = generator.generateSequence(solution, vars, failToSetVars);
-			map.put(seq, i);
-			sequences.add(seq);
+			try {
+				Sequence seq = generator.generateSequence(solution, vars, failToSetVars);
+				map.put(seq, i);
+				sequences.add(seq);
+			} catch (Throwable e) {
+				log.debug(String.format("Fail to generate sequence for solution(%s) due to error: %s",
+						Arrays.toString(solution), e.getMessage()));
+			}
 		}
 		if (!failToSetVars.isEmpty()) {
 			log.debug("Cannot modify value for variables: {}", failToSetVars);

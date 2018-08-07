@@ -95,10 +95,6 @@ public class TestSeqGenerator {
 		return sequence;
 	}
 	
-	/**
-	 * LLT: If solution is still not up-to-date, consider to retrieve values from breakpointValue back to solution[].
-	 * 9NOV2017
-	 */
 	private void resetFailValues(List<ExecVar> vars, Set<String> failToSetVars, double[] solution, BreakpointValue breakpointValue) {
 		for (int i = 0; i < solution.length; i++) {
 			String varId = vars.get(i).getVarId();
@@ -139,9 +135,15 @@ public class TestSeqGenerator {
 		if (target.requireReceiver()) {
 			ISelectedVariable receiverParam = varMap.get(RECEIVER_PARAM_KEY);
 			if (receiverParam == null) {
-				receiverParam = valueGenerator.generate(receiverType, firstVarIdx, true);
-				sequence.append(receiverParam);
-				firstVarIdx += receiverParam.getNewVariables().size();
+				int maxTry = 3;
+				for (int i = 0; i < maxTry; i++) {
+					receiverParam = valueGenerator.generate(receiverType, firstVarIdx, true);
+					if (!receiverParam.getNewVariables().isEmpty()) {
+						sequence.append(receiverParam);
+						firstVarIdx += receiverParam.getNewVariables().size();
+						break;
+					}
+				}
 			}
 			rmethod = new RqueryMethod(target, receiverParam.getReturnVarId());
 		} else {

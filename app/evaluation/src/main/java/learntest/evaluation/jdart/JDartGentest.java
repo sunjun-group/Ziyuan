@@ -93,15 +93,21 @@ public class JDartGentest {
 					if (timer.isTimeout()) {
 						break;
 					}
-					List<TestInput> testInput = Arrays.asList(input);
-					List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(testInput,
-							targetMethod.getMethodFullName());
-					List<ExecVar> vars = BreakpointDataUtils.collectAllVarsInturn(bkpVals);
-					List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
-					UnitTestSuite testsuite = tester.createTest(targetMethod, settings, appClasspath, solutions, vars);
-					recorder.updateNewCoverage(testsuite.getCoverageGraph());
-					initTestsuite = testsuite;
-					junitMethods.addAll(testsuite.getJunitTestcases());
+					try {
+						List<TestInput> testInput = Arrays.asList(input);
+						List<BreakpointValue> bkpVals = JdartTestInputUtils.toBreakpointValue(testInput,
+								targetMethod.getMethodFullName());
+						List<ExecVar> vars = BreakpointDataUtils.collectAllVarsInturn(bkpVals);
+						List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
+						UnitTestSuite testsuite = tester.createTest(targetMethod, settings, appClasspath, solutions,
+								vars);
+						recorder.updateNewCoverage(testsuite.getCoverageGraph());
+						initTestsuite = testsuite;
+						junitMethods.addAll(testsuite.getJunitTestcases());
+					} catch (Exception e) {
+						log.debug("Fail to generate testcases according to solutions!");
+						// ignore
+					}
 				}
 			}
 			recorder.updateProgress();
