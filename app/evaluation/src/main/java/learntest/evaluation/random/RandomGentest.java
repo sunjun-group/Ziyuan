@@ -19,6 +19,11 @@ import sav.strategies.dto.AppJavaClassPath;
 
 public class RandomGentest {
 	private Logger log = LoggerFactory.getLogger(RandomGentest.class);
+	private String outputFolder;
+	
+	public RandomGentest(String randomOutputFolder) {
+		this.outputFolder = randomOutputFolder;
+	}
 
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings)
 			throws Exception {
@@ -39,7 +44,7 @@ public class RandomGentest {
 		long endTime = 0;
 		int interval = 10000;
 		int numInterval = 9;
-		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, "D:/progress.xlsx");
+		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, outputFolder + "/progress.xlsx");
 		log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageSFlowGraph, cfgInstance), "\n"));
 		progressRecorder.setCoverageGraph(coverageSFlowGraph);
 		for (int i = 0; i < numInterval; i++) {

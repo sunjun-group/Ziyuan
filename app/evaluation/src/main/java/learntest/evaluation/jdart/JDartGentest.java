@@ -67,7 +67,7 @@ public class JDartGentest {
 		junitMethods.addAll(initTestsuite.getJunitTestcases());
 		int round = 0;
 		JDartRunner jdartRunner = new JDartRunner(appClasspath);
-		CoverageProgressRecorder recorder = new CoverageProgressRecorder(targetMethod, "E:\\lyly\\progress.xlsx");
+		CoverageProgressRecorder recorder = new CoverageProgressRecorder(targetMethod, jdartOutputFolder + "/coverage_progress.xlsx");
 		recorder.setCoverageGraph(initTestsuite.getCoverageGraph());
 		recorder.updateNewCoverage(initTestsuite.getCoverageGraph());
 		MainClassGenerator mainClassGenerator = new MainClassGenerator(appClasspath);

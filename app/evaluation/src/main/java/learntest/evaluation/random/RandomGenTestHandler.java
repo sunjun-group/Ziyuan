@@ -17,6 +17,7 @@ import learntest.activelearning.plugin.handler.ActiveLearntestUtils;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.plugin.LearnTestConfig;
 import learntest.plugin.LearntestLogger;
+import learntest.plugin.ProjectSetting;
 import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IStatusUtils;
@@ -64,11 +65,11 @@ public class RandomGenTestHandler extends AbstractHandler implements IHandler {
 		LearntestLogger.initLog4j(project);
 		ValidMethodsLoader methodLoader = new ValidMethodsLoader();
 		List<LearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
+		String outputFolder = ProjectSetting.getLearntestOutputFolder(project) + "/random";
+		RandomGentest rtest = new RandomGentest(outputFolder);
 		for (LearnTestConfig config : validMethods) {
 			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
 			LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
-			// TODO Guanjie
-			RandomGentest rtest = new RandomGentest();
 			//try {
 			rtest.generateTestcase(appClasspath, methodInfo, learntestSettings);
 			//}
