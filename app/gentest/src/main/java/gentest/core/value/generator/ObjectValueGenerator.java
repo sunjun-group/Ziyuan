@@ -46,7 +46,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 		for (int i = 0; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
 			long now = System.currentTimeMillis();
 			if (now > start +limit) {
-				return false;
+				break;
 			}
 			TypeInitializer initializer = loadInitializer(type, 0);
 			if (initializer == null || initializer.hasNoConstructor()) {
