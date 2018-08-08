@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import microbat.instrumentation.AgentConstants;
 import microbat.instrumentation.AgentParams.LogType;
 import microbat.instrumentation.cfgcoverage.CoverageAgentParams;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
@@ -74,4 +75,11 @@ public class CoverageAgentRunner extends AgentVmRunner {
 		}
 		return coverageOutput;
 	}
+	
+	@Override
+	protected void printOut(String line, boolean error) {
+//		if (error || line.startsWith(AgentConstants.LOG_HEADER)) {
+			System.out.println(line);
+//		}
+	};
 }

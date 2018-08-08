@@ -78,11 +78,11 @@ public class OneTestcaseDistributionHandler extends AbstractHandler implements I
 //		SAVTimer.enableExecutionTimeout = true;
 		SAVTimer.exeuctionTimeout = 50000000;
 
-		run(project, appClasspath, learntestSettings, monitor, method);
+		run(appClasspath, learntestSettings, monitor, method);
 		
 	}
 	
-	private void run(IJavaProject project, AppJavaClassPath appClasspath, LearntestSettings learntestSettings, IProgressMonitor monitor, MethodInfo method) {
+	public void run(AppJavaClassPath appClasspath, LearntestSettings learntestSettings, IProgressMonitor monitor, MethodInfo method) {
 		/*----------*/
 
 		RandomTestDistributionRunner distributionRunner = new RandomTestDistributionRunner();

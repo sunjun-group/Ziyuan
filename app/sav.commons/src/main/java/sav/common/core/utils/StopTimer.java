@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A countdown timer which starts to work with the first entry and
@@ -62,7 +63,7 @@ public class StopTimer {
 		}
 		// add overall
 		lines.add(new StringBuilder(module).append(" ").append("Overall: ")
-				.append(TextFormatUtils.printTimeString(overall)).toString());
+				.append(getTimeString(overall)).toString());
 		return lines;
 	}
 	
@@ -88,11 +89,25 @@ public class StopTimer {
 	
 	private String toDisplayString(Entry<String, Long> timeResult) {
 		return new StringBuilder(module).append(" - ").append(timeResult.getKey())
-				.append(": ").append(TextFormatUtils.printTimeString(timeResult.getValue())).toString();
+				.append(": ").append(getTimeString(timeResult.getValue())).toString();
 	}
 
 	private long getExecutionTime(Entry<Long, String> entry, long endTime) {
 		return endTime - entry.getKey().longValue();
+	}
+
+	private String getTimeString(long diff) {
+		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+		long diffSec = timeUnit.toSeconds(diff);
+		long diffMin = timeUnit.toMinutes(diff);
+		StringBuilder sb = new StringBuilder();
+		sb.append(diff).append(" ms");
+		if (diffMin >= 1) {
+			sb.append("(").append(diffMin).append("m").append(diffSec - (60 * diffMin)).append("s").append(")");
+		} else if (diffSec > 1) {
+			sb.append("(").append(diffSec).append("s").append(")");
+		}
+		return sb.toString();
 	}
 
 	public void logResults(org.slf4j.Logger log) {
@@ -105,4 +120,7 @@ public class StopTimer {
 		}
 	}
 
+	public String getResultString() {
+		return StringUtils.newLineJoin(getResults());
+	}
 }

@@ -9,6 +9,7 @@
 package sav.strategies.vm;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +18,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
@@ -35,7 +39,7 @@ import sav.common.core.utils.StringUtils;
  * 
  */
 public class VMRunner {
-	private static final int NO_TIME_OUT = -1;
+	public static final int NO_TIME_OUT = -1;
 	private static Logger log = LoggerFactory.getLogger(VMRunner.class);
 	protected static final String cpToken = "-cp";
 	/*
@@ -52,14 +56,27 @@ public class VMRunner {
 	private long timeout = NO_TIME_OUT;
 	private boolean isLog = true;
 	protected Timer timer = null;
+	protected ScheduledFuture<?> timerTask = null;
 	
 	protected Process process;
 	private String processError;
+	protected boolean printOutExecutionTrace = false;
+	private boolean processTimeout = false;
+	private static ExecutorService executorService = Executors.newCachedThreadPool();
+	private static ScheduledExecutorService timeoutExecutor = Executors.newSingleThreadScheduledExecutor();
+	private int vmDebugPort = -1;
+	
+	private String workingDir;
 	
 	public boolean startVm(VMConfiguration config) throws SavException {
 		this.isLog = config.isVmLogEnable();
 		List<String> commands = buildCommandsFromConfiguration(config);
 		return startVm(commands, false);
+	}
+	
+	public String getCommandLinesString(VMConfiguration config) throws SavException {
+		List<String> commands = buildCommandsFromConfiguration(config);
+		return StringUtils.join(commands, " ");
 	}
 
 	private List<String> buildCommandsFromConfiguration(VMConfiguration config)
@@ -95,15 +112,16 @@ public class VMRunner {
 
 	public void setupInputStream(final InputStream is, final StringBuffer sb, final boolean error) {
 		final InputStreamReader streamReader = new InputStreamReader(is);
-		new Thread(new Runnable() {
+		executorService.execute(new Runnable() {
 			public void run() {
 				BufferedReader br = new BufferedReader(streamReader);
 				String line = null;
 				try {
-					while ((line = br.readLine()) != null) {
+					while (isProcessRunning() && ((line = br.readLine()) != null)) {
 //						if (error) {
 //							log.warn(line);
 //						}
+						printOut(line, error);
 						if (!line.contains("Class JavaLaunchHelper is implemented in both")) {
 							sb.append(line).append("\n");
 						}
@@ -116,20 +134,37 @@ public class VMRunner {
 					IOUtils.closeQuietly(is);
 				}
 			}
-		}).start();
+		});
+	}
+	
+	protected void printOut(String line, boolean error) {
+		if (printOutExecutionTrace) {
+			System.out.println(line);
+		}
 	}
 
 	protected void buildVmOption(CollectionBuilder<String, ?> builder, VMConfiguration config) {
-		builder.appendIf(String.format(debugToken, config.getPort()), config.isDebug())
-				.appendIf(noVerifyToken, config.isNoVerify())
-				.appendIf(enableAssertionToken, config.isEnableAssertion());
+		builder
+		.appendIf(enableAssertionToken, config.isEnableAssertion())
+		.appendIf(noVerifyToken, config.isNoVerify())
+		.appendIf(String.format(debugToken, config.getPort()), config.isDebug() && (vmDebugPort < 0))
+		.appendIf(String.format("-agentlib:jdwp=transport=dt_socket,server=y,address=%s", vmDebugPort), vmDebugPort > 0);
 	}
 
 	public boolean startVm(List<String> commands, boolean waitUntilStop)
 			throws SavException {
+		processTimeout = false;
 		StringBuffer sb = new StringBuffer();
 		logCommands(commands);
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
+		
+		if(this.workingDir!=null){
+			File workingDirFile = new File(this.workingDir);
+			if(workingDirFile.exists()){
+				processBuilder.directory(workingDirFile);
+			}
+		}
+		
 		try {
 			process = processBuilder.start();
 			setupErrorStream(process.getErrorStream(), sb);
@@ -138,24 +173,40 @@ public class VMRunner {
 			 * the printStream is not set */
 			setupInputStream(process.getInputStream(), new StringBuffer(), false);
 			setupOutputStream(process.getOutputStream());
+//			executorService.
 			timer = null;
+			timerTask = null;
 			if (timeout != NO_TIME_OUT) {
-				timer = new Timer();
-			    timer.schedule(new TimerTask() {
-
-			        @Override
-			        public void run() {
-			            stop();
-			            log.info("destroy thread due to timeout!");
-			        }
-
-			    }, timeout); 
+				timerTask = timeoutExecutor.schedule(new Runnable() {
+					
+					@Override
+					public void run() {
+						stop();
+						processTimeout = true;
+						log.info("destroy thread due to timeout!");
+					}
+				}, timeout, TimeUnit.MILLISECONDS);
+//				timer = new Timer();
+//			    timer.schedule(new TimerTask() {
+//
+//			        @Override
+//			        public void run() {
+//			            stop();
+//			            processTimeout = true;
+//			            log.info("destroy thread due to timeout!");
+//			        }
+//
+//			    }, timeout); 
 			}
 			if (waitUntilStop) {
 				waitUntilStop(process);
 				if (timer != null) {
 					timer.cancel();
 					timer = null;
+				}
+				if (timerTask != null) {
+					timerTask.cancel(true);
+					timerTask = null;
 				}
 				processError = sb.toString();
 				return isExecutionSuccessful();
@@ -176,7 +227,9 @@ public class VMRunner {
 	}
 	
 	protected void stop() {
-		process.destroy();
+		if (isProcessRunning()) {
+			process.destroy();
+		}
 	}
 	
 	protected void setupErrorStream(InputStream errorStream, StringBuffer sb) {
@@ -188,6 +241,7 @@ public class VMRunner {
 	}
 
 	private void logCommands(List<String> commands) {
+		System.out.println(StringUtils.join(commands, " "));
 		if (isLog && log.isDebugEnabled()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));
@@ -250,6 +304,9 @@ public class VMRunner {
 		if (timer != null) {
 			timer.cancel();
 		}
+		if (timerTask != null) {
+			timerTask.cancel(true);
+		}
 	}
 	
 	public static VMRunner getDefault() {
@@ -264,8 +321,23 @@ public class VMRunner {
 		return process;
 	}
 	
-	public String getCommandLinesString(VMConfiguration config) throws SavException {
-		List<String> commands = buildCommandsFromConfiguration(config);
-		return StringUtils.join(commands, " ");
+	public void setPrintOutExecutionTrace(boolean printOutExecutionTrace) {
+		this.printOutExecutionTrace = printOutExecutionTrace;
+	}
+	
+	public boolean isProcessTimeout() {
+		return processTimeout;
+	}
+	
+	public void setVmDebugPort(int vmDebugPort) {
+		this.vmDebugPort = vmDebugPort;
+	}
+
+	public String getWorkingDir() {
+		return workingDir;
+	}
+
+	public void setWorkingDir(String workingDir) {
+		this.workingDir = workingDir;
 	}
 }
