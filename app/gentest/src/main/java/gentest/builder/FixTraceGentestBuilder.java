@@ -10,6 +10,7 @@ package gentest.builder;
 
 import gentest.core.FixTraceTester;
 import gentest.core.GentestListener;
+import gentest.core.MethodParamUtils;
 import gentest.core.TestcaseGenerator;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
@@ -120,7 +121,7 @@ public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilde
 					"targetAlias must be specified to call paramAutofill");
 			for (MethodCall methodCall : methodCalls) {
 				if (targetAlias.equals(methodCall.getAlias())) {
-					for (String param : methodCall.getParamNames()) {
+					for (String param : MethodParamUtils.getParamNames(methodCall)) {
 						this.params.add(Pair.of(targetAlias, param));
 					}
 					this.params.add(Pair.of(targetAlias, RETURN_METHOD_PARAM_NAME));
@@ -174,7 +175,7 @@ public class FixTraceGentestBuilder extends GentestBuilder<FixTraceGentestBuilde
 						if (RETURN_METHOD_PARAM_NAME.equals(param.b)) {
 							inVarIds[i] = methodOfAlias.getOutVarId();
 						} else {
-							inVarIds[i] = methodOfAlias.getVarIdsByParamName(param.b);
+							inVarIds[i] = MethodParamUtils.getIdxOfParamByName(methodOfAlias.getQueryMethod(), param.b);
 						}
 					}
 					rmethod.setInVarIds(inVarIds);

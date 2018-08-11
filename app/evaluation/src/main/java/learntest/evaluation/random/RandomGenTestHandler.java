@@ -21,6 +21,7 @@ import learntest.plugin.ProjectSetting;
 import learntest.plugin.handler.gentest.GentestSettings;
 import learntest.plugin.utils.IMethodUtils;
 import learntest.plugin.utils.IStatusUtils;
+import sav.common.core.utils.FileUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class RandomGenTestHandler extends AbstractHandler implements IHandler {
@@ -66,6 +67,7 @@ public class RandomGenTestHandler extends AbstractHandler implements IHandler {
 		ValidMethodsLoader methodLoader = new ValidMethodsLoader();
 		List<LearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
 		String outputFolder = ProjectSetting.getLearntestOutputFolder(project) + "/random";
+		FileUtils.mkDirs(outputFolder);
 		RandomGentest rtest = new RandomGentest(outputFolder);
 		for (LearnTestConfig config : validMethods) {
 			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);

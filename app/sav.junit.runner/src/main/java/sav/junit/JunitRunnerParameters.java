@@ -10,7 +10,6 @@ package sav.junit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author LLT
@@ -28,21 +27,25 @@ public class JunitRunnerParameters {
 		CommandLine cmd = CommandLine.parse(args);
 		JunitRunnerParameters params = new JunitRunnerParameters();
 		List<String> tcFullNames = cmd.getStringList(TESTCASES);
+		params.setTestcases(tcFullNames);
+		params.timeout = cmd.getLong(TESTCASE_TIME_OUT, -1);
+		return params;
+	}
+
+	public void setTestcases(List<String> tcFullNames) {
 		List<String[]> tcs = new ArrayList<String[]>();
 		for (String tcFullName : tcFullNames) {
 			tcs.add(splitTestcase(tcFullName));
 		}
-		params.testcases = tcs;
-		params.timeout = cmd.getLong(TESTCASE_TIME_OUT, -1);
-		return params;
+		testcases = tcs;
 	}
 	
 	public long getTimeout() {
 		return timeout;
 	}
 
-	public void setTimeout(int timeout, TimeUnit unit) {
-		this.timeout = unit.toMillis(timeout);
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 	
 	public List<String[]> getTestcases() {
@@ -62,5 +65,4 @@ public class JunitRunnerParameters {
 	public static String toTestcaseName(String className, String methodName) {
 		return new StringBuilder(className).append(".").append(methodName).toString();
 	}
-	
 }

@@ -12,7 +12,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 
 import sav.utils.ClassUtils;
-import sav.utils.CountDownExecutionTimer;
+import sav.utils.ExecutionTimerUtils;
 import sav.utils.IExecutionTimer;
 import sav.utils.TestRunner;
 
@@ -22,11 +22,11 @@ import sav.utils.TestRunner;
  */
 public class SavSimpleRunner implements TestRunner {
 	private static final String SUCCESS_MSG = "no fail";
-	private boolean successful = false;
-	private String failureMessage = SUCCESS_MSG;
-	private String className;
-	private String methodName;
-	private long curThreadId = -1;
+	protected boolean successful = false;
+	protected String failureMessage = SUCCESS_MSG;
+	protected String className;
+	protected String methodName;
+	protected long curThreadId = -1;
 	
 	public SavSimpleRunner(){
 		
@@ -37,19 +37,12 @@ public class SavSimpleRunner implements TestRunner {
         long vmStartTime = ManagementFactory.getRuntimeMXBean().getStartTime();
         System.out.println("Startup time: " + (currentTime - vmStartTime));
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
-		IExecutionTimer timer;
-		if (params.getTimeout() <= 0) {
-			timer = new IExecutionTimer() {
-				
-				@Override
-				public boolean run(TestRunner target, long timeout) {
-					target.run();
-					return true;
-				}
-			};
-		} else {
-			timer = new CountDownExecutionTimer();
-		}
+		IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(params.getTimeout());
+		SavSimpleRunner junitRunner = executeTestcases(params, timer);
+		junitRunner.$exitProgram("SavJunitRunner finished!");
+	}
+
+	public static SavSimpleRunner executeTestcases(JunitRunnerParameters params, IExecutionTimer timer) {
 		SavSimpleRunner junitRunner = new SavSimpleRunner();
 		for (String[] tc : params.getTestcases()) {
 			junitRunner.curThreadId = -1;
@@ -57,11 +50,11 @@ public class SavSimpleRunner implements TestRunner {
 			junitRunner.methodName = tc[1];
 			timer.run(junitRunner, params.getTimeout());
 			System.out.println("is successful? " + junitRunner.successful);
-			System.out.println(junitRunner.failureMessage);
+			System.out.println("failure message: " + junitRunner.failureMessage);
 			junitRunner.$exitTest(junitRunner.successful + ";" + junitRunner.failureMessage, junitRunner.className,
 					junitRunner.methodName, junitRunner.curThreadId);
 		}
-		junitRunner.$exitProgram("SavJunitRunner finished!");
+		return junitRunner;
 	}
 	
 	@Override
@@ -73,7 +66,8 @@ public class SavSimpleRunner implements TestRunner {
 			$testStarted(className, methodName);
 			method.invoke(clazz.newInstance());
 		} catch (Exception e) {
-			e.printStackTrace();
+			// ignore
+			failureMessage = e.getMessage();
 		}
 		$testFinished(className, methodName);
 	}
@@ -83,19 +77,19 @@ public class SavSimpleRunner implements TestRunner {
 		this.failureMessage = "time out!";
 	}
 	
-	private void $testFinished(String className, String methodName) {
+	protected void $testFinished(String className, String methodName) {
 		// for agent part.
 	}
 
-	private void $testStarted(String className, String methodName) {
+	protected void $testStarted(String className, String methodName) {
 		// for agent part.
 	}
 	
-	private void $exitProgram(String resultMsg) {
+	protected void $exitProgram(String resultMsg) {
 		// for agent part.
 	}
 
-	private void $exitTest(String className, String methodName, String testResultMsg, Long curThreadId) {
+	protected void $exitTest(String className, String methodName, String testResultMsg, Long curThreadId) {
 		// for agent part.
 	}
 

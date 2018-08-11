@@ -17,7 +17,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
-import sav.utils.CountDownExecutionTimer;
+import sav.utils.ExecutionTimerUtils;
 import sav.utils.IExecutionTimer;
 import sav.utils.TestRunner;
 
@@ -51,19 +51,12 @@ public class SavJunitRunner implements TestRunner {
 	
 	public static void main(String[] args){
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
-		IExecutionTimer timer;
-		if (params.getTimeout() <= 0) {
-			timer = new IExecutionTimer() {
-				
-				@Override
-				public boolean run(TestRunner target, long timeout) {
-					target.run();
-					return true;
-				}
-			};
-		} else {
-			timer = new CountDownExecutionTimer();
-		}
+		IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(params.getTimeout());
+		SavJunitRunner junitRunner = executeTestcases(params, timer);
+		junitRunner.$exitProgram("SavJunitRunner finished!");
+	}
+
+	public static SavJunitRunner executeTestcases(JunitRunnerParameters params, IExecutionTimer timer) {
 		SavJunitRunner junitRunner = new SavJunitRunner();
 		for (String[] tc : params.getTestcases()) {
 			junitRunner.curThreadId = -1;
@@ -75,11 +68,12 @@ public class SavJunitRunner implements TestRunner {
 			junitRunner.$exitTest(junitRunner.successful + ";" + junitRunner.failureMessage, junitRunner.className,
 					junitRunner.methodName, junitRunner.curThreadId);
 		}
-		junitRunner.$exitProgram("SavJunitRunner finished!");
+		return junitRunner;
 	}
 	
 	@Override
 	public void run() {
+		long start = System.currentTimeMillis();
 		Request request;
 		try {
 			curThreadId = Thread.currentThread().getId();
@@ -97,7 +91,7 @@ public class SavJunitRunner implements TestRunner {
 			e.printStackTrace();
 		}
 		
-		System.currentTimeMillis();
+		System.out.println("TESTCASE RUNNING TIME: " + (System.currentTimeMillis() - start));
 	}
 	
 	@Override
@@ -113,7 +107,7 @@ public class SavJunitRunner implements TestRunner {
 		// for agent part.
 	}
 	
-	private void $exitProgram(String resultMsg) {
+	public void $exitProgram(String resultMsg) {
 		// for agent part.
 	}
 

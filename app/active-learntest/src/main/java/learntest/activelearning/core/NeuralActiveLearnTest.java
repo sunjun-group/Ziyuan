@@ -42,7 +42,7 @@ public class NeuralActiveLearnTest {
 		CDG cdg = cdgConstructor.construct(coverageSFlowGraph);
 		
 		/* generate random test */
-		Tester tester = new Tester(settings, true);
+		Tester tester = new Tester(settings, true, appClasspath);
 		UnitTestSuite testsuite = tester.createInitRandomTest(targetMethod, settings, appClasspath, 3, cfgInstance);
 		if (testsuite == null) {
 			throw new SavRtException("Fail to generate random test!");

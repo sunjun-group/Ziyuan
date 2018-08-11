@@ -15,6 +15,7 @@ public class LearntestSettings {
 	private boolean addMainClassWhenGeneratingTest = false;
 	private long runtimeForEachRound = 60000l;
 	private int testingIteration = 10;
+	private boolean coverageRunSocket = false;
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
@@ -98,6 +99,14 @@ public class LearntestSettings {
 
 	public void setTestingIteration(int testingIteration) {
 		this.testingIteration = testingIteration;
+	}
+
+	public boolean isCoverageRunSocket() {
+		return coverageRunSocket;
+	}
+
+	public void setCoverageRunSocket(boolean coverageRunSocket) {
+		this.coverageRunSocket = coverageRunSocket;
 	}
 	
 }

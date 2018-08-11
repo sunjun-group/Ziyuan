@@ -84,4 +84,14 @@ public class CommandLine {
 		String strVal = getString(option);
 		return strVal == null ? defaultVal : Long.valueOf(strVal);
 	}
+	
+	public int getInt(String option, int defaultVal) {
+		String strVal = getString(option);
+		return strVal == null ? defaultVal : Integer.valueOf(strVal);
+	}
+	
+	public boolean getBoolean(String option, boolean defaultVal) {
+		String strVal = getString(option);
+		return strVal == null ? defaultVal : Boolean.valueOf(strVal);
+	}
 }

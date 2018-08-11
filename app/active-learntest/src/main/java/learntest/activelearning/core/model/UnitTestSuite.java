@@ -61,6 +61,14 @@ public class UnitTestSuite {
 	public List<String> getJunitClassNames() {
 		return junitClassNames;
 	}
+	
+	public void setJunitTestcases(List<String> junitTestcases) {
+		this.junitTestcases = junitTestcases;
+	}
+	
+	public void setJunitClassNames(List<String> junitClasses) {
+		this.junitClassNames = junitClasses;
+	}
 
 	public void setJunitClassNames(List<String> junitClasses, ClassLoader classLoader) {
 		this.junitClassNames = junitClasses;

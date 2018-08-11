@@ -19,7 +19,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  libs/microbat_instrumentator.jar,
  libs/bcel-6.0-sources.jar,
- libs/bcel-6.0.jar
+ libs/bcel-6.0.jar,
+ libs/sav.testrunner.jar
 Export-Package: learntest.activelearning.core,
  learntest.activelearning.core.coverage,
  learntest.activelearning.core.handler,

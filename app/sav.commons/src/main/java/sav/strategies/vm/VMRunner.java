@@ -226,7 +226,7 @@ public class VMRunner {
 		}
 	}
 	
-	protected void stop() {
+	public void stop() {
 		if (isProcessRunning()) {
 			process.destroy();
 		}

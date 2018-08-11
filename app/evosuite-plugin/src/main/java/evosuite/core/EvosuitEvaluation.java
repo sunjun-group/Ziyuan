@@ -30,6 +30,7 @@ import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.SignatureUtils;
+import sav.common.core.utils.SingleTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.JavaCompiler;
@@ -103,9 +104,11 @@ public class EvosuitEvaluation {
 						System.out.println();
 						if (result.targetMethod != null) {
 							FilesInfo junitFilesInfo = evosuiteTcHandler.getEvosuiteTestcases(config, targetClass.generatePackage(i), result);
+							SingleTimer timer = SingleTimer.start("ZiyuanCoverage");
 							CfgCoverage coverage = coverageCounter.calculateCoverage(result, junitFilesInfo);
 							result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
 							System.out.println("Coverage calculated by Ziyuan: " + result.branchCoverage);
+							System.out.println(timer.getResult());
 							result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
 							System.out.println(StringUtils.newLineJoin(result.coverageInfo));
 							graphCoverage = coverageCounter.calculateCfgCoverage(result, junitFilesInfo, learntestSettings);

@@ -51,6 +51,10 @@ public class ProgramArgumentBuilder {
 		return addArgument(option, String.valueOf(value));
 	}
 	
+	public ProgramArgumentBuilder addArgument(String option, boolean value) {
+		return addArgument(option, String.valueOf(value));
+	}
+	
 	public ProgramArgumentBuilder addArgument(String option, int value) {
 		return addArgument(option, String.valueOf(value));
 	}

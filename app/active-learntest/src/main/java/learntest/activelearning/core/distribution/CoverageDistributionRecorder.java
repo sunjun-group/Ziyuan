@@ -16,7 +16,8 @@ import sav.common.core.utils.FileUtils;
 public class CoverageDistributionRecorder {
 	private List<CoveragePath> allPath = new ArrayList<CoveragePath>();
 
-	public void record(String prefix, String outputFolder,MethodInfo targetMethod, CoverageSFlowGraph coverageGraph) throws Exception  {
+	public void record(String prefix, String outputFolder, MethodInfo targetMethod, CoverageSFlowGraph coverageGraph)
+			throws Exception {
 		String distributionFile = FileUtils.getFilePath(outputFolder, prefix + "_distribution.xlsx");
 		List<CoveragePath> distributionPath = coverageGraph.getCoveragePaths();
 

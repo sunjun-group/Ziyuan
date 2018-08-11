@@ -26,7 +26,7 @@ public class RandomTestDistributionRunner {
 	private List<CoveragePath> allPath = new ArrayList<CoveragePath>();
 	public void run(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
 		log.info("Run method: " + targetMethod.toString());
-		Tester tester = new Tester(settings, false);
+		Tester tester = new Tester(settings, false, appClasspath);
 		//settings.setInitRandomTestNumber(1);
 		
 		/*filter out method without branches*/

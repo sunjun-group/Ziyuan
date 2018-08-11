@@ -54,7 +54,7 @@ public class JDartGentest {
 		SingleTimer timer = SingleTimer.start("jdart-learntest");
 		timer.setTimeLimit(settings.getRuntimeForEachRound());
 		/* generate random test */
-		Tester tester = new Tester(settings, true);
+		Tester tester = new Tester(settings, true, appClasspath);
 		UnitTestSuite initTestsuite = null;
 		
 		while (initTestsuite == null && timer.getExecutionTime() < settings.getRuntimeForEachRound()) {

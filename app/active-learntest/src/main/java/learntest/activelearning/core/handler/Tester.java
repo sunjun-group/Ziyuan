@@ -1,6 +1,7 @@
 package learntest.activelearning.core.handler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gentest.core.data.Sequence;
+import gentest.core.data.statement.RConstructor;
+import gentest.core.data.statement.Rmethod;
+import gentest.core.data.statement.Statement;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.coverage.CoverageUtils;
@@ -18,9 +23,11 @@ import learntest.core.commons.data.classinfo.MethodInfo;
 import learntest.core.gentest.GentestParams;
 import learntest.core.gentest.GentestResult;
 import learntest.core.gentest.TestGenerator;
+import microbat.instrumentation.cfgcoverage.CoverageAgentParams.CoverageCollectionType;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
+import microbat.instrumentation.cfgcoverage.runtime.MethodExecutionData;
 import microbat.model.BreakPointValue;
 import microbat.model.value.ArrayValue;
 import microbat.model.value.PrimitiveValue;
@@ -29,7 +36,9 @@ import microbat.model.value.StringValue;
 import microbat.model.value.VarValue;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.AlphanumComparator;
 import sav.common.core.utils.CollectionUtils;
+import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.AppJavaClassPath;
@@ -45,9 +54,10 @@ import sav.strategies.vm.VMConfiguration;
 public class Tester {
 	private Logger log = LoggerFactory.getLogger(Tester.class);
 	private CoverageCounter coverageCounter;
+	private CoverageCollectionType cvgType = CoverageCollectionType.UNCIRCLE_CFG_COVERAGE;
 
-	public Tester(LearntestSettings settings, boolean collectConditionVariation) {
-		coverageCounter = new CoverageCounter(settings, collectConditionVariation);
+	public Tester(LearntestSettings settings, boolean collectConditionVariation, AppJavaClassPath appClasspath) {
+		coverageCounter = new CoverageCounter(settings, collectConditionVariation, appClasspath);
 	}
 	
 	public UnitTestSuite createInitRandomTest(MethodInfo targetMethod, LearntestSettings settings,
@@ -76,32 +86,60 @@ public class Tester {
 	 * create random testcases and count coverage,
 	 * if generated test covers at least first branch, then execute to get input value.
 	 */
+	StopTimer timer;
 	public UnitTestSuite createRandomTest(MethodInfo targetMethod, LearntestSettings settings,
 			AppJavaClassPath appClasspath) throws SavRtException {
+		timer = new StopTimer("createRandomTest");
+		timer.newPoint("geneate test");
 		GentestParams params = initGentestParams(targetMethod, settings, appClasspath);
 		TestGenerator testGenerator = new TestGenerator(appClasspath);
 		try {
 			GentestResult testCases = testGenerator.generateRandomTestcases(params);
-			return executeTest(targetMethod, settings, appClasspath, testCases);
+			UnitTestSuite testsuite = executeTest(targetMethod, settings, appClasspath, testCases);
+			log.debug(timer.getResultString());
+			return testsuite;
 		} catch (Exception e) {
-			log.error(e.getStackTrace().toString());
 			throw new SavRtException(e);
 		}
 	}
 
 	private UnitTestSuite executeTest(MethodInfo targetMethod, LearntestSettings settings,
 			AppJavaClassPath appClasspath, GentestResult testCases) throws SavException, SAVExecutionTimeOutException {
-		JavaCompiler javaCompiler = new JavaCompiler(new VMConfiguration(appClasspath));
-		javaCompiler.compile(appClasspath.getTestTarget(), testCases.getAllFiles());
-		
 		UnitTestSuite testSuite = new UnitTestSuite();
-		testSuite.setJunitClassNames(testCases.getJunitClassNames(), appClasspath.getClassLoader());
+		ArrayList<String> junitTest = new ArrayList<>(testCases.getTestcaseSequenceMap().keySet());
+		Collections.sort(junitTest, new AlphanumComparator());
+		testSuite.setJunitClassNames(testCases.getJunitClassNames());
+		testSuite.setJunitTestcases(junitTest);
 		testSuite.setJunitfiles(testCases.getJunitfiles());
 		testSuite.setMainClass(testCases.getMainClassName());
 		testSuite.setTestcaseSequenceMap(testCases.getTestcaseSequenceMap());
+		List<Sequence> sequences = null;
+		if (!settings.isCoverageRunSocket()) {
+			timer.newPoint("compile");
+			JavaCompiler javaCompiler = new JavaCompiler(new VMConfiguration(appClasspath));
+			javaCompiler.setGenerateDebugInfo(false);
+			javaCompiler.compile(appClasspath.getTestTarget(), testCases.getAllFiles());
+		} else {
+			sequences = new ArrayList<>(testSuite.getJunitTestcases().size());
+			for (String tc : testSuite.getJunitTestcases()) {
+				sequences.add(testSuite.getTestcaseSequenceMap().get(tc));
+			}
+			for (Sequence seq : sequences) {
+				for (Statement stmt : seq.getStmts()) {
+					if (stmt instanceof Rmethod) {
+						((Rmethod) stmt).fillMissingMethodInfo();
+					}
+					if (stmt instanceof RConstructor) {
+						((RConstructor) stmt).fillMissingInfo();
+					}
+				}
+			}
+		}
+		
+		timer.newPoint("coverage");
 		
 		CoverageOutput coverageOutput = coverageCounter.runCoverage(targetMethod, testSuite.getJunitTestcases(),
-				appClasspath, settings.getInputValueExtractLevel());
+				appClasspath, settings.getInputValueExtractLevel(), cvgType, sequences);
 		testSuite.setCoverageGraph(coverageOutput.getCoverageGraph());
 		
 		/* transfer input data */
@@ -115,10 +153,13 @@ public class Tester {
 		return testSuite;
 	}
 	
-	private Map<Integer, TestInputData> transferInputData(Map<Integer, microbat.instrumentation.cfgcoverage.runtime.TestInputData> inputData) {
+	private Map<Integer, TestInputData> transferInputData(Map<Integer, List<MethodExecutionData>> inputData) {
 		Map<Integer, TestInputData> resultMap = new HashMap<>();
+		if (inputData == null) {
+			return resultMap;
+		}
 		for (Integer testIdx : inputData.keySet()) {
-			microbat.instrumentation.cfgcoverage.runtime.TestInputData testInputs = inputData.get(testIdx);
+			MethodExecutionData testInputs = CollectionUtils.getLast(inputData.get(testIdx));
 			BreakPointValue methodInputValue = testInputs.getMethodInputValue();
 			BreakpointValue inputValue = new BreakpointValue(methodInputValue.getName());
 			for (VarValue value : methodInputValue.getChildren()) {
@@ -192,4 +233,11 @@ public class Tester {
 		return params;
 	}
 	
+	public void setCvgType(CoverageCollectionType cvgType) {
+		this.cvgType = cvgType;
+	}
+	
+	public void dispose() {
+		coverageCounter.stop();
+	}
 }

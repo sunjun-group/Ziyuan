@@ -29,6 +29,7 @@ import sav.common.core.utils.StringUtils;
 public class JavaCompiler {
 	private Logger log = LoggerFactory.getLogger(JavaCompiler.class);
 	private VMConfiguration vmConfig;
+	private boolean generateDebugInfo = true;
 
 	public JavaCompiler(VMConfiguration vmConfig) {
 		setVmConfig(vmConfig);
@@ -49,8 +50,10 @@ public class JavaCompiler {
 		for (File mutatedFile : javaFiles) {
 			builder.append(mutatedFile.getAbsolutePath());
 		}
-		builder.append("-g")
-			.append("-nowarn");
+//		builder.appendIf("-g", generateDebugInfo)
+//			.appendIf("-g:none", !generateDebugInfo)
+//			.appendIf("-proc:none", !generateDebugInfo)
+			builder	.append("-nowarn");
 		VMRunner vmRunner = VMRunner.getDefault();
 		vmRunner.setLog(vmConfig.isVmLogEnable());
 		boolean success = vmRunner.startAndWaitUntilStop(builder.toCollection());
@@ -70,4 +73,7 @@ public class JavaCompiler {
 		this.vmConfig = vmConfig;
 	}
 
+	public void setGenerateDebugInfo(boolean generateDebugInfo) {
+		this.generateDebugInfo = generateDebugInfo;
+	}
 }

@@ -18,6 +18,7 @@ import evosuite.core.EvosuiteTestcasesHandler.FilesInfo;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.commons.data.classinfo.ClassInfo;
 import learntest.core.commons.data.classinfo.MethodInfo;
+import microbat.instrumentation.cfgcoverage.CoverageAgentParams.CoverageCollectionType;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.JunitUtils;
@@ -56,13 +57,14 @@ public class CoverageCounter {
 			LearntestSettings learntestSettings) throws Exception {
 		try {
 			learntest.activelearning.core.handler.CoverageCounter cvgCounter = new learntest.activelearning.core.handler.CoverageCounter(
-					learntestSettings, false);
+					learntestSettings, false, appClasspath);
 			MethodInfo targetMethod = new MethodInfo(new ClassInfo(result.targetClass));
 			targetMethod.setMethodName(SignatureUtils.extractMethodName(result.targetMethod));
 			targetMethod.setMethodSignature(SignatureUtils.extractSignature(result.targetMethod));
 			List<String> testMethods = JunitUtils.extractTestMethods(junitFilesInfo.junitClasses,
 					appClasspath.getClassLoader());
-			return cvgCounter.runCoverage(targetMethod, testMethods, appClasspath, learntestSettings.getInputValueExtractLevel());
+			return cvgCounter.runCoverage(targetMethod, testMethods, appClasspath, learntestSettings.getInputValueExtractLevel(),
+					CoverageCollectionType.BRANCH_COVERAGE, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SavRtException(e);

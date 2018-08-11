@@ -53,6 +53,7 @@ public class CoverageProgressRecorder {
 	
 	public void store() throws SavException {
 		try {
+			System.out.println("Total tcs: " + tcsNum);
 			ProgressExcelWriter writer = new ProgressExcelWriter(new File(filePath));
 			ProgressRow trial = new ProgressRow();
 			trial.setMethodName(targetMethod.getMethodFullName() + '.' + targetMethod.getLineNum());

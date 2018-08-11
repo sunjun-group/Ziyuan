@@ -9,7 +9,6 @@
 package sav.common.core.utils;
 
 import java.lang.reflect.Method;
-import static org.apache.commons.lang.StringUtils.replace;
 
 /**
  * @author LLT
@@ -114,7 +113,7 @@ public class SignatureUtils {
 	}
 	
 	public static String trimSignature(String typeSign) {
-		return replace(typeSign, ";", "");
+		return typeSign.replace(";", "");
 	}
 
 	public static String createMethodNameSign(String methodName, String signature) {
