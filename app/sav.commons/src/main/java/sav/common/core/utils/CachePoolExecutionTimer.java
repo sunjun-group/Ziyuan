@@ -85,7 +85,7 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 			List<Runnable> runnables = super.shutdownNow();
 			int killedThreads = 0;
 			for (Thread runningThread : cachedRunningThreads) {
-				if (runningThread.isAlive()) {
+				if (runningThread != null && runningThread.isAlive()) {
 					runningThread.stop();
 					killedThreads++;
 				}
