@@ -12,8 +12,9 @@ import sav.utils.IExecutionTimer;
 
 public class SavSocketTestRunner {
 	public static final String OPT_COMUNICATE_TCP_PORT = "tcp_port";
-	public static final String OPT_RUNNNING_MODE = "using_simple_runner";
-
+	public static final String OPT_RUNNNING_MODE = "test_running_mode";
+	public static final String OPT_ENABLE_TIME_OUT = "enable_timeout";
+	
 	public static void main(String[] args) throws Exception {
 		SavSocketTestRunner testRunner = new SavSocketTestRunner();
 		testRunner.run(args);
@@ -23,55 +24,55 @@ public class SavSocketTestRunner {
 		CommandLine cmd = CommandLine.parse(args);
 		int tcpPort = cmd.getInt(OPT_COMUNICATE_TCP_PORT, -1);
 		RunningMode runningMode = RunningMode.valueOf(cmd.getString(OPT_RUNNNING_MODE));
+		boolean enableTimeout = cmd.getBoolean(OPT_ENABLE_TIME_OUT, false);
 		
 		TcpConnector tcpConnnector = new TcpConnector(tcpPort);
 		Socket server = tcpConnnector.connect();
 		InputReader inputReader = new InputReader(server.getInputStream());
-		SavSimpleRunner savSimpleRunner = null;
-		SavJunitRunner savJunitRunner = null;
-		SavSequenceRunner savSequenceRunner = null;
+		IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(enableTimeout);
 		try {
 			while (true) {
 				Request request = Request.getValue(inputReader.readString());
 				if (request == Request.STOP) {
+					server.getOutputStream().close();
+					server.close();
 					return;
 				}
 				if (request == Request.UNKNOWN) {
 					continue;
 				}
-				long timeout = inputReader.readLong();
-				List<String> tcs = inputReader.readListString();
-				JunitRunnerParameters params = new JunitRunnerParameters();
-				params.setTimeout(timeout);
-				params.setTestcases(tcs);
-				IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(params.getTimeout());
-				switch (runningMode) {
-				case SIMPLE_RUN:
-					savSimpleRunner = SavSimpleRunner.executeTestcases(params, timer);
-					break;
-				case JUNIT:
-					savJunitRunner = SavJunitRunner.executeTestcases(params, timer);
-					break;
-				case SEQUENCE_EXECUTION:
-					List<Sequence> sequences = inputReader.readSerializableList();
-					savSequenceRunner = SavSequenceRunner.executeTestcases(sequences, tcs, timeout, timer);
-					break;
+				/* Request.RUN_TEST */
+				try {
+					long timeout = inputReader.readLong();
+					List<String> tcs = inputReader.readListString();
+					JunitRunnerParameters params = new JunitRunnerParameters();
+					params.setTimeout(timeout);
+					params.setTestcases(tcs);
+					switch (runningMode) {
+					case SIMPLE_RUN:
+						SavSimpleRunner.executeTestcases(params, timer);
+						break;
+					case JUNIT:
+						SavJunitRunner.executeTestcases(params, timer);
+						break;
+					case SEQUENCE_EXECUTION:
+						List<Sequence> sequences = inputReader.readSerializableList();
+						SavSequenceRunner.executeTestcases(sequences, tcs, timeout, timer);
+						break;
+					}
+					$storeCoverage(server.getOutputStream(), true);
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
-				$storeCoverage(server.getOutputStream(), true);
+				Runtime.getRuntime().freeMemory();
 			}
 		} finally {
-			if (savSimpleRunner != null) {
-				savSimpleRunner.$exitProgram("SavJunitRunner finished!");
-			}
-			if (savJunitRunner != null) {
-				savJunitRunner.$exitProgram("SavJunitRunner finished!");
-			}
-			if (savSequenceRunner != null) {
-				savSequenceRunner.$exitProgram("SavJunitRunner finished!");
-			}
+			System.out.println("SavSocketTestRunner - Exit program..");
+			timer.shutdown();
 			if (inputReader != null) {
 				inputReader.close();
 			}
+			Runtime.getRuntime().halt(1);
 		}
 	}
 	

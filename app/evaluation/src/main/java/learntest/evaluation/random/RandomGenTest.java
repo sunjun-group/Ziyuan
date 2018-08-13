@@ -3,6 +3,7 @@ package learntest.evaluation.random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.activelearning.core.IProgressMonitor;
 import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
@@ -19,21 +20,21 @@ import sav.common.core.utils.SingleTimer;
 import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
-public class RandomGentest {
-	private Logger log = LoggerFactory.getLogger(RandomGentest.class);
+public class RandomGenTest {
+	private Logger log = LoggerFactory.getLogger(RandomGenTest.class);
 	private String outputFolder;
 	
-	public RandomGentest(String randomOutputFolder) {
+	public RandomGenTest(String randomOutputFolder) {
 		this.outputFolder = randomOutputFolder;
 	}
 
-	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings)
-			throws Exception {
+	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings,
+			IProgressMonitor progressMonitor) throws Exception {
 		log.info("Run method: " + targetMethod.toString());
 		settings.setInitRandomTestNumber(1);
 		settings.setCfgExtensionLayer(1);
 		settings.setRunCoverageAsMethodInvoke(true);
-		settings.setMethodExecTimeout(200l);
+		settings.setMethodExecTimeout(500l);
 		settings.setCoverageRunSocket(true);
 		CFGUtility cfgUtility = new CFGUtility();
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
@@ -74,17 +75,20 @@ public class RandomGentest {
 							finalTestsuit.addTestCases(testsuite);
 						}
 					} catch(Exception e) {
+						e.printStackTrace();
+						log.debug(e.getMessage());
 						// ignore
 						endTime = System.currentTimeMillis();
 					}
 				} while (endTime - startTime <= interval);
 				progressRecorder.updateProgress();
 			}
-			System.out.println(timer.getResult());
+			log.debug(timer.getResult());
 			progressRecorder.store();
 		} finally {
 			tester.dispose();
 		}
+		log.debug("Finish RandomGenTest");
 	}
 
 }

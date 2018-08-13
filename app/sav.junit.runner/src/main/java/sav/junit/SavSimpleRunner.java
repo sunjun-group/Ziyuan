@@ -37,7 +37,7 @@ public class SavSimpleRunner implements TestRunner {
         long vmStartTime = ManagementFactory.getRuntimeMXBean().getStartTime();
         System.out.println("Startup time: " + (currentTime - vmStartTime));
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
-		IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(params.getTimeout());
+		IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(params.getTimeout() >= 0);
 		SavSimpleRunner junitRunner = executeTestcases(params, timer);
 		junitRunner.$exitProgram("SavJunitRunner finished!");
 	}
@@ -66,6 +66,7 @@ public class SavSimpleRunner implements TestRunner {
 			$testStarted(className, methodName);
 			method.invoke(clazz.newInstance());
 		} catch (Exception e) {
+			e.printStackTrace();
 			// ignore
 			failureMessage = e.getMessage();
 		}
@@ -74,6 +75,7 @@ public class SavSimpleRunner implements TestRunner {
 	
 	@Override
 	public void onTimeout() {
+		System.out.println("TEST TIME OUT!!");
 		this.failureMessage = "time out!";
 	}
 	

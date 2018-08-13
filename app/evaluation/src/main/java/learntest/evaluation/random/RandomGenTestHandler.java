@@ -35,7 +35,7 @@ public class RandomGenTestHandler extends AbstractHandler implements IHandler {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					execute();
+					execute(monitor);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
@@ -50,7 +50,7 @@ public class RandomGenTestHandler extends AbstractHandler implements IHandler {
 		return null;
 	}
 
-	protected void execute() throws Exception {
+	protected void execute(IProgressMonitor monitor) throws Exception {
 //		List<String> projects = WorkbenchUtils.getAllProjects();
 //		for (Iterator<String> it = projects.iterator(); it.hasNext();) {
 //			String projectam
@@ -58,22 +58,31 @@ public class RandomGenTestHandler extends AbstractHandler implements IHandler {
 //		for (String project : projects) {
 //			runProject(project);
 //		}
-		runProject(LearnTestConfig.getInstance().getProjectName());
+		runProject(LearnTestConfig.getInstance().getProjectName(), new learntest.activelearning.core.IProgressMonitor() {
+			
+			@Override
+			public boolean isCanceled() {
+				return monitor.isCanceled();
+			}
+		});
 	}
 
-	private void runProject(String project) throws Exception {
+	private void runProject(String project, learntest.activelearning.core.IProgressMonitor progressMonitor) throws Exception {
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(project);
 		LearntestLogger.initLog4j(project);
 		ValidMethodsLoader methodLoader = new ValidMethodsLoader();
 		List<LearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
 		String outputFolder = ProjectSetting.getLearntestOutputFolder(project) + "/random";
 		FileUtils.mkDirs(outputFolder);
-		RandomGentest rtest = new RandomGentest(outputFolder);
+		RandomGenTest randomGentest = new RandomGenTest(outputFolder);
 		for (LearnTestConfig config : validMethods) {
+			if (progressMonitor.isCanceled()) {
+				return;
+			}
 			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
 			LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
 			//try {
-			rtest.generateTestcase(appClasspath, methodInfo, learntestSettings);
+			randomGentest.generateTestcase(appClasspath, methodInfo, learntestSettings, progressMonitor);
 			//}
 			//catch(Exception e){log.error(e.getStackTrace() != null ? e.getStackTrace().toString() : e.getMessage());}
 		}

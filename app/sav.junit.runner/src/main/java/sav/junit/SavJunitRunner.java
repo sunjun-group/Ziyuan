@@ -51,7 +51,7 @@ public class SavJunitRunner implements TestRunner {
 	
 	public static void main(String[] args){
 		JunitRunnerParameters params = JunitRunnerParameters.parse(args);
-		IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(params.getTimeout());
+		IExecutionTimer timer = ExecutionTimerUtils.getExecutionTimer(params.getTimeout() >= 0);
 		SavJunitRunner junitRunner = executeTestcases(params, timer);
 		junitRunner.$exitProgram("SavJunitRunner finished!");
 	}
@@ -96,6 +96,7 @@ public class SavJunitRunner implements TestRunner {
 	
 	@Override
 	public void onTimeout() {
+		System.out.println("TEST TIME OUT!!");
 		this.failureMessage = "time out!";
 	}
 	

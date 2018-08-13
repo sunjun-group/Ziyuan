@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gentest.core.data.Sequence;
 import microbat.instrumentation.AgentParams.LogType;
 import microbat.instrumentation.cfgcoverage.CoverageAgentParams;
@@ -30,6 +33,7 @@ import sav.tcp.OutputWriter;
  *
  */
 public class CoverageAgentRunner extends AgentVmRunner {
+	private Logger log = LoggerFactory.getLogger(CoverageAgentRunner.class);
 	private VMConfiguration vmConfig;
 	private ServerSocket serverSocket;
 	private OutputWriter outputWriter;
@@ -61,10 +65,22 @@ public class CoverageAgentRunner extends AgentVmRunner {
 	}
 	
 	public void reset() {
-		stop();
-		serverSocket = null;
-		outputWriter = null;
-		coverageReader = null;
+		if (serverSocket != null) {
+			try {
+				outputWriter.writeString(Request.STOP.name());
+				outputWriter.flush();
+				Thread.sleep(100l);
+				serverSocket.close();
+				outputWriter.close();
+				coverageReader.close();
+				stop();
+			} catch(Exception e) {
+				// ignore
+			}
+			serverSocket = null;
+			outputWriter = null;
+			coverageReader = null;
+		}
 	}
 	
 	public CoverageOutput runWithSocket(CoverageAgentParams agentParams, long methodTimeout,
@@ -87,6 +103,7 @@ public class CoverageAgentRunner extends AgentVmRunner {
 				List<String> programArgs = new ProgramArgumentBuilder()
 						.addArgument(SavSocketTestRunner.OPT_COMUNICATE_TCP_PORT, port)
 						.addArgument(SavSocketTestRunner.OPT_RUNNNING_MODE, runningMode.name())
+						.addArgument(SavSocketTestRunner.OPT_ENABLE_TIME_OUT, methodTimeout >= 0)
 						.build();
 				vmConfig.setProgramArgs(programArgs);
 				super.startVm(vmConfig);
@@ -157,7 +174,8 @@ public class CoverageAgentRunner extends AgentVmRunner {
 	@Override
 	protected void printOut(String line, boolean error) {
 //		if (error || line.startsWith(AgentConstants.LOG_HEADER)) {
-			System.out.println(line);
+		log.debug(line);
+//			System.out.println(line);
 //		}
 	};
 }

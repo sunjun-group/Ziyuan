@@ -25,6 +25,8 @@ public class SavSequenceRunner extends SavSimpleRunner {
 			runner.methodName = tc.substring(idx + 1, tc.length());
 			runner.sequence = sequence;
 			timer.run(runner, timeout);
+			runner.$exitTest(runner.successful + ";" + runner.failureMessage, runner.className,
+					runner.methodName, runner.curThreadId);
 		}
 		return runner;
 	}
@@ -44,8 +46,6 @@ public class SavSequenceRunner extends SavSimpleRunner {
 				}
 				stmt.accept(rtExecutor);
 			}
-			$exitTest(successful + ";" + failureMessage, className,
-					methodName, curThreadId);
 		} catch (Exception e) {
 			failureMessage = e.getMessage();
 		}

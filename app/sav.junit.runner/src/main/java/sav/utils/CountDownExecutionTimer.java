@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class CountDownExecutionTimer implements IExecutionTimer {
 	/* allow the timertask to wait another 2 second before stop the running thread */
-	private static final long CONCESSION_TIME = 2000l; 
+	private static final long CONCESSION_TIME = 200l; 
 	private static Timer timer = new Timer();
 
 	@Override
@@ -84,5 +84,10 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 				latch.countDown();
 			}
 		}
+	}
+
+	@Override
+	public void shutdown() {
+		
 	}
 }

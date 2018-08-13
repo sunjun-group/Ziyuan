@@ -8,4 +8,6 @@ public interface IExecutionTimer {
 
 	boolean run(TestRunner target, long timeout);
 
+	void shutdown();
+
 }
