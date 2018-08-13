@@ -3,6 +3,7 @@ package learntest.evaluation.random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gentest.main.GentestService;
 import learntest.activelearning.core.IProgressMonitor;
 import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.handler.Tester;
@@ -62,6 +63,7 @@ public class RandomGenTest {
 				CoverageSFlowGraph newCoverageGraph;
 				do {
 					try {
+						
 						long startTest = System.currentTimeMillis();
 						UnitTestSuite testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
 						endTime = System.currentTimeMillis();
@@ -81,12 +83,14 @@ public class RandomGenTest {
 						endTime = System.currentTimeMillis();
 					}
 				} while (endTime - startTime <= interval);
+				GentestService.cleanupThread();
 				progressRecorder.updateProgress();
 			}
 			log.debug(timer.getResult());
 			progressRecorder.store();
 		} finally {
 			tester.dispose();
+			GentestService.reset();
 		}
 		log.debug("Finish RandomGenTest");
 	}

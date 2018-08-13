@@ -29,6 +29,7 @@ import gentest.core.data.statement.Statement;
 import gentest.core.data.statement.StatementVisitor;
 import gentest.core.data.variable.ISelectedVariable;
 import sav.common.core.utils.Assert;
+import sav.common.core.utils.CachePoolExecutionTimer;
 import sav.common.core.utils.ExecutionTimer;
 
 /**
@@ -41,8 +42,9 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	static long methodExecTimeout;
 	protected RuntimeData data;
 	protected Boolean successful;
-	private static ExecutionTimer executionTimer = ExecutionTimer.getCachePoolExecutionTimer(methodExecTimeout);
-	
+	public static CachePoolExecutionTimer executionTimer = (CachePoolExecutionTimer) ExecutionTimer
+			.getCachePoolExecutionTimer(methodExecTimeout);
+
 	public VariableRuntimeExecutor() {
 		data = new RuntimeData();
 	}

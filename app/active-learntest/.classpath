@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
-	<classpathentry exported="true" kind="lib" path="libs/sav.testrunner.jar" sourcepath="/gentest-model"/>
+	<classpathentry exported="true" kind="lib" path="libs/sav.testrunner.jar" sourcepath="/sav.junit.runner"/>
 	<classpathentry exported="true" kind="lib" path="libs/bcel-6.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/bcel-6.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/microbat_instrumentator.jar" sourcepath="/microbat_instrumentator"/>
