@@ -50,20 +50,19 @@ public class RandomGenTest {
 		UnitTestSuite finalTestsuit = null;
 		long startTime = 0;
 		long endTime = 0;
-		int interval = 2000;
+		int interval = 10000;
 		int numInterval = 9;
 		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, outputFolder + "/coverage_progress.xlsx");
 		
 		log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageSFlowGraph, cfgInstance), "\n"));
 		progressRecorder.setCoverageGraph(coverageSFlowGraph);
-		SingleTimer timer = SingleTimer.start("run Random Test");
+		SingleTimer timer = SingleTimer.start("Cleanup Thread");
 		try {
 			for (int i = 0; i < numInterval; i++) {
 				startTime = System.currentTimeMillis();
 				CoverageSFlowGraph newCoverageGraph;
 				do {
 					try {
-						
 						long startTest = System.currentTimeMillis();
 						UnitTestSuite testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
 						endTime = System.currentTimeMillis();
@@ -82,8 +81,11 @@ public class RandomGenTest {
 						// ignore
 						endTime = System.currentTimeMillis();
 					}
+					if (timer.getExecutionTime() > 2000) {
+						GentestService.cleanupThread();
+						timer.restart();
+					}
 				} while (endTime - startTime <= interval);
-				GentestService.cleanupThread();
 				progressRecorder.updateProgress();
 			}
 			log.debug(timer.getResult());
