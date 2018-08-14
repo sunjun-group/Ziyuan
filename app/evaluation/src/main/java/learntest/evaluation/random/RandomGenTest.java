@@ -41,7 +41,6 @@ public class RandomGenTest {
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 				InstrumentationUtils.getClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature()),
 				settings.getCfgExtensionLayer());
-		cfgUtility.breakCircle(cfgInstance);
 		CoverageGraphConstructor constructor = new CoverageGraphConstructor();
 		CoverageSFlowGraph coverageSFlowGraph = constructor.buildCoverageGraph(cfgInstance);
 		
