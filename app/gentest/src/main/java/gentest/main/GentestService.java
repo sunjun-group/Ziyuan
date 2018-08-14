@@ -7,9 +7,7 @@ public class GentestService {
 	
 	public static void cleanupThread() {
 		CachePoolExecutionTimer executionTimer = VariableRuntimeExecutor.executionTimer;
-		if (executionTimer.hasUnStoppableTask()) {
-			executionTimer.shutdown();
-		}
+		executionTimer.cleanUpThreads();
 	}
 	
 	public static void reset() {

@@ -10,8 +10,12 @@ package sav.common.core.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
@@ -51,15 +55,12 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 		}
 	}
 	
+	private Map<Thread, Long> abandonedThreads = new HashMap<>();
 	private class CustomizedThreadPoolExecutor extends ThreadPoolExecutor {
-		private List<Thread> cachedRunningThreads = new ArrayList<>();
+		private Map<Thread, Long> cachedRunningThreads = new HashMap<>();
 		private Map<Runnable, Thread> runnableThreadMap = new HashMap<>();
 		
 		CustomizedThreadPoolExecutor() {
-			this (Executors.defaultThreadFactory());
-		}
-		
-		CustomizedThreadPoolExecutor(ThreadFactory threadFactory) {
 			super(0, Integer.MAX_VALUE,
                     60L, TimeUnit.SECONDS,
                     new SynchronousQueue<Runnable>());
@@ -67,7 +68,7 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 
 		@Override
 		protected void beforeExecute(Thread t, Runnable r) {
-			cachedRunningThreads.add(t);
+			cachedRunningThreads.put(t, System.currentTimeMillis());
 			runnableThreadMap.put(r, t);
 			super.beforeExecute(t, r);
 		}
@@ -79,19 +80,13 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 			super.afterExecute(r, t);
 		}
 		
-		@SuppressWarnings("deprecation")
 		@Override
 		public List<Runnable> shutdownNow() {
 			List<Runnable> runnables = super.shutdownNow();
-			int killedThreads = 0;
-			for (Thread runningThread : cachedRunningThreads) {
+			for (Thread runningThread : cachedRunningThreads.keySet()) {
 				if (runningThread != null && runningThread.isAlive()) {
-					runningThread.stop();
-					killedThreads++;
+					abandonedThreads.put(runningThread, cachedRunningThreads.get(runningThread));
 				}
-			}
-			if (killedThreads > 0) {
-				log.debug(String.format("CachePoolExecutionTimer: kill %d threads due to unable to stop by interrupting!", killedThreads));
 			}
 			cachedRunningThreads.clear();
 			runnableThreadMap.clear();
@@ -99,8 +94,26 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 		}
 	}
 	
-	public boolean hasUnStoppableTask() {
-		return !executorService.cachedRunningThreads.isEmpty();
+	public boolean cleanUpThreads() {
+		if (executorService != null && !executorService.cachedRunningThreads.isEmpty()) {
+			executorService.shutdownNow();
+			executorService = null;
+		}
+		long curTime = System.currentTimeMillis();
+		int killedThreads = 0;
+		for (Iterator<Entry<Thread, Long>> it = abandonedThreads.entrySet().iterator(); it.hasNext();) {
+			Entry<Thread, Long> entry = it.next();
+			if (entry != null && (curTime - entry.getValue()) > 1000) {
+				entry.getKey().stop();
+				it.remove();
+				killedThreads++;
+			}
+		}
+		if (killedThreads > 0) {
+			log.debug(String.format("CachePoolExecutionTimer: kill %d threads due to unable to stop by interrupting!",
+					killedThreads));
+		}
+		return killedThreads > 0;
 	}
 
 	@Override
@@ -108,6 +121,20 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 		if (executorService != null) {
 			executorService.shutdownNow();
 			executorService = null;
+			Timer timer = new Timer();
+			final Map<Thread, Long> threadsToStop = new HashMap<>(abandonedThreads);
+			timer.schedule(new TimerTask() {
+				
+				@Override
+				public void run() {
+					for (Thread thread : threadsToStop.keySet()) {
+						if (thread != null && thread.isAlive()) {
+							thread.stop();
+						}
+					}
+				}
+			}, 1000l);
+			abandonedThreads.clear();
 		}
 	}
 	

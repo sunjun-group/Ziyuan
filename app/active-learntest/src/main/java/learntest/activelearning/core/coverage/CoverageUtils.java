@@ -72,7 +72,7 @@ public class CoverageUtils {
 	
 	public static String toBranchString(List<CoverageSFNode> vals, CFGInstance cfg) {
 		if (vals == null || vals.isEmpty()) {
-			return "";
+			return "{}";
 		}
 		StringBuilder sb = new StringBuilder("{");
 		int i = 0;
