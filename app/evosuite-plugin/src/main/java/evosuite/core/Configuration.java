@@ -91,9 +91,7 @@ public class Configuration {
 
 	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage, CFGInstance cfgInstance) {
 		writeToExcel(classMethod, line, result);
-		if (graphCoverage != null && graphCoverage.getCoverageGraph() != null) {
-			recorder.record(classMethod, line, graphCoverage);
-		}
+		recorder.record(classMethod, line, graphCoverage, result, cfgInstance);
 		writeToCoverageInfoLog(classMethod, line, result);
 	}
 

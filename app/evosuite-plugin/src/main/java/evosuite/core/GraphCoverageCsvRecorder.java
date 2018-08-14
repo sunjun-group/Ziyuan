@@ -8,9 +8,13 @@ import java.io.IOException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
+import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import learntest.activelearning.core.coverage.CoverageUtils;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
+import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import sav.common.core.utils.ResourceUtils;
+import sav.common.core.utils.StringUtils;
+import sav.common.core.utils.TextFormatUtils;
 
 public class GraphCoverageCsvRecorder {
 	private String filePath;
@@ -19,7 +23,7 @@ public class GraphCoverageCsvRecorder {
 		this.filePath = graphCoverageFilePath;
 	}
 
-	public void record(String classMethod, int line, CoverageOutput graphCoverage) {
+	public void record(String classMethod, int line, CoverageOutput graphCoverage, EvosuiteResult result, CFGInstance cfgInstance) {
 		CSVPrinter csvPrinter = null;
 		BufferedWriter writer = null;
 		try {
@@ -31,10 +35,14 @@ public class GraphCoverageCsvRecorder {
 			writer = new BufferedWriter(new FileWriter(csvFile, true));
 			csvPrinter = new CSVPrinter(writer, format);
 			String methodId = String.format("%s.%s", classMethod, line);
-			double branchCoverage = CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), methodId);
-			System.out.println("New Ziyuan coverage: " + branchCoverage);
-			csvPrinter.printRecord(methodId,
-					branchCoverage);
+			double branchCoverage = -1;
+			if (graphCoverage != null && graphCoverage.getCoverageGraph() != null) {
+				branchCoverage = CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), methodId);
+			}
+			csvPrinter.printRecord(methodId, branchCoverage, 
+					StringUtils.join(CoverageUtils.getBranchCoverageDisplayTexts(graphCoverage.getCoverageGraph(), cfgInstance),  "\n"),
+					result.branchCoverage,
+					StringUtils.join(result.coverageInfo, "\n"));
 			csvPrinter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -46,7 +54,10 @@ public class GraphCoverageCsvRecorder {
 
 	public static enum Column {
 		target_method,
-		graph_coverage;
+		graph_coverage,
+		graph_coverage_info,
+		old_coverage,
+		old_coverage_info;
 		
 		public static String[] allColumns() {
 			Column[] values = values();
