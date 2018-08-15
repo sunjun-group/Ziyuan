@@ -19,7 +19,8 @@ import sav.common.core.SavException;
 
 public class CoverageProgressRecorder {
 	private Logger log = LoggerFactory.getLogger(CoverageProgressRecorder.class);
-	private String filePath;
+	private String progressfilePath;
+	private String caseNumberfilePath;
 	private MethodInfo targetMethod;
 	private Set<Branch> currentCoveredBranch = new HashSet<>();
 	private Set<Branch> allBranches;
@@ -27,9 +28,10 @@ public class CoverageProgressRecorder {
 	private List<Integer> tcsNum;
 	private int curNumberOfTcs;
 	
-	public CoverageProgressRecorder(MethodInfo targetMethod, String filePath) {
+	public CoverageProgressRecorder(MethodInfo targetMethod, String filePath, String caseNumfilePath) {
 		this.targetMethod = targetMethod;
-		this.filePath = filePath;
+		this.progressfilePath = filePath;
+		this.caseNumberfilePath = caseNumfilePath;
 		this.progressCoverages = new ArrayList<>();
 		this.tcsNum = new ArrayList<>();
 	}
@@ -54,7 +56,7 @@ public class CoverageProgressRecorder {
 	public void store() throws SavException {
 		try {
 			System.out.println("Total tcs: " + tcsNum);
-			ProgressExcelWriter writer = new ProgressExcelWriter(new File(filePath));
+			ProgressExcelWriter writer = new ProgressExcelWriter(new File(progressfilePath));
 			ProgressRow trial = new ProgressRow();
 			trial.setMethodName(targetMethod.getMethodFullName() + '.' + targetMethod.getLineNum());
 			double[] progress = new double[progressCoverages.size()];
@@ -65,14 +67,15 @@ public class CoverageProgressRecorder {
 			trial.setProgress(progress);
 			writer.addRowData(trial);
 			
-			trial.setMethodName("TestCasesNumber");
+			ProgressExcelWriter writer1 = new ProgressExcelWriter(new File(caseNumberfilePath));
+			trial.setMethodName(targetMethod.getMethodFullName() + '.' + targetMethod.getLineNum());
 			double[] tcsnum = new double[tcsNum.size()];
 			i = 0;
 			for (Integer num : tcsNum) {
 				tcsnum[i++] = (double)(num.intValue()); 
 			}
 			trial.setProgress(tcsnum);
-			writer.addRowData(trial);
+			writer1.addRowData(trial);
 			
 		} catch(Exception ex) {
 			throw new SavException(ex);

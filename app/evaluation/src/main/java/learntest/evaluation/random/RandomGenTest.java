@@ -51,7 +51,7 @@ public class RandomGenTest {
 		long endTime = 0;
 		int interval = 10000;
 		int numInterval = 9;
-		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, outputFolder + "/coverage_progress.xlsx");
+		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, outputFolder + "/coverage_progress.xlsx", outputFolder + "/coverage_casenumber.xlsx");
 		
 		log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageSFlowGraph, cfgInstance), "\n"));
 		progressRecorder.setCoverageGraph(coverageSFlowGraph);
