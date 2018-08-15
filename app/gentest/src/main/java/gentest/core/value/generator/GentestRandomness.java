@@ -19,6 +19,9 @@ public class GentestRandomness implements IRandomness {
 	private static final double PROB_VALUE_IN_LIST = 0.4;
 	private Random random = new Random();
 	
+	private double max = -1000;
+	private double min = -1000;
+	
 	private Random getRandom() {
 		return random;
 	}
@@ -29,8 +32,8 @@ public class GentestRandomness implements IRandomness {
 			return RandomUtils.randomMember(new Float[]{0.0f, 0.01f, -0.01f}, random);
 		}
 		
-		float min = -100;
-		float max = 100;
+		float min = (float) this.min;
+		float max = (float) this.max;
 		float f = (min + (max - min) * getRandom().nextFloat());
 		return f;
 	}
@@ -59,8 +62,8 @@ public class GentestRandomness implements IRandomness {
 			return RandomUtils.randomMember(new Double[]{0.0, 0.01, -0.01}, random);
 		}
 		
-		double min = -100;
-		double max = 100;
+		double min = this.min;
+		double max = this.max;
 		
 		double d = (min + (max - min) * getRandom().nextDouble());
 		return d;
@@ -72,7 +75,7 @@ public class GentestRandomness implements IRandomness {
 			return RandomUtils.randomMember(new Integer[]{-1 ,0, 1}, getRandom());
 		}
 		
-		return RandomUtils.nextInt(-200, 200, getRandom());
+		return RandomUtils.nextInt((int)this.min, (int)this.max, getRandom());
 	}
 
 	@Override
@@ -81,7 +84,7 @@ public class GentestRandomness implements IRandomness {
 			return RandomUtils.randomMember(new Long[]{0l, 1l, -1l}, random);
 		}
 		
-		return RandomUtils.nextLong(-1000, 1000, getRandom());
+		return RandomUtils.nextLong((int)this.min, (int)this.max, getRandom());
 	}
 
 	@Override
@@ -90,7 +93,7 @@ public class GentestRandomness implements IRandomness {
 			return RandomUtils.randomMember(new Short[]{-1 ,0, 1}, getRandom());
 		}
 		
-		return (short) RandomUtils.nextInt(-200, 200, getRandom());
+		return (short) RandomUtils.nextInt((int)this.min, (int)this.max, getRandom());
 	}
 
 	@Override
