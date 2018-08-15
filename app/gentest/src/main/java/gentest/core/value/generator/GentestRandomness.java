@@ -19,7 +19,7 @@ public class GentestRandomness implements IRandomness {
 	private static final double PROB_VALUE_IN_LIST = 0.4;
 	private Random random = new Random();
 	
-	private double max = -1000;
+	private double max = 1000;
 	private double min = -1000;
 	
 	private Random getRandom() {
