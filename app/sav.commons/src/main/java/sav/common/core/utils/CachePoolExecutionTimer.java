@@ -96,24 +96,10 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 	
 	public boolean cleanUpThreads() {
 		if (executorService != null && !executorService.cachedRunningThreads.isEmpty()) {
-			executorService.shutdownNow();
-			executorService = null;
+			shutdown();
+			return true;
 		}
-		long curTime = System.currentTimeMillis();
-		int killedThreads = 0;
-		for (Iterator<Entry<Thread, Long>> it = abandonedThreads.entrySet().iterator(); it.hasNext();) {
-			Entry<Thread, Long> entry = it.next();
-			if (entry != null && (curTime - entry.getValue()) > 1000) {
-				entry.getKey().stop();
-				it.remove();
-				killedThreads++;
-			}
-		}
-		if (killedThreads > 0) {
-			log.debug(String.format("CachePoolExecutionTimer: kill %d threads due to unable to stop by interrupting!",
-					killedThreads));
-		}
-		return killedThreads > 0;
+		return false;
 	}
 
 	@Override
