@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cfg.CfgNode;
 import learntest.activelearning.core.model.TestInputData;
 import learntest.activelearning.core.model.UnitTestSuite;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
@@ -13,10 +12,6 @@ import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
-import sav.common.core.SavException;
-import sav.strategies.vm.interprocess.InputDataWriter;
-import sav.strategies.vm.interprocess.python.PythonVmConfiguration;
-import sav.strategies.vm.interprocess.python.PythonVmRunner;
 
 /**
  * @author LLT
@@ -26,11 +21,7 @@ public class NeuralNetworkLearner {
 	
 	private Map<Branch, List<TestInputData>> branchInputMap = new HashMap<>();
 	private UnitTestSuite testsuite;
-	
-	private InputDataWriter inputWriter;
-	private OutputDataReader outputReader;
-	private PythonVmRunner vmRunner;
-	private long timeout = -1;
+	private PythonCommunicator communicator;
 	
 	public void learningToCover(CDG cdg) {
 		this.branchInputMap = buildBranchTestInputMap(testsuite.getInputData(), testsuite.getCoverageGraph());
@@ -40,7 +31,6 @@ public class NeuralNetworkLearner {
 	}
 	
 	private void traverseLearning(CDGNode parent, Branch parentBranch) {
-		
 		List<CDGNode> decisionChildren = new ArrayList<>();
 		for(CDGNode child: parent.getChildren()){
 			if(isAllChildrenCovered(child)){
@@ -64,7 +54,8 @@ public class NeuralNetworkLearner {
 				
 				inputs = this.branchInputMap.get(branch);
 				if(!inputs.isEmpty()){
-					learnClassificationModel(branch, child.getCfgNode());
+					CoverageSFNode originalParentNode = testsuite.getCoverageGraph().getNodeList().get(parent.getCfgNode().getCvgIdx());
+					learnClassificationModel(branch, originalParentNode);
 				}
 			}
 		}
@@ -123,20 +114,24 @@ public class NeuralNetworkLearner {
 	private void learnClassificationModel(Branch branch, CoverageSFNode node) {
 		List<TestInputData> positiveInputs = this.branchInputMap.get(branch);
 		List<TestInputData> negativeInputs = retrieveNegativeInputs(branch, node);
-		
+		System.currentTimeMillis();
 		if(positiveInputs.isEmpty() || negativeInputs.isEmpty()){
 			return;
 		}
 		
-		
+		//TODO
+		communicator.requestTraining(branch, positiveInputs, negativeInputs);
+		System.currentTimeMillis();
 	}
 
 	private List<TestInputData> retrieveNegativeInputs(Branch branch, CoverageSFNode node) {
 		List<TestInputData> negativeInputs = new ArrayList<>();
 		
-		List<Integer> inputIndexes = node.getCoveredTestcasesOnBranches().get(branch);
+		CoverageSFNode childNode = this.testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
+		
+		List<Integer> inputIndexes = node.getCoveredTestcasesOnBranches().get(childNode);
 		for(int i=0; i<this.testsuite.getInputData().size(); i++){
-			if(!inputIndexes.contains(i)){
+			if(inputIndexes!=null && !inputIndexes.contains(i)){
 				negativeInputs.add(this.testsuite.getInputData().get(i));
 			}
 		}
@@ -197,44 +192,10 @@ public class NeuralNetworkLearner {
 		
 	}
 	
-	public NeuralNetworkLearner() {
-		// init vm configuration
-		inputWriter = new InputDataWriter();
-		outputReader = new OutputDataReader();
-	}
-	
-	public NeuralNetworkLearner(UnitTestSuite testsuite) {
+	public NeuralNetworkLearner(UnitTestSuite testsuite, PythonCommunicator communicator) {
 		this.testsuite = testsuite;
+		this.communicator = communicator;
 //		this.branchInputMap = CoverageUtils.buildBranchTestInputMap(testsuite.getInputData(), testsuite.getCoverageGraph());
 	}
-
-	public void start() throws SavException {
-		inputWriter.open();
-		outputReader.open();
-		vmRunner = new PythonVmRunner(inputWriter, outputReader, true);
-		vmRunner.setTimeout(timeout);
-		PythonVmConfiguration vmConfig = new PythonVmConfiguration();
-		vmConfig.setPythonHome("C:\\Program Files\\Python36");
-		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\nn_learntest.py");
-		vmRunner.start(vmConfig);
-	}
 	
-	public void startTrainingMethod(String methodName) {
-		inputWriter.request(InputData.createStartMethodRequest(methodName));
-	}
-	
-	public void stop() {
-		vmRunner.stop();
-	}
-	
-	public void setVmTimeout(long timeout) {
-		this.timeout = timeout;
-	}
-	
-	public List<double[]> boundaryRemaining(Dataset pathCoverage) {
-		inputWriter.request(InputData.forBoundaryRemaining(pathCoverage));
-		OutputData output = outputReader.readOutput();
-		return output.getDataSet().getCoveredData();
-	}
-
 }

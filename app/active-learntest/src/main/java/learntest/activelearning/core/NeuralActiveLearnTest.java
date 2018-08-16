@@ -12,6 +12,7 @@ import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.python.NeuralNetworkLearner;
+import learntest.activelearning.core.python.PythonCommunicator;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
@@ -51,9 +52,13 @@ public class NeuralActiveLearnTest {
 			throw new SavRtException("Fail to generate random test!");
 		}
 		
-		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner(testsuite);
 		/* learn */
+		PythonCommunicator communicator = new PythonCommunicator();
+		communicator.start();
+		
+		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner(testsuite, communicator);
 		nnLearner.learningToCover(cdg);
+		communicator.stop();
 	}
 
 	private List<double[]> fake_boundary_remaining(List<double[]> coveredInput, List<double[]> uncoveredInput, CfgNode branch) {
