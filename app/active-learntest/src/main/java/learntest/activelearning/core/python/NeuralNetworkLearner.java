@@ -39,8 +39,6 @@ public class NeuralNetworkLearner {
 		}
 	}
 	
-	
-	
 	private void traverseLearning(CDGNode parent, Branch parentBranch) {
 		
 		List<CDGNode> decisionChildren = new ArrayList<>();
@@ -66,7 +64,7 @@ public class NeuralNetworkLearner {
 				
 				inputs = this.branchInputMap.get(branch);
 				if(!inputs.isEmpty()){
-					learnClassificationModel(branch);
+					learnClassificationModel(branch, child.getCfgNode());
 				}
 			}
 		}
@@ -122,9 +120,28 @@ public class NeuralNetworkLearner {
 
 
 
-	private void learnClassificationModel(Branch branch) {
-		// TODO Auto-generated method stub
+	private void learnClassificationModel(Branch branch, CoverageSFNode node) {
+		List<TestInputData> positiveInputs = this.branchInputMap.get(branch);
+		List<TestInputData> negativeInputs = retrieveNegativeInputs(branch, node);
 		
+		if(positiveInputs.isEmpty() || negativeInputs.isEmpty()){
+			return;
+		}
+		
+		
+	}
+
+	private List<TestInputData> retrieveNegativeInputs(Branch branch, CoverageSFNode node) {
+		List<TestInputData> negativeInputs = new ArrayList<>();
+		
+		List<Integer> inputIndexes = node.getCoveredTestcasesOnBranches().get(branch);
+		for(int i=0; i<this.testsuite.getInputData().size(); i++){
+			if(!inputIndexes.contains(i)){
+				negativeInputs.add(this.testsuite.getInputData().get(i));
+			}
+		}
+		
+		return negativeInputs;
 	}
 
 	private void generateInputByExplorationSearch() {
@@ -142,9 +159,19 @@ public class NeuralNetworkLearner {
 		return new ArrayList<>();
 	}
 
-	private boolean isAllChildrenCovered(CDGNode child) {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean isAllChildrenCovered(CDGNode node) {
+		if(!node.getCfgNode().isCovered()){
+			return false; 
+		}
+		
+		for(CDGNode child: node.getChildren()){
+			boolean covered = isAllChildrenCovered(child);
+			if(!covered){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	public Map<Branch, List<TestInputData>> buildBranchTestInputMap(List<TestInputData> testInputs,
