@@ -28,6 +28,10 @@ public class UnitTestSuite {
 	private InputDatapointMapping inputDpMapping;
 	private CoverageSFlowGraph coverageGraph;
 
+	public List<TestInputData> getInputData() {
+		return inputData;
+	}
+
 	public void setInputData(List<TestInputData> inputData) {
 		this.inputData = inputData;
 		if (inputDpMapping == null) {

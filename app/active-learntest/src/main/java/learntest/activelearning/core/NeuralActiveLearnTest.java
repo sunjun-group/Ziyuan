@@ -3,6 +3,7 @@ package learntest.activelearning.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.bcel.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,8 @@ public class NeuralActiveLearnTest {
 		settings.setInitRandomTestNumber(10);
 		//settings.setMethodExecTimeout(100);
 		CFGUtility cfgUtility = new CFGUtility();
+		
+		Repository.clearCache();
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 				InstrumentationUtils.getClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature()),
 				settings.getCfgExtensionLayer());
@@ -48,9 +51,9 @@ public class NeuralActiveLearnTest {
 			throw new SavRtException("Fail to generate random test!");
 		}
 		
-		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner();
+		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner(testsuite);
 		/* learn */
-		
+		nnLearner.learningToCover(cdg);
 	}
 
 	private List<double[]> fake_boundary_remaining(List<double[]> coveredInput, List<double[]> uncoveredInput, CfgNode branch) {

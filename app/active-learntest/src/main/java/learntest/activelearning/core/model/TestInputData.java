@@ -22,4 +22,7 @@ public class TestInputData {
 		return conditionVariationMap;
 	}
 
+	public String toString(){
+		return inputValue.toString();
+	}
 }

@@ -74,7 +74,7 @@ public class RandomTestDistributionRunner {
 			distribution[distribution.length - 1 - k]  = t;
 		}				
        
-		DistributionExcelWriter writer = new DistributionExcelWriter(new File("D:/distribution.xlsx"));
+		DistributionExcelWriter writer = new DistributionExcelWriter(new File("E:/distribution.xlsx"));
 		DistributionRow trial = new DistributionRow();
 		trial.setMethodName(targetMethod.getMethodFullName());
 		trial.setDistribution(distribution);
