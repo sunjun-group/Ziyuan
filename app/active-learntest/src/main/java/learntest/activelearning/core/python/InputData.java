@@ -1,16 +1,17 @@
 package learntest.activelearning.core.python;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.model.TestInputData;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
+import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.vm.interprocess.InputDataWriter.IInputData;
 
 /**
@@ -60,10 +61,34 @@ public class InputData implements IInputData {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.START_TRAINING_FOR_METHOD;
 		inputData.obj.put(JsLabels.BRANCH_ID, branch.getBranchID());
-		inputData.obj.put(JsLabels.POSITIVE_DATA, positiveData);
-		inputData.obj.put(JsLabels.NEGATIVE_DATA, negativeData);
+		
+		JSONArray positiveArray = transferToJsonArray(positiveData);
+		inputData.obj.put(JsLabels.POSITIVE_DATA, positiveArray);
+		
+		JSONArray negativeArray = transferToJsonArray(negativeData);
+		inputData.obj.put(JsLabels.NEGATIVE_DATA, negativeArray);
 		
 		return inputData;
+	}
+
+	private static JSONArray transferToJsonArray(List<TestInputData> positiveData) {
+		JSONArray arrayObj = new JSONArray();
+		for(TestInputData testInput: positiveData){
+			
+			BreakpointValue bpv = testInput.getInputValue();
+			JSONArray positiveObj = new JSONArray();
+			for(int i=0; i<bpv.getChildren().size(); i++){
+				ExecValue value = bpv.getChildren().get(i);
+				JSONObject param = new JSONObject();
+				param.put(JsLabels.TYPE, value.getType());
+				param.put(JsLabels.VALUE, value.getStrVal());
+				param.put(JsLabels.NAME, value.getVarId());
+				
+				positiveObj.put(param);
+			}
+			arrayObj.put(positiveObj);
+		}
+		return arrayObj;
 	}
 
 }
