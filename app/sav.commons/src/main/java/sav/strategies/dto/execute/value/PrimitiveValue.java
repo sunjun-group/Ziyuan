@@ -15,10 +15,16 @@ package sav.strategies.dto.execute.value;
  */
 public class PrimitiveValue extends ExecValue {
 	private String strVal;
-
+	private String type;
+	
 	public PrimitiveValue(String id, String strVal) {
 		super(id);
 		this.strVal = strVal;
+	}
+
+	public PrimitiveValue(String id, String strVal, String type) {
+		this(id, strVal);
+		this.type = type;
 	}
 
 	public String getStrVal() {
@@ -77,9 +83,17 @@ public class PrimitiveValue extends ExecValue {
 	public ExecVarType getType() {
 		return ExecVarType.PRIMITIVE;
 	}
+	
+	public ExecVarType getSpecificVarType() {
+		return ExecVarType.primitiveTypeOf(type);
+	}
 
 	@Override
 	public boolean isPrimitive() {
 		return true;
+	}
+	
+	public String getValueType() {
+		return type;
 	}
 }
