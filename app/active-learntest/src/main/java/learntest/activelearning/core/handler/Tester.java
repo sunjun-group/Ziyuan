@@ -175,7 +175,9 @@ public class Tester {
 		if (value instanceof StringValue) {
 			execValue = new sav.strategies.dto.execute.value.StringValue(value.getVarID(), value.getStringValue());
 		} else if (value instanceof PrimitiveValue) {
-			execValue = new sav.strategies.dto.execute.value.PrimitiveValue(value.getVarID(), value.getStringValue());
+			execValue = new sav.strategies.dto.execute.value.PrimitiveValue(value.getVarID(), 
+					value.getStringValue(),
+					value.getType());
 		} else if (value instanceof ArrayValue) {
 			execValue = new sav.strategies.dto.execute.value.ArrayValue(value.getVarID());
 		} else if (value instanceof ReferenceValue) {
