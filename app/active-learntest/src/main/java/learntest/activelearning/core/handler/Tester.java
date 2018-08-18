@@ -191,6 +191,7 @@ public class Tester {
 					execValue.add(childExecVal);
 				}
 			}
+			execValue.setValueType(value.getType());
 		}
 		return execValue;
 	}

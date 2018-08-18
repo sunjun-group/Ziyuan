@@ -8,9 +8,9 @@ import java.util.Map;
 import gentest.core.data.Sequence;
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
-import learntest.core.gan.InputDatapointMapping;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import sav.common.core.utils.JunitUtils;
+import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -25,7 +25,7 @@ public class UnitTestSuite {
 	private List<TestInputData> inputData; //inputData.get(i) might be null in case target method isn't even reached. 
 	private List<ExecVar> inputVars;
 	private Map<String, Sequence> testcaseSequenceMap;
-	private InputDatapointMapping inputDpMapping;
+	private LearningInputMapping inputLearningMap;
 	private CoverageSFlowGraph coverageGraph;
 
 	public List<TestInputData> getInputData() {
@@ -34,7 +34,7 @@ public class UnitTestSuite {
 
 	public void setInputData(List<TestInputData> inputData) {
 		this.inputData = inputData;
-		if (inputDpMapping == null) {
+		if (inputLearningMap == null) {
 			List<BreakpointValue> bkpValues = new ArrayList<>(inputData.size());
 			for (TestInputData input : inputData) {
 				if (input != null) {
@@ -42,7 +42,7 @@ public class UnitTestSuite {
 				}
 			}
 			inputVars = BreakpointDataUtils.collectAllVars(bkpValues);
-			inputDpMapping = new InputDatapointMapping(inputVars);
+			inputLearningMap = new LearningInputMapping(inputVars);
 		}
 	}
 
@@ -117,4 +117,7 @@ public class UnitTestSuite {
 		this.mainClass = mainClass;
 	}
 	
+	public List<List<ExecValue>> getLearningInputValues() {
+		return inputLearningMap.getLearningValue(inputData);
+	}
 }

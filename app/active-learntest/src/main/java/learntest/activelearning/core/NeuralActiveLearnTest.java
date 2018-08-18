@@ -51,7 +51,7 @@ public class NeuralActiveLearnTest {
 		if (testsuite == null) {
 			throw new SavRtException("Fail to generate random test!");
 		}
-		
+		testsuite.getLearningInputValues();
 		/* learn */
 		PythonCommunicator communicator = new PythonCommunicator();
 		communicator.start();

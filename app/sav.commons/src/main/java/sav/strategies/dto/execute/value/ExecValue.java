@@ -24,6 +24,7 @@ public abstract class ExecValue implements IExecValue {
 	protected String varId;
 	protected List<ExecValue> children;
 	public static final int NOT_NULL_VAL = 1;
+	protected String valueType;
 	
 	protected ExecValue(String id) {
 		this.varId = id;
@@ -173,7 +174,7 @@ public abstract class ExecValue implements IExecValue {
 		if (this.varId.equals(varId)) {
 			return this;
 		} else {
-			for (ExecValue child : CollectionUtils.initIfEmpty(children)) {
+			for (ExecValue child : CollectionUtils.nullToEmpty(children)) {
 				ExecValue match = child.findVariableById(varId);
 				if (match != null) {
 					return match;
@@ -193,6 +194,14 @@ public abstract class ExecValue implements IExecValue {
 		return String.format("(%s:%s)", varId, children);
 	}
 	
+	public String getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
+	}
+
 	public abstract String getStrVal();
 	
 	public abstract ExecVarType getType();

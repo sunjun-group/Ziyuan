@@ -18,6 +18,7 @@ import sav.common.core.formula.utils.ExpressionVisitor;
 public class ExecVar implements Var {
 	private final String varId;
 	private ExecVarType type;
+	private String valueType;
 
 	public ExecVar(String varId) {
 		this.varId = varId;
@@ -102,5 +103,13 @@ public class ExecVar implements Var {
 			return true;
 		}
 		return false;
+	}
+
+	public String getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
 	}
 }

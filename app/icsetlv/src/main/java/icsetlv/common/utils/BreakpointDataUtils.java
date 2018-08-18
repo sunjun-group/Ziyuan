@@ -63,7 +63,9 @@ public class BreakpointDataUtils {
 		for (ExecValue val : vals) {
 			if (CollectionUtils.isEmpty(val.getChildren())) {
 				String varId = val.getVarId();
-				vars.add(new ExecVar(varId, val.getType()));
+				ExecVar var = new ExecVar(varId, val.getType());
+				var.setValueType(val.getValueType());
+				vars.add(var);
 			}
 			collectExecVar(val.getChildren(), vars);
 		}
