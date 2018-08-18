@@ -56,7 +56,7 @@ public class NeuralActiveLearnTest {
 		PythonCommunicator communicator = new PythonCommunicator();
 		communicator.start();
 		
-		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner(testsuite, communicator);
+		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner(tester, testsuite, communicator, appClasspath, targetMethod, settings);
 		nnLearner.learningToCover(cdg);
 		communicator.stop();
 	}
