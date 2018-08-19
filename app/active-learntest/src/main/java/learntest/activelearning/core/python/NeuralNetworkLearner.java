@@ -5,13 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Test;
+
+import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.TestInputData;
 import learntest.activelearning.core.model.UnitTestSuite;
+import learntest.activelearning.core.settings.LearntestSettings;
+import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
+import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.execute.value.ExecValue;
 
 /**
  * @author LLT
@@ -45,7 +52,7 @@ public class NeuralNetworkLearner {
 			List<TestInputData> inputs = this.branchInputMap.get(branch);
 			if(inputs!=null){
 				if(inputs.isEmpty()){
-					List<TestInputData> gradientInputs = generateInputByGradientSearch();
+					List<TestInputData> gradientInputs = generateInputByGradientSearch(branch, parent);
 					if(gradientInputs.isEmpty()){
 						generateInputByParentBranch(parentBranch);
 						generateInputByExplorationSearch();
@@ -149,9 +156,58 @@ public class NeuralNetworkLearner {
 		
 	}
 
-	private List<TestInputData> generateInputByGradientSearch() {
-		// TODO Auto-generated method stub
-		return new ArrayList<>();
+	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode parent) {
+		Branch siblingBranch = findSiblingBranch(branch);
+		if(siblingBranch==null){
+			return new ArrayList<>();			
+		}
+		
+		List<TestInputData> otherInputs = this.branchInputMap.get(siblingBranch);
+		if(otherInputs.isEmpty()){
+			return new ArrayList<>();
+		}
+		else{
+			CoverageSFNode decisionNode = parent.getCfgNode();
+			TestInputData closestInput = findClosestInput(otherInputs, decisionNode);
+			
+			List<TestInputData> list = new ArrayList<>();
+			for(ExecValue execValue: closestInput.getInputValue().getChildren()){
+//				TestInputData newInput = new TestInputData(inputValue, conditionVariationMap);
+			}
+//			this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, inputData, vars);
+			return list;
+		}
+	}
+
+	private TestInputData findClosestInput(List<TestInputData> otherInputs, CoverageSFNode decisionNode) {
+		TestInputData returnInput = null;
+		double closestValue = -1;
+		for(TestInputData input: otherInputs){
+			if(returnInput==null){
+				returnInput = input;
+				closestValue = input.getConditionVariationMap().get(decisionNode.getCvgIdx());
+			}
+			else{
+				Double value = input.getConditionVariationMap().get(decisionNode.getCvgIdx());
+				if(closestValue>value){
+					closestValue = value;
+					returnInput = input;
+				}
+			}
+			
+		}
+		
+		return returnInput;
+	}
+
+	private Branch findSiblingBranch(Branch branch) {
+		for(Branch b: branchInputMap.keySet()){
+			if(b.getFromNodeIdx()==branch.getFromNodeIdx() &&
+					b.getToNodeIdx()!=branch.getToNodeIdx()){
+				return b;
+			}
+		}
+		return null;
 	}
 
 	private boolean isAllChildrenCovered(CDGNode node) {
@@ -192,10 +248,19 @@ public class NeuralNetworkLearner {
 		
 	}
 	
-	public NeuralNetworkLearner(UnitTestSuite testsuite, PythonCommunicator communicator) {
+	private Tester tester;
+	private AppJavaClassPath appClasspath;
+	private MethodInfo targetMethod;
+	private LearntestSettings settings;
+	
+	public NeuralNetworkLearner(Tester tester, UnitTestSuite testsuite, PythonCommunicator communicator, 
+			AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) {
 		this.testsuite = testsuite;
 		this.communicator = communicator;
-//		this.branchInputMap = CoverageUtils.buildBranchTestInputMap(testsuite.getInputData(), testsuite.getCoverageGraph());
+		this.tester = tester;
+		this.appClasspath = appClasspath;
+		this.targetMethod = targetMethod;
+		this.settings = settings;
 	}
 	
 }
