@@ -105,8 +105,7 @@ public class UnitTestSuite {
 		} else if (newTestSuite.testcaseSequenceMap != null) {
 			this.testcaseSequenceMap.putAll(newTestSuite.testcaseSequenceMap);
 		}
-		// TODO-LLT: Merge coverage.
-//		this.coverage.merge(newTestSuite.coverage);
+		this.coverageGraph.addCoverageInfo(newTestSuite.coverageGraph);
 	}
 
 	public String getMainClass() {
