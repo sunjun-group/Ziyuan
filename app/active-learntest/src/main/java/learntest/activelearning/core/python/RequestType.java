@@ -5,7 +5,10 @@ package learntest.activelearning.core.python;
  *
  */
 public enum RequestType {
-	START_TRAINING_FOR_METHOD,
-	BOUNDARY_REMAINING,
-	INPUT_OF_BRANCH
+	$TRAINING,
+	$BOUNDARY_REMAINING,
+	$INPUT_OF_BRANCH, 
+	$TRAINING_FINISH,
+	$REQUEST_LABEL,
+	$RECEIVED
 }

@@ -18,9 +18,11 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.core.gan.vm.BranchDataSet;
 import learntest.core.gan.vm.BranchDataSet.Category;
 import learntest.core.gan.vm.JsLabel;
+import mosek.Env.value;
 
 
 /**
@@ -45,16 +47,31 @@ public class OutputData {
 		this.requestType = requestType;
 	}
 	
+	public static VariableValue requestLabelOuput(BufferedReader br) {
+		String jsonStr;
+		try {
+			jsonStr = br.readLine();
+			VariableValue values = JSONParser.parseUnlabeledDataPoints(jsonStr);
+			return values;
+		} catch (IOException e) {
+			log.debug(e.getMessage());
+		}
+		
+		return null;
+	}
+	
+	
 	public static OutputData boundaryRemainingOuput(BufferedReader br) {
-		OutputData outputData = new OutputData(RequestType.BOUNDARY_REMAINING);
+		OutputData outputData = new OutputData(RequestType.$BOUNDARY_REMAINING);
 		
 		String jsonStr;
 		try {
 			jsonStr = br.readLine();
 			JSONObject obj = new JSONObject(jsonStr);
-			Dataset dataSet = new Dataset(obj.getString(JsLabels.PATH_ID));
+			Dataset dataSet = new Dataset(obj.getString(JsLabels.BRANCH_ID));
 			dataSet.setCoveredData(parseDatapoints(obj.getJSONArray(JsLabels.COVERED_DATA_POINTS)));
 			dataSet.setUncoveredData(parseDatapoints(obj.getJSONArray(JsLabels.UNCOVERED_DATA_POINTS)));
+			outputData.dataSet = dataSet;
 		} catch (IOException e) {
 			log.debug(e.getMessage());
 		}

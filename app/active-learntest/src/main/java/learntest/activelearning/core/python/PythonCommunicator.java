@@ -9,8 +9,6 @@ import java.util.List;
 import learntest.activelearning.core.model.TestInputData;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.common.core.SavException;
-import sav.strategies.vm.interprocess.InputDataWriter;
-import sav.strategies.vm.interprocess.InputDataWriter.IInputData;
 import sav.strategies.vm.interprocess.python.PythonVmConfiguration;
 import sav.strategies.vm.interprocess.python.PythonVmRunner;
 
@@ -46,12 +44,18 @@ public class PythonCommunicator {
 	
 	public void requestTraining(Branch branch, List<TestInputData> positiveData, 
 			List<TestInputData> negativeData){
-		IInputData data = InputData.createTrainingRequest(branch, positiveData, negativeData);
-		inputWriter.request(data);
+		InputData typeData = InputData.createInputType(RequestType.$TRAINING);
+		inputWriter.send(typeData);
+		
+		InputData data = InputData.createTrainingRequest(branch, positiveData, negativeData);
+		inputWriter.send(data);
+		
+//		OutputData d = outputReader.readOutput();
+		System.currentTimeMillis();
 	}
 	
 	public void startTrainingMethod(String methodName) {
-		inputWriter.request(InputData.createStartMethodRequest(methodName));
+		inputWriter.send(InputData.createStartMethodRequest(methodName));
 	}
 	
 	public void stop() {
@@ -63,7 +67,7 @@ public class PythonCommunicator {
 	}
 	
 	public List<double[]> boundaryRemaining(Dataset pathCoverage) {
-		inputWriter.request(InputData.forBoundaryRemaining(pathCoverage));
+		inputWriter.send(InputData.forBoundaryRemaining(pathCoverage));
 		OutputData output = outputReader.readOutput();
 		return output.getDataSet().getCoveredData();
 	}

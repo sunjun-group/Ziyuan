@@ -44,8 +44,12 @@ public class OutputDataReader extends ServerOutputReader {
 	@Override
 	protected void readData(BufferedReader br) {
 		switch (requestType) {
-		case BOUNDARY_REMAINING:
+		case $BOUNDARY_REMAINING:
 			readOutput = OutputData.boundaryRemainingOuput(br);
+			ready();
+			break;
+		case $REQUEST_LABEL:
+			VariableValue v = OutputData.requestLabelOuput(br);
 			ready();
 			break;
 		default:

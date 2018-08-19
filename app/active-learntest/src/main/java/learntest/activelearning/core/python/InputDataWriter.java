@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.strategies.vm.interprocess;
+package learntest.activelearning.core.python;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -18,7 +18,7 @@ import sav.strategies.vm.interprocess.ServerInputWriter;
  *
  */
 public class InputDataWriter extends ServerInputWriter {
-	private IInputData inputData;
+	private InputData inputData;
 	private PrintWriter pw;
 	
 	public InputDataWriter() {
@@ -32,7 +32,7 @@ public class InputDataWriter extends ServerInputWriter {
 		waiting();
 	}
 	
-	public void request(IInputData input) {
+	public void send(InputData input) {
 		while(!isWaiting()) {
 			// wait for the old data to be written.
 		}
@@ -66,11 +66,6 @@ public class InputDataWriter extends ServerInputWriter {
 		if (pw != null) {
 			pw.close();
 		}
-	}
-	
-	public static interface IInputData {
-		
-		void writeData(PrintWriter pw);
 	}
 	
 }

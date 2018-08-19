@@ -5,20 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.json.JSONObject;
 
+import icsetlv.common.dto.BreakpointValue;
+import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.TestInputData;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
+import microbat.instrumentation.cfgcoverage.graph.CoveragePath;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.ExecVar;
 
 /**
  * @author LLT
@@ -54,8 +57,7 @@ public class NeuralNetworkLearner {
 				if(inputs.isEmpty()){
 					List<TestInputData> gradientInputs = generateInputByGradientSearch(branch, parent);
 					if(gradientInputs.isEmpty()){
-						generateInputByParentBranch(parentBranch);
-						generateInputByExplorationSearch();
+						generateInputByExplorationSearch(parentBranch);
 					}
 				}
 				
@@ -128,6 +130,14 @@ public class NeuralNetworkLearner {
 		
 		//TODO
 		communicator.requestTraining(branch, positiveInputs, negativeInputs);
+//		String response = "[[{'VALUE': '1', 'TYPE': 'PRIMITIVE', 'NAME': 'a'}, {'VALUE': '2', 'TYPE': 'PRIMITIVE', 'NAME': 'b'}], [{'VALUE': '3', 'TYPE': 'PRIMITIVE', 'NAME': 'a'}, {'VALUE': '4', 'TYPE': 'PRIMITIVE', 'NAME': 'b'}], [{'VALUE': '5', 'TYPE': 'PRIMITIVE', 'NAME': 'a'}, {'VALUE': '6', 'TYPE': 'PRIMITIVE', 'NAME': 'b'}]]";
+//		if(response.equals(String.valueOf(RequestType.$TRAINING_FINISH))){
+//			return;
+//		}
+//		else{
+//			JSONObject obj = new JSONObject(response);
+//		}
+		
 		System.currentTimeMillis();
 	}
 
@@ -146,13 +156,8 @@ public class NeuralNetworkLearner {
 		return negativeInputs;
 	}
 
-	private void generateInputByExplorationSearch() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void generateInputByParentBranch(Branch parentBranch) {
-		// TODO Auto-generated method stub
+	private void generateInputByExplorationSearch(Branch parentBranch) {
+//		communicator.requestBundaryExploration(parentBranch);
 		
 	}
 
@@ -169,14 +174,78 @@ public class NeuralNetworkLearner {
 		else{
 			CoverageSFNode decisionNode = parent.getCfgNode();
 			TestInputData closestInput = findClosestInput(otherInputs, decisionNode);
+			double bestFitness = closestInput.getConditionVariationMap().get(decisionNode.getCvgIdx());
+			
+			List<BreakpointValue> l = new ArrayList<>();
+			l.add(closestInput.getInputValue());
+			List<ExecVar> vars = BreakpointDataUtils.collectAllVars(l);
 			
 			List<TestInputData> list = new ArrayList<>();
-			for(ExecValue execValue: closestInput.getInputValue().getChildren()){
-//				TestInputData newInput = new TestInputData(inputValue, conditionVariationMap);
+			double[] value = closestInput.getInputValue().getAllValues();
+			for(int i=0; i<vars.size(); i++){
+				
+				boolean currentDirection = true;
+				boolean previousDirection = currentDirection;
+				int amount = 1;
+				
+				while(true){
+					double[] newValue = value.clone();
+					adjustValue(newValue, i, currentDirection, amount);
+					
+					List<double[]> inputData = new ArrayList<>();
+					inputData.add(newValue);
+					UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
+							inputData, vars);
+					this.testsuite.addTestCases(newSuite);
+					
+					TestInputData newInput = newSuite.getInputData().get(0);
+					list.add(newInput);
+					
+					if(isCoverBranch(newSuite, newInput, branch)){
+						break;
+					}
+					else{
+						double newFitness = newInput.getConditionVariationMap().get(decisionNode);
+						if(newFitness < bestFitness){
+							bestFitness = newInput.getConditionVariationMap().get(decisionNode);
+							amount *= 2;
+							continue;
+						}
+						else{
+							if(previousDirection!=currentDirection){
+								break;
+							}
+							
+							previousDirection = currentDirection;
+							currentDirection = !currentDirection;
+							amount = 1;
+						}
+					}
+				}
+				
 			}
-//			this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, inputData, vars);
+			
 			return list;
 		}
+	}
+
+	private void adjustValue(double[] newValue, int d, boolean increaseValue, int amount) {
+		if(increaseValue){
+			newValue[d] += amount; 			
+		}
+		else{
+			newValue[d] -= amount; 	
+		}
+	}
+
+	private boolean isCoverBranch(UnitTestSuite newSuite, TestInputData newInput1, Branch branch) {
+		CoveragePath path = newSuite.getCoverageGraph().getCoveragePaths().get(0);
+		for(CoverageSFNode node: path.getPath()){
+			if(node.getCvgIdx()==branch.getToNodeIdx()){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private TestInputData findClosestInput(List<TestInputData> otherInputs, CoverageSFNode decisionNode) {
