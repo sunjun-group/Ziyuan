@@ -24,6 +24,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import gentest.builder.RandomTraceGentestBuilder;
+import gentest.core.MethodParamUtils;
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
 import gentest.injection.GentestModules;
@@ -161,6 +162,7 @@ public class TestGenerator {
 				map.put(seq, i);
 				sequences.add(seq);
 			} catch (Throwable e) {
+				e.printStackTrace();
 				log.debug(String.format("Fail to generate sequence for solution(%s) due to error: %s",
 						Arrays.toString(solution), e.getMessage()));
 			}
@@ -197,7 +199,9 @@ public class TestGenerator {
 			throw new SavException(String.format("Cannot find method %s in class %s!", params.getMethodSignature(),
 					params.getTargetClassName()), LearntestExceptionType.METHOD_NOT_FOUND);
 		}
-		return MethodCall.of(method, targetClazz);
+		MethodCall methodCall = MethodCall.of(method, targetClazz);
+		MethodParamUtils.getParamNames(methodCall);
+		return methodCall;
 	}
 	
 	private Class<?> loadClass(String className) throws SavException {

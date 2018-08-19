@@ -16,6 +16,7 @@ package sav.strategies.dto.execute.value;
 public class PrimitiveValue extends ExecValue {
 	private String strVal;
 	private String type;
+	private ExecVarType execVarType;
 	
 	public PrimitiveValue(String id, String strVal) {
 		super(id);
@@ -25,6 +26,7 @@ public class PrimitiveValue extends ExecValue {
 	public PrimitiveValue(String id, String strVal, String type) {
 		this(id, strVal);
 		this.type = type;
+		execVarType = ExecVarType.primitiveTypeOf(type);
 	}
 
 	public String getStrVal() {
@@ -69,6 +71,7 @@ public class PrimitiveValue extends ExecValue {
 			child = LongValue.of(id, value.longValue());
 			break;
 		default:
+			child = new PrimitiveValue(id, value.toString(), execVar.getValueType());
 			break;
 		}
 		return child;
@@ -81,11 +84,10 @@ public class PrimitiveValue extends ExecValue {
 
 	@Override
 	public ExecVarType getType() {
+		if (execVarType != null) {
+			return execVarType;
+		}
 		return ExecVarType.PRIMITIVE;
-	}
-	
-	public ExecVarType getSpecificVarType() {
-		return ExecVarType.primitiveTypeOf(type);
 	}
 
 	@Override
