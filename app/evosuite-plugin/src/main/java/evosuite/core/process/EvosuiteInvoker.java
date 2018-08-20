@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.channels.FileLock;
 import java.util.List;
 
 import org.evosuite.EvoSuite;
@@ -40,11 +41,12 @@ public class EvosuiteInvoker {
 		FileOutputStream fileStream = null;
 		OutputStream bufferedStream = null;
 		DataOutputStream outputWriter = null;
+		FileLock lock = null;
 		try {
 			System.out.println(result);
 			fileStream = new FileOutputStream(file, false);
 			// Avoid concurrent writes from other processes:
-			fileStream.getChannel().lock();
+			lock = fileStream.getChannel().lock();
 			bufferedStream = new BufferedOutputStream(fileStream);
 			outputWriter = new DataOutputStream(bufferedStream);
 			byte[] bytes = ByteConverter.convertToBytes(EvosuiteTestResult.extract(result));
@@ -52,6 +54,9 @@ public class EvosuiteInvoker {
 			outputWriter.write(bytes);
 			outputWriter.flush();
 		} finally {
+			if (lock != null) {
+				lock.release();
+			}
 			close(fileStream);
 			close(bufferedStream);
 			close(outputWriter);

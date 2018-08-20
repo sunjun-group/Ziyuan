@@ -14,7 +14,6 @@ import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import sav.common.core.utils.ResourceUtils;
 import sav.common.core.utils.StringUtils;
-import sav.common.core.utils.TextFormatUtils;
 
 public class GraphCoverageCsvRecorder {
 	private String filePath;
@@ -36,13 +35,15 @@ public class GraphCoverageCsvRecorder {
 			csvPrinter = new CSVPrinter(writer, format);
 			String methodId = String.format("%s.%s", classMethod, line);
 			double branchCoverage = -1;
+			String coverageInfo = "";
 			if (graphCoverage != null && graphCoverage.getCoverageGraph() != null) {
 				branchCoverage = CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), methodId);
+				coverageInfo = StringUtils.join(CoverageUtils.getBranchCoverageDisplayTexts(graphCoverage.getCoverageGraph(), cfgInstance),  "\n");
 			}
 			csvPrinter.printRecord(methodId, branchCoverage, 
-					StringUtils.join(CoverageUtils.getBranchCoverageDisplayTexts(graphCoverage.getCoverageGraph(), cfgInstance),  "\n"),
-					result.branchCoverage,
-					StringUtils.join(result.coverageInfo, "\n"));
+					coverageInfo,
+					result == null ? 0 : result.branchCoverage,
+					result == null ? "" : StringUtils.join(result.coverageInfo, "\n"));
 			csvPrinter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

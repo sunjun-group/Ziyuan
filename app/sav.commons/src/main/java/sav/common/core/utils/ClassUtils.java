@@ -106,6 +106,14 @@ public class ClassUtils {
 		return className;
 	}
 	
+	public static String getPackageName(String className) {
+		int idx = className.lastIndexOf(Constants.DOT);
+		if (idx > 0) {
+			return className.substring(0, idx);
+		}
+		return "";
+	}
+	
 	/**
 	 * return pair of class name, and method name
 	 */
