@@ -29,6 +29,7 @@ import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.common.core.utils.StringUtils;
@@ -102,7 +103,7 @@ public class EvosuitEvaluation {
 						CoverageOutput graphCoverage = null;
 						CFGInstance cfgInstance = null;
 						System.out.println();
-						if (result.targetMethod != null) {
+						if (result.targetMethod != null && result.targetClass != null) {
 							FilesInfo junitFilesInfo = evosuiteTcHandler.getEvosuiteTestcases(config, targetClass.generatePackage(i), result);
 							SingleTimer timer = SingleTimer.start("ZiyuanCoverage");
 							CfgCoverage coverage = coverageCounter.calculateCoverage(result, junitFilesInfo);
@@ -126,6 +127,8 @@ public class EvosuitEvaluation {
 						System.out.println(e);
 						config.logError(targetClass.getMethodFullName(i), line);
 					}
+					System.gc();
+					Thread.sleep(2000);
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
