@@ -23,7 +23,7 @@ import sav.strategies.vm.interprocess.ServerOutputReader;
  */
 public class OutputDataReader extends ServerOutputReader {
 	private static Logger log = LoggerFactory.getLogger(OutputDataReader.class);
-	private volatile OutputData readOutput;
+	private volatile Message readOutput;
 	private RequestType requestType;
 
 	public OutputDataReader() {
@@ -45,11 +45,11 @@ public class OutputDataReader extends ServerOutputReader {
 	protected void readData(BufferedReader br) {
 		switch (requestType) {
 		case $BOUNDARY_REMAINING:
-			readOutput = OutputData.boundaryRemainingOuput(br);
+			readOutput = Message.boundaryRemainingOuput(br);
 			ready();
 			break;
 		case $REQUEST_LABEL:
-			VariableValue v = OutputData.requestLabelOuput(br);
+			readOutput = Message.parseUnlabeledDataPoints(br);
 			ready();
 			break;
 		default:
@@ -63,11 +63,7 @@ public class OutputDataReader extends ServerOutputReader {
 		waiting();
 	}
 	
-	public OutputData readOutput() {
-		return readOutput(-1);
-	}
-
-	public OutputData readOutput(long timeout) {
+	public Message readOutput(long timeout) {
 		SingleTimer timer = SingleTimer.start("read output");
 		if (timeout > 0) {
 			try {
@@ -81,7 +77,7 @@ public class OutputDataReader extends ServerOutputReader {
 				// do nothing
 			}
 		}
-		OutputData result = readOutput;
+		Message result = readOutput;
 		readOutput = null;
 		waiting();
 		return result;

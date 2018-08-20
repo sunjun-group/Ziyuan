@@ -12,6 +12,7 @@ import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.model.TestInputData;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.strategies.dto.execute.value.ExecValue;
+import sav.strategies.dto.execute.value.ExecVar;
 
 /**
  * @author LLT
@@ -69,6 +70,36 @@ public class InputData /*implements IInputData*/ {
 		
 		return inputData;
 	}
+	
+	public static InputData transferToJSON(DataPoints points) {
+		InputData inputData = new InputData();
+		
+		
+		JSONArray positiveArray = new JSONArray();
+		JSONArray negativeArray = new JSONArray();
+		
+		for(int i=0; i<points.values.size(); i++){
+			for(int j=0; j<points.varList.size(); j++){
+				ExecVar var = points.getVarList().get(j);
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("NAME", var.getVarId());
+				jsonObj.put("VALUE", points.values.get(i)[j]);
+				jsonObj.put("TYPE", points.varList.get(j).getType());
+				
+				if(points.getLabels().get(i)){
+					positiveArray.put(jsonObj);
+				}
+				else{
+					negativeArray.put(jsonObj);
+				}
+			}
+		}
+		
+		inputData.obj.put(JsLabels.POSITIVE_DATA, positiveArray);
+		inputData.obj.put(JsLabels.NEGATIVE_DATA, negativeArray);
+		
+		return inputData;
+	}
 
 	private static JSONArray transferToJsonArray(List<TestInputData> positiveData) {
 		JSONArray arrayObj = new JSONArray();
@@ -95,5 +126,7 @@ public class InputData /*implements IInputData*/ {
 		inputData.requestType = RequestType.$TRAINING;
 		return inputData;
 	}
+
+	
 
 }

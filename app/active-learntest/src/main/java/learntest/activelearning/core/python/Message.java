@@ -18,24 +18,18 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import learntest.activelearning.core.model.UnitTestSuite;
-import learntest.core.gan.vm.BranchDataSet;
-import learntest.core.gan.vm.BranchDataSet.Category;
-import learntest.core.gan.vm.JsLabel;
-import mosek.Env.value;
-
 
 /**
  * @author LLT
  *
  */
-public class OutputData {
-	private static Logger log = LoggerFactory.getLogger(OutputData.class);
+public class Message {
+	private static Logger log = LoggerFactory.getLogger(Message.class);
 	
 	private RequestType requestType;
-	private Dataset dataSet;
+	private Object messageBody;
 
-	public OutputData(RequestType requestType) {
+	public Message(RequestType requestType) {
 		this.requestType = requestType;
 	}
 
@@ -47,12 +41,15 @@ public class OutputData {
 		this.requestType = requestType;
 	}
 	
-	public static VariableValue requestLabelOuput(BufferedReader br) {
+	public static Message parseUnlabeledDataPoints(BufferedReader br) {
 		String jsonStr;
 		try {
 			jsonStr = br.readLine();
-			VariableValue values = JSONParser.parseUnlabeledDataPoints(jsonStr);
-			return values;
+			DataPoints values = JSONParser.parseUnlabeledDataPoints(jsonStr);
+			Message message = new Message(RequestType.$REQUEST_LABEL);
+			message.messageBody = values;
+			
+			return message;
 		} catch (IOException e) {
 			log.debug(e.getMessage());
 		}
@@ -61,8 +58,8 @@ public class OutputData {
 	}
 	
 	
-	public static OutputData boundaryRemainingOuput(BufferedReader br) {
-		OutputData outputData = new OutputData(RequestType.$BOUNDARY_REMAINING);
+	public static Message boundaryRemainingOuput(BufferedReader br) {
+		Message outputData = new Message(RequestType.$BOUNDARY_REMAINING);
 		
 		String jsonStr;
 		try {
@@ -71,7 +68,7 @@ public class OutputData {
 			Dataset dataSet = new Dataset(obj.getString(JsLabels.BRANCH_ID));
 			dataSet.setCoveredData(parseDatapoints(obj.getJSONArray(JsLabels.COVERED_DATA_POINTS)));
 			dataSet.setUncoveredData(parseDatapoints(obj.getJSONArray(JsLabels.UNCOVERED_DATA_POINTS)));
-			outputData.dataSet = dataSet;
+//			outputData.dataSet = dataSet;
 		} catch (IOException e) {
 			log.debug(e.getMessage());
 		}
@@ -91,9 +88,13 @@ public class OutputData {
 		}
 		return datapoints;
 	}
-	
-	public Dataset getDataSet() {
-		return dataSet;
+
+	public Object getMessageBody() {
+		return messageBody;
+	}
+
+	public void setMessageBody(Object message) {
+		this.messageBody = message;
 	}
 
 }

@@ -12,7 +12,7 @@ import sav.strategies.dto.execute.value.ExecVarType;
 public class JSONParser {
 	
 	
-	public static VariableValue parseUnlabeledDataPoints(String jsonStr) {
+	public static DataPoints parseUnlabeledDataPoints(String jsonStr) {
 		List<ExecVar> varList = new ArrayList<>();
 		List<double[]> values = new ArrayList<>();
 		
@@ -34,6 +34,6 @@ public class JSONParser {
 			values.add(value);
 		}
 		
-		return new VariableValue(varList, values);
+		return new DataPoints(varList, values);
 	}
 }

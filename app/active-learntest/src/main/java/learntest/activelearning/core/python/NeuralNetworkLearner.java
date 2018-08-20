@@ -120,23 +120,41 @@ public class NeuralNetworkLearner {
 
 
 
-	private void learnClassificationModel(Branch branch, CoverageSFNode node) {
+	private void learnClassificationModel(Branch branch, CoverageSFNode parent) {
 		List<TestInputData> positiveInputs = this.branchInputMap.get(branch);
-		List<TestInputData> negativeInputs = retrieveNegativeInputs(branch, node);
+		List<TestInputData> negativeInputs = retrieveNegativeInputs(branch, parent);
 		System.currentTimeMillis();
 		if(positiveInputs.isEmpty() || negativeInputs.isEmpty()){
 			return;
 		}
 		
 		//TODO
-		communicator.requestTraining(branch, positiveInputs, negativeInputs);
-//		String response = "[[{'VALUE': '1', 'TYPE': 'PRIMITIVE', 'NAME': 'a'}, {'VALUE': '2', 'TYPE': 'PRIMITIVE', 'NAME': 'b'}], [{'VALUE': '3', 'TYPE': 'PRIMITIVE', 'NAME': 'a'}, {'VALUE': '4', 'TYPE': 'PRIMITIVE', 'NAME': 'b'}], [{'VALUE': '5', 'TYPE': 'PRIMITIVE', 'NAME': 'a'}, {'VALUE': '6', 'TYPE': 'PRIMITIVE', 'NAME': 'b'}]]";
-//		if(response.equals(String.valueOf(RequestType.$TRAINING_FINISH))){
-//			return;
-//		}
-//		else{
-//			JSONObject obj = new JSONObject(response);
-//		}
+		Message response = communicator.requestTraining(branch, positiveInputs, negativeInputs);
+		while(response.getRequestType()==RequestType.$REQUEST_LABEL){
+			DataPoints points = (DataPoints) response.getMessageBody();
+			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
+					points.values, points.varList);
+			
+			int start = this.testsuite.getInputData().size();
+			int length = newSuite.getInputData().size();
+			
+			this.testsuite.addTestCases(newSuite);
+			
+			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
+			
+			for(int i=start; i<=start+length-1; i++){
+//				TestInputData input = this.testsuite.getInputData().get(i);
+				if(branchNode.getCoveredTestcases().contains(i)){
+					points.getLabels().add(true);
+				}
+				else{
+					points.getLabels().add(false);
+				}
+			}
+			
+			response = communicator.sendLabel(points);
+		}
+		
 		
 		System.currentTimeMillis();
 	}

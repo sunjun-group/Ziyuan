@@ -35,14 +35,7 @@ public class PythonCommunicator {
 		vmRunner.start(vmConfig);
 	}
 	
-	public void requestInput(Branch branch){
-		InputData.createBranchRequest(branch);
-//		inputWriter.request(InputData.forBoundaryRemaining(pathCoverage));
-//		OutputData output = outputReader.readOutput();
-//		return output.getDataSet().getCoveredData();
-	}
-	
-	public void requestTraining(Branch branch, List<TestInputData> positiveData, 
+	public Message requestTraining(Branch branch, List<TestInputData> positiveData, 
 			List<TestInputData> negativeData){
 		InputData typeData = InputData.createInputType(RequestType.$TRAINING);
 		inputWriter.send(typeData);
@@ -50,8 +43,19 @@ public class PythonCommunicator {
 		InputData data = InputData.createTrainingRequest(branch, positiveData, negativeData);
 		inputWriter.send(data);
 		
-//		OutputData d = outputReader.readOutput();
-		System.currentTimeMillis();
+		Message output = outputReader.readOutput(-1);
+		return output;
+	}
+	
+	public Message sendLabel(DataPoints points) {
+		InputData typeData = InputData.createInputType(RequestType.$SEND_LABEL);
+		inputWriter.send(typeData);
+		
+		InputData data = InputData.transferToJSON(points);
+		inputWriter.send(data);
+		
+		Message output = outputReader.readOutput(-1);
+		return output;
 	}
 	
 	public void startTrainingMethod(String methodName) {
@@ -68,8 +72,8 @@ public class PythonCommunicator {
 	
 	public List<double[]> boundaryRemaining(Dataset pathCoverage) {
 		inputWriter.send(InputData.forBoundaryRemaining(pathCoverage));
-		OutputData output = outputReader.readOutput();
-		return output.getDataSet().getCoveredData();
+		Message output = outputReader.readOutput(-1);
+		return null;
 	}
 
 	private boolean printErrorStream(InputStream error) {
@@ -96,4 +100,6 @@ public class PythonCommunicator {
     	
     	return true;
 	}
+
+	
 }

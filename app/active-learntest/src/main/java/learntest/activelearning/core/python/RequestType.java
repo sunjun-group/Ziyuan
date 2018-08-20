@@ -10,5 +10,6 @@ public enum RequestType {
 	$INPUT_OF_BRANCH, 
 	$TRAINING_FINISH,
 	$REQUEST_LABEL,
-	$RECEIVED
+	$RECEIVED, 
+	$SEND_LABEL
 }
