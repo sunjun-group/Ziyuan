@@ -11,6 +11,9 @@ package evosuite.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import sav.common.core.Constants;
+import sav.common.core.utils.ClassUtils;
+
 /**
  * @author LLT
  *
@@ -58,8 +61,9 @@ public class TargetClass {
 	}
 
 	public String generatePackage(int i) {
-		String pkg = new StringBuilder().append(classMethods.get(i)).append(methodStartLines.get(i)).toString();
-		return org.apache.commons.lang3.StringUtils.lowerCase(pkg);
+		return ClassUtils.getPackageName(className);
+//		String pkg = new StringBuilder().append(classMethods.get(i)).append(methodStartLines.get(i)).toString();
+//		return org.apache.commons.lang3.StringUtils.lowerCase(pkg);
 	}
 
 }
