@@ -41,6 +41,11 @@ public class Message {
 		this.requestType = requestType;
 	}
 	
+	public static Message parseTrainingFinish(BufferedReader br) {
+		Message message = new Message(RequestType.$TRAINING_FINISH);
+		return message;
+	}
+	
 	public static Message parseUnlabeledDataPoints(BufferedReader br) {
 		String jsonStr;
 		try {
@@ -96,5 +101,7 @@ public class Message {
 	public void setMessageBody(Object message) {
 		this.messageBody = message;
 	}
+
+	
 
 }

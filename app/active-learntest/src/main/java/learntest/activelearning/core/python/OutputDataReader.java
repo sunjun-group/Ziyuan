@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import sav.common.core.utils.SingleTimer;
 import sav.settings.SAVExecutionTimeOutException;
-import sav.strategies.vm.VMRunner;
 import sav.strategies.vm.interprocess.ServerOutputReader;
 import sav.strategies.vm.interprocess.python.PythonVmRunner;
 
@@ -52,6 +51,10 @@ public class OutputDataReader extends ServerOutputReader {
 			break;
 		case $REQUEST_LABEL:
 			readOutput = Message.parseUnlabeledDataPoints(br);
+			ready();
+			break;
+		case $TRAINING_FINISH:
+			readOutput = Message.parseTrainingFinish(br);
 			ready();
 			break;
 		default:

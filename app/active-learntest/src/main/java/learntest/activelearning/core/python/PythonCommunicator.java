@@ -33,6 +33,12 @@ public class PythonCommunicator {
 		vmConfig.setPythonHome("C:\\Program Files\\Python36\\python.exe");
 		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\nn_learntest.py");
 		vmRunner.start(vmConfig);
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Message requestTraining(Branch branch, List<TestInputData> positiveData, 
@@ -64,11 +70,11 @@ public class PythonCommunicator {
 		this.timeout = timeout;
 	}
 	
-	public List<double[]> boundaryRemaining(Dataset pathCoverage) {
-		inputWriter.send(InputData.forBoundaryRemaining(pathCoverage), vmRunner);
-		Message output = outputReader.readOutput(-1, vmRunner);
-		return null;
-	}
+//	public List<double[]> boundaryRemaining(Dataset pathCoverage) {
+//		inputWriter.send(InputData.forBoundaryRemaining(pathCoverage), vmRunner);
+//		Message output = outputReader.readOutput(-1, vmRunner);
+//		return null;
+//	}
 
 	private boolean printErrorStream(InputStream error) {
 		BufferedReader reader = new BufferedReader (new InputStreamReader(error));
