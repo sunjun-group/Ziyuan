@@ -35,13 +35,18 @@ public class InputDataWriter extends ServerInputWriter {
 	public void send(InputData input) {
 		while(!isWaiting()) {
 			// wait for the old data to be written.
+			checkState();
 		}
 		synchronized (state) {
-			if (isClosed()) {
-				throw new IllegalStateException("InputWriter is closed!");
-			}
+			checkState();
 			this.inputData = input;
 			ready(); // ready to write
+		}
+	}
+
+	private void checkState() {
+		if (isClosed()) {
+			throw new IllegalStateException("InputWriter is already closed!");
 		}
 	}
 	

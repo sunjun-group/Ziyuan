@@ -97,7 +97,9 @@ public class InterprocessVmRunner extends VMRunner {
 					IOUtils.closeQuietly(br);
 					IOUtils.closeQuietly(is);
 				}
-				
+				if (!isProcessRunning() && closeStreamsOnStop) {
+					outputReader.close();
+				}
 			}
 		}).start();
 	}
@@ -121,6 +123,9 @@ public class InterprocessVmRunner extends VMRunner {
 					}
 				} finally {
 					IOUtils.closeQuietly(outputStream);
+				}
+				if (!isProcessRunning() && closeStreamsOnStop) {
+					inputWriter.close();
 				}
 			}
 		});
