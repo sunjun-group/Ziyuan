@@ -11,7 +11,6 @@ package evosuite.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import sav.common.core.Constants;
 import sav.common.core.utils.ClassUtils;
 
 /**

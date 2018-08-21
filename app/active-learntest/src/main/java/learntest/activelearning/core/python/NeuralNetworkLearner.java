@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONObject;
+import java.util.Map.Entry;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
@@ -20,6 +19,7 @@ import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
+import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -99,8 +99,7 @@ public class NeuralNetworkLearner {
 							}
 						}
 					}
-				}
-				else{
+				} else {
 					node = null;
 				}
 			}
@@ -135,16 +134,13 @@ public class NeuralNetworkLearner {
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
 					points.values, points.varList);
 			
-			int start = this.testsuite.getInputData().size();
-			int length = newSuite.getInputData().size();
-			
 			this.testsuite.addTestCases(newSuite);
 			
 			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
 			
-			for(int i=start; i<=start+length-1; i++){
+			for (String testcase : newSuite.getJunitTestcases()) {
 //				TestInputData input = this.testsuite.getInputData().get(i);
-				if(branchNode.getCoveredTestcases().contains(i)){
+				if(branchNode.getCoveredTestcases().contains(testcase)){
 					points.getLabels().add(true);
 				}
 				else{
@@ -162,12 +158,12 @@ public class NeuralNetworkLearner {
 	private List<TestInputData> retrieveNegativeInputs(Branch branch, CoverageSFNode node) {
 		List<TestInputData> negativeInputs = new ArrayList<>();
 		
-		CoverageSFNode childNode = this.testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
+		CoverageSFNode childNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
 		
-		List<Integer> inputIndexes = node.getCoveredTestcasesOnBranches().get(childNode);
-		for(int i=0; i<this.testsuite.getInputData().size(); i++){
-			if(inputIndexes!=null && !inputIndexes.contains(i)){
-				negativeInputs.add(this.testsuite.getInputData().get(i));
+		List<String> coveredTestcases = CollectionUtils.nullToEmpty(node.getCoveredTestcasesOnBranches().get(childNode));
+		for (Entry<String, TestInputData> inputEntry : testsuite.getInputData().entrySet()) {
+			if (!coveredTestcases.contains(inputEntry.getKey())) {
+				negativeInputs.add(inputEntry.getValue());
 			}
 		}
 		
@@ -216,9 +212,8 @@ public class NeuralNetworkLearner {
 							inputData, vars);
 					this.testsuite.addTestCases(newSuite);
 					
-					TestInputData newInput = newSuite.getInputData().get(0);
+					TestInputData newInput = newSuite.getInputData().values().iterator().next();
 					list.add(newInput);
-					
 					if(isCoverBranch(newSuite, newInput, branch)){
 						break;
 					}
@@ -312,27 +307,24 @@ public class NeuralNetworkLearner {
 		return true;
 	}
 
-	public Map<Branch, List<TestInputData>> buildBranchTestInputMap(List<TestInputData> testInputs,
-			CoverageSFlowGraph coverageSFlowGraph){
+	public Map<Branch, List<TestInputData>> buildBranchTestInputMap(Map<String, TestInputData> inputData,
+			CoverageSFlowGraph coverageSFlowGraph) {
 		Map<Branch, List<TestInputData>> map = new HashMap<>();
 		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
 			for (CoverageSFNode branchNode : node.getBranches()) {
 				List<TestInputData> list = new ArrayList<>();
 				Branch branch = new Branch(node.getCvgIdx(), branchNode.getCvgIdx());
-				
-				List<Integer> coveredTcs = node.getCoveredTestcasesOnBranches().get(branchNode);
-				if (coveredTcs != null) {
-					for(Integer inputID: coveredTcs){
-						list.add(testInputs.get(inputID));
+				List<String> coveredTcs = node.getCoveredTestcasesOnBranches().get(branchNode);
+				for (String testcase : CollectionUtils.nullToEmpty(coveredTcs)) {
+					TestInputData testInput = inputData.get(testcase);
+					if (testInput != null) {
+						list.add(testInput);
 					}
 				}
 				map.put(branch, list);
-				
 			}
 		}
-		
 		return map;
-		
 	}
 	
 	private Tester tester;

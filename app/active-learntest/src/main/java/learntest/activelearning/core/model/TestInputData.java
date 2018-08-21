@@ -5,11 +5,12 @@ import java.util.Map;
 import icsetlv.common.dto.BreakpointValue;
 
 public class TestInputData {
+	private String testcase;
 	private BreakpointValue inputValue;
 	private Map<Integer, Double> conditionVariationMap;
 
-	public TestInputData(BreakpointValue inputValue, Map<Integer, Double> conditionVariationMap) {
-		super();
+	public TestInputData(String testcase, BreakpointValue inputValue, Map<Integer, Double> conditionVariationMap) {
+		this.testcase = testcase;
 		this.inputValue = inputValue;
 		this.conditionVariationMap = conditionVariationMap;
 	}
@@ -24,5 +25,9 @@ public class TestInputData {
 
 	public String toString(){
 		return inputValue.toString();
+	}
+	
+	public String getTestcase() {
+		return testcase;
 	}
 }

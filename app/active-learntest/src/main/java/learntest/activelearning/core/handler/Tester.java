@@ -143,7 +143,7 @@ public class Tester {
 		testSuite.setCoverageGraph(coverageOutput.getCoverageGraph());
 		
 		/* transfer input data */
-		Map<Integer, TestInputData> inputDataMap = transferInputData(coverageOutput.getInputData());
+		Map<Integer, TestInputData> inputDataMap = transferInputData(coverageOutput);
 		List<TestInputData> inputData = new ArrayList<>(testSuite.getJunitTestcases().size());
 		for (int i = 0; i < testSuite.getJunitTestcases().size(); i++) {
 			TestInputData input = inputDataMap.get(i);
@@ -153,7 +153,9 @@ public class Tester {
 		return testSuite;
 	}
 	
-	private Map<Integer, TestInputData> transferInputData(Map<Integer, List<MethodExecutionData>> inputData) {
+	private Map<Integer, TestInputData> transferInputData(CoverageOutput coverageOutput) {
+		Map<Integer, List<MethodExecutionData>> inputData = coverageOutput.getInputData();
+		List<String> testcases = coverageOutput.getCoverageGraph().getCoveredTestcases();
 		Map<Integer, TestInputData> resultMap = new HashMap<>();
 		if (inputData == null) {
 			return resultMap;
@@ -165,7 +167,8 @@ public class Tester {
 			for (VarValue value : methodInputValue.getChildren()) {
 				inputValue.add(transfer(value));
 			}
-			resultMap.put(testIdx, new TestInputData(inputValue, testInputs.getConditionVariationMap()));
+			resultMap.put(testIdx,
+					new TestInputData(testcases.get(testIdx), inputValue, testInputs.getConditionVariationMap()));
 		}
 		return resultMap;
 	}
