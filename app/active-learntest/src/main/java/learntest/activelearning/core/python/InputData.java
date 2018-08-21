@@ -59,7 +59,7 @@ public class InputData /*implements IInputData*/ {
 	public static InputData createTrainingRequest(Branch branch, List<TestInputData> positiveData, 
 			List<TestInputData> negativeData) {
 		InputData inputData = new InputData();
-//		inputData.requestType = RequestType.TRAINING;
+		inputData.requestType = RequestType.$TRAINING;
 		inputData.obj.put(JsLabels.BRANCH_ID, branch.getBranchID());
 		
 		JSONArray positiveArray = transferToJsonArray(positiveData);
@@ -73,30 +73,25 @@ public class InputData /*implements IInputData*/ {
 	
 	public static InputData transferToJSON(DataPoints points) {
 		InputData inputData = new InputData();
-		
-		
-		JSONArray positiveArray = new JSONArray();
-		JSONArray negativeArray = new JSONArray();
+		inputData.requestType = RequestType.$SEND_LABEL;
+		JSONArray array = new JSONArray();
 		
 		for(int i=0; i<points.values.size(); i++){
+			JSONArray point = new JSONArray();
 			for(int j=0; j<points.varList.size(); j++){
 				ExecVar var = points.getVarList().get(j);
 				JSONObject jsonObj = new JSONObject();
-				jsonObj.put("NAME", var.getVarId());
-				jsonObj.put("VALUE", points.values.get(i)[j]);
-				jsonObj.put("TYPE", points.varList.get(j).getType());
-				
-				if(points.getLabels().get(i)){
-					positiveArray.put(jsonObj);
-				}
-				else{
-					negativeArray.put(jsonObj);
-				}
+				jsonObj.put(JsLabels.NAME, var.getVarId());
+				jsonObj.put(JsLabels.VALUE, points.values.get(i)[j]);
+				jsonObj.put(JsLabels.TYPE, points.varList.get(j).getType());
+				boolean label = points.getLabels().get(i);
+				jsonObj.put(JsLabels.LABEL, label);
+				point.put(jsonObj);
 			}
+			array.put(point);
 		}
 		
-		inputData.obj.put(JsLabels.POSITIVE_DATA, positiveArray);
-		inputData.obj.put(JsLabels.NEGATIVE_DATA, negativeArray);
+		inputData.obj.put(JsLabels.RESULT, array);
 		
 		return inputData;
 	}

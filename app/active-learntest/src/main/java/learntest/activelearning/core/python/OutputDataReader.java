@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import sav.common.core.utils.SingleTimer;
 import sav.settings.SAVExecutionTimeOutException;
+import sav.strategies.vm.VMRunner;
 import sav.strategies.vm.interprocess.ServerOutputReader;
+import sav.strategies.vm.interprocess.python.PythonVmRunner;
 
 /**
  * @author LLT
@@ -62,8 +64,15 @@ public class OutputDataReader extends ServerOutputReader {
 		readOutput = null;
 		waiting();
 	}
-	
-	public Message readOutput(long timeout) {
+
+	public Message readOutput(long timeout, PythonVmRunner vmRunner) {
+		
+		if(!vmRunner.getProcess().isAlive()){
+			return null;
+		}
+		
+		System.currentTimeMillis();
+		
 		SingleTimer timer = SingleTimer.start("read output");
 		if (timeout > 0) {
 			try {
@@ -74,7 +83,9 @@ public class OutputDataReader extends ServerOutputReader {
 			}
 		} else {
 			while (isWaiting()) {
-				// do nothing
+				if(!vmRunner.getProcess().isAlive()){
+					return null;
+				}
 			}
 		}
 		Message result = readOutput;

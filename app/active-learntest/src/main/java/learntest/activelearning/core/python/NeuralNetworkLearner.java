@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import icsetlv.common.dto.BreakpointValue;
@@ -130,7 +131,11 @@ public class NeuralNetworkLearner {
 		
 		//TODO
 		Message response = communicator.requestTraining(branch, positiveInputs, negativeInputs);
-		while(response.getRequestType()==RequestType.$REQUEST_LABEL){
+		if(response==null){
+			System.err.println("the python server is closed!");
+		}
+		
+		while(response!=null && response.getRequestType()==RequestType.$REQUEST_LABEL){
 			DataPoints points = (DataPoints) response.getMessageBody();
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
 					points.values, points.varList);
@@ -223,9 +228,9 @@ public class NeuralNetworkLearner {
 						break;
 					}
 					else{
-						double newFitness = newInput.getConditionVariationMap().get(decisionNode);
+						double newFitness = newInput.getConditionVariationMap().get(decisionNode.getCvgIdx());
 						if(newFitness < bestFitness){
-							bestFitness = newInput.getConditionVariationMap().get(decisionNode);
+							bestFitness = newInput.getConditionVariationMap().get(decisionNode.getCvgIdx());
 							amount *= 2;
 							continue;
 						}

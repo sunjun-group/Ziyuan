@@ -87,6 +87,8 @@ public class InterprocessVmRunner extends VMRunner {
 						while ((line = br.readLine()) != null) {
 							if (!outputReader.isClosed() && outputReader.isMatched(line)) {
 								outputReader.read(br);
+							} else {
+//								System.out.println(line);
 							}
 						}
 					} catch (IOException e) {

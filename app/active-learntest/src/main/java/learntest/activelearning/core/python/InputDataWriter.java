@@ -11,6 +11,7 @@ package learntest.activelearning.core.python;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import sav.strategies.vm.VMRunner;
 import sav.strategies.vm.interprocess.ServerInputWriter;
 
 /**
@@ -32,9 +33,12 @@ public class InputDataWriter extends ServerInputWriter {
 		waiting();
 	}
 	
-	public void send(InputData input) {
+	public void send(InputData input, VMRunner vmRunner) {
 		while(!isWaiting()) {
 			// wait for the old data to be written.
+			if(!vmRunner.getProcess().isAlive()){
+				return;
+			}
 		}
 		synchronized (state) {
 			if (isClosed()) {
