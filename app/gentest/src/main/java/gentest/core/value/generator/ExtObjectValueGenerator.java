@@ -22,6 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
 
@@ -31,6 +34,7 @@ import sav.common.core.utils.Randomness;
  *
  */
 public class ExtObjectValueGenerator extends ObjectValueGenerator {
+	private Logger log = LoggerFactory.getLogger(ExtObjectValueGenerator.class);
 	private List<Method> methodcalls;
 	
 	public ExtObjectValueGenerator(IType type, List<String> methodSigns) {
@@ -115,7 +119,9 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 		// executor.start(null);
 		executor.execute(variable);
 		// generate value for method call
+		long rerunDueToFail = 0;
 		for (Method method : methodcalls) {
+			long time = System.currentTimeMillis();
 			variable.newCuttingPoint();
 			doAppendMethod(variable, level, scopeId, false, method);
 			boolean pass = executor.execute(variable.getLastFragmentStmts());
@@ -127,8 +133,11 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 				executor.reset(variable.getFirstVarId());
 				// executor.start(null);
 				executor.execute(variable);
+				time = System.currentTimeMillis() - time;
+				rerunDueToFail += time;
 			}
 		}
+		log.debug(String.format("Rerun due to fail: %s ms", rerunDueToFail));
 	}
 
 }

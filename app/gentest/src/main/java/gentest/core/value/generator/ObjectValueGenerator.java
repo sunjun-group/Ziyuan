@@ -14,6 +14,9 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gentest.core.data.MethodCall;
 import gentest.core.data.statement.RConstructor;
 import gentest.core.data.statement.Rmethod;
@@ -31,6 +34,7 @@ import sav.common.core.utils.CollectionUtils;
  *
  */
 public class ObjectValueGenerator extends ValueGenerator {
+	private static Logger log = LoggerFactory.getLogger(ObjectValueGenerator.class);
 	private VariableRuntimeExecutor rtExecutor = new VariableRuntimeExecutor();
 	private IType selectedType;
 	
@@ -43,7 +47,8 @@ public class ObjectValueGenerator extends ValueGenerator {
 			throws SavException {
 		long start = System.currentTimeMillis();
 		long limit = 30 * 1000;
-		for (int i = 0; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
+		int i = 0;
+		for (; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
 			long now = System.currentTimeMillis();
 			if (now > start +limit) {
 				break;
@@ -70,6 +75,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 				variable.reset();
 			}
 		}
+		log.debug(String.format("Select constructor after %s trial [%s]", i + 1, variable.isEmpty() ? "unsuccessful" : "successful"));
 		if (variable.isEmpty()) {
 			selectedType = null;
 			/* we have to assign null to the obj */

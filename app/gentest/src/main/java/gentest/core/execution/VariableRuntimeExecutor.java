@@ -31,6 +31,8 @@ import gentest.core.data.variable.ISelectedVariable;
 import sav.common.core.utils.Assert;
 import sav.common.core.utils.CachePoolExecutionTimer;
 import sav.common.core.utils.ExecutionTimer;
+import sav.common.core.utils.SingleTimer;
+import sav.common.core.utils.TextFormatUtils;
 
 /**
  * @author LLT
@@ -113,6 +115,8 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 
 	@Override
 	public boolean visit(RConstructor stmt) {
+		SingleTimer timer = SingleTimer.start(String.format("Execute Constructor [%s (%s params)]",
+				stmt.getDeclaringClass().getName(), TextFormatUtils.printObj(stmt.getInputTypes())));
 		List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
 		for (int var : stmt.getInVarIds()) {
 			inputs.add(getExecData(var));
@@ -125,6 +129,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		} catch (Throwable e) {
 			onFail();
 		}
+		log.debug(timer.getResult());
 		return successful;
 	}
 	
