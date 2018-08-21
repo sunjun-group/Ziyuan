@@ -32,7 +32,9 @@ public class UnitTestSuite {
 	public void setInputData(List<TestInputData> inputData) {
 		this.inputDataMap = new HashMap<>();
 		for (TestInputData testInput : inputData) {
-			inputDataMap.put(testInput.getTestcase(), testInput);
+			if (testInput != null) {
+				inputDataMap.put(testInput.getTestcase(), testInput);
+			}
 		}
 		if (inputLearningMap == null) {
 			List<BreakpointValue> bkpValues = new ArrayList<>(inputData.size());
