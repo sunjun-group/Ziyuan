@@ -1,6 +1,7 @@
 package learntest.activelearning.core.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import icsetlv.common.dto.BreakpointValue;
@@ -17,7 +18,7 @@ public class LearningInputMapping {
 		this.learningVars = inputVars;
 	}
 
-	public List<List<ExecValue>> getLearningValue(List<TestInputData> inputData) {
+	public List<List<ExecValue>> getLearningValue(Collection<TestInputData> inputData) {
 		List<List<ExecValue>> learningInputValues = new ArrayList<>(inputData.size()); 
 		for (TestInputData singleInputData : inputData) {
 			learningInputValues.add(extractLearningValues(singleInputData.getInputValue()));

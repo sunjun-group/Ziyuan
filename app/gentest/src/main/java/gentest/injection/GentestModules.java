@@ -63,7 +63,12 @@ public class GentestModules extends AbstractModule {
 		}
 		bind(ClassLoader.class).annotatedWith(Names.named("prjClassLoader")).toInstance(getPrjClassLoader());
 		bind(IVariableStore.class).to(VariableCache.class);
-		bind(ISubTypesScanner.class).to(SubTypesScanner.class);
+		SubTypesScanner subTypesScanner = SubTypesScanner.getInstance();
+		if (subTypesScanner.getPrjClassLoader() != getPrjClassLoader()) {
+			subTypesScanner.clear();
+			subTypesScanner.setPrjClassLoader(getPrjClassLoader());
+		}
+		bind(ISubTypesScanner.class).toInstance(subTypesScanner);
 		bind(ITypeMethodCallStore.class).to(TypeMethodCallsCache.class);
 		bind(ITypeInitializerStore.class).to(TypeInitializerStore.class);
 		bind(ITypeCreator.class).to(VarTypeCreator.class);

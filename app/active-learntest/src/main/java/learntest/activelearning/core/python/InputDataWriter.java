@@ -39,13 +39,18 @@ public class InputDataWriter extends ServerInputWriter {
 			if(!vmRunner.getProcess().isAlive()){
 				return;
 			}
+			checkState();
 		}
 		synchronized (state) {
-			if (isClosed()) {
-				throw new IllegalStateException("InputWriter is closed!");
-			}
+			checkState();
 			this.inputData = input;
 			ready(); // ready to write
+		}
+	}
+
+	private void checkState() {
+		if (isClosed()) {
+			throw new IllegalStateException("InputWriter is already closed!");
 		}
 	}
 	

@@ -29,7 +29,6 @@ import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SignatureUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.common.core.utils.StringUtils;

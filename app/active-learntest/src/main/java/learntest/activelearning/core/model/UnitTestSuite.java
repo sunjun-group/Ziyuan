@@ -2,6 +2,7 @@ package learntest.activelearning.core.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,18 +23,19 @@ public class UnitTestSuite {
 	private String mainClass;
 	private List<File> junitfiles;
 	private List<String> junitTestcases;
-	private List<TestInputData> inputData; //inputData.get(i) might be null in case target method isn't even reached. 
+	private Map<String, TestInputData> inputDataMap; //inputData.get(i) might be null in case target method isn't even reached. 
 	private List<ExecVar> inputVars;
 	private Map<String, Sequence> testcaseSequenceMap;
 	private LearningInputMapping inputLearningMap;
 	private CoverageSFlowGraph coverageGraph;
 
-	public List<TestInputData> getInputData() {
-		return inputData;
-	}
-
 	public void setInputData(List<TestInputData> inputData) {
-		this.inputData = inputData;
+		this.inputDataMap = new HashMap<>();
+		for (TestInputData testInput : inputData) {
+			if (testInput != null) {
+				inputDataMap.put(testInput.getTestcase(), testInput);
+			}
+		}
 		if (inputLearningMap == null) {
 			List<BreakpointValue> bkpValues = new ArrayList<>(inputData.size());
 			for (TestInputData input : inputData) {
@@ -44,6 +46,10 @@ public class UnitTestSuite {
 			inputVars = BreakpointDataUtils.collectAllVars(bkpValues);
 			inputLearningMap = new LearningInputMapping(inputVars);
 		}
+	}
+	
+	public Map<String, TestInputData> getInputData() {
+		return inputDataMap;
 	}
 
 	public Map<String, Sequence> getTestcaseSequenceMap() {
@@ -99,7 +105,7 @@ public class UnitTestSuite {
 		this.junitClassNames.addAll(newTestSuite.getJunitClassNames());
 		this.junitfiles.addAll(newTestSuite.junitfiles);
 		this.junitTestcases.addAll(newTestSuite.junitTestcases);
-		this.inputData.addAll(newTestSuite.inputData);
+		this.inputDataMap.putAll(newTestSuite.inputDataMap);
 		if (this.testcaseSequenceMap == null) {
 			this.testcaseSequenceMap = newTestSuite.testcaseSequenceMap;
 		} else if (newTestSuite.testcaseSequenceMap != null) {
@@ -117,6 +123,6 @@ public class UnitTestSuite {
 	}
 	
 	public List<List<ExecValue>> getLearningInputValues() {
-		return inputLearningMap.getLearningValue(inputData);
+		return inputLearningMap.getLearningValue(inputDataMap.values());
 	}
 }

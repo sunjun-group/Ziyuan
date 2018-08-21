@@ -29,26 +29,23 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
-import gentest.injection.TestcaseGenerationScope;
 import gentest.main.GentestConstants;
 import sav.common.core.ModuleEnum;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.Randomness;
+import sav.common.core.utils.SingleTimer;
 
 /**
  * @author LLT
  *
  */
-@TestcaseGenerationScope
 public class SubTypesScanner implements ISubTypesScanner {
+	private static SubTypesScanner instance = new SubTypesScanner();
 	private static Logger log = LoggerFactory.getLogger(SubTypesScanner.class);
 	private LoadingCache<Class<?>, Set<Class<?>>> subTypesCache;
 	private LoadingCache<Class<?>[], Set<Class<?>>> subTypesBoundsCache;
-	@Inject @Named("prjClassLoader")
 	private ClassLoader prjClassLoader;
 	
 	static {
@@ -89,11 +86,13 @@ public class SubTypesScanner implements ISubTypesScanner {
 	}
 	
 	private Set<Class<?>> loadSubClasses(Class<?> key, FilterType... filters) {
+		SingleTimer timer = SingleTimer.start("LoadSubClass");
 		Reflections reflections = new Reflections(
 				ConfigurationBuilder.build(prjClassLoader).setExpandSuperTypes(false));
 		Set<?> subTypes = reflections.getSubTypesOf(key);
 		log.debug("Subtypes of {}: {}", key.getSimpleName(), subTypes);
 		Set<Class<?>> subClasses = filterAndSelect(subTypes, key, filters);
+		log.debug(timer.getResult());
 		return subClasses;
 	}
 
@@ -224,8 +223,6 @@ public class SubTypesScanner implements ISubTypesScanner {
 		return subTypes;
 	}
 	
-	
-	
 	public void clear() {
 		subTypesCache.cleanUp();
 	}
@@ -284,4 +281,15 @@ public class SubTypesScanner implements ISubTypesScanner {
 		return true;
 	}
 	
+	public static SubTypesScanner getInstance() {
+		return instance;
+	}
+	
+	public ClassLoader getPrjClassLoader() {
+		return prjClassLoader;
+	}
+	
+	public void setPrjClassLoader(ClassLoader prjClassLoader) {
+		this.prjClassLoader = prjClassLoader;
+	}
 }

@@ -83,6 +83,7 @@ public class OutputDataReader extends ServerOutputReader {
 			}
 		} else {
 			while (isWaiting()) {
+				checkState();
 				if(!vmRunner.getProcess().isAlive()){
 					return null;
 				}
@@ -94,8 +95,15 @@ public class OutputDataReader extends ServerOutputReader {
 		return result;
 	}
 
+	private void checkState() {
+		if (isClosed()) {
+			throw new IllegalStateException("OutputReader is already closed!");
+		}
+	}
+
 	private void waitingWithTimeout(SingleTimer timer, long timeout) throws SAVExecutionTimeOutException {
 		while (isWaiting()) {
+			checkState();
 			if (timer.getExecutionTime() > timeout) {
 				System.out.println("timeout!");
 				throw new SAVExecutionTimeOutException();
