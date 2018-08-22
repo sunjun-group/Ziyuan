@@ -2,11 +2,10 @@ package learntest.activelearning.core.python;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
+import java.util.Queue;
 import java.util.Map.Entry;
 
 import icsetlv.common.dto.BreakpointValue;
@@ -130,7 +129,6 @@ public class NeuralNetworkLearner {
 			return;
 		}
 		
-		//TODO
 		Message response = communicator.requestTraining(branch, positiveInputs, negativeInputs);
 		if(response==null){
 			System.err.println("the python server is closed!");
@@ -178,7 +176,29 @@ public class NeuralNetworkLearner {
 	}
 
 	private void generateInputByExplorationSearch(Branch parentBranch) {
-//		communicator.requestBundaryExploration(parentBranch);
+		Boolean hasModel = false;
+		Queue<Branch> queue = new LinkedList<>();
+		queue.add(parentBranch);
+//		while(!queue.isEmpty()){
+//			Message response0 = communicator.confirmModel(parentBranch);
+//			if(response0.getRequestType()!=RequestType.$CONFIRM_MODEL){
+//				return;
+//			}
+//			
+//			hasModel = (Boolean) response0.getMessageBody();
+//			
+//			if(hasModel){
+////				Message response1 = communicator.gener	
+//				break;
+//			}
+//			else{
+//				CoverageSFlowGraph graph = this.testsuite.getCoverageGraph();
+//				CoverageSFNode node = graph.getNodeList().get(parentBranch.getFromNodeIdx());
+//				
+//				List<Branch> newParentBranches = retrieveParents()
+//			}
+//		}
+		
 		
 	}
 

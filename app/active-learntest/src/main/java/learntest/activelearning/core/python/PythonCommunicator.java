@@ -32,6 +32,7 @@ public class PythonCommunicator {
 		PythonVmConfiguration vmConfig = new PythonVmConfiguration();
 		vmConfig.setPythonHome("C:\\Program Files\\Python36\\python.exe");
 		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\nn_learntest.py");
+//		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\test.py");
 		vmRunner.start(vmConfig);
 		
 		try {
@@ -45,6 +46,7 @@ public class PythonCommunicator {
 			List<TestInputData> negativeData){
 		InputData data = InputData.createTrainingRequest(branch, positiveData, negativeData);
 		inputWriter.send(data, vmRunner);
+//		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
 		return output;

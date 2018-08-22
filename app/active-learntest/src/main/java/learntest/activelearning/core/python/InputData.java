@@ -31,6 +31,7 @@ public class InputData /*implements IInputData*/ {
 		log.debug("write data: {}, {}", requestType, obj);
 		pw.println(String.valueOf(requestType));
 		pw.println(obj);
+//		pw.flush();
 	}
 	
 	public static InputData forBoundaryRemaining(Dataset pathCoverage) {

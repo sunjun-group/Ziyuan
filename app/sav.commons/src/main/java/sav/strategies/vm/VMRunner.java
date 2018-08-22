@@ -168,11 +168,14 @@ public class VMRunner {
 		try {
 			process = processBuilder.start();
 			setupErrorStream(process.getErrorStream(), sb);
+			
+			
 			/* Note: The input stream must be read if available to be closed, 
 			 * otherwise, the process will never end. So, keep doing this even if 
 			 * the printStream is not set */
 			setupInputStream(process.getInputStream(), new StringBuffer(), false);
 			setupOutputStream(process.getOutputStream());
+			
 //			executorService.
 			timer = null;
 			timerTask = null;
