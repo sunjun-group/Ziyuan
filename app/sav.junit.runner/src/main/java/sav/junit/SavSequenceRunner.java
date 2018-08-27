@@ -19,14 +19,18 @@ public class SavSequenceRunner extends SavSimpleRunner {
 		runner.rtExecutor = new RuntimeExecutor();
 		int i = 0;
 		for (Sequence sequence : sequences) {
-			String tc = tcs.get(i++);
-			int idx = tc.lastIndexOf(".");
-			runner.className = tc.substring(0, idx);
-			runner.methodName = tc.substring(idx + 1, tc.length());
-			runner.sequence = sequence;
-			timer.run(runner, timeout);
-			runner.$exitTest(runner.successful + ";" + runner.failureMessage, runner.className,
-					runner.methodName, runner.curThreadId);
+			try {
+				String tc = tcs.get(i++);
+				int idx = tc.lastIndexOf(".");
+				runner.className = tc.substring(0, idx);
+				runner.methodName = tc.substring(idx + 1, tc.length());
+				runner.sequence = sequence;
+				timer.run(runner, timeout);
+				runner.$exitTest(runner.successful + ";" + runner.failureMessage, runner.className,
+						runner.methodName, runner.curThreadId);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return runner;
 	}

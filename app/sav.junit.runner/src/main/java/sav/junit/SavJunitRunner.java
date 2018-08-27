@@ -59,14 +59,18 @@ public class SavJunitRunner implements TestRunner {
 	public static SavJunitRunner executeTestcases(JunitRunnerParameters params, IExecutionTimer timer) {
 		SavJunitRunner junitRunner = new SavJunitRunner();
 		for (String[] tc : params.getTestcases()) {
-			junitRunner.curThreadId = -1;
-			junitRunner.className = tc[0];
-			junitRunner.methodName = tc[1];
-			timer.run(junitRunner, params.getTimeout());
-			System.out.println("is successful? " + junitRunner.successful);
-			System.out.println(junitRunner.failureMessage);
-			junitRunner.$exitTest(junitRunner.successful + ";" + junitRunner.failureMessage, junitRunner.className,
-					junitRunner.methodName, junitRunner.curThreadId);
+			try {
+				junitRunner.curThreadId = -1;
+				junitRunner.className = tc[0];
+				junitRunner.methodName = tc[1];
+				timer.run(junitRunner, params.getTimeout());
+				System.out.println("is successful? " + junitRunner.successful);
+				System.out.println(junitRunner.failureMessage);
+				junitRunner.$exitTest(junitRunner.successful + ";" + junitRunner.failureMessage, junitRunner.className,
+						junitRunner.methodName, junitRunner.curThreadId);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return junitRunner;
 	}
