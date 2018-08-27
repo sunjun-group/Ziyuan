@@ -89,6 +89,8 @@ public class EvosuiteRunner {
 		vmConfig.getProgramArgs().clear();
 		vmConfig.addProgramArgs(dumpFile.getAbsolutePath());
 		vmConfig.addProgramArgs(StringUtils.join(EvosuiteInvoker.CMD_SEPRATOR, (Object[]) params.getCommandLine()));
+		//vmConfig.addProgramArgs("-Dtimeline_interval=1000");
+		vmConfig.addProgramArgs("-Dtimeline_budget=90000");
 		System.out.println(vmRunner.getCommandLinesString(vmConfig));
 		vmRunner.startAndWaitUntilStop(vmConfig);
 

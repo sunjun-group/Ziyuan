@@ -79,8 +79,8 @@ public class RunSingleProjectHandler extends AbstractHandler {
 		
 		LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
 		learntestSettings.setRunCoverageAsMethodInvoke(true);
-//		learntestSettings.setMethodExecTimeout(1000l);
-		learntestSettings.setMethodExecTimeout(-1);
+		learntestSettings.setMethodExecTimeout(1000l);
+//		learntestSettings.setMethodExecTimeout(-1);
 		learntestSettings.setCfgExtensionLayer(1);
 		EvosuitEvaluation evosuite = new EvosuitEvaluation(evosuiteConfig, learntestSettings);
 		evosuite.run(appClasspath, config, new evosuite.core.commons.IProgressMonitor() {
