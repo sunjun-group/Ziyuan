@@ -108,6 +108,7 @@ public class Configuration {
 				sb.append(infoLine).append("\n");
 			}
 		}
+		sb.append("Running time: ").append(result.runningTime).append("ms");
 		sb.append("------------------------------------------------------------------------------------------\n");
 		FileUtils.appendFile(coverageInfoLogFile, sb.toString());
 	}

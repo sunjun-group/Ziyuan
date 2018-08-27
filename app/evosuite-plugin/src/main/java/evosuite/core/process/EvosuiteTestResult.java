@@ -25,8 +25,9 @@ public class EvosuiteTestResult implements Serializable {
 	private Set<BranchInfo> uncoveredBranches;
 	private Set<BranchInfo> coveredBranches;
 	private String targetClass;
+	private long runningTime;
 
-	public static List<List<EvosuiteTestResult>> extract (List<List<TestGenerationResult>> result) {
+	public static List<List<EvosuiteTestResult>> extract (List<List<TestGenerationResult>> result, long runningTime) {
 		List<List<EvosuiteTestResult>> eResult = new ArrayList<List<EvosuiteTestResult>>(result.size());
 		for (List<TestGenerationResult> list : result) {
 			List<EvosuiteTestResult> eList = new ArrayList<>(list.size());
@@ -37,6 +38,7 @@ public class EvosuiteTestResult implements Serializable {
 				ele.uncoveredBranches = testGenerationResult.getUncoveredBranches();
 				ele.coveredBranches = testGenerationResult.getCoveredBranches();
 				ele.targetClass = testGenerationResult.getClassUnderTest();
+				ele.runningTime = runningTime;
 			}
 		}
 		return eResult;
@@ -66,4 +68,11 @@ public class EvosuiteTestResult implements Serializable {
 		this.targetClass = targetClass;
 	}
 
+	public long getRunningTime() {
+		return runningTime;
+	}
+
+	public void setRunningTime(long runningTime) {
+		this.runningTime = runningTime;
+	}
 }

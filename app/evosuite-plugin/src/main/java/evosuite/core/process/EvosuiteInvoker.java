@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.FileLock;
+import java.util.Arrays;
 import java.util.List;
 
 import org.evosuite.EvoSuite;
@@ -31,8 +32,10 @@ public class EvosuiteInvoker {
 	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
+		long runningTime = System.currentTimeMillis();
 		String filePath = args[0];
 		String[] evosuiteParams = args[1].split(CMD_SEPRATOR);
+		System.out.println(Arrays.toString(evosuiteParams));
 		EvoSuite evosuite = new EvoSuite();
 		List<List<TestGenerationResult>> result = (List<List<TestGenerationResult>>) evosuite
 				.parseCommandLine(evosuiteParams);
@@ -49,7 +52,8 @@ public class EvosuiteInvoker {
 			lock = fileStream.getChannel().lock();
 			bufferedStream = new BufferedOutputStream(fileStream);
 			outputWriter = new DataOutputStream(bufferedStream);
-			byte[] bytes = ByteConverter.convertToBytes(EvosuiteTestResult.extract(result));
+			runningTime = System.currentTimeMillis() - runningTime;
+			byte[] bytes = ByteConverter.convertToBytes(EvosuiteTestResult.extract(result, runningTime));
 			outputWriter.writeInt(bytes.length);
 			outputWriter.write(bytes);
 			outputWriter.flush();
@@ -60,7 +64,9 @@ public class EvosuiteInvoker {
 			close(fileStream);
 			close(bufferedStream);
 			close(outputWriter);
+			runningTime = System.currentTimeMillis() - runningTime;
 		}
+		System.out.println("Evosuite Running Time: " + runningTime);
 		System.out.println(END_TOKEN);
 	}
 

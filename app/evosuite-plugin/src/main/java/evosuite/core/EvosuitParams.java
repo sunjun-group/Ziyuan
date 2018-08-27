@@ -20,6 +20,8 @@ public class EvosuitParams {
 	private String baseDir;
 	private String method;
 	private int[] methodPosition;
+	private long timelineInterval;
+	private long searchBudget;
 
 	public String getTargetClass() {
 		return targetClass;
@@ -58,6 +60,12 @@ public class EvosuitParams {
 				.addArgument("class", targetClass).addArgument("projectCP", classpath)
 				.addArgument("base_dir", baseDir)
 				.addArgument("criterion", "BRANCH");
+		if (timelineInterval > 0) {
+			argBuilder.addOptionArgument("Dtimeline_interval=" + timelineInterval);
+		}
+		if (searchBudget > 0) {
+			argBuilder.addOptionArgument("Dsearch_budget=" + searchBudget);
+		}
 		return argBuilder.getArgArr();
 	}
 
@@ -67,5 +75,13 @@ public class EvosuitParams {
 
 	public int[] getMethodPosition() {
 		return methodPosition;
+	}
+
+	public void setTimelineInterval(long timelineInterval) {
+		this.timelineInterval = timelineInterval;
+	}
+	
+	public void setSearchBudget(long searchBudget) {
+		this.searchBudget = searchBudget;
 	}
 }

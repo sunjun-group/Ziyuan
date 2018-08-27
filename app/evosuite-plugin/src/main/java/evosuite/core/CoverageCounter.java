@@ -45,7 +45,6 @@ public class CoverageCounter {
 					result.getTargetMethodAsList(),
 					result.getTargetClassAsList(),
 					junitFilesInfo.junitClasses);
-			System.out.println(TextFormatUtils.printMap(cfgCoverage));
 			return cfgCoverage.values().iterator().next();
 		} catch (Exception e) {
 			e.printStackTrace();

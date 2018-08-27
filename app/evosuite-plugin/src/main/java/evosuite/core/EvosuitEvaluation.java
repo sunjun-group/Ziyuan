@@ -98,6 +98,7 @@ public class EvosuitEvaluation {
 						params.setMethod(targetClass.getMethods().get(i));
 						params.setMethodPosition(adaptor.getStartLine(line), adaptor.getEndLine(line));
 						params.setBaseDir(config.getEvoBaseDir());
+						params.setSearchBudget(90);
 						EvosuiteResult result = EvosuiteRunner.run(evosuiteConfig, params);
 						CoverageOutput graphCoverage = null;
 						CFGInstance cfgInstance = null;

@@ -29,7 +29,6 @@ import org.evosuite.result.BranchInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import evosuite.core.process.ByteConverter;
 import evosuite.core.process.EvosuiteInvoker;
 import evosuite.core.process.EvosuiteTestResult;
@@ -89,8 +88,6 @@ public class EvosuiteRunner {
 		vmConfig.getProgramArgs().clear();
 		vmConfig.addProgramArgs(dumpFile.getAbsolutePath());
 		vmConfig.addProgramArgs(StringUtils.join(EvosuiteInvoker.CMD_SEPRATOR, (Object[]) params.getCommandLine()));
-		//vmConfig.addProgramArgs("-Dtimeline_interval=1000");
-		vmConfig.addProgramArgs("-Dtimeline_budget=90000");
 		System.out.println(vmRunner.getCommandLinesString(vmConfig));
 		vmRunner.startAndWaitUntilStop(vmConfig);
 
@@ -117,6 +114,7 @@ public class EvosuiteRunner {
 					evoResult.uncoveredBranches = uncoveredBranches;
 					evoResult.coveredBranches = coveredBranches;
 					evoResult.branchCoverage = getBranchCoverage(coveredBranches, uncoveredBranches);
+					evoResult.runningTime = testGenerationResult.getRunningTime();
 					System.out.println("branch coverage: " + evoResult.branchCoverage);
 				}
 			}
@@ -174,6 +172,7 @@ public class EvosuiteRunner {
 		public Set<BranchInfo> coveredBranches;
 		public double branchCoverage;
 		public List<String> coverageInfo;
+		public long runningTime;
 		
 		public List<String> getTargetClassAsList() {
 			return Arrays.asList(targetClass);
