@@ -107,8 +107,8 @@ public class Configuration {
 			for (String infoLine : CollectionUtils.nullToEmpty(result.coverageInfo)) {
 				sb.append(infoLine).append("\n");
 			}
+			sb.append("Running time: ").append(result.runningTime).append("ms\n");
 		}
-		sb.append("Running time: ").append(result.runningTime).append("ms");
 		sb.append("------------------------------------------------------------------------------------------\n");
 		FileUtils.appendFile(coverageInfoLogFile, sb.toString());
 	}
