@@ -38,6 +38,7 @@ public class SavJunitRunnerDeployer {
 		System.out.println("Deploy testrunner.jar to " + resourceDir);
 		FileUtils.copyFileToFolder(jarDestFile , libsFolder, true);
 		System.out.println("Deploy testrunner.jar to " + libsFolder);
+		System.out.println("Finished!");
 	}
 	
 }

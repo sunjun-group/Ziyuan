@@ -31,7 +31,6 @@ public class RandomGenTest {
 
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings,
 			IProgressMonitor progressMonitor) throws Exception {
-		log.info("Run method: " + targetMethod.toString());
 		settings.setInitRandomTestNumber(1);
 		settings.setCfgExtensionLayer(1);
 		settings.setRunCoverageAsMethodInvoke(true);
@@ -62,6 +61,7 @@ public class RandomGenTest {
 				CoverageSFlowGraph newCoverageGraph;
 				do {
 					try {
+						log.info(String.format("Run method: %s, round %s", targetMethod.toString(), i));
 						long startTest = System.currentTimeMillis();
 						UnitTestSuite testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
 						endTime = System.currentTimeMillis();

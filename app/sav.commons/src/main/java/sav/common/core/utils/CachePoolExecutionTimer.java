@@ -8,12 +8,12 @@
 
 package sav.common.core.utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -32,14 +32,46 @@ import org.slf4j.LoggerFactory;
 public class CachePoolExecutionTimer extends ExecutionTimer {
 	private static Logger log = LoggerFactory.getLogger(CachePoolExecutionTimer.class);
 	private CustomizedThreadPoolExecutor executorService;
+	private Timer cleanUpTimer;
 	
 	protected CachePoolExecutionTimer(long defaultTimeout) {
 		super(defaultTimeout);
+		cleanUpTimer = new Timer();
+		cleanUpTimer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				threadFactory.checkTerminatedThreads();
+				long curTime = System.currentTimeMillis();
+				synchronized (abandonedThreads) {
+					for (Iterator<Thread> it = abandonedThreads.keySet().iterator(); it.hasNext();) {
+						try {
+							Thread thread = it.next();
+							if (thread != null && thread.isAlive()) {
+								if (abandonedThreads.get(thread) < curTime) {
+									log.debug("stop thread " + thread.getId());
+									thread.stop();
+									it.remove();
+									log.debug("after stopping thread..");
+								}
+							} else {
+								it.remove();
+							}
+						} catch (Throwable t) {
+							// ignore
+							log.debug("after stopping thread..");
+						}
+					}
+				}
+			}
+		}, 5000l, 5000l);
 	}
-
+	
 	@Override
 	public boolean run(Runnable target, long timeout) {
-		refreshExecutorService();
+		if (executorService == null) {
+			executorService = new CustomizedThreadPoolExecutor();
+		}
 		executorService.execute(target);
 		try {
 			executorService.awaitTermination(timeout, TimeUnit.MILLISECONDS);
@@ -48,54 +80,62 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 		}
 		return true;
 	}
-
-	private void refreshExecutorService() {
-		if (executorService == null) {
-			executorService = new CustomizedThreadPoolExecutor();
-		}
-	}
 	
-	private Map<Thread, Long> abandonedThreads = new HashMap<>();
+	private volatile Map<Thread, Long> abandonedThreads = new HashMap<>();
+	private CustomizedThreadFactory threadFactory = new CustomizedThreadFactory();
 	private class CustomizedThreadPoolExecutor extends ThreadPoolExecutor {
-		private Map<Thread, Long> cachedRunningThreads = new HashMap<>();
-		private Map<Runnable, Thread> runnableThreadMap = new HashMap<>();
 		
 		CustomizedThreadPoolExecutor() {
 			super(0, Integer.MAX_VALUE,
                     60L, TimeUnit.SECONDS,
-                    new SynchronousQueue<Runnable>());
+                    new SynchronousQueue<Runnable>(),
+                    threadFactory);
 		}
 
 		@Override
-		protected void beforeExecute(Thread t, Runnable r) {
-			cachedRunningThreads.put(t, System.currentTimeMillis());
-			runnableThreadMap.put(r, t);
-			super.beforeExecute(t, r);
-		}
-		
-		@Override
-		protected void afterExecute(Runnable r, Throwable t) {
-			Thread correspondingThread = runnableThreadMap.remove(r);
-			cachedRunningThreads.remove(correspondingThread);
-			super.afterExecute(r, t);
-		}
-		
-		@Override
 		public List<Runnable> shutdownNow() {
 			List<Runnable> runnables = super.shutdownNow();
-			for (Thread runningThread : cachedRunningThreads.keySet()) {
-				if (runningThread != null && runningThread.isAlive()) {
-					abandonedThreads.put(runningThread, cachedRunningThreads.get(runningThread));
+			long timeout = System.currentTimeMillis() + 1000l;
+			synchronized (abandonedThreads) {
+				synchronized (threadFactory.createdThreads) {
+					for (Thread runningThread : threadFactory.createdThreads) {
+						if (runningThread != null && runningThread.isAlive()) {
+							abandonedThreads.put(runningThread, timeout);
+						}
+					}
+					threadFactory.createdThreads.clear();
 				}
 			}
-			cachedRunningThreads.clear();
-			runnableThreadMap.clear();
 			return runnables;
 		}
 	}
 	
-	public boolean cleanUpThreads() {
-		if (executorService != null && !executorService.cachedRunningThreads.isEmpty()) {
+	private static class CustomizedThreadFactory implements ThreadFactory {
+		private ThreadFactory defautThreadFactory = Executors.defaultThreadFactory();
+		private volatile Set<Thread> createdThreads = new HashSet<>();
+		
+		@Override
+		public Thread newThread(Runnable r) {
+			Thread thread = defautThreadFactory.newThread(r);
+			createdThreads.add(thread);
+			return thread;
+		}
+		
+		public void checkTerminatedThreads() {
+			synchronized (createdThreads) {
+				for (Iterator<Thread> it = createdThreads.iterator(); it.hasNext();) {
+					Thread t = it.next();
+					if (!t.isAlive()) {
+						it.remove();
+					}
+				}
+			}
+		}
+	}
+	
+	public boolean cleanUpThreads() { 
+		threadFactory.checkTerminatedThreads();
+		if (executorService != null && !threadFactory.createdThreads.isEmpty()) {
 			shutdown();
 			return true;
 		}
@@ -107,20 +147,6 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 		if (executorService != null) {
 			executorService.shutdownNow();
 			executorService = null;
-			Timer timer = new Timer();
-			final Map<Thread, Long> threadsToStop = new HashMap<>(abandonedThreads);
-			timer.schedule(new TimerTask() {
-				
-				@Override
-				public void run() {
-					for (Thread thread : threadsToStop.keySet()) {
-						if (thread != null && thread.isAlive()) {
-							thread.stop();
-						}
-					}
-				}
-			}, 1000l);
-			abandonedThreads.clear();
 		}
 	}
 	
