@@ -9,6 +9,7 @@
 package evosuite.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cfgcoverage.jacoco.analysis.data.CfgCoverage;
 import evosuite.core.EvosuiteRunner.EvosuiteResult;
 import evosuite.core.EvosuiteTestcasesHandler.FilesInfo;
-import evosuite.core.commons.CoverageUtils;
 import evosuite.core.commons.IProgressMonitor;
+import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.settings.LearntestSettings;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
@@ -30,7 +30,6 @@ import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.SignatureUtils;
-import sav.common.core.utils.SingleTimer;
 import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.vm.JavaCompiler;
@@ -105,19 +104,21 @@ public class EvosuitEvaluation {
 						System.out.println();
 						if (result.targetMethod != null && result.targetClass != null) {
 							FilesInfo junitFilesInfo = evosuiteTcHandler.getEvosuiteTestcases(config, targetClass.generatePackage(i), result);
-							SingleTimer timer = SingleTimer.start("ZiyuanCoverage");
-							CfgCoverage coverage = coverageCounter.calculateCoverage(result, junitFilesInfo);
-							result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
-							System.out.println("Coverage calculated by Ziyuan: " + result.branchCoverage);
-							System.out.println(timer.getResult());
-							result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
-							System.out.println(StringUtils.newLineJoin(result.coverageInfo));
+//							SingleTimer timer = SingleTimer.start("ZiyuanCoverage");
+//							CfgCoverage coverage = coverageCounter.calculateCoverage(result, junitFilesInfo);
+//							result.branchCoverage = CoverageUtils.calculateCoverageByBranch(coverage);
+//							System.out.println("Coverage calculated by Ziyuan: " + result.branchCoverage);
+//							System.out.println(timer.getResult());
+//							result.coverageInfo = CoverageUtils.getBranchCoverageDisplayTexts(coverage, -1);
+//							System.out.println(StringUtils.newLineJoin(result.coverageInfo));
 							graphCoverage = coverageCounter.calculateCfgCoverage(result, junitFilesInfo, learntestSettings);
 							CFGUtility cfgUtility = new CFGUtility();
 							cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 									InstrumentationUtils.getClassLocation(result.targetClass, result.targetMethod),
 									learntestSettings.getCfgExtensionLayer());
 							cfgUtility.breakCircle(cfgInstance);
+							System.out.println(StringUtils.newLineJoin(CoverageUtils
+									.getBranchCoverageDisplayTexts(graphCoverage.getCoverageGraph(), cfgInstance)));
 						}
 						
 						config.updateResult(targetClass.getMethodFullName(i), line, result, graphCoverage, cfgInstance);

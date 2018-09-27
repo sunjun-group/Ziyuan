@@ -22,6 +22,39 @@ public class GraphCoverageCsvRecorder {
 		this.filePath = graphCoverageFilePath;
 	}
 
+//	public void recordAll(String classMethod, int line, CoverageOutput graphCoverage, EvosuiteResult result,
+//			CFGInstance cfgInstance) {
+//		CSVPrinter csvPrinter = null;
+//		BufferedWriter writer = null;
+//		try {
+//			File csvFile = new File(filePath);
+//			CSVFormat format = CSVFormat.EXCEL;
+//			if (!csvFile.exists()) {
+//				format = format.withHeader(Column.allColumns());
+//			}
+//			writer = new BufferedWriter(new FileWriter(csvFile, true));
+//			csvPrinter = new CSVPrinter(writer, format);
+//			String methodId = String.format("%s.%s", classMethod, line);
+//			double branchCoverage = -1;
+//			String coverageInfo = "";
+//			if (graphCoverage != null && graphCoverage.getCoverageGraph() != null) {
+//				branchCoverage = CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), methodId);
+//				coverageInfo = StringUtils.join(CoverageUtils.getBranchCoverageDisplayTexts(graphCoverage.getCoverageGraph(), cfgInstance),  "\n");
+//			}
+//			
+//			csvPrinter.printRecord(methodId, branchCoverage, 
+//					coverageInfo,
+//					result == null ? 0 : result.branchCoverage,
+//					result == null ? "" : StringUtils.join(result.coverageInfo, "\n"));
+//			csvPrinter.flush();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} finally {
+//			ResourceUtils.closeQuitely(csvPrinter);
+//			ResourceUtils.closeQuitely(writer);
+//		}
+//	}
+	
 	public void record(String classMethod, int line, CoverageOutput graphCoverage, EvosuiteResult result, CFGInstance cfgInstance) {
 		CSVPrinter csvPrinter = null;
 		BufferedWriter writer = null;
@@ -29,7 +62,7 @@ public class GraphCoverageCsvRecorder {
 			File csvFile = new File(filePath);
 			CSVFormat format = CSVFormat.EXCEL;
 			if (!csvFile.exists()) {
-				format = format.withHeader(Column.allColumns());
+				format = format.withHeader(Column.baseColumns());
 			}
 			writer = new BufferedWriter(new FileWriter(csvFile, true));
 			csvPrinter = new CSVPrinter(writer, format);
@@ -40,10 +73,9 @@ public class GraphCoverageCsvRecorder {
 				branchCoverage = CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), methodId);
 				coverageInfo = StringUtils.join(CoverageUtils.getBranchCoverageDisplayTexts(graphCoverage.getCoverageGraph(), cfgInstance),  "\n");
 			}
+			
 			csvPrinter.printRecord(methodId, branchCoverage, 
-					coverageInfo,
-					result == null ? 0 : result.branchCoverage,
-					result == null ? "" : StringUtils.join(result.coverageInfo, "\n"));
+					coverageInfo);
 			csvPrinter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -67,6 +99,14 @@ public class GraphCoverageCsvRecorder {
 				cols[i] = values[i].name();
 			}
 			return cols;
+		}
+		
+		public static String[] baseColumns() {
+			return new String[] {
+					target_method.name(),
+					graph_coverage.name(),
+					graph_coverage_info.name()
+			};
 		}
 	}
 }

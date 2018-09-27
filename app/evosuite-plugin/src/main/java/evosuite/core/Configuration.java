@@ -90,7 +90,7 @@ public class Configuration {
 	}
 
 	public void updateResult(String classMethod, int line, EvosuiteResult result, CoverageOutput graphCoverage, CFGInstance cfgInstance) {
-		writeToExcel(classMethod, line, result);
+//		writeToExcel(classMethod, line, result);
 		recorder.record(classMethod, line, graphCoverage, result, cfgInstance);
 		writeToCoverageInfoLog(classMethod, line, result);
 	}
