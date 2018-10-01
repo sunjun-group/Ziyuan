@@ -10,11 +10,10 @@ package sav.strategies.dto;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import sav.common.core.SystemVariables;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
 
 /**
@@ -23,7 +22,7 @@ import sav.common.core.utils.StringUtils;
  */
 public class AppJavaClassPath {
 	private String javaHome;
-	private Set<String> classpaths;
+	private List<String> classpaths;
 	private String workingDirectory; // project folder
 	/*
 	 * Note [AppJavaClassPath incompatible issue]: those three fields above
@@ -38,7 +37,7 @@ public class AppJavaClassPath {
 	private SystemPreferences preferences;
 
 	public AppJavaClassPath() {
-		classpaths = new HashSet<String>();
+		classpaths = new ArrayList<String>();
 		preferences = new SystemPreferences();
 	}
 
@@ -55,7 +54,7 @@ public class AppJavaClassPath {
 	}
 
 	public void addClasspaths(List<String> paths) {
-		classpaths.addAll(paths);
+		CollectionUtils.addIfNotNullNotExist(classpaths, paths);
 	}
 
 	public void addClasspath(String path) {
