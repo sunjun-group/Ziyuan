@@ -12,6 +12,7 @@ import sav.utils.IExecutionTimer;
 public class SavSequenceRunner extends SavSimpleRunner {
 	private Sequence sequence;
 	private RuntimeExecutor rtExecutor;
+	private String curThreadName;
 
 	public static SavSequenceRunner executeTestcases(List<Sequence> sequences, List<String> tcs, long timeout,
 			IExecutionTimer timer) {
@@ -26,6 +27,8 @@ public class SavSequenceRunner extends SavSimpleRunner {
 				runner.methodName = tc.substring(idx + 1, tc.length());
 				runner.sequence = sequence;
 				timer.run(runner, timeout);
+				System.out.println(String.format("[%s (id=%s)]: is successful? ", runner.curThreadName, runner.curThreadId, runner.successful));
+				System.out.println(runner.failureMessage);
 				runner.$exitTest(runner.successful + ";" + runner.failureMessage, runner.className,
 						runner.methodName, runner.curThreadId);
 			} catch (Exception e) {
@@ -39,8 +42,9 @@ public class SavSequenceRunner extends SavSimpleRunner {
 	public void run() {
 		try {
 			curThreadId = Thread.currentThread().getId();
-			rtExecutor.reset();
+			curThreadName = Thread.currentThread().getName();
 			$testStarted(className, methodName);
+			rtExecutor.reset();
 			for (Statement stmt : sequence.getStmts()) {
 				if (stmt instanceof Rmethod) {
 					((Rmethod) stmt).fillMissingMethodInfo();
@@ -50,7 +54,7 @@ public class SavSequenceRunner extends SavSimpleRunner {
 				}
 				stmt.accept(rtExecutor);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			failureMessage = e.getMessage();
 		}
 		$testFinished(className, methodName);

@@ -6,12 +6,11 @@
  *  Version:  $Revision: 1 $
  */
 
-package sav.common.core.utils;
+package sav.utils;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -22,54 +21,65 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author LLT
  *
  */
-public class CachePoolExecutionTimer extends ExecutionTimer {
-	private static Logger log = LoggerFactory.getLogger(CachePoolExecutionTimer.class);
-	private CustomizedThreadPoolExecutor executorService;
+public class CachePoolExecutionTimer implements IExecutionTimer {
+	private volatile CustomizedThreadPoolExecutor executorService;
+	private volatile Map<Thread, Long> abandonedThreads = new HashMap<>();
+	private CustomizedThreadFactory threadFactory = new CustomizedThreadFactory();
 	private Timer cleanUpTimer;
 	
-	protected CachePoolExecutionTimer(long defaultTimeout) {
-		super(defaultTimeout);
+	protected CachePoolExecutionTimer() {
 		cleanUpTimer = new Timer();
 		cleanUpTimer.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
 			public void run() {
-				threadFactory.checkTerminatedThreads();
+				refresh();
 				long curTime = System.currentTimeMillis();
 				synchronized (abandonedThreads) {
+//					System.out.println(TimeUtils.getCurrentTimeStamp());
+//					StringBuffer sb = new StringBuffer("Cleanup-Threads: ");
+//					for (Thread thread : abandonedThreads.keySet()) {
+//						sb.append(thread.getId()).append(", ");
+//					}
+//					System.out.println(sb.toString());
 					for (Iterator<Thread> it = abandonedThreads.keySet().iterator(); it.hasNext();) {
 						try {
 							Thread thread = it.next();
+							long timeToStop = abandonedThreads.get(thread);
 							if (thread != null && thread.isAlive()) {
-								if (abandonedThreads.get(thread) < curTime) {
-									String threadId = "Thread " + thread.getId();
-									log.debug("stop " + threadId);
-									thread.stop();
+//								System.out.println(String.format("Thread %s, time to stop: %s, curTime: %s",
+//										thread.getId(), timeToStop, curTime));
+								if (timeToStop < curTime) {
+									long threadId = thread.getId();
+									System.out.println(String.format("stop thread %s (%s)", threadId, thread.getName()));
+									try {
+										thread.stop();
+									} catch(Throwable ex) {
+										ex.printStackTrace(System.out);
+									}
+//									System.out.println(String.format("agent - thread %s stopped!", threadId));
 									it.remove();
-									log.debug(threadId + " stopped!");
 								}
 							} else {
 								it.remove();
 							}
 						} catch (Throwable t) {
 							// ignore
-							log.debug("after stopping thread..");
+							t.printStackTrace(System.out);
 						}
 					}
 				}
 			}
-		}, 5000l, 5000l);
+
+		}, 500l, 50l);
 	}
 	
 	@Override
-	public boolean run(Runnable target, long timeout) {
+	public boolean run(TestRunner target, long timeout) {
 		if (executorService == null) {
 			executorService = new CustomizedThreadPoolExecutor();
 		}
@@ -77,13 +87,12 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 		try {
 			executorService.awaitTermination(timeout, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
+			target.onTimeout();
 			return false;
 		}
 		return true;
 	}
 	
-	private volatile Map<Thread, Long> abandonedThreads = new HashMap<>();
-	private CustomizedThreadFactory threadFactory = new CustomizedThreadFactory();
 	private class CustomizedThreadPoolExecutor extends ThreadPoolExecutor {
 		
 		CustomizedThreadPoolExecutor() {
@@ -93,10 +102,8 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
                     threadFactory);
 		}
 
-		@Override
-		public List<Runnable> shutdownNow() {
-			List<Runnable> runnables = super.shutdownNow();
-			long timeout = System.currentTimeMillis() + 1000l;
+		public void cleanup() {
+			long timeout = System.currentTimeMillis() + 50l;
 			synchronized (abandonedThreads) {
 				synchronized (threadFactory.createdThreads) {
 					for (Thread runningThread : threadFactory.createdThreads) {
@@ -107,7 +114,6 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 					threadFactory.createdThreads.clear();
 				}
 			}
-			return runnables;
 		}
 	}
 	
@@ -134,21 +140,13 @@ public class CachePoolExecutionTimer extends ExecutionTimer {
 		}
 	}
 	
-	public boolean cleanUpThreads() { 
+	@Override
+	public void refresh() {
 		threadFactory.checkTerminatedThreads();
 		if (executorService != null && !threadFactory.createdThreads.isEmpty()) {
-			shutdown();
-			return true;
+			executorService.cleanup();
 		}
-		return false;
 	}
 
-	@Override
-	public void shutdown() {
-		if (executorService != null) {
-			executorService.shutdownNow();
-			executorService = null;
-		}
-	}
 	
 }

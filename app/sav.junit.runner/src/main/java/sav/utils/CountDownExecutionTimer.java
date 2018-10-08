@@ -8,8 +8,10 @@
 
 package sav.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,6 +26,7 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 	private static final long CONCESSION_TIME = 50l; 
 	private static Timer cleanUpTimer;
 	private static volatile Map<Thread, Long> abandonedThreads = new HashMap<>();
+	static int i = 0;
 	
 	static {
 		cleanUpTimer = new Timer();
@@ -31,39 +34,43 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 			
 			@Override
 			public void run() {
+				long curTime = System.currentTimeMillis();
+				List<Thread> queueThreads = new ArrayList<Thread>();
 				synchronized (abandonedThreads) {
-					long curTime = System.currentTimeMillis();
-					synchronized (abandonedThreads) {
-						for (Iterator<Thread> it = abandonedThreads.keySet().iterator(); it.hasNext();) {
-							try {
-								Thread thread = it.next();
-								long timeToStop = abandonedThreads.get(thread);
-								if (thread != null && thread.isAlive()) {
-									System.out.println(String.format("Thread %s, time to stop: %s, curTime: %s",
-											thread.getId(), timeToStop, curTime));
-									if (timeToStop < curTime) {
-										long threadId = thread.getId();
-										System.out.println("stop thread " + threadId);
-										try {
-											thread.stop();
-										} catch(Exception ex) {
-											ex.printStackTrace();
-										}
-										it.remove();
-										System.out.println(String.format("thread %s stopped!", threadId));
-									}
-								} else {
-									it.remove();
-								}
-							} catch (Throwable t) {
-								// ignore
-							}
+					for (Iterator<Thread> it = abandonedThreads.keySet().iterator(); it.hasNext();) {
+						Thread thread = it.next();
+						long timeToStop = abandonedThreads.get(thread);
+						if (timeToStop < curTime) {
+							queueThreads.add(thread);
+							it.remove();
 						}
+					}
+				}
+//					System.out.println(String.format("CleanUpThread: %s at %s (%s threads)", i++, TimeUtils.getCurrentTimeStamp(), abandonedThreads.size()));
+//					StringBuffer sb = new StringBuffer("Threads: ");
+//					for (Thread thread : abandonedThreads.keySet()) {
+//						sb.append(thread.getId()).append(", ");
+//					}
+//					System.out.println(sb.toString());
+				for (Thread thread : queueThreads) {
+					try {
+						if (thread != null && thread.isAlive()) {
+							long threadId = thread.getId();
+							System.out.println(String.format("stop thread %s (%s)", threadId, thread.getName()));
+							try {
+								thread.stop();
+							} catch(Throwable ex) {
+								ex.printStackTrace(System.out);
+							}
+							System.out.println(String.format("thread %s stopped!", threadId));
+						}
+					} catch (Throwable t) {
+						// ignore
 					}
 				}
 			}
 			
-		}, 1000l, 5000l);
+		}, 100l, 100l);
 	}
 	
 	@Override
@@ -77,6 +84,7 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 			public void run() {
 				if (thread.isAlive()) {
 					executor.isSuccess = false;
+					target.onTimeout();
 					executor.latch.countDown();
 					/*
 					 * by calling interrupt(), thread with
@@ -88,7 +96,6 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 					synchronized (abandonedThreads) {
 						abandonedThreads.put(thread, System.currentTimeMillis() + CONCESSION_TIME);
 					}
-					target.onTimeout();
 				}
 			}
 		}, timeout);
@@ -98,7 +105,9 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 		} catch (InterruptedException e) {
 			// do nothing
 		}
-		timer.cancel();
+		if (executor.isSuccess) {
+			timer.cancel();
+		}
 		return executor.isSuccess;
 	}
 	
@@ -123,7 +132,7 @@ public class CountDownExecutionTimer implements IExecutionTimer {
 	}
 
 	@Override
-	public void shutdown() {
+	public void refresh() {
 		
 	}
 }

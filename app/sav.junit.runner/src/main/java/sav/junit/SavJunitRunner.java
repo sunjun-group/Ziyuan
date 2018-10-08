@@ -33,6 +33,7 @@ public class SavJunitRunner implements TestRunner {
 	private String className;
 	private String methodName;
 	private long curThreadId = -1;
+	private String curThreadName = "";
 	
 	public SavJunitRunner(){
 		jUnitCore = new JUnitCore();
@@ -66,6 +67,7 @@ public class SavJunitRunner implements TestRunner {
 				timer.run(junitRunner, params.getTimeout());
 				System.out.println("is successful? " + junitRunner.successful);
 				System.out.println(junitRunner.failureMessage);
+				System.out.println("Thread-name=" + junitRunner.curThreadName);
 				junitRunner.$exitTest(junitRunner.successful + ";" + junitRunner.failureMessage, junitRunner.className,
 						junitRunner.methodName, junitRunner.curThreadId);
 			} catch (Exception e) {
@@ -81,6 +83,7 @@ public class SavJunitRunner implements TestRunner {
 		Request request;
 		try {
 			curThreadId = Thread.currentThread().getId();
+			curThreadName = Thread.currentThread().getName();
 			request = Request.method(Class.forName(className), methodName);
 			Result result = jUnitCore.run(request);
 			successful = result.wasSuccessful();

@@ -2,6 +2,7 @@ package sav.utils;
 
 public class ExecutionTimerUtils {
 	private ExecutionTimerUtils() {}
+	private static IExecutionTimer execTimer;
 	
 	public static IExecutionTimer getExecutionTimer(boolean enableTimeout) {
 		IExecutionTimer timer;
@@ -15,12 +16,15 @@ public class ExecutionTimerUtils {
 				}
 				
 				@Override
-				public void shutdown() {
+				public void refresh() {
 					
 				}
 			};
 		} else {
-			timer = new CountDownExecutionTimer();
+			if (execTimer == null) {
+				execTimer = new CachePoolExecutionTimer();
+			}
+			timer = execTimer;
 		}
 		return timer;
 	}
