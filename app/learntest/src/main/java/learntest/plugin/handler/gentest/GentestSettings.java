@@ -55,7 +55,7 @@ public class GentestSettings {
 			appClasspath.setTarget(outputPath);
 			appClasspath.setTestTarget(outputPath);
 			/* create l2t-test folder in target project */
-			String testSrc = IProjectUtils.createSourceFolder(javaProject, "l2t_test");
+			String testSrc = IProjectUtils.createFolder(javaProject, "l2t_test");
 			appClasspath.setTestSrc(testSrc);
 			appClasspath.addClasspaths(IProjectUtils.getPrjectClasspath(javaProject));
 			String projectPath = IResourceUtils.relativeToAbsolute(javaProject.getPath()).toOSString();

@@ -194,6 +194,15 @@ public class IProjectUtils {
 		addNewSourceFolderIntoClasspath(javaProject, folder);
 		return folder.getLocation().toOSString();
 	}
+	
+	public static String createFolder(IJavaProject javaProject, String name)
+			throws CoreException {
+		IFolder folder = javaProject.getProject().getFolder(name);
+		if (!folder.exists()) {
+			folder.create(false, true, null);
+		}
+		return folder.getLocation().toOSString();
+	}
 
 	private static void addNewSourceFolderIntoClasspath(IJavaProject javaProject, IFolder folder)
 			throws JavaModelException {
