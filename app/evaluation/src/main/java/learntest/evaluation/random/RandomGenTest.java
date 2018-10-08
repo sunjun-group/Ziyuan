@@ -49,16 +49,20 @@ public class RandomGenTest {
 		long startTime = 0;
 		long endTime = 0;
 		int interval = 10000;
-		int numInterval = 9;
+		int numInterval = 90;
 		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, outputFolder + "/coverage_progress.xlsx", outputFolder + "/coverage_casenumber.xlsx");
 		
 		log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageSFlowGraph, cfgInstance), "\n"));
 		progressRecorder.setCoverageGraph(coverageSFlowGraph);
-		SingleTimer timer = SingleTimer.start("Cleanup Thread");
+		SingleTimer gentestTimer = SingleTimer.start("Gentest-Cleanup Thread");
+		SingleTimer coverageTimer = SingleTimer.start("Coverage-timer");
 		try {
 			for (int i = 0; i < numInterval; i++) {
 				startTime = System.currentTimeMillis();
 				CoverageSFlowGraph newCoverageGraph;
+				if (progressMonitor.isCanceled()) {
+					break;
+				}
 				do {
 					try {
 						log.info(String.format("Run method: %s, round %s", targetMethod.toString(), i));
@@ -79,18 +83,26 @@ public class RandomGenTest {
 						log.debug(e.getMessage());
 						// ignore
 						endTime = System.currentTimeMillis();
+						tester.reset();
 					}
-					if (timer.getExecutionTime() > 2000) {
+					if (gentestTimer.getExecutionTime() > 2000) {
 						GentestService.cleanupThread();
-						timer.restart();
+						gentestTimer.restart();
+					}
+					if (coverageTimer.getExecutionTime() > 60000) {
+						tester.reset();
+						coverageTimer.restart();
+					}
+					if (progressMonitor.isCanceled()) {
+						break;
 					}
 				} while (endTime - startTime <= interval);
 				progressRecorder.updateProgress();
 			}
-			log.debug(timer.getResult());
+			log.debug(gentestTimer.getResult());
 			progressRecorder.store();
 		} finally {
-			tester.dispose();
+			tester.reset();
 			GentestService.reset();
 		}
 		log.debug("Finish RandomGenTest");

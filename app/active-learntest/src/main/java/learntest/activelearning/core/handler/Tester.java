@@ -243,7 +243,7 @@ public class Tester {
 		this.cvgType = cvgType;
 	}
 	
-	public void dispose() {
+	public void reset() {
 		coverageCounter.stop();
 	}
 }
