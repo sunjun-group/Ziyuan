@@ -22,7 +22,7 @@ public class ExecutionTimerUtils {
 			};
 		} else {
 			if (execTimer == null) {
-				execTimer = new CachePoolExecutionTimer();
+				execTimer = new CountDownExecutionTimer();
 			}
 			timer = execTimer;
 		}

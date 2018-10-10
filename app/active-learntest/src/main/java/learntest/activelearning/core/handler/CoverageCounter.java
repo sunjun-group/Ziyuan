@@ -39,7 +39,7 @@ public class CoverageCounter {
 	public CoverageCounter(LearntestSettings settings, boolean collectConditionVariation, AppJavaClassPath appClasspath) {
 		this.agentJarPath = settings.getResources().getMicrobatInstrumentationJarPath();
 		this.cdgLayer = settings.getCfgExtensionLayer();
-		this.methodExecTimeout = settings.getMethodExecTimeout() + 80l; // allow to run a little longer due to coverage collection process.
+		this.methodExecTimeout = settings.getMethodExecTimeout() + 60l; // allow to run a little longer due to coverage collection process.
 		this.savJunitRunnerJarPath = settings.getResources().getSavJunitRunnerJarPath();
 		this.collectConditionVariation = collectConditionVariation;
 		this.runCoverageAsMethodInvoke = settings.isRunCoverageAsMethodInvoke();
