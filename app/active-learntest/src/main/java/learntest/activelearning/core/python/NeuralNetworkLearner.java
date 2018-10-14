@@ -202,7 +202,13 @@ public class NeuralNetworkLearner {
 		
 	}
 
-	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode parent) {
+	/**
+	 * the branch <code>branch</code> is a branch of <code>decisionCDGNode</code> node  
+	 * @param branch
+	 * @param decisionCDGNode
+	 * @return
+	 */
+	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode decisionCDGNode) {
 		Branch siblingBranch = findSiblingBranch(branch);
 		if(siblingBranch==null){
 			return new ArrayList<>();			
@@ -213,9 +219,9 @@ public class NeuralNetworkLearner {
 			return new ArrayList<>();
 		}
 		else{
-			CoverageSFNode decisionNode = parent.getCfgNode();
-			TestInputData closestInput = findClosestInput(otherInputs, decisionNode);
-			double bestFitness = closestInput.getConditionVariationMap().get(decisionNode.getCvgIdx());
+//			CoverageSFNode decisionNode = decisionCDGNode.getCfgNode();
+			TestInputData closestInput = findClosestInput(otherInputs, decisionCDGNode);
+			double bestFitness = closestInput.getFitness(decisionCDGNode);
 			
 			List<BreakpointValue> l = new ArrayList<>();
 			l.add(closestInput.getInputValue());
@@ -245,9 +251,9 @@ public class NeuralNetworkLearner {
 						break;
 					}
 					else{
-						double newFitness = newInput.getConditionVariationMap().get(decisionNode.getCvgIdx());
+						double newFitness = newInput.getFitness(decisionCDGNode);
 						if(newFitness < bestFitness){
-							bestFitness = newInput.getConditionVariationMap().get(decisionNode.getCvgIdx());
+							bestFitness = newInput.getFitness(decisionCDGNode);
 							amount *= 2;
 							continue;
 						}
@@ -288,16 +294,16 @@ public class NeuralNetworkLearner {
 		return false;
 	}
 
-	private TestInputData findClosestInput(List<TestInputData> otherInputs, CoverageSFNode decisionNode) {
+	private TestInputData findClosestInput(List<TestInputData> otherInputs, CDGNode decisionCDGNode) {
 		TestInputData returnInput = null;
 		double closestValue = -1;
 		for(TestInputData input: otherInputs){
 			if(returnInput==null){
 				returnInput = input;
-				closestValue = input.getConditionVariationMap().get(decisionNode.getCvgIdx());
+				closestValue = input.getFitness(decisionCDGNode);
 			}
 			else{
-				Double value = input.getConditionVariationMap().get(decisionNode.getCvgIdx());
+				Double value = input.getFitness(decisionCDGNode);;
 				if(closestValue>value){
 					closestValue = value;
 					returnInput = input;
