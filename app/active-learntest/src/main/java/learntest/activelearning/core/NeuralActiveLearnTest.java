@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cfg.CfgNode;
-import learntest.activelearning.core.coverage.CoverageUtils;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.python.NeuralNetworkLearner;
@@ -24,7 +23,6 @@ import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGConstructor;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.Randomness;
-import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class NeuralActiveLearnTest {
@@ -34,24 +32,20 @@ public class NeuralActiveLearnTest {
 		settings.setInitRandomTestNumber(10);
 		//settings.setMethodExecTimeout(100);
 		CFGUtility cfgUtility = new CFGUtility();
-		
 		Repository.clearCache();
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 				InstrumentationUtils.getClassLocation(targetMethod.getClassName(), targetMethod.getMethodSignature()),
 				settings.getCfgExtensionLayer());
 		cfgUtility.breakCircle(cfgInstance);
-		CoverageGraphConstructor constructor = new CoverageGraphConstructor();
-		CoverageSFlowGraph coverageSFlowGraph = constructor.buildCoverageGraph(cfgInstance);
-		CDGConstructor cdgConstructor = new CDGConstructor();
-		CDG cdg = cdgConstructor.construct(coverageSFlowGraph);
-		
 		/* generate random test */
 		Tester tester = new Tester(settings, true, appClasspath);
 		UnitTestSuite testsuite = tester.createInitRandomTest(targetMethod, settings, appClasspath, 3, cfgInstance);
 		if (testsuite == null) {
 			throw new SavRtException("Fail to generate random test!");
 		}
-		testsuite.getLearningInputValues();
+		testsuite.getCoverageGraph().setCfg(cfgInstance);
+		CDGConstructor cdgConstructor = new CDGConstructor();
+		CDG cdg = cdgConstructor.construct(testsuite.getCoverageGraph());
 		/* learn */
 		PythonCommunicator communicator = new PythonCommunicator();
 		communicator.start();

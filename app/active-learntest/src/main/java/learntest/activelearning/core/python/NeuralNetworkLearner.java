@@ -53,7 +53,7 @@ public class NeuralNetworkLearner {
 				decisionChildren.add(child);
 			}
 			
-			Branch branch = new Branch(parent.getCfgNode().getId(), child.getCfgNode().getId());
+			Branch branch = new Branch(parent.getCfgNode(), child.getCfgNode());
 			List<TestInputData> inputs = this.branchInputMap.get(branch);
 			if(inputs!=null){
 				if(inputs.isEmpty()){
@@ -80,7 +80,7 @@ public class NeuralNetworkLearner {
 	private Branch findParentBranch(CDGNode parent, CDGNode decisionChild){
 		CoverageSFNode node = decisionChild.getCfgNode();
 		while(node!=null && node.getCvgIdx()!=parent.getCfgNode().getCvgIdx()){
-			Branch b = new Branch(parent.getCfgNode().getCvgIdx(), node.getCvgIdx());
+			Branch b = new Branch(parent.getCfgNode(), node);
 			if(this.branchInputMap.containsKey(b)){
 				return b;
 			}
@@ -91,7 +91,7 @@ public class NeuralNetworkLearner {
 				else if(node.getParents().size()>1){
 					for(CoverageSFNode p: node.getParents()){
 						if(isChildOf(p, parent)){
-							b = new Branch(parent.getCfgNode().getCvgIdx(), p.getCvgIdx());
+							b = new Branch(parent.getCfgNode(), p);
 							if(this.branchInputMap.containsKey(b)){
 								return b;
 							}
@@ -247,9 +247,12 @@ public class NeuralNetworkLearner {
 					
 					TestInputData newInput = newSuite.getInputData().values().iterator().next();
 					list.add(newInput);
-					if(isCoverBranch(newSuite, newInput, branch)){
+					if (branch.getFromNode().getCoveredBranches().contains(branch.getToNode())) {
 						break;
 					}
+//					if(isCoverBranch(newSuite, newInput, branch)){
+//						break;
+//					}
 					else{
 						double newFitness = newInput.getFitness(decisionCDGNode);
 						if(newFitness < bestFitness){
@@ -346,7 +349,7 @@ public class NeuralNetworkLearner {
 		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
 			for (CoverageSFNode branchNode : node.getBranches()) {
 				List<TestInputData> list = new ArrayList<>();
-				Branch branch = new Branch(node.getCvgIdx(), branchNode.getCvgIdx());
+				Branch branch = new Branch(node, branchNode);
 				List<String> coveredTcs = node.getCoveredTestcasesOnBranches().get(branchNode);
 				for (String testcase : CollectionUtils.nullToEmpty(coveredTcs)) {
 					TestInputData testInput = inputData.get(testcase);

@@ -23,7 +23,6 @@ import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.JunitUtils;
 import sav.common.core.utils.SignatureUtils;
-import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
 /**
