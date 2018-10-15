@@ -176,6 +176,7 @@ public class NeuralNetworkLearner {
 	}
 
 	private void generateInputByExplorationSearch(Branch parentBranch) {
+		//TODO
 		Boolean hasModel = false;
 		Queue<Branch> queue = new LinkedList<>();
 		queue.add(parentBranch);
