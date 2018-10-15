@@ -1,14 +1,11 @@
 package learntest.activelearning.core.coverage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import cfg.utils.OpcodeUtils;
-import learntest.activelearning.core.model.TestInputData;
 import microbat.codeanalysis.bytecode.CFGNode;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
@@ -42,7 +39,7 @@ public class CoverageUtils {
 		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
 			for (CoverageSFNode branchNode : node.getBranches()) {
 				if (!CollectionUtils.isEmpty(node.getCoveredTestcasesOnBranches().get(branchNode))) {
-					branches.add(new Branch(node.getCvgIdx(), branchNode.getCvgIdx()));
+					branches.add(new Branch(node, branchNode));
 				}
 			}
 		}
@@ -53,7 +50,7 @@ public class CoverageUtils {
 		Set<Branch> branches = new HashSet<>();
 		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
 			for (CoverageSFNode branchNode : node.getBranches()) {
-				branches.add(new Branch(node.getCvgIdx(), branchNode.getCvgIdx()));
+				branches.add(new Branch(node, branchNode));
 			}
 		}
 		return branches;
