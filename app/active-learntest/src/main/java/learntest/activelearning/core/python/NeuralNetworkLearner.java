@@ -221,8 +221,8 @@ public class NeuralNetworkLearner {
 		}
 		else{
 //			CoverageSFNode decisionNode = decisionCDGNode.getCfgNode();
-			TestInputData closestInput = findClosestInput(otherInputs, decisionCDGNode);
-			double bestFitness = closestInput.getFitness(decisionCDGNode);
+			TestInputData closestInput = findClosestInput(otherInputs, decisionCDGNode, branch);
+			double bestFitness = closestInput.getFitness(decisionCDGNode, branch);
 			
 			List<BreakpointValue> l = new ArrayList<>();
 			l.add(closestInput.getInputValue());
@@ -230,6 +230,7 @@ public class NeuralNetworkLearner {
 			
 			List<TestInputData> list = new ArrayList<>();
 			double[] value = closestInput.getInputValue().getAllValues();
+			double[] bestValue = value;
 			for(int i=0; i<vars.size(); i++){
 				
 				boolean currentDirection = true;
@@ -245,24 +246,34 @@ public class NeuralNetworkLearner {
 					UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
 							inputData, vars);
 					this.testsuite.addTestCases(newSuite);
+					System.currentTimeMillis();
 					
 					TestInputData newInput = newSuite.getInputData().values().iterator().next();
-					list.add(newInput);
-					if (branch.getFromNode().getCoveredBranches().contains(branch.getToNode())) {
+					
+					boolean isVisit = false;
+					if(!list.contains(newInput)){
+						list.add(newInput);						
+					}
+					else{
+						isVisit = true;
+					}
+					
+					if (branch.isCovered()) {
 						break;
 					}
-//					if(isCoverBranch(newSuite, newInput, branch)){
-//						break;
-//					}
 					else{
-						double newFitness = newInput.getFitness(decisionCDGNode);
+						value = newValue;
+						
+						double newFitness = newInput.getFitness(decisionCDGNode, branch);
 						if(newFitness < bestFitness){
-							bestFitness = newInput.getFitness(decisionCDGNode);
+							bestFitness = newInput.getFitness(decisionCDGNode, branch);
+							bestValue = newInput.getInputValue().getAllValues();
 							amount *= 2;
 							continue;
 						}
 						else{
-							if(previousDirection!=currentDirection){
+							if(isVisit && 
+									Math.abs(newValue[i]-bestValue[i])<=1){
 								break;
 							}
 							
@@ -298,16 +309,17 @@ public class NeuralNetworkLearner {
 		return false;
 	}
 
-	private TestInputData findClosestInput(List<TestInputData> otherInputs, CDGNode decisionCDGNode) {
+	private TestInputData findClosestInput(List<TestInputData> otherInputs, 
+			CDGNode decisionCDGNode, Branch branch) {
 		TestInputData returnInput = null;
 		double closestValue = -1;
 		for(TestInputData input: otherInputs){
 			if(returnInput==null){
 				returnInput = input;
-				closestValue = input.getFitness(decisionCDGNode);
+				closestValue = input.getFitness(decisionCDGNode, branch);
 			}
 			else{
-				Double value = input.getFitness(decisionCDGNode);;
+				Double value = input.getFitness(decisionCDGNode, branch);;
 				if(closestValue>value){
 					closestValue = value;
 					returnInput = input;
