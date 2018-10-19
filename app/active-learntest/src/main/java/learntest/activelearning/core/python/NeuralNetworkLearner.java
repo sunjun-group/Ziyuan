@@ -210,8 +210,6 @@ public class NeuralNetworkLearner {
 	 * @return
 	 */
 	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode decisionCDGNode) {
-		
-		
 		Branch siblingBranch = findSiblingBranch(branch);
 		if(siblingBranch==null){
 			return new ArrayList<>();			
@@ -282,7 +280,7 @@ public class NeuralNetworkLearner {
 							continue;
 						}
 						else{
-							if(isVisit && amount==1){
+							if(isVisit /*&& amount==1*/){
 								break;									
 							}
 							
