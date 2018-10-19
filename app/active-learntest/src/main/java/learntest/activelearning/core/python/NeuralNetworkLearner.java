@@ -31,72 +31,70 @@ import sav.strategies.dto.execute.value.ExecVar;
  *
  */
 public class NeuralNetworkLearner {
-	
+
 	private Map<Branch, List<TestInputData>> branchInputMap = new HashMap<>();
 	private UnitTestSuite testsuite;
 	private PythonCommunicator communicator;
-	
+
 	public void learningToCover(CDG cdg) {
 		this.branchInputMap = buildBranchTestInputMap(testsuite.getInputData(), testsuite.getCoverageGraph());
-		for(CDGNode node: cdg.getStartNodes()){
-			traverseLearning(node, null);			
+		for (CDGNode node : cdg.getStartNodes()) {
+			traverseLearning(node, null);
 		}
 	}
-	
+
 	private void traverseLearning(CDGNode parent, Branch parentBranch) {
 		List<CDGNode> decisionChildren = new ArrayList<>();
-		for(CDGNode child: parent.getChildren()){
-			if(isAllChildrenCovered(child)){
+		for (CDGNode child : parent.getChildren()) {
+			if (isAllChildrenCovered(child)) {
 				continue;
 			}
-			
-			if(child.getCfgNode().isConditionalNode()){
+
+			if (child.getCfgNode().isConditionalNode()) {
 				decisionChildren.add(child);
 			}
-			
+
 			Branch branch = new Branch(parent.getCfgNode(), child.getCfgNode());
 			List<TestInputData> inputs = this.branchInputMap.get(branch);
-			if(inputs!=null){
-				if(inputs.isEmpty()){
+			if (inputs != null) {
+				if (inputs.isEmpty()) {
 					List<TestInputData> gradientInputs = generateInputByGradientSearch(branch, parent);
-					if(gradientInputs.isEmpty()){
+					if (gradientInputs.isEmpty()) {
 						generateInputByExplorationSearch(parentBranch);
 					}
 				}
-				
+
 				inputs = this.branchInputMap.get(branch);
-				if(!inputs.isEmpty()){
-					CoverageSFNode originalParentNode = testsuite.getCoverageGraph().getNodeList().get(parent.getCfgNode().getCvgIdx());
+				if (!inputs.isEmpty()) {
+					CoverageSFNode originalParentNode = testsuite.getCoverageGraph().getNodeList()
+							.get(parent.getCfgNode().getCvgIdx());
 					learnClassificationModel(branch, originalParentNode);
 				}
 			}
 		}
-		
-		for(CDGNode decisionChild: decisionChildren){
+
+		for (CDGNode decisionChild : decisionChildren) {
 			Branch b = findParentBranch(parent, decisionChild);
 			traverseLearning(decisionChild, b);
 		}
 	}
-	
-	private Branch findParentBranch(CDGNode parent, CDGNode decisionChild){
+
+	private Branch findParentBranch(CDGNode parent, CDGNode decisionChild) {
 		CoverageSFNode node = decisionChild.getCfgNode();
-		while(node!=null && node.getCvgIdx()!=parent.getCfgNode().getCvgIdx()){
+		while (node != null && node.getCvgIdx() != parent.getCfgNode().getCvgIdx()) {
 			Branch b = new Branch(parent.getCfgNode(), node);
-			if(this.branchInputMap.containsKey(b)){
+			if (this.branchInputMap.containsKey(b)) {
 				return b;
-			}
-			else{
-				if(node.getParents().size()==1){
+			} else {
+				if (node.getParents().size() == 1) {
 					node = node.getParents().get(0);
-				}
-				else if(node.getParents().size()>1){
-					for(CoverageSFNode p: node.getParents()){
-						if(isChildOf(p, parent)){
+				} else if (node.getParents().size() > 1) {
+					for (CoverageSFNode p : node.getParents()) {
+						if (isChildOf(p, parent)) {
 							b = new Branch(parent.getCfgNode(), p);
-							if(this.branchInputMap.containsKey(b)){
+							if (this.branchInputMap.containsKey(b)) {
 								return b;
-							}
-							else{
+							} else {
 								node = p;
 								break;
 							}
@@ -107,255 +105,331 @@ public class NeuralNetworkLearner {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
 	private boolean isChildOf(CoverageSFNode node, CDGNode parent) {
-		for(CDGNode c: parent.getChildren()){
-			if(c.getCfgNode().getCvgIdx()==node.getCvgIdx()){
+		for (CDGNode c : parent.getChildren()) {
+			if (c.getCfgNode().getCvgIdx() == node.getCvgIdx()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-
-
 	private void learnClassificationModel(Branch branch, CoverageSFNode parent) {
 		List<TestInputData> positiveInputs = this.branchInputMap.get(branch);
 		List<TestInputData> negativeInputs = retrieveNegativeInputs(branch, parent);
 		System.currentTimeMillis();
-		if(positiveInputs.isEmpty() || negativeInputs.isEmpty()){
+		if (positiveInputs.isEmpty() || negativeInputs.isEmpty()) {
 			return;
 		}
-		
+
 		Message response = communicator.requestTraining(branch, positiveInputs, negativeInputs);
-		if(response==null){
+		if (response == null) {
 			System.err.println("the python server is closed!");
 		}
-		
-		while(response!=null && response.getRequestType()==RequestType.$REQUEST_LABEL){
+
+		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
 			DataPoints points = (DataPoints) response.getMessageBody();
-			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
+			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 					points.values, points.varList);
-			
+
 			this.testsuite.addTestCases(newSuite);
-			
+
 			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
-			
+
 			for (String testcase : newSuite.getJunitTestcases()) {
-//				TestInputData input = this.testsuite.getInputData().get(i);
-				if(branchNode.getCoveredTestcases().contains(testcase)){
+				// TestInputData input = this.testsuite.getInputData().get(i);
+				if (branchNode.getCoveredTestcases().contains(testcase)) {
 					points.getLabels().add(true);
-				}
-				else{
+				} else {
 					points.getLabels().add(false);
 				}
 			}
-			
+
 			response = communicator.sendLabel(points);
 		}
-		
-		
+
 		System.currentTimeMillis();
 	}
 
 	private List<TestInputData> retrieveNegativeInputs(Branch branch, CoverageSFNode node) {
 		List<TestInputData> negativeInputs = new ArrayList<>();
-		
+
 		CoverageSFNode childNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
-		
-		List<String> coveredTestcases = CollectionUtils.nullToEmpty(node.getCoveredTestcasesOnBranches().get(childNode));
+
+		List<String> coveredTestcases = CollectionUtils
+				.nullToEmpty(node.getCoveredTestcasesOnBranches().get(childNode));
 		for (Entry<String, TestInputData> inputEntry : testsuite.getInputData().entrySet()) {
 			if (!coveredTestcases.contains(inputEntry.getKey())) {
 				negativeInputs.add(inputEntry.getValue());
 			}
 		}
-		
+
 		return negativeInputs;
 	}
 
 	private void generateInputByExplorationSearch(Branch parentBranch) {
-		//TODO
+		// TODO
 		Boolean hasModel = false;
 		Queue<Branch> queue = new LinkedList<>();
 		queue.add(parentBranch);
-//		while(!queue.isEmpty()){
-//			Message response0 = communicator.confirmModel(parentBranch);
-//			if(response0.getRequestType()!=RequestType.$CONFIRM_MODEL){
-//				return;
-//			}
-//			
-//			hasModel = (Boolean) response0.getMessageBody();
-//			
-//			if(hasModel){
-////				Message response1 = communicator.gener	
-//				break;
-//			}
-//			else{
-//				CoverageSFlowGraph graph = this.testsuite.getCoverageGraph();
-//				CoverageSFNode node = graph.getNodeList().get(parentBranch.getFromNodeIdx());
-//				
-//				List<Branch> newParentBranches = retrieveParents()
-//			}
-//		}
-		
-		
+		// while(!queue.isEmpty()){
+		// Message response0 = communicator.confirmModel(parentBranch);
+		// if(response0.getRequestType()!=RequestType.$CONFIRM_MODEL){
+		// return;
+		// }
+		//
+		// hasModel = (Boolean) response0.getMessageBody();
+		//
+		// if(hasModel){
+		//// Message response1 = communicator.gener
+		// break;
+		// }
+		// else{
+		// CoverageSFlowGraph graph = this.testsuite.getCoverageGraph();
+		// CoverageSFNode node =
+		// graph.getNodeList().get(parentBranch.getFromNodeIdx());
+		//
+		// List<Branch> newParentBranches = retrieveParents()
+		// }
+		// }
+
+	}
+
+	class IntermediateSearchResult {
+		double[] bestValue;
+		double bestFitness;
+
+		double[] localBestValue;
+		double localBestFitness;
+
+		List<TestInputData> inputList;
+
+		public IntermediateSearchResult(double[] bestValue, double bestFitness, double[] localBestValue,
+				double localBestFitness, List<TestInputData> inputList) {
+			super();
+			this.bestValue = bestValue;
+			this.bestFitness = bestFitness;
+			this.localBestValue = localBestValue;
+			this.localBestFitness = localBestFitness;
+			this.inputList = inputList;
+		}
 	}
 
 	/**
-	 * the branch <code>branch</code> is a branch of <code>decisionCDGNode</code> node  
+	 * the branch <code>branch</code> is a branch of
+	 * <code>decisionCDGNode</code> node
+	 * 
 	 * @param branch
 	 * @param decisionCDGNode
 	 * @return
 	 */
 	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode decisionCDGNode) {
 		Branch siblingBranch = findSiblingBranch(branch);
-		if(siblingBranch==null){
-			return new ArrayList<>();			
-		}
-		
-		List<TestInputData> otherInputs = this.branchInputMap.get(siblingBranch);
-		if(otherInputs.isEmpty()){
+		if (siblingBranch == null) {
 			return new ArrayList<>();
 		}
-		else{
+
+		List<TestInputData> otherInputs = this.branchInputMap.get(siblingBranch);
+		if (otherInputs.isEmpty()) {
+			return new ArrayList<>();
+		} else {
 			TestInputData closestInput = findClosestInput(otherInputs, decisionCDGNode, branch);
 			List<BreakpointValue> l = new ArrayList<>();
 			l.add(closestInput.getInputValue());
 			List<ExecVar> vars = BreakpointDataUtils.collectAllVars(l);
-			
+
 			List<TestInputData> list = new ArrayList<>();
 			double[] value = closestInput.getInputValue().getAllValues();
-			
+
 			double[] bestValue = value;
 			double bestFitness = closestInput.getFitness(decisionCDGNode, branch);
-			
+
 			double[] localBestValue = value;
 			double localBestFitness = bestFitness;
-			
-			for(int i=0; i<vars.size(); i++){
-				
-				boolean currentDirection = true;
-				int amount = 1;
-				value = bestValue.clone();
-				localBestFitness = bestFitness;
-				
-				while(true){
-					double[] newValue = value.clone();
-					adjustValue(newValue, i, currentDirection, amount);
-					
-					List<double[]> inputData = new ArrayList<>();
-					inputData.add(newValue);
-					UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
-							inputData, vars);
-					this.testsuite.addTestCases(newSuite);
-					
-					TestInputData newInput = null;
-					while(newInput==null){
-						try{
-							newInput = newSuite.getInputData().values().iterator().next();
-						}
-						catch(Exception e){
-							e.printStackTrace();
-						}
-					}
-					
-					boolean isVisit = false;
-					if(!list.contains(newInput)){
-						list.add(newInput);						
-					}
-					else{
-						isVisit = true;
-					}
-					
-					if (branch.isCovered()) {
-						break;
-					}
-					else{
-						double newFitness = newInput.getFitness(decisionCDGNode, branch);
-						if(newFitness < localBestFitness){
-							localBestFitness = newFitness;
-							localBestValue = newInput.getInputValue().getAllValues();
-							amount += 1;
-							
-							if(localBestFitness < bestFitness) {
-								bestValue = localBestValue.clone();
-								bestFitness = localBestFitness;								
-							}
-							
-							value = newValue;	
-							continue;
-						}
-						else{
-							if(isVisit /*&& amount==1*/){
-								break;									
-							}
-							
-							if(amount != 1) {
-								value = newValue;
-								localBestFitness = newFitness;
-								localBestValue = value.clone();
-							}
-							
-							currentDirection = !currentDirection;
-							amount = 1;
-						}
-					}
+
+			for (int i = 0; i < vars.size(); i++) {
+
+				IntermediateSearchResult iResult = null;
+
+				ExecVar var = vars.get(i);
+				switch (var.getType()) {
+				case INTEGER:
+				case BYTE:
+				case CHAR:
+				case LONG:
+				case SHORT:
+					iResult = doIntegerSearch(bestValue, bestFitness, localBestValue, localBestFitness, 
+							i, vars, list, branch, decisionCDGNode);
+					break;
+				case DOUBLE:
+				case FLOAT:
+					iResult = doDoubleSearch(bestValue, bestFitness, localBestValue, localBestFitness, 
+							i, vars, list, branch, decisionCDGNode);
+					break;
+				case BOOLEAN:
+					iResult = doBooleanSearch(bestValue, bestFitness, localBestValue, localBestFitness, 
+							i, vars, list, branch, decisionCDGNode);
+					break;
+				case STRING:
+					iResult = doStringSearch(bestValue, bestFitness, localBestValue, localBestFitness, 
+							i, vars, list, branch, decisionCDGNode);
+					break;
+				default:
+					break;
 				}
-				
+
+				if (iResult != null) {
+					bestFitness = iResult.bestFitness;
+					bestValue = iResult.bestValue;
+					localBestFitness = iResult.localBestFitness;
+					localBestValue = iResult.localBestValue;
+				}
+
 			}
-			
+
 			return list;
 		}
 	}
 
-	private void adjustValue(double[] newValue, int d, boolean increaseValue, int amount) {
-		if(increaseValue){
-			newValue[d] += amount; 			
+	private IntermediateSearchResult doStringSearch(double[] bestValue, double bestFitness, double[] localBestValue,
+			double localBestFitness, int i, List<ExecVar> vars, List<TestInputData> list, Branch branch,
+			CDGNode decisionCDGNode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private IntermediateSearchResult doBooleanSearch(double[] bestValue, double bestFitness, double[] localBestValue,
+			double localBestFitness, int i, List<ExecVar> vars, List<TestInputData> list, Branch branch,
+			CDGNode decisionCDGNode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private IntermediateSearchResult doDoubleSearch(double[] bestValue, double bestFitness, double[] localBestValue,
+			double localBestFitness, int i, List<ExecVar> vars, List<TestInputData> list, Branch branch,
+			CDGNode decisionCDGNode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private IntermediateSearchResult doIntegerSearch(double[] bestValue, double bestFitness, double[] localBestValue,
+			double localBestFitness, int index, List<ExecVar> vars, List<TestInputData> list, Branch branch,
+			CDGNode decisionCDGNode) {
+		boolean currentDirection = true;
+		int amount = 1;
+		double[] value = bestValue.clone();
+		localBestFitness = bestFitness;
+
+		while (true) {
+			double[] newValue = value.clone();
+			adjustValue(newValue, index, currentDirection, amount);
+
+			List<double[]> inputData = new ArrayList<>();
+			inputData.add(newValue);
+			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
+					inputData, vars);
+			this.testsuite.addTestCases(newSuite);
+
+			TestInputData newInput = null;
+			while (newInput == null) {
+				try {
+					newInput = newSuite.getInputData().values().iterator().next();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			boolean isVisit = false;
+			if (!list.contains(newInput)) {
+				list.add(newInput);
+			} else {
+				isVisit = true;
+			}
+
+			if (branch.isCovered()) {
+				break;
+			} else {
+				double newFitness = newInput.getFitness(decisionCDGNode, branch);
+				if (newFitness < localBestFitness) {
+					localBestFitness = newFitness;
+					localBestValue = newInput.getInputValue().getAllValues();
+					amount += 1;
+
+					if (localBestFitness < bestFitness) {
+						bestValue = localBestValue.clone();
+						bestFitness = localBestFitness;
+					}
+
+					value = newValue;
+					continue;
+				} else {
+					if (isVisit /* && amount==1 */) {
+						break;
+					}
+
+					if (amount != 1) {
+						value = newValue;
+						localBestFitness = newFitness;
+						localBestValue = value.clone();
+					}
+
+					currentDirection = !currentDirection;
+					amount = 1;
+				}
+			}
 		}
-		else{
-			newValue[d] -= amount; 	
+
+		IntermediateSearchResult iResult = new IntermediateSearchResult(bestValue, bestFitness, localBestValue,
+				localBestFitness, list);
+		return iResult;
+	}
+
+	private void adjustValue(double[] newValue, int d, boolean increaseValue, int amount) {
+		if (increaseValue) {
+			newValue[d] += amount;
+		} else {
+			newValue[d] -= amount;
 		}
 	}
 
 	private boolean isCoverBranch(UnitTestSuite newSuite, TestInputData newInput1, Branch branch) {
 		CoveragePath path = newSuite.getCoverageGraph().getCoveragePaths().get(0);
-		for(CoverageSFNode node: path.getPath()){
-			if(node.getCvgIdx()==branch.getToNodeIdx()){
+		for (CoverageSFNode node : path.getPath()) {
+			if (node.getCvgIdx() == branch.getToNodeIdx()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private TestInputData findClosestInput(List<TestInputData> otherInputs, 
-			CDGNode decisionCDGNode, Branch branch) {
+	private TestInputData findClosestInput(List<TestInputData> otherInputs, CDGNode decisionCDGNode, Branch branch) {
 		TestInputData returnInput = null;
 		double closestValue = -1;
-		for(TestInputData input: otherInputs){
-			if(returnInput==null){
+		for (TestInputData input : otherInputs) {
+			if (returnInput == null) {
 				returnInput = input;
 				closestValue = input.getFitness(decisionCDGNode, branch);
-			}
-			else{
-				Double value = input.getFitness(decisionCDGNode, branch);;
-				if(closestValue>value){
+			} else {
+				Double value = input.getFitness(decisionCDGNode, branch);
+				;
+				if (closestValue > value) {
 					closestValue = value;
 					returnInput = input;
 				}
 			}
-			
+
 		}
-		
+
 		return returnInput;
 	}
 
 	private Branch findSiblingBranch(Branch branch) {
-		for(Branch b: branchInputMap.keySet()){
-			if(b.getFromNodeIdx()==branch.getFromNodeIdx() &&
-					b.getToNodeIdx()!=branch.getToNodeIdx()){
+		for (Branch b : branchInputMap.keySet()) {
+			if (b.getFromNodeIdx() == branch.getFromNodeIdx() && b.getToNodeIdx() != branch.getToNodeIdx()) {
 				return b;
 			}
 		}
@@ -363,17 +437,17 @@ public class NeuralNetworkLearner {
 	}
 
 	private boolean isAllChildrenCovered(CDGNode node) {
-		if(!node.getCfgNode().isCovered()){
-			return false; 
+		if (!node.getCfgNode().isCovered()) {
+			return false;
 		}
-		
-		for(CDGNode child: node.getChildren()){
+
+		for (CDGNode child : node.getChildren()) {
 			boolean covered = isAllChildrenCovered(child);
-			if(!covered){
+			if (!covered) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -396,13 +470,13 @@ public class NeuralNetworkLearner {
 		}
 		return map;
 	}
-	
+
 	private Tester tester;
 	private AppJavaClassPath appClasspath;
 	private MethodInfo targetMethod;
 	private LearntestSettings settings;
-	
-	public NeuralNetworkLearner(Tester tester, UnitTestSuite testsuite, PythonCommunicator communicator, 
+
+	public NeuralNetworkLearner(Tester tester, UnitTestSuite testsuite, PythonCommunicator communicator,
 			AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) {
 		this.testsuite = testsuite;
 		this.communicator = communicator;
@@ -411,5 +485,5 @@ public class NeuralNetworkLearner {
 		this.targetMethod = targetMethod;
 		this.settings = settings;
 	}
-	
+
 }
