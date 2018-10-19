@@ -210,6 +210,8 @@ public class NeuralNetworkLearner {
 	 * @return
 	 */
 	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode decisionCDGNode) {
+		
+		
 		Branch siblingBranch = findSiblingBranch(branch);
 		if(siblingBranch==null){
 			return new ArrayList<>();			
@@ -220,22 +222,26 @@ public class NeuralNetworkLearner {
 			return new ArrayList<>();
 		}
 		else{
-//			CoverageSFNode decisionNode = decisionCDGNode.getCfgNode();
 			TestInputData closestInput = findClosestInput(otherInputs, decisionCDGNode, branch);
-			double bestFitness = closestInput.getFitness(decisionCDGNode, branch);
-			
 			List<BreakpointValue> l = new ArrayList<>();
 			l.add(closestInput.getInputValue());
 			List<ExecVar> vars = BreakpointDataUtils.collectAllVars(l);
 			
 			List<TestInputData> list = new ArrayList<>();
 			double[] value = closestInput.getInputValue().getAllValues();
+			
 			double[] bestValue = value;
+			double bestFitness = closestInput.getFitness(decisionCDGNode, branch);
+			
+			double[] localBestValue = value;
+			double localBestFitness = bestFitness;
+			
 			for(int i=0; i<vars.size(); i++){
 				
 				boolean currentDirection = true;
-				boolean previousDirection = currentDirection;
 				int amount = 1;
+				value = bestValue.clone();
+				localBestFitness = bestFitness;
 				
 				while(true){
 					double[] newValue = value.clone();
@@ -246,7 +252,6 @@ public class NeuralNetworkLearner {
 					UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
 							inputData, vars);
 					this.testsuite.addTestCases(newSuite);
-					System.currentTimeMillis();
 					
 					TestInputData newInput = newSuite.getInputData().values().iterator().next();
 					
@@ -262,22 +267,31 @@ public class NeuralNetworkLearner {
 						break;
 					}
 					else{
-						value = newValue;
-						
 						double newFitness = newInput.getFitness(decisionCDGNode, branch);
-						if(newFitness < bestFitness){
-							bestFitness = newInput.getFitness(decisionCDGNode, branch);
-							bestValue = newInput.getInputValue().getAllValues();
-							amount *= 2;
+						if(newFitness < localBestFitness){
+							localBestFitness = newFitness;
+							localBestValue = newInput.getInputValue().getAllValues();
+							amount += 1;
+							
+							if(localBestFitness < bestFitness) {
+								bestValue = localBestValue.clone();
+								bestFitness = localBestFitness;								
+							}
+							
+							value = newValue;	
 							continue;
 						}
 						else{
-							if(isVisit && 
-									Math.abs(newValue[i]-bestValue[i])<=1){
-								break;
+							if(isVisit && amount==1){
+								break;									
 							}
 							
-							previousDirection = currentDirection;
+							if(amount != 1) {
+								value = newValue;
+								localBestFitness = newFitness;
+								localBestValue = value.clone();
+							}
+							
 							currentDirection = !currentDirection;
 							amount = 1;
 						}
