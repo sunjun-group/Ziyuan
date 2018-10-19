@@ -22,6 +22,10 @@ public class GentestRandomness implements IRandomness {
 	private double max = 1000;
 	private double min = -1000;
 	
+	public GentestRandomness() {
+//		this.random.setSeed(12);
+	}
+	
 	private Random getRandom() {
 		return random;
 	}
