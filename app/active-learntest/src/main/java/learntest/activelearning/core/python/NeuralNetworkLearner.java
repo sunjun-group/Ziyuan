@@ -23,6 +23,7 @@ import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.execute.value.BooleanValue;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**
@@ -251,7 +252,15 @@ public class NeuralNetworkLearner {
 							inputData, vars);
 					this.testsuite.addTestCases(newSuite);
 					
-					TestInputData newInput = newSuite.getInputData().values().iterator().next();
+					TestInputData newInput = null;
+					while(newInput==null){
+						try{
+							newInput = newSuite.getInputData().values().iterator().next();
+						}
+						catch(Exception e){
+							e.printStackTrace();
+						}
+					}
 					
 					boolean isVisit = false;
 					if(!list.contains(newInput)){
