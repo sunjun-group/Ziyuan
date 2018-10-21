@@ -102,6 +102,11 @@ public class Message {
 		this.messageBody = message;
 	}
 
+	public static Message parseBoundaryExplorationPoints(BufferedReader br) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 }

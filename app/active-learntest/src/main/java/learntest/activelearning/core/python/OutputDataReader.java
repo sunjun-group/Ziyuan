@@ -57,6 +57,10 @@ public class OutputDataReader extends ServerOutputReader {
 			readOutput = Message.parseTrainingFinish(br);
 			ready();
 			break;
+		case $BOUNDARY_EXPLORATION:
+			readOutput = Message.parseBoundaryExplorationPoints(br);
+			ready();
+			break;
 		default:
 			break;
 		}

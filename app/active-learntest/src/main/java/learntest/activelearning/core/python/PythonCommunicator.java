@@ -46,7 +46,6 @@ public class PythonCommunicator {
 			List<TestInputData> negativeData){
 		InputData data = InputData.createTrainingRequest(branch, positiveData, negativeData);
 		inputWriter.send(data, vmRunner);
-//		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
 		return output;
@@ -60,8 +59,12 @@ public class PythonCommunicator {
 		return output;
 	}
 	
-	public void startTrainingMethod(String methodName) {
-		inputWriter.send(InputData.createStartMethodRequest(methodName), vmRunner);
+	public Message requestBoundaryExploration(Branch branch, List<TestInputData> testData) {
+		InputData data = InputData.createBoundaryExplorationRequest(branch, testData);
+		inputWriter.send(data, vmRunner);
+		
+		Message output = outputReader.readOutput(-1, vmRunner);
+		return output;
 	}
 	
 	public void stop() {
@@ -71,12 +74,6 @@ public class PythonCommunicator {
 	public void setVmTimeout(long timeout) {
 		this.timeout = timeout;
 	}
-	
-//	public List<double[]> boundaryRemaining(Dataset pathCoverage) {
-//		inputWriter.send(InputData.forBoundaryRemaining(pathCoverage), vmRunner);
-//		Message output = outputReader.readOutput(-1, vmRunner);
-//		return null;
-//	}
 
 	private boolean printErrorStream(InputStream error) {
 		BufferedReader reader = new BufferedReader (new InputStreamReader(error));

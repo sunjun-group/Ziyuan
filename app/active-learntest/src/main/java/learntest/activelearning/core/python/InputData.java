@@ -72,6 +72,17 @@ public class InputData /*implements IInputData*/ {
 		return inputData;
 	}
 	
+	public static InputData createBoundaryExplorationRequest(Branch branch, List<TestInputData> testData) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$BOUNDARY_EXPLORATION;
+		inputData.obj.put(JsLabels.BRANCH_ID, branch.getBranchID());
+		
+		JSONArray jArray = transferToJsonArray(testData);
+		inputData.obj.put(JsLabels.TEST_DATA, jArray);
+		
+		return inputData;
+	}
+	
 	public static InputData transferToJSON(DataPoints points) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$SEND_LABEL;
@@ -123,6 +134,5 @@ public class InputData /*implements IInputData*/ {
 		return inputData;
 	}
 
-	
 
 }

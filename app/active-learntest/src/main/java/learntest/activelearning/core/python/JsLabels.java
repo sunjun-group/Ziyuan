@@ -20,5 +20,6 @@ public class JsLabels {
 	public static final String UNCOVERED_DATA_POINTS = "UNCOVERED_DATA_POINTS";
 	public static final String NAME = "NAME";
 	public static final String RESULT = "RESULT";
+	public static final String TEST_DATA = "TEST_DATA";
 	
 }
