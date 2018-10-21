@@ -39,13 +39,13 @@ public class NeuralNetworkLearner {
 	public void learningToCover(CDG cdg) {
 		this.branchInputMap = buildBranchTestInputMap(testsuite.getInputData(), testsuite.getCoverageGraph());
 		for (CDGNode node : cdg.getStartNodes()) {
-			traverseLearning(node, null);
+			traverseLearning(node);
 		}
 	}
 
-	private void traverseLearning(CDGNode parent, Branch parentBranch) {
+	private void traverseLearning(CDGNode branchCDGNode) {
 		List<CDGNode> decisionChildren = new ArrayList<>();
-		for (CDGNode child : parent.getChildren()) {
+		for (CDGNode child : branchCDGNode.getChildren()) {
 			if (isAllChildrenCovered(child)) {
 				continue;
 			}
@@ -54,28 +54,28 @@ public class NeuralNetworkLearner {
 				decisionChildren.add(child);
 			}
 
-			Branch branch = new Branch(parent.getCfgNode(), child.getCfgNode());
+			Branch branch = new Branch(branchCDGNode.getCfgNode(), child.getCfgNode());
 			List<TestInputData> inputs = this.branchInputMap.get(branch);
 			if (inputs != null) {
 				if (inputs.isEmpty()) {
-					List<TestInputData> gradientInputs = generateInputByGradientSearch(branch, parent);
+					List<TestInputData> gradientInputs = generateInputByGradientSearch(branch, branchCDGNode);
 					if (gradientInputs.isEmpty()) {
-						generateInputByExplorationSearch(parentBranch);
+						generateInputByExplorationSearch(branch, branchCDGNode);
 					}
 				}
 
 				inputs = this.branchInputMap.get(branch);
 				if (!inputs.isEmpty()) {
 					CoverageSFNode originalParentNode = testsuite.getCoverageGraph().getNodeList()
-							.get(parent.getCfgNode().getCvgIdx());
+							.get(branchCDGNode.getCfgNode().getCvgIdx());
 					learnClassificationModel(branch, originalParentNode);
 				}
 			}
 		}
 
 		for (CDGNode decisionChild : decisionChildren) {
-			Branch b = findParentBranch(parent, decisionChild);
-			traverseLearning(decisionChild, b);
+//			Branch b = findParentBranch(parentNode, decisionChild);
+			traverseLearning(decisionChild);
 		}
 	}
 
@@ -171,31 +171,15 @@ public class NeuralNetworkLearner {
 		return negativeInputs;
 	}
 
-	private void generateInputByExplorationSearch(Branch parentBranch) {
-		// TODO
-		Boolean hasModel = false;
-		Queue<Branch> queue = new LinkedList<>();
-		queue.add(parentBranch);
-		// while(!queue.isEmpty()){
-		// Message response0 = communicator.confirmModel(parentBranch);
-		// if(response0.getRequestType()!=RequestType.$CONFIRM_MODEL){
-		// return;
-		// }
-		//
-		// hasModel = (Boolean) response0.getMessageBody();
-		//
-		// if(hasModel){
-		//// Message response1 = communicator.gener
-		// break;
-		// }
-		// else{
-		// CoverageSFlowGraph graph = this.testsuite.getCoverageGraph();
-		// CoverageSFNode node =
-		// graph.getNodeList().get(parentBranch.getFromNodeIdx());
-		//
-		// List<Branch> newParentBranches = retrieveParents()
-		// }
-		// }
+	private void generateInputByExplorationSearch(Branch branch, CDGNode parent) {
+		
+//		List<Branch> parentBranches = findParentsWithModel(branch);
+//		
+//		
+//		
+//		for(Branch parentBranch: parentBranches){
+//			communicator.requestBoundaryExploration(parentBranch, testData);
+//		}
 
 	}
 
@@ -205,8 +189,7 @@ public class NeuralNetworkLearner {
 
 		List<TestInputData> inputList;
 
-		public IntermediateSearchResult(double[] bestValue, double bestFitness, 
-				List<TestInputData> inputList) {
+		public IntermediateSearchResult(double[] bestValue, double bestFitness, List<TestInputData> inputList) {
 			super();
 			this.bestValue = bestValue;
 			this.bestFitness = bestFitness;
@@ -219,10 +202,10 @@ public class NeuralNetworkLearner {
 	 * <code>decisionCDGNode</code> node
 	 * 
 	 * @param branch
-	 * @param decisionCDGNode
+	 * @param branchCDGNode
 	 * @return
 	 */
-	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode decisionCDGNode) {
+	private List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode branchCDGNode) {
 		Branch siblingBranch = findSiblingBranch(branch);
 		if (siblingBranch == null) {
 			return new ArrayList<>();
@@ -232,7 +215,7 @@ public class NeuralNetworkLearner {
 		if (otherInputs.isEmpty()) {
 			return new ArrayList<>();
 		} else {
-			TestInputData closestInput = findClosestInput(otherInputs, decisionCDGNode, branch);
+			TestInputData closestInput = findClosestInput(otherInputs, branchCDGNode, branch);
 			List<BreakpointValue> l = new ArrayList<>();
 			l.add(closestInput.getInputValue());
 			List<ExecVar> vars = BreakpointDataUtils.collectAllVars(l);
@@ -241,7 +224,7 @@ public class NeuralNetworkLearner {
 			double[] value = closestInput.getInputValue().getAllValues();
 
 			double[] bestValue = value;
-			double bestFitness = closestInput.getFitness(decisionCDGNode, branch);
+			double bestFitness = closestInput.getFitness(branchCDGNode, branch);
 
 			for (int index = 0; index < vars.size(); index++) {
 
@@ -254,21 +237,17 @@ public class NeuralNetworkLearner {
 				case CHAR:
 				case LONG:
 				case SHORT:
-					iResult = doIntegerSearch(bestValue, bestFitness,
-							index, vars, list, branch, decisionCDGNode);
+					iResult = doIntegerSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
 					break;
 				case DOUBLE:
 				case FLOAT:
-					iResult = doDoubleSearch(bestValue, bestFitness,  
-							index, vars, list, branch, decisionCDGNode);
+					iResult = doDoubleSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
 					break;
 				case BOOLEAN:
-					iResult = doBooleanSearch(bestValue, bestFitness, 
-							index, vars, list, branch, decisionCDGNode);
+					iResult = doBooleanSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
 					break;
 				case STRING:
-					iResult = doStringSearch(bestValue, bestFitness, 
-							index, vars, list, branch, decisionCDGNode);
+					iResult = doStringSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
 					break;
 				default:
 					break;
@@ -294,17 +273,16 @@ public class NeuralNetworkLearner {
 	private IntermediateSearchResult doBooleanSearch(double[] bestValue, double bestFitness, int index,
 			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
 		double[] newValue = bestValue.clone();
-		if(newValue[index]==1.0){
+		if (newValue[index] == 1.0) {
 			newValue[index] = 0.0;
-		}
-		else{
+		} else {
 			newValue[index] = 1.0;
 		}
-		
+
 		List<double[]> inputData = new ArrayList<>();
 		inputData.add(newValue);
-		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-				inputData, vars);
+		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, inputData,
+				vars);
 		this.testsuite.addTestCases(newSuite);
 
 		TestInputData newInput = null;
@@ -328,15 +306,13 @@ public class NeuralNetworkLearner {
 		return iResult;
 	}
 
-	private IntermediateSearchResult doSearch(double[] bestValue, double bestFitness, 
-			int index, List<ExecVar> vars,
-			List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, 
-			double minimumUnit, double factor){
+	private IntermediateSearchResult doSearch(double[] bestValue, double bestFitness, int index, List<ExecVar> vars,
+			List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, double minimumUnit, double factor) {
 		double amount = minimumUnit;
-		
+
 		boolean currentDirection = true;
 		double[] value = bestValue.clone();
-		
+
 		double[] localBestValue = value;
 		double localBestFitness = bestFitness;
 
@@ -403,20 +379,19 @@ public class NeuralNetworkLearner {
 		return iResult;
 	}
 
-	private IntermediateSearchResult doDoubleSearch(double[] bestValue, double bestFitness, int index, List<ExecVar> vars,
-			List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
+	private IntermediateSearchResult doDoubleSearch(double[] bestValue, double bestFitness, int index,
+			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
 		double minimumUnit = 0.001;
 		double factor = 2;
-		
+
 		return doSearch(bestValue, bestFitness, index, vars, list, branch, decisionCDGNode, minimumUnit, factor);
 	}
 
-	private IntermediateSearchResult doIntegerSearch(double[] bestValue, double bestFitness, 
-			int index, List<ExecVar> vars, List<TestInputData> list, Branch branch,
-			CDGNode decisionCDGNode) {
+	private IntermediateSearchResult doIntegerSearch(double[] bestValue, double bestFitness, int index,
+			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
 		double minimumUnit = 1;
 		double factor = 2;
-		
+
 		return doSearch(bestValue, bestFitness, index, vars, list, branch, decisionCDGNode, minimumUnit, factor);
 	}
 
