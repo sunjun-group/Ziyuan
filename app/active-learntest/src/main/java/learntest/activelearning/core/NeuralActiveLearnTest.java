@@ -11,7 +11,7 @@ import cfg.CfgNode;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
-import learntest.activelearning.core.testgeneration.NeuralNetworkLearner;
+import learntest.activelearning.core.testgeneration.NNBasedTestGenerator;
 import learntest.activelearning.core.testgeneration.PythonCommunicator;
 import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
@@ -50,8 +50,8 @@ public class NeuralActiveLearnTest {
 		PythonCommunicator communicator = new PythonCommunicator();
 		communicator.start();
 		
-		NeuralNetworkLearner nnLearner = new NeuralNetworkLearner(tester, testsuite, communicator, appClasspath, targetMethod, settings);
-		nnLearner.learningToCover(cdg);
+		NNBasedTestGenerator nnLearner = new NNBasedTestGenerator(tester, testsuite, communicator, appClasspath, targetMethod, settings);
+		nnLearner.cover(cdg);
 		communicator.stop();
 	}
 
