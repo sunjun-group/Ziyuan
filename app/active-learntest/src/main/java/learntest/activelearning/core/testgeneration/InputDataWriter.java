@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.activelearning.core.python;
+package learntest.activelearning.core.testgeneration;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
