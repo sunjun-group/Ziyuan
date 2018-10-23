@@ -11,16 +11,16 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.ValidMethodsLoader;
 import learntest.activelearning.plugin.handler.ActiveLearntestUtils;
-import learntest.core.commons.data.classinfo.MethodInfo;
-import learntest.plugin.LearnTestConfig;
-import learntest.plugin.LearntestLogger;
-import learntest.plugin.ProjectSetting;
-import learntest.plugin.handler.gentest.GentestSettings;
-import learntest.plugin.utils.IMethodUtils;
-import learntest.plugin.utils.IStatusUtils;
+import learntest.activelearning.plugin.settings.GentestSettings;
+import learntest.activelearning.plugin.settings.LearntestLogger;
+import learntest.activelearning.plugin.settings.ProjectSetting;
+import learntest.activelearning.plugin.utils.IMethodUtils;
+import learntest.activelearning.plugin.utils.IStatusUtils;
+import learntest.activelearning.plugin.utils.ActiveLearnTestConfig;
 import sav.common.core.utils.FileUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -58,7 +58,7 @@ public class RandomGenTestHandler extends AbstractHandler implements IHandler {
 //		for (String project : projects) {
 //			runProject(project);
 //		}
-		runProject(LearnTestConfig.getInstance().getProjectName(), new learntest.activelearning.core.IProgressMonitor() {
+		runProject(ActiveLearnTestConfig.getInstance().getProjectName(), new learntest.activelearning.core.IProgressMonitor() {
 			
 			@Override
 			public boolean isCanceled() {
@@ -71,18 +71,20 @@ public class RandomGenTestHandler extends AbstractHandler implements IHandler {
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(project);
 		LearntestLogger.initLog4j(project);
 		ValidMethodsLoader methodLoader = new ValidMethodsLoader();
-		List<LearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
+		List<ActiveLearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
 		String outputFolder = ProjectSetting.getLearntestOutputFolder(project) + "/random";
 		FileUtils.mkDirs(outputFolder);
 		RandomGenTest randomGentest = new RandomGenTest(outputFolder);
-		for (LearnTestConfig config : validMethods) {
+		Gentest gentest = new Gentest();
+		for (ActiveLearnTestConfig config : validMethods) {
 			if (progressMonitor.isCanceled()) {
 				return;
 			}
 			MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
 			LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
-			//try {
-			randomGentest.generateTestcase(appClasspath, methodInfo, learntestSettings, progressMonitor);
+//			try {
+//			randomGentest.generateTestcase(appClasspath, methodInfo, learntestSettings, progressMonitor);
+			gentest.generateTestcase(appClasspath, methodInfo, learntestSettings, progressMonitor);
 			//}
 			//catch(Exception e){log.error(e.getStackTrace() != null ? e.getStackTrace().toString() : e.getMessage());}
 		}

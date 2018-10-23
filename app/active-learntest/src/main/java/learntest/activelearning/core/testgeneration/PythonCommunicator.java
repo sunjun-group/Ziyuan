@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import learntest.activelearning.core.model.TestInputData;
+import learntest.activelearning.core.data.TestInputData;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.common.core.SavException;
 import sav.strategies.vm.interprocess.python.PythonVmConfiguration;

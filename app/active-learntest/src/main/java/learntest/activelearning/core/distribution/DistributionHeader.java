@@ -1,6 +1,6 @@
 package learntest.activelearning.core.distribution;
 
-import learntest.plugin.export.io.excel.common.ExcelHeader;
+import learntest.activelearning.core.utils.excel.ExcelHeader;
 
 public enum  DistributionHeader implements ExcelHeader{
 	EXCEL_HEADER("MethodDistribution")

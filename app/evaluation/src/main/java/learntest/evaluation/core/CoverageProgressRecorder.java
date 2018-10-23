@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import learntest.activelearning.core.coverage.CoverageUtils;
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.progress.ProgressExcelWriter;
 import learntest.activelearning.core.progress.ProgressRow;
-import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import sav.common.core.SavException;

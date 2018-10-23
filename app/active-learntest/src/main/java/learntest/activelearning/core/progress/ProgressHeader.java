@@ -1,6 +1,6 @@
 package learntest.activelearning.core.progress;
 
-import learntest.plugin.export.io.excel.common.ExcelHeader;
+import learntest.activelearning.core.utils.excel.ExcelHeader;
 
 public enum ProgressHeader implements ExcelHeader {	
 	EXCEL_HEADER("MethodProgress")

@@ -17,7 +17,6 @@ import learntest.plugin.commons.PluginException;
 import learntest.plugin.commons.event.EmptyGentestManager;
 import learntest.plugin.commons.event.IJavaGentestEventManager;
 import learntest.plugin.commons.event.IJavaModelRuntimeInfo;
-import learntest.plugin.console.LearntestConsole;
 import sav.common.core.pattern.IDataProvider;
 
 /**

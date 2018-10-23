@@ -3,8 +3,8 @@ package learntest.activelearning.plugin.handler;
 import learntest.activelearning.core.settings.LearnTestResources;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.ActiveLearntestPlugin;
-import learntest.plugin.commons.PluginException;
-import learntest.plugin.utils.IResourceUtils;
+import sav.eclipse.plugin.IResourceUtils;
+import sav.eclipse.plugin.PluginException;
 
 public class ActiveLearntestUtils {
 	

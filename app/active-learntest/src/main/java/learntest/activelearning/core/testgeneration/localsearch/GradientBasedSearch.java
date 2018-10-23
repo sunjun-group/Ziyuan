@@ -7,13 +7,13 @@ import java.util.Map;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
+import learntest.activelearning.core.data.MethodInfo;
+import learntest.activelearning.core.data.TestInputData;
+import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
-import learntest.activelearning.core.model.TestInputData;
-import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.mutate.Mutator;
 import learntest.activelearning.core.testgeneration.mutate.NumericMutator;
-import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.strategies.dto.AppJavaClassPath;

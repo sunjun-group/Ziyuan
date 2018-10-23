@@ -59,5 +59,13 @@
          </menu>
       </menuContribution>
    </extension>
-
+ <extension
+         id="learntestPreferences"
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="learntest.activelearning.plugin.preferences.ActiveLearnTestPreference"
+            id="learntest.preference"
+            name="Active Learntest">
+      </page>
+   </extension>
 </plugin>

@@ -9,17 +9,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.ValidMethodsLoader;
 import learntest.activelearning.plugin.handler.ActiveLearntestUtils;
-import learntest.core.commons.data.classinfo.MethodInfo;
-import learntest.plugin.LearnTestConfig;
-import learntest.plugin.LearntestLogger;
-import learntest.plugin.ProjectSetting;
-import learntest.plugin.handler.gentest.GentestSettings;
-import learntest.plugin.utils.IMethodUtils;
+import learntest.activelearning.plugin.settings.GentestSettings;
+import learntest.activelearning.plugin.settings.LearntestLogger;
+import learntest.activelearning.plugin.settings.ProjectSetting;
+import learntest.activelearning.plugin.utils.IMethodUtils;
+import learntest.activelearning.plugin.utils.IStatusUtils;
+import learntest.activelearning.plugin.utils.ActiveLearnTestConfig;
 import learntest.plugin.utils.IResourceUtils;
-import learntest.plugin.utils.IStatusUtils;
 import learntest.plugin.utils.JdartConstants;
 import learntest.plugin.utils.WorkbenchUtils;
 import sav.strategies.dto.AppJavaClassPath;
@@ -62,13 +62,13 @@ public class JDartGentestHandler extends AbstractHandler implements IHandler {
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(project);
 		LearntestLogger.initLog4j(project);
 		ValidMethodsLoader methodLoader = new ValidMethodsLoader();
-		List<LearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
+		List<ActiveLearnTestConfig> validMethods = methodLoader.loadValidMethodInfos(project);
 		String jdartFolder = ProjectSetting.getLearntestOutputFolder(project) + "/jdart";
 		JDartGentest jdartGentest = new JDartGentest(
 				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jdart/jpf.properties"),
 				IResourceUtils.getResourceAbsolutePath(JdartConstants.BUNDLE_ID, "libs/jpf.properties"),
 				jdartFolder);
-		for (LearnTestConfig config : validMethods) {
+		for (ActiveLearnTestConfig config : validMethods) {
 			if (monitor.isCanceled()) {
 				return;
 			}

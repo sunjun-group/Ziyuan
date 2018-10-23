@@ -22,10 +22,10 @@ import jdart.model.TestInput;
 import learntest.core.LearnTestParams;
 import learntest.core.LearnTestParams.LearntestSystemVariable;
 import learntest.core.commons.data.classinfo.TargetMethod;
-import learntest.plugin.utils.IResourceUtils;
 import learntest.plugin.utils.JdartConstants;
 import sav.common.core.Pair;
 import sav.common.core.utils.StringUtils;
+import sav.eclipse.plugin.IResourceUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
 /**

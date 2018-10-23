@@ -1,7 +1,6 @@
 package learntest.activelearning.plugin.handler;
 
 import java.util.ArrayList;
-import learntest.activelearning.core.settings.LearntestSettings;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,24 +20,24 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.distribution.RandomTestDistributionRunner;
 import learntest.activelearning.core.settings.LearnTestResources;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.ActiveLearntestPlugin;
-import learntest.core.commons.data.classinfo.MethodInfo;
-import learntest.plugin.LearnTestConfig;
-import learntest.plugin.LearntestLogger;
-import learntest.plugin.handler.TestableMethodCollector;
-import learntest.plugin.handler.filter.classfilter.ITypeFilter;
-import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
-import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
-import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
-import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
-import learntest.plugin.handler.gentest.GentestSettings;
-import learntest.plugin.utils.IProjectUtils;
-import learntest.plugin.utils.IResourceUtils;
-import learntest.plugin.utils.IStatusUtils;
-import learntest.plugin.utils.LearnTestUtil;
+import learntest.activelearning.plugin.settings.GentestSettings;
+import learntest.activelearning.plugin.settings.LearntestLogger;
+import learntest.activelearning.plugin.utils.IStatusUtils;
+import learntest.activelearning.plugin.utils.ActiveLearnTestConfig;
+import learntest.activelearning.plugin.utils.PluginUtils;
+import learntest.activelearning.plugin.utils.filter.IMethodFilter;
+import learntest.activelearning.plugin.utils.filter.ITypeFilter;
+import learntest.activelearning.plugin.utils.filter.NestedBlockChecker;
+import learntest.activelearning.plugin.utils.filter.TestableClassFilter;
+import learntest.activelearning.plugin.utils.filter.TestableMethodCollector;
+import learntest.activelearning.plugin.utils.filter.TestableMethodFilter;
+import sav.eclipse.plugin.IProjectUtils;
+import sav.eclipse.plugin.IResourceUtils;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -83,7 +82,7 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 	}
 
 	protected void execute(IProgressMonitor monitor) throws Exception {
-		LearnTestConfig config = LearnTestConfig.getInstance();
+		ActiveLearnTestConfig config = ActiveLearnTestConfig.getInstance();
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(config);
 		LearntestLogger.initLog4j(config.getProjectName());
 		LearnTestResources resources = new LearnTestResources();
@@ -126,7 +125,7 @@ public class TestcasesDistributionHandler extends AbstractHandler implements IHa
 				run((IPackageFragment) javaElement, appClasspath, learntestSettings, monitor);
 			} else if (javaElement instanceof ICompilationUnit) {
 				ICompilationUnit icu = (ICompilationUnit) javaElement;
-				CompilationUnit cu = LearnTestUtil.convertICompilationUnitToASTNode(icu);
+				CompilationUnit cu = PluginUtils.convertICompilationUnitToASTNode(icu);
 				boolean valid = true;
 				for (ITypeFilter classFilter : classFilters) {
 					if (!classFilter.isValid(cu)) {

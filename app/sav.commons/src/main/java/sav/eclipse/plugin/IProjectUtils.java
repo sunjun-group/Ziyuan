@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -157,6 +156,15 @@ public class IProjectUtils {
 		String outputPath = project.getProject().getLocation().toOSString() + File.separator + outputFolder;
 		return outputPath;
 	}
+	
+	public static String createFolder(IJavaProject javaProject, String name)
+			throws CoreException {
+		IFolder folder = javaProject.getProject().getFolder(name);
+		if (!folder.exists()) {
+			folder.create(false, true, null);
+		}
+		return folder.getLocation().toOSString();
+	}
 
 	public static String createSourceFolder(IJavaProject javaProject, String name)
 			throws CoreException {
@@ -241,4 +249,39 @@ public class IProjectUtils {
 		return StringUtils.dotJoin(fragments);
 	}
 
+	public static ClassLoader getPrjClassLoader(IJavaProject javaProject) {
+		try {
+			List<URL> urlList = new ArrayList<URL>();
+			List<String> classPathEntries = getPrjectClasspath(javaProject);
+			for (String cpEntry : classPathEntries) {
+				IPath path = new Path(cpEntry);
+				URL url = path.toFile().toURI().toURL();
+				urlList.add(url);
+			}
+			ClassLoader parentClassLoader = javaProject.getClass().getClassLoader();
+			URL[] urls = (URL[]) urlList.toArray(new URL[urlList.size()]);
+			URLClassLoader classLoader = new URLClassLoader(urls, parentClassLoader);
+			return classLoader;
+		} catch (MalformedURLException e) {
+			throw new SavRtException(e);
+		}
+	}
+	
+	public static List<IPackageFragmentRoot> getSourcePkgRoots(IJavaProject project) {
+		List<IPackageFragmentRoot> roots = new ArrayList<IPackageFragmentRoot>();
+		try {
+			for (IPackageFragmentRoot packageFragmentRoot : project.getPackageFragmentRoots()) {
+				if (packageFragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE
+						&& !startWith(packageFragmentRoot.getResource().getProjectRelativePath().toString(), "src/test",
+								"test", "l2t_test")) {
+					roots.add(packageFragmentRoot);
+				}
+			}
+
+		} catch (JavaModelException e1) {
+			e1.printStackTrace();
+		}
+
+		return roots;
+	}
 }

@@ -2,7 +2,7 @@ package learntest.activelearning.core.testgeneration.localsearch;
 
 import java.util.List;
 
-import learntest.activelearning.core.model.TestInputData;
+import learntest.activelearning.core.data.TestInputData;
 
 class IntermediateSearchResult {
 	double[] bestValue;

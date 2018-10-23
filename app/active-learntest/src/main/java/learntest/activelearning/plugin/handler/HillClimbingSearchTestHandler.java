@@ -8,13 +8,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 
 import learntest.activelearning.core.SearchBasedLearnTest;
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.settings.LearntestSettings;
-import learntest.core.commons.data.classinfo.MethodInfo;
-import learntest.plugin.LearnTestConfig;
-import learntest.plugin.LearntestLogger;
-import learntest.plugin.handler.gentest.GentestSettings;
-import learntest.plugin.utils.IMethodUtils;
-import learntest.plugin.utils.IStatusUtils;
+import learntest.activelearning.plugin.settings.GentestSettings;
+import learntest.activelearning.plugin.settings.LearntestLogger;
+import learntest.activelearning.plugin.utils.IMethodUtils;
+import learntest.activelearning.plugin.utils.IStatusUtils;
+import learntest.activelearning.plugin.utils.ActiveLearnTestConfig;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class HillClimbingSearchTestHandler extends AbstractHandler implements IHandler {
@@ -42,7 +42,7 @@ public class HillClimbingSearchTestHandler extends AbstractHandler implements IH
 	}
 
 	protected void execute() throws Exception {
-		LearnTestConfig config = LearnTestConfig.getInstance();
+		ActiveLearnTestConfig config = ActiveLearnTestConfig.getInstance();
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(config);
 		LearntestLogger.initLog4j(config.getProjectName());
 		MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);

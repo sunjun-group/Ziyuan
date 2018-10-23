@@ -26,7 +26,6 @@ import learntest.core.commons.data.SolutionBreakpointValue;
 import sav.common.core.Constants;
 import sav.common.core.formula.Eq;
 import sav.common.core.utils.CollectionUtils;
-import sav.common.core.utils.StringUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
 /**

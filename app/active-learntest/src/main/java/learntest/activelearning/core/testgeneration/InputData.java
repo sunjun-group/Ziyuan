@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
-import learntest.activelearning.core.model.TestInputData;
+import learntest.activelearning.core.data.TestInputData;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;

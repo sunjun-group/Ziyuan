@@ -16,13 +16,13 @@ import gentest.core.data.statement.Statement;
 import gentest.junit.TestsPrinter.PrintOption;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.coverage.CoverageUtils;
-import learntest.activelearning.core.model.TestInputData;
-import learntest.activelearning.core.model.UnitTestSuite;
+import learntest.activelearning.core.data.MethodInfo;
+import learntest.activelearning.core.data.TestInputData;
+import learntest.activelearning.core.data.UnitTestSuite;
+import learntest.activelearning.core.gentest.GentestParams;
+import learntest.activelearning.core.gentest.GentestResult;
+import learntest.activelearning.core.gentest.TestGenerator;
 import learntest.activelearning.core.settings.LearntestSettings;
-import learntest.core.commons.data.classinfo.MethodInfo;
-import learntest.core.gentest.GentestParams;
-import learntest.core.gentest.GentestResult;
-import learntest.core.gentest.TestGenerator;
 import microbat.instrumentation.cfgcoverage.CoverageAgentParams.CoverageCollectionType;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
@@ -211,7 +211,7 @@ public class Tester {
 		}
 	}
 	
-	private GentestParams initGentestParams(MethodInfo targetMethod, LearntestSettings settings,
+	public GentestParams initGentestParams(MethodInfo targetMethod, LearntestSettings settings,
 			AppJavaClassPath appClasspath) {
 		GentestParams params = new GentestParams();
 		params.setMethodExecTimeout(settings.getMethodExecTimeout());

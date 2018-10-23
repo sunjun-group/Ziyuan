@@ -4,11 +4,11 @@ import org.apache.bcel.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.activelearning.core.data.MethodInfo;
+import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
-import learntest.activelearning.core.model.UnitTestSuite;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.SearchBasedTestGenerator;
-import learntest.core.commons.data.classinfo.MethodInfo;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CFGUtility;

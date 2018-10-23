@@ -1,7 +1,6 @@
 package learntest.activelearning.plugin.handler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -14,25 +13,22 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+
+import learntest.activelearning.core.data.ClassInfo;
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.distribution.RandomTestDistributionRunner;
 import learntest.activelearning.core.settings.LearnTestResources;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.ActiveLearntestPlugin;
-import learntest.core.commons.data.classinfo.ClassInfo;
-import learntest.core.commons.data.classinfo.MethodInfo;
-import learntest.plugin.LearnTestConfig;
-import learntest.plugin.LearntestLogger;
-import learntest.plugin.handler.filter.classfilter.TestableClassFilter;
-import learntest.plugin.handler.filter.methodfilter.IMethodFilter;
-import learntest.plugin.handler.filter.methodfilter.NestedBlockChecker;
-import learntest.plugin.handler.filter.methodfilter.TestableMethodFilter;
-import learntest.plugin.handler.gentest.GentestSettings;
-import learntest.plugin.utils.IProjectUtils;
-import learntest.plugin.utils.IResourceUtils;
-import learntest.plugin.utils.IStatusUtils;
-import learntest.plugin.utils.LearnTestUtil;
+import learntest.activelearning.plugin.settings.GentestSettings;
+import learntest.activelearning.plugin.settings.LearntestLogger;
+import learntest.activelearning.plugin.utils.IStatusUtils;
+import learntest.activelearning.plugin.utils.ActiveLearnTestConfig;
+import learntest.activelearning.plugin.utils.PluginUtils;
 import sav.common.core.SavException;
 import sav.common.core.utils.CollectionUtils;
+import sav.eclipse.plugin.IProjectUtils;
+import sav.eclipse.plugin.IResourceUtils;
 import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
@@ -64,7 +60,7 @@ public class OneTestcaseDistributionHandler extends AbstractHandler implements I
 	}
 
 	protected void execute(IProgressMonitor monitor) throws Exception {
-		LearnTestConfig config = LearnTestConfig.getInstance();
+		ActiveLearnTestConfig config = ActiveLearnTestConfig.getInstance();
 		AppJavaClassPath appClasspath = GentestSettings.getConfigAppClassPath(config);
 		MethodInfo method = initTargetMethod(config);
 		LearntestLogger.initLog4j(config.getProjectName());
@@ -102,14 +98,14 @@ public class OneTestcaseDistributionHandler extends AbstractHandler implements I
 		/*----------*/
 	}
 
-	private MethodInfo initTargetMethod(LearnTestConfig config) throws SavException, JavaModelException {
+	private MethodInfo initTargetMethod(ActiveLearnTestConfig config) throws SavException, JavaModelException {
 		ClassInfo targetClass = new ClassInfo(config.getTargetClassName());
 		MethodInfo method = new MethodInfo(targetClass);
 		method.setMethodName(config.getTargetMethodName());
 		method.setLineNum(config.getMethodLineNumber());
-		MethodDeclaration methodDeclaration = LearnTestUtil.findSpecificMethod(method.getClassName(),
+		MethodDeclaration methodDeclaration = PluginUtils.findSpecificMethod(method.getClassName(),
 				method.getMethodName(), method.getLineNum());
-		method.setMethodSignature(LearnTestUtil.getMethodSignature(methodDeclaration));
+		method.setMethodSignature(PluginUtils.getMethodSignature(methodDeclaration));
 		List<String> paramNames = new ArrayList<String>(CollectionUtils.getSize(methodDeclaration.parameters()));
 		List<String> paramTypes = new ArrayList<String>(paramNames.size());
 		for (Object obj : methodDeclaration.parameters()) {

@@ -13,8 +13,8 @@ package sav.strategies.dto.execute.value;
  *
  */
 public class StringValue extends PrimitiveValue {
-	private static final String LENGTH_CODE = "length";
-	private static final String IS_EMPTY = "isEmpty";
+	public static final String LENGTH_CODE = "length";
+	public static final String IS_EMPTY = "isEmpty";
 	
 	public StringValue(String id, String val) {
 		super(id, val);

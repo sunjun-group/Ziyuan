@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import gentest.core.data.Sequence;
 import learntest.activelearning.core.coverage.CoverageAgentRunner;
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.settings.LearntestSettings;
-import learntest.core.commons.TimeController;
-import learntest.core.commons.data.classinfo.MethodInfo;
+import learntest.activelearning.core.utils.TimeController;
 import microbat.instrumentation.cfgcoverage.CoverageAgentParams;
+import microbat.instrumentation.cfgcoverage.CoverageAgentParams.CoverageCollectionType;
 import microbat.instrumentation.cfgcoverage.CoverageOutput;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
-import microbat.instrumentation.cfgcoverage.CoverageAgentParams.CoverageCollectionType;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.SingleTimer;

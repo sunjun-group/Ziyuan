@@ -115,7 +115,7 @@ public abstract class ExecValue implements IExecValue {
 	}
 	
 	public String getChildId(String childCode) {
-		return String.format("%s.%s", varId, childCode);
+		return ExecVarHelper.getFieldId(varId, childCode);
 	}
 	
 	public String getChildId(int i) {

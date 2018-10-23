@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 
-import learntest.plugin.LearnTestConfig;
-import learntest.plugin.ProjectSetting;
+import learntest.activelearning.plugin.settings.ProjectSetting;
+import learntest.activelearning.plugin.utils.ActiveLearnTestConfig;
 import sav.common.core.Constants;
 import sav.common.core.Pair;
 import sav.common.core.utils.ClassUtils;
@@ -17,14 +17,14 @@ import sav.strategies.dto.ClassLocation;
 
 public class ValidMethodsLoader {
 	
-	public List<LearnTestConfig> loadValidMethodInfos(String projectName) throws CoreException {
+	public List<ActiveLearnTestConfig> loadValidMethodInfos(String projectName) throws CoreException {
 		String learntestOutput = ProjectSetting.getLearntestOutputFolder(projectName);
 		String validMethodFile = FileUtils.getFilePath(learntestOutput, "allValidMethods.txt");
 		List<String> validMethods = loadValidMethods(validMethodFile);
 		List<ClassLocation> methodLocs = toMethodLocations(validMethods);
-		List<LearnTestConfig> learntestConfigs = new ArrayList<>(methodLocs.size());
+		List<ActiveLearnTestConfig> learntestConfigs = new ArrayList<>(methodLocs.size());
 		for (ClassLocation method : methodLocs) {
-			LearnTestConfig config = new LearnTestConfig();
+			ActiveLearnTestConfig config = new ActiveLearnTestConfig();
 			config.setProjectName(projectName);
 			config.setTargetClassName(method.getClassCanonicalName());
 			config.setTargetMethodName(method.getMethodName());

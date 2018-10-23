@@ -5,9 +5,7 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Row;
 
-import learntest.activelearning.core.progress.ProgressHeader;
-import learntest.activelearning.core.progress.ProgressRow;
-import learntest.plugin.export.io.excel.common.SimpleExcelWriter;
+import learntest.activelearning.core.utils.excel.SimpleExcelWriter;
 
 public class ProgressExcelWriter extends SimpleExcelWriter<ProgressRow>{
 	
