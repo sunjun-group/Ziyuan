@@ -57,7 +57,7 @@ public abstract class ExecutionTimer {
 	}
 	
 	public static ExecutionTimer getCountDownExecutionTimer(long defaultTimeout) {
-		return new CountDownExecutionTimer(defaultTimeout);
+		return new CountDownExecutionTimer2(defaultTimeout);
 	}
 	
 	public void shutdown() {

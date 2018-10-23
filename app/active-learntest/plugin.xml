@@ -23,6 +23,11 @@
             id="active-learntest.plugin.commands.onetestcaseDistribution"
             name="Run One Random Testcase For Distribution">
       </command>
+      <command
+            defaultHandler="learntest.activelearning.plugin.handler.HillClimbingSearchTestHandler"
+            id="active-learntest.plugin.commands.hillclimbing"
+            name="Test with hill-climbing search">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -34,6 +39,11 @@
             <command
                   commandId="active-learntest.plugin.commands.gentest"
                   label="Generate Test"
+                  style="push">
+            </command>
+            <command
+                  commandId="active-learntest.plugin.commands.hillclimbing"
+                  label="Test with hill-climbing search"
                   style="push">
             </command>
             <command
