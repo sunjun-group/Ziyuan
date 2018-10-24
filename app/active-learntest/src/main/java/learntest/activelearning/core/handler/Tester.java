@@ -165,7 +165,7 @@ public class Tester {
 			BreakPointValue methodInputValue = testInputs.getMethodInputValue();
 			BreakpointValue inputValue = new BreakpointValue(methodInputValue.getName());
 			for (VarValue value : methodInputValue.getChildren()) {
-				inputValue.add(transfer(value));
+				inputValue.add(convert(value));
 			}
 			resultMap.put(testIdx,
 					new TestInputData(testcases.get(testIdx), inputValue, testInputs.getConditionVariationMap()));
@@ -173,7 +173,7 @@ public class Tester {
 		return resultMap;
 	}
 	
-	private ExecValue transfer(VarValue value) {
+	private ExecValue convert(VarValue value) {
 		ExecValue execValue = null;
 		if (value instanceof StringValue) {
 			execValue = new sav.strategies.dto.execute.value.StringValue(value.getVarID(), value.getStringValue());
@@ -189,7 +189,7 @@ public class Tester {
 		}
 		if (execValue != null) {
 			for (VarValue child : value.getChildren()) {
-				ExecValue childExecVal = transfer(child);
+				ExecValue childExecVal = convert(child);
 				if (childExecVal != null) {
 					execValue.add(childExecVal);
 				}

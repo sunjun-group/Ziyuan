@@ -8,6 +8,9 @@
 
 package sav.strategies.dto.execute.value;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sav.common.core.formula.Var;
 import sav.common.core.formula.utils.ExpressionVisitor;
 
@@ -19,9 +22,13 @@ public class ExecVar implements Var {
 	private final String varId;
 	private ExecVarType type;
 	private String valueType;
+	private boolean isModifiable = true;
+	private double defaultValue = 0.0;
+	private List<ExecVar> children = new ArrayList<>();
 
-	public ExecVar(String varId) {
+	public ExecVar(String varId, String valueType) {
 		this.varId = varId;
+		this.valueType = valueType;
 	}
 
 	public ExecVar(String varId, ExecVarType type) {
@@ -111,5 +118,25 @@ public class ExecVar implements Var {
 
 	public void setValueType(String valueType) {
 		this.valueType = valueType;
+	}
+	
+	public void setModifiable(boolean isModifiable) {
+		this.isModifiable = isModifiable;
+	}
+	
+	public void setDefaultValue(double defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+	
+	public double getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void add(ExecVar child) {
+		children.add(child);
+	}
+	
+	public List<ExecVar> getChildren() {
+		return children;
 	}
 }

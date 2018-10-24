@@ -98,7 +98,6 @@ public class NNBasedTestGenerator extends TestGenerator{
 			DataPoints points = (DataPoints) response.getMessageBody();
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 					points.values, points.varList);
-
 			this.testsuite.addTestCases(newSuite);
 
 			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());

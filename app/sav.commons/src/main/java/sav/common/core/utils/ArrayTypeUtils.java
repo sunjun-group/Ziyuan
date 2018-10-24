@@ -33,4 +33,13 @@ public class ArrayTypeUtils {
 		}
 		return contentClazz;
 	}
+	
+	public static int getArrayDimension(String type) {
+		int i = 0;
+		while (type.charAt(i) == '[') {
+			i++;
+		}
+		return i;
+	}
+	
 }

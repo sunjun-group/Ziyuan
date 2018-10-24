@@ -22,10 +22,6 @@ public class TestInputData {
 		return inputValue;
 	}
 
-	private Map<Integer, Double> getConditionVariationMap() {
-		return conditionVariationMap;
-	}
-
 	class ApproachLevel {
 		int level = 0;
 
