@@ -17,8 +17,9 @@ import sav.common.core.utils.CollectionUtils;
 
 /**
  * @author LLT
- * 
+ * will be removed, be replaced with MultiDimArrayValue
  */
+@Deprecated
 public class ArrayValue extends ReferenceValue {
 	public static final String LENGTH_CODE = "length";
 	private List<ArrValueElement> elements; 

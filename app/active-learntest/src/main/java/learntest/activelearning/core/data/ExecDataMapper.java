@@ -6,7 +6,8 @@ import java.util.Map;
 
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.ArrayTypeUtils;
-import sav.strategies.dto.execute.value.ArrayValue;
+import sav.strategies.dto.execute.value.MultiDimArrayValue;
+import sav.strategies.dto.execute.value.MultiDimArrayValue.ArrayValueElement;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
@@ -35,18 +36,22 @@ public class ExecDataMapper {
 		if (type == ExecVarType.STRING) {
 			size = k;
 		} else if (type == ExecVarType.ARRAY) {
-			int eleSlots = calculateRequireSlot(var.getChildren().get(0));
+			int arrElementSlots = 0;
+			for (ExecVar arrEleVar : var.getChildren()) {
+				arrElementSlots += calculateRequireSlot(arrEleVar);
+			}
 			String valueType = var.getValueType();
-			size = (int) Math.pow(k, ArrayTypeUtils.getArrayDimension(valueType));
-			size = size * eleSlots + 2; // for isNull & length
+			int arrayDimension = ArrayTypeUtils.getArrayDimension(valueType);
+			size = 1 + arrayDimension /*for isNull & arrayDimensionSize */ + arrElementSlots;
 		} else if (type == ExecVarType.REFERENCE) {
 			for (ExecVar field : var.getChildren()) {
 				size += calculateRequireSlot(field);
 			}
 			size = size + 1; // for isNull
-		} else {
+		} else { // primitive type
 			size = 1;
 		}
+		requireSlotsMap.put(var.getVarId(), size);
 		return size;
 	}
 	
@@ -87,16 +92,13 @@ public class ExecDataMapper {
 				}
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			ArrayValue arrayValue = (ArrayValue) execVal;
+			MultiDimArrayValue arrayValue = (MultiDimArrayValue) execVal;
 			dp[pos++] = arrayValue.isNull() ? "0" : "1";
-			dp[pos++] = String.valueOf(arrayValue.getLengthValue()); 
-			int maxEleSize = (int) Math.pow(k, ArrayTypeUtils.getArrayDimension(arrayValue.getValueType()));
-			for (int i = 0; i < maxEleSize; i++) {
-				ExecValue elementValue = arrayValue.getElementByFlattenLocation(i); // TODO-LLT: impl the function.
-				if (elementValue != null) {
-					fillDatapoint(elementValue, dp, pos);
-				}
-				// TODO: calculate next pos.
+			for (int i = 0; i < arrayValue.getDimension(); i++) {
+				dp[pos++] = String.valueOf(arrayValue.getLength()[i]);
+			}
+			for (ArrayValueElement arrayElementValue : arrayValue.getElements()) {
+				fillDatapoint(arrayElementValue.getValue(), dp, posMap.get(arrayElementValue.getVarId()));
 			}
 		} else if (type == ExecVarType.REFERENCE) {
 			ReferenceValue refValue = (ReferenceValue) execVal;

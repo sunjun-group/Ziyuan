@@ -5,7 +5,7 @@ import java.util.Arrays;
 import gentest.core.data.statement.RArrayConstructor;
 import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
-import gentest.core.value.generator.ArrayRandomness;
+import gentest.core.value.generator.ArrayWalker;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.PrimitiveUtils;
 import sav.common.core.utils.Randomness;
@@ -55,11 +55,11 @@ public class FixLengthArrayValueGenerator {
 			 * Check the last dimension, if there is no any data, try to fakely
 			 * assign some for randomly generating purpose.
 			 */
-			int[] location = ArrayRandomness.next(null, limits);
+			int[] location = ArrayWalker.next(null, limits);
 			while (location != null) {
 				LocationHolderExecValue fakeEle = new LocationHolderExecValue(getArrayElementId(value, location));
 				value.add(fakeEle);
-				location = ArrayRandomness.next(location, limits);
+				location = ArrayWalker.next(location, limits);
 			}
 		}
 		return lengths;

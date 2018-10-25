@@ -42,7 +42,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 		variable.append(arrayConstructor);
 		variable.commitReturnVarIdIfNotExist();
 		// Generate the array content
-		int[] location = ArrayRandomness.next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
+		int[] location = ArrayWalker.next(null, arrayConstructor.getSizes()); // if arrayConstructor.getSizes()[i]>0, i.e. size[i]>0, location[i] = 0,otherwise null
 		while (location != null) {
 			/* keep level the same for better chance to generate a non-null value for content, this would be make
 			 * more sense in case of an array.
@@ -55,7 +55,7 @@ public class ArrayValueGenerator extends ValueGenerator {
 			RArrayAssignment arrayAssignment = new RArrayAssignment(
 					arrayConstructor.getOutVarId(), location, localVariableID);
 			variable.append(arrayAssignment);
-			location = ArrayRandomness.next(location, arrayConstructor.getSizes());
+			location = ArrayWalker.next(location, arrayConstructor.getSizes());
 		}
 		return true;
 	}
