@@ -9,14 +9,16 @@ import java.util.Set;
 import gentest.core.value.generator.ArrayWalker;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.SavRtException;
-import sav.common.core.utils.ArrayTypeUtils;
-import sav.strategies.dto.execute.value.MultiDimArrayValue;
-import sav.strategies.dto.execute.value.MultiDimArrayValue.ArrayValueElement;
-import sav.strategies.dto.execute.value.PrimitiveValue;
+import sav.strategies.dto.execute.value.ArrayValue;
+import sav.strategies.dto.execute.value.ArrayValue.ArrValueElement;
+import sav.strategies.dto.execute.value.BooleanValue;
+import sav.strategies.dto.execute.value.CharValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarHelper;
 import sav.strategies.dto.execute.value.ExecVarType;
+import sav.strategies.dto.execute.value.IntegerValue;
+import sav.strategies.dto.execute.value.PrimitiveValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
 import sav.strategies.dto.execute.value.StringValue;
 
@@ -26,6 +28,8 @@ public class ExecDataMapper {
 	private int definedArraySize;
 	private int size;
 	private List<ExecVar> methodInputs;
+	private Map<String, PrimitiveValue> defaultPaddingValues = new HashMap<>();
+	private Map<String, ExecVar> varMap = new HashMap<>();
 	
 	public ExecDataMapper(List<ExecVar> params, int k) {
 		for (ExecVar var : params) {
@@ -43,15 +47,15 @@ public class ExecDataMapper {
 		ExecVarType type = var.getType();
 		int size = 0;
 		if (type == ExecVarType.STRING) {
+			/* isNotNull, length, charArray(definedArraySize - 2) elements */
 			size = definedArraySize;
 		} else if (type == ExecVarType.ARRAY) {
+			/* isNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
 			int arrElementSlots = 0;
 			for (ExecVar arrEleVar : var.getChildren()) {
 				arrElementSlots += calculateRequireSlot(arrEleVar);
 			}
-			String valueType = var.getValueType();
-			int arrayDimension = ArrayTypeUtils.getArrayDimension(valueType);
-			size = 1 + arrayDimension /*for isNull & arrayDimensionSize */ + arrElementSlots;
+			size = 1/*isNull*/ + 1/*dimension*/ + 1/*length*/ + arrElementSlots;
 		} else if (type == ExecVarType.REFERENCE) {
 			for (ExecVar field : var.getChildren()) {
 				size += calculateRequireSlot(field);
@@ -61,6 +65,7 @@ public class ExecDataMapper {
 			size = 1;
 		}
 		requireSlotsMap.put(var.getVarId(), size);
+		varMap.put(var.getVarId(), var);
 		return size;
 	}
 	
@@ -78,51 +83,132 @@ public class ExecDataMapper {
 		}
 		return pos + requireSlotsMap.get(var.getVarId());
 	}
-	
-	public String[] toDatapoint(BreakpointValue bkpValue) {
-		String[] dp = new String[size];
-		for (ExecValue execVal : bkpValue.getChildren()) {
-			fillDatapoint(execVal, dp, posMap.get(execVal.getVarId()));
+
+	public DpAttribute[] getDatapoint(BreakpointValue bkpValue) {
+		Map<String, ExecValue> execValues = new HashMap<>();
+		collectExecValues(bkpValue.getChildren(), execValues);
+		DpAttribute[] dp = new DpAttribute[size];
+		for (ExecVar var : methodInputs) {
+			initDatapoint(dp, var);
 		}
-		// TODO filling padding elements, 
-		// & define ExecType
+		for (ExecValue value : bkpValue.getChildren()) {
+			fillDatapoint(value, dp, posMap.get(value.getVarId()));
+		}
 		return dp;
 	}
-
-	private void fillDatapoint(ExecValue execVal, String[] dp, int pos) {
-		ExecVarType type = execVal.getType();
+	
+	private void initDatapoint(DpAttribute[] dp, ExecVar var) {
+		ExecVarType type = var.getType();
+		String varId = var.getVarId();
+		int sPos = posMap.get(varId);
+		int pos = sPos; 
 		if (type == ExecVarType.STRING) {
-			/* isNotNull, length, charArray */
-			String strVal = execVal.getStrVal();
-			if (strVal == null) {
-				dp[pos++] = "0";
-			} else {
-				dp[pos++] = "1";
-				dp[pos++] = String.valueOf(strVal.length());
-				for (int i = 0; i < (definedArraySize - 2); i++) {
-					dp[pos++] = String.valueOf(strVal.charAt(i));
-				}
+			/* isNull, length, charArray */
+			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true));
+			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true);
+			for (int i = 0; i < (definedArraySize - 2); i++) {
+				dp[pos++] = new DpAttribute(new CharValue(var.getElementId(i), Character.MIN_VALUE), true);
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNotNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
-			MultiDimArrayValue arrayValue = (MultiDimArrayValue) execVal;
-			dp[pos++] = arrayValue.isNull() ? "0" : "1";
-			dp[pos++] = String.valueOf(arrayValue.getDimension());
-			for (int i = 0; i < arrayValue.getDimension(); i++) {
-				dp[pos++] = String.valueOf(arrayValue.getLength()[i]);
-			}
-			for (ArrayValueElement arrayElementValue : arrayValue.getElements()) {
-				fillDatapoint(arrayElementValue.getValue(), dp, posMap.get(arrayElementValue.getVarId()));
+			/* isNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
+			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true);
+			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("dimension"), 0), true);
+			for (ExecVar arrEleVar : var.getChildren()) {
+				initDatapoint(dp, arrEleVar);
 			}
 		} else if (type == ExecVarType.REFERENCE) {
 			/* isNotNull, fields */
+			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true);
+		} else {
+			PrimitiveValue defaultPaddingValue = defaultPaddingValues.get(varId);
+			if (defaultPaddingValue == null) {
+				defaultPaddingValues.put(varId, PrimitiveValue.valueOf(var, 0));
+			}
+			dp[pos] = new DpAttribute(defaultPaddingValue, true);
+		}
+	}
+	
+	private int fillDatapoint(ExecValue execVal, DpAttribute[] dp, int spos) {
+		ExecVarType type = execVal.getType();
+		int pos = spos;
+		DpAttribute paddingCond = null;
+		if (type == ExecVarType.STRING) {
+			/* isNull, length, charArray */
+			String strVal = execVal.getStrVal();
+			DpAttribute isNullAttr = dp[pos++];
+			if (strVal != null) {
+				isNullAttr.setBoolean(false);
+				DpAttribute lengthAttr = dp[pos++].setInt(strVal.length());
+				int realEleSize = Math.min(strVal.length(), (definedArraySize - 2));
+				int i = 0;
+				for (; i < realEleSize; i++) {
+					dp[pos++].setChar(strVal.charAt(i));
+				}
+				paddingCond = lengthAttr;
+			} else {
+				paddingCond = isNullAttr;
+			}
+		} else if (type == ExecVarType.ARRAY) {
+			/* isNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
+			ArrayValue arrayValue = (ArrayValue) execVal;
+			DpAttribute isNullAttr = dp[pos++];
+			if (!arrayValue.isNull()) {
+				isNullAttr.setBoolean(false);
+				dp[pos++].setInt(arrayValue.getDimension());
+				DpAttribute lengthAttr = dp[pos++].setInt(arrayValue.getLength());
+				int realEleSize = Math.min(arrayValue.getLength(), (definedArraySize - 2));
+				int i = 0;
+				ArrValueElement[] arrElements = arrayValue.getElementArray(realEleSize);
+				for (; i < realEleSize; i++) {
+					ArrValueElement ele = arrElements[i];
+					ExecValue eleValue = null;
+					if (ele == null) {
+						ExecVar eleVar = varMap.get(ExecVarHelper.getArrayElementID(execVal.getVarId(), i));
+						if (eleVar.getType() == ExecVarType.STRING) {
+							ele = new ArrValueElement(i, new StringValue(eleVar.getVarId(), null));
+						} else if (eleVar.getType() == ExecVarType.REFERENCE) {
+							ele = new ArrValueElement(i, new ReferenceValue(eleVar.getVarId(), true));
+						} else if (eleVar.getType() == ExecVarType.ARRAY) {
+							ele = new ArrValueElement(i, new ArrayValue(eleVar.getVarId(), true));
+						}
+					} else {
+						eleValue = ele.getValue();
+					}
+					pos = fillDatapoint(eleValue, dp, posMap.get(ele.getValue().getVarId()));
+				}
+				paddingCond = lengthAttr;
+			} else {
+				paddingCond = isNullAttr;
+			}
+		} else if (type == ExecVarType.REFERENCE) {
+			DpAttribute isNullAttr = dp[pos++];
 			ReferenceValue refValue = (ReferenceValue) execVal;
-			dp[pos++] = refValue.isNull() ? "0" : "1";
-			for (ExecValue fieldValue : refValue.getChildren()) {
-				fillDatapoint(fieldValue, dp, posMap.get(fieldValue.getVarId()));
+			if (refValue.isNull()) {
+				paddingCond = isNullAttr;
+			} else {
+				isNullAttr.setBoolean(false);
+				for (ExecValue fieldValue : refValue.getChildren()) {
+					pos = fillDatapoint(fieldValue, dp, posMap.get(fieldValue.getVarId()));
+				}
 			}
 		} else {
-			dp[pos] = execVal.getStrVal();
+			dp[pos].setValue(execVal); 
+			dp[pos].setPadding(false);
+			pos++;
+		}
+		if (paddingCond != null) {
+			int endPos = requireSlotsMap.get(execVal.getVarId()) + spos;
+			while(pos < endPos) {
+				dp[pos++].setPaddingCondition(paddingCond);
+			}
+		}
+		return pos;
+	}
+
+	private void collectExecValues(List<ExecValue> values, Map<String, ExecValue> execValueMap) {
+		for (ExecValue value : values) {
+			execValueMap.put(value.getVarId(), value);
+			collectExecValues(value.getChildren(), execValueMap);
 		}
 	}
 	
@@ -137,7 +223,7 @@ public class ExecDataMapper {
 		return bkpValue;
 	}
 	
-	private void appendValue(ExecVar var, ExecValue parent, double[] dp) {
+	private ExecValue appendValue(ExecVar var, ExecValue parent, double[] dp) {
 		ExecVarType type = var.getType();
 		String varId = var.getVarId();
 		ExecValue value = null;
@@ -160,7 +246,7 @@ public class ExecDataMapper {
 			/* isNotNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
 			double isNotNull = dp[pos++];
 			if (isNotNull >= 0) {
-				value = new MultiDimArrayValue(varId, false);
+				value = new ArrayValue(varId, false);
 				int dimension = (int) dp[pos++];
 				int[] arrDimSize = new int[dimension];
 				for(int i = 0; i < dimension; i++) {
@@ -178,7 +264,7 @@ public class ExecDataMapper {
 					}
 				}
 			} else {
-				value = new MultiDimArrayValue(varId, true);
+				value = new ArrayValue(varId, true);
 			}
 		} else if (type == ExecVarType.REFERENCE) {
 			/* isNotNull, fields */
@@ -194,9 +280,10 @@ public class ExecDataMapper {
 		} else { // primitive type
 			value = PrimitiveValue.valueOf(var, dp[pos]);
 		}
-		if (value != null) {
+		if (value != null && parent != null) {
 			parent.add(value);
 		}
+		return value;
 	}
 	
 }

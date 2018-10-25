@@ -139,4 +139,12 @@ public class ExecVar implements Var {
 	public List<ExecVar> getChildren() {
 		return children;
 	}
+	
+	public String getChildId(String childCode) {
+		return ExecVarHelper.getFieldId(this.varId, childCode);
+	}
+	
+	public String getElementId(int idx) {
+		return ExecVarHelper.getArrayElementID(varId, idx);
+	}
 }

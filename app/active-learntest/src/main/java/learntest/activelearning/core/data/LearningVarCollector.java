@@ -16,10 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import gentest.core.commons.utils.MethodUtils;
-import gentest.core.value.generator.ArrayWalker;
 import microbat.util.PrimitiveUtils;
 import sav.common.core.SavRtException;
-import sav.common.core.utils.ArrayTypeUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -78,15 +76,8 @@ public class LearningVarCollector {
 				var = new ExecVar(varId, ExecVarType.primitiveTypeOf(type.getName()));
 			} else if (type.isArray()) {
 				var = new ExecVar(varId, ExecVarType.ARRAY);
-				int dimension = ArrayTypeUtils.getArrayDimension(type);
-				int[] arrayDimensionSize = new int[dimension];
-				for (int i = 0; i < dimension; i++) {
-					arrayDimensionSize[i] = arraySize;
-				}
-				int[] curLoc = ArrayWalker.next(null, arrayDimensionSize);
-				while (curLoc != null) {
-					var.add(new ExecVar(getArrayElementID(varId, curLoc), type.getComponentType().getName()));
-					curLoc = ArrayWalker.next(curLoc, arrayDimensionSize);
+				for (int idx = 0; idx < arraySize; idx++) {
+					appendVariable(type.getComponentType(), getArrayElementID(varId, idx), var, retrieveLayer - 1);
 				}
 			} else {
 				String runtimeClass = varIdTypeMap.get(varId);

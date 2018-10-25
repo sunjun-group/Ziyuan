@@ -21,6 +21,10 @@ public class IntegerValue extends PrimitiveValue {
 		return new IntegerValue(id, value);
 	}
 	
+	public void setValue(Integer value) {
+		this.value = value;
+	}
+	
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.INTEGER;

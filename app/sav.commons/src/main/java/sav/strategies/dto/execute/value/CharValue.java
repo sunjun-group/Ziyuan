@@ -25,6 +25,10 @@ public class CharValue extends PrimitiveValue {
 		return new CharValue(id, value);
 	}
 	
+	public void setValue(Character value) {
+		this.value = value;
+	}
+	
 	@Override
 	public ExecVarType getType() {
 		return ExecVarType.CHAR;

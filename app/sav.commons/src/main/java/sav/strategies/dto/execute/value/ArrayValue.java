@@ -19,10 +19,14 @@ import sav.common.core.utils.CollectionUtils;
  * @author LLT
  * will be removed, be replaced with MultiDimArrayValue
  */
-@Deprecated
 public class ArrayValue extends ReferenceValue {
+	@Deprecated
 	public static final String LENGTH_CODE = "length";
 	private List<ArrValueElement> elements; 
+	private int length;
+	private int dimension;
+	
+	public static final ArrayValue NULL_VALUE = new ArrayValue("", true);
 
 	public ArrayValue(String id) {
 		super(id, false);
@@ -32,6 +36,22 @@ public class ArrayValue extends ReferenceValue {
 		super(id, isNull);
 	}
 	
+	public int getDimension() {
+		return dimension;
+	}
+
+	public void setDimension(int dimension) {
+		this.dimension = dimension;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
+
 	public String getElementId(int i) {
 		return ExecVarHelper.getArrayElementID(this.varId, i);
 	}
@@ -39,6 +59,16 @@ public class ArrayValue extends ReferenceValue {
 	@Override
 	public String getChildId(String childCode) {
 		return ExecVarHelper.getArrayChildID(this.varId, childCode);
+	}
+	
+	public ArrValueElement[] getElementArray(int size) {
+		ArrValueElement[] elements = new ArrValueElement[size];
+		for (ArrValueElement ele : getElements()) {
+			if(ele.getIdx() < size) {
+				elements[ele.getIdx()] = ele;
+			}
+		}
+		return elements;
 	}
 	
 	@Override
@@ -60,10 +90,12 @@ public class ArrayValue extends ReferenceValue {
 		return elements;
 	}
 
-	public void setLength(int length) {
+	@Deprecated
+	public void addLengthValue(int length) {
 		add(new IntegerValue(getChildId(LENGTH_CODE), length));
 	}
 	
+	@Deprecated
 	public IntegerValue getLengthValue() {
 		ExecValue value = findVariableById(getChildId(LENGTH_CODE));
 		if (value == null) {
@@ -76,7 +108,7 @@ public class ArrayValue extends ReferenceValue {
 		Assert.assertTrue(ar != null,
 				"Value of ArrayReference is null, in this case, initialize execValue using ReferenceValue.nullValue instead!");
 		final int arrayLength = ar.length();
-		setLength(arrayLength);
+		addLengthValue(arrayLength);
 	}
 
 	@Override
@@ -154,11 +186,6 @@ public class ArrayValue extends ReferenceValue {
 		public String toString() {
 			return "[idx=" + idx + "] = " + value + "]";
 		}
-	}
-
-	public ExecValue getElementByFlattenLocation(int i) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

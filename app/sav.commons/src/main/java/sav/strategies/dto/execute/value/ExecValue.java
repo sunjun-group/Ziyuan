@@ -31,7 +31,7 @@ public abstract class ExecValue implements IExecValue {
 	}
 	
 	public List<ExecValue> getChildren() {
-		return children;
+		return CollectionUtils.nullToEmpty(children);
 	}
 	
 	public String getVarId() {
