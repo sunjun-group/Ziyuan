@@ -210,10 +210,10 @@ public class CfgJaCoCoTest extends AbstractTest {
 	public void testLoopHeader() throws Exception {
 		runSimpleRunner = true;
 		CfgCoverage cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCond");
-		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCondNeg");
-		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "singleLoopCond");
-		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "forLoop");
-		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileMultiCond");
+//		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "multiLoopCondNeg");
+//		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "singleLoopCond");
+//		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "forLoop");
+//		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileMultiCond");
 		cfgCoverage = runTest(LoopHeaderSample.class, LoopHeaderSampleTest.class, "doWhileSingleCondWithInLoopCond");
 	}
 	

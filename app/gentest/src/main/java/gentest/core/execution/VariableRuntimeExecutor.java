@@ -46,7 +46,10 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	protected Boolean successful;
 	public static CachePoolExecutionTimer executionTimer = (CachePoolExecutionTimer) ExecutionTimer
 			.getCachePoolExecutionTimer(methodExecTimeout);
+//	public static ExecutionTimer executionTimer = ExecutionTimer.getCountDownExecutionTimer(methodExecTimeout);
+//	public static ExecutionTimer executionTimer = ExecutionTimer.getCachePoolExecutionTimer(methodExecTimeout);
 
+	
 	public VariableRuntimeExecutor() {
 		data = new RuntimeData();
 	}
@@ -86,6 +89,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 
 	public boolean execute(Statement stmt) {
 		try {
+			log.debug("Execute stmt " + stmt.getKind());
 			stmt.accept(this);
 		} catch(Throwable ex) {
 			log.debug(ex.getMessage());
@@ -109,12 +113,18 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	/* visitor part */
 	@Override
 	public boolean visit(RAssignment stmt) {
+		if (stmt.getValue() == null) {
+			log.debug(String.format("var_%s=null", stmt.getOutVarId()));
+		} else {
+			log.debug(String.format("var_%s=%s", stmt.getOutVarId(), stmt.getValue()));
+		}
 		addExecData(stmt.getOutVarId(), stmt.getValue());
 		return successful;
 	}
 
 	@Override
 	public boolean visit(RConstructor stmt) {
+		log.debug("Execute Constructor...");
 		SingleTimer timer = SingleTimer.start(String.format("Execute Constructor [%s (%s params)]",
 				stmt.getDeclaringClass().getName(), TextFormatUtils.printObj(stmt.getInputTypes())));
 		List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
@@ -172,6 +182,9 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	
 	@Override
 	public boolean visitRmethod(Rmethod stmt) {
+		SingleTimer timer = SingleTimer.start(String.format("Execute Method [%s (%s params)]",
+				stmt.getMethod().getName(), TextFormatUtils.printObj(stmt.getMethod().getParameterTypes())));
+	
 		final List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
 		for (int var : stmt.getInVarIds()) {
 			inputs.add(getExecData(var));
@@ -195,12 +208,13 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 			log.debug(e.getMessage());
 			onFail();
 		}
+		log.debug(timer.getResult());
 		return successful;
 	}
 	
 	private void invokeMethodByExecutionTimer(final List<Object> inputs, final ReturnValue value, final Object obj,
 			final Method method) throws Exception {
-		boolean success = executionTimer.run(new Runnable() {
+		boolean notTimeout = executionTimer.run(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -211,7 +225,8 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 				}
 			}
 		});
-		if (!success) {
+		if (!notTimeout) {
+			log.debug("timeout!");
 			onFail();
 		}
 	}

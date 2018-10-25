@@ -34,7 +34,7 @@
 	<classpathentry kind="lib" path="libs/commons-collections4-4.1.jar"/>
 	<classpathentry kind="lib" path="libs/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="libs/evosuite-generated-1.0.5.jar"/>
-	<classpathentry kind="lib" path="libs/evosuite-standalone-runtime-1.0.5.jar"/>
+	<classpathentry kind="lib" path="libs/evosuite-standalone-runtime-1.0.5.jar" sourcepath="libs/evosuite-standalone-runtime-1.0.5-sources.jar"/>
 	<classpathentry kind="lib" path="libs/poi-3.17.jar"/>
 	<classpathentry kind="lib" path="libs/poi-ooxml-3.17.jar"/>
 	<classpathentry kind="lib" path="libs/poi-ooxml-schemas-3.17.jar"/>

@@ -32,10 +32,15 @@ import sav.strategies.dto.AppJavaClassPath;
  */
 @ExcludeCategory
 public class CfgJaCoCoMathProjectTest extends AbstractTest {
-	private static final String mathTrunk = "/Users/lylytran/apache-common-math-2.2/apache-common-math-2.2";
-	private static final String MATH_PROJ_BIN_FOLDER = "/Users/lylytran/apache-common-math-2.2/apache-common-math-2.2/bin";
-	private static final String HAMCREST_CORE_JAR_PATH = "/Applications/Eclipse.app/Contents/Eclipse/plugins/org.hamcrest.core_1.3.0.v201303031735.jar";
-	private static final String JUNIT_JAR_PATH = "/Applications/Eclipse.app/Contents/Eclipse/plugins/org.junit_4.12.0.v201504281640/junit.jar";
+//	private static final String mathTrunk = "/Users/lylytran/apache-common-math-2.2/apache-common-math-2.2";
+//	private static final String MATH_PROJ_BIN_FOLDER = "/Users/lylytran/apache-common-math-2.2/apache-common-math-2.2/bin";
+//	private static final String HAMCREST_CORE_JAR_PATH = "/Applications/Eclipse.app/Contents/Eclipse/plugins/org.hamcrest.core_1.3.0.v201303031735.jar";
+//	private static final String JUNIT_JAR_PATH = "/Applications/Eclipse.app/Contents/Eclipse/plugins/org.junit_4.12.0.v201504281640/junit.jar";
+
+	private static final String mathTrunk = "E:/lyly/Projects/TestData/trunk/test-projects/apache-common-math-2.2";
+	private static final String MATH_PROJ_BIN_FOLDER = "E:/lyly/Projects/TestData/trunk/test-projects/apache-common-math-2.2/bin";
+	private static final String HAMCREST_CORE_JAR_PATH = "E:/lyly/eclipse-java-mars-clean/eclipse/plugins/org.hamcrest.core.source_1.3.0.v201303031735.jar";
+	private static final String JUNIT_JAR_PATH = "E:/lyly/eclipse-java-mars-clean/eclipse/plugins/org.junit.source_4.12.0.v201504281640.jar";
 	
 	
 	public void run(List<String> targetMethods, List<String> testingClassNames, List<String> junitClassNames)
@@ -105,6 +110,15 @@ public class CfgJaCoCoMathProjectTest extends AbstractTest {
 		List<String> targetClasses = Arrays.asList("org.apache.commons.math.Testing");
 		List<String> targetMethods = Arrays.asList("org.apache.commons.math.Testing.multiCond");
 		List<String> junitClassNames = Arrays.asList("org.apache.commons.math.testing.multicond22.Testing_ESTest");
+		run(targetMethods, targetClasses, junitClassNames);
+	}
+	
+	
+	@Test
+	public void runGraggBulirschStoerIntegrator554() throws Exception {
+		List<String> targetClasses = Arrays.asList("org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegrator");
+		List<String> targetMethods = Arrays.asList("org.apache.commons.math.ode.nonstiff.GraggBulirschStoerIntegrator.integrate");
+		List<String> junitClassNames = Arrays.asList("testdata.learntest.graggbulirschstoerintegrator.integrate.GraggBulirschStoerIntegrator1");
 		run(targetMethods, targetClasses, junitClassNames);
 	}
 }

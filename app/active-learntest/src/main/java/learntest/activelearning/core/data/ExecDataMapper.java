@@ -18,6 +18,7 @@ public class ExecDataMapper {
 	private Map<String, Integer> requireSlotsMap = new HashMap<>(); // map between ExecVar.varId & its required slots.
 	private int k;
 	private int size;
+	private List<ExecVar> methodInputs;
 	
 	public ExecDataMapper(List<ExecVar> params, int k) {
 		for (ExecVar var : params) {
@@ -28,6 +29,7 @@ public class ExecDataMapper {
 			pos = assignPos(var, pos);
 		}
 		this.size = pos;
+		this.methodInputs = params;
 	}
 	
 	private int calculateRequireSlot(ExecVar var) {
@@ -75,6 +77,8 @@ public class ExecDataMapper {
 		for (ExecValue execVal : bkpValue.getChildren()) {
 			fillDatapoint(execVal, dp, posMap.get(execVal.getVarId()));
 		}
+		// TODO filling padding elements, 
+		// & define ExecType
 		return dp;
 	}
 
