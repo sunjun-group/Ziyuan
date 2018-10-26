@@ -10,9 +10,6 @@ package sav.strategies.dto.execute.value;
 
 import java.util.List;
 
-import com.sun.jdi.ArrayReference;
-
-import sav.common.core.utils.Assert;
 import sav.common.core.utils.CollectionUtils;
 
 /**
@@ -20,14 +17,10 @@ import sav.common.core.utils.CollectionUtils;
  * will be removed, be replaced with MultiDimArrayValue
  */
 public class ArrayValue extends ReferenceValue {
-	@Deprecated
-	public static final String LENGTH_CODE = "length";
 	private List<ArrValueElement> elements; 
 	private int length;
 	private int dimension;
 	
-	public static final ArrayValue NULL_VALUE = new ArrayValue("", true);
-
 	public ArrayValue(String id) {
 		super(id, false);
 	}
@@ -54,11 +47,6 @@ public class ArrayValue extends ReferenceValue {
 
 	public String getElementId(int i) {
 		return ExecVarHelper.getArrayElementID(this.varId, i);
-	}
-	
-	@Override
-	public String getChildId(String childCode) {
-		return ExecVarHelper.getArrayChildID(this.varId, childCode);
 	}
 	
 	public ArrValueElement[] getElementArray(int size) {
@@ -90,36 +78,9 @@ public class ArrayValue extends ReferenceValue {
 		return elements;
 	}
 
-	@Deprecated
-	public void addLengthValue(int length) {
-		add(new IntegerValue(getChildId(LENGTH_CODE), length));
-	}
-	
-	@Deprecated
-	public IntegerValue getLengthValue() {
-		ExecValue value = findVariableById(getChildId(LENGTH_CODE));
-		if (value == null) {
-			return null;
-		}
-		return (IntegerValue) value;
-	}
-
-	public void setValue(final ArrayReference ar) {
-		Assert.assertTrue(ar != null,
-				"Value of ArrayReference is null, in this case, initialize execValue using ReferenceValue.nullValue instead!");
-		final int arrayLength = ar.length();
-		addLengthValue(arrayLength);
-	}
-
 	@Override
 	public Double getDoubleVal() {
-		String lengthId = getChildId(LENGTH_CODE);
-		for (ExecValue child : children) {
-			if (lengthId.equals(child.getVarId())) {
-				return child.getDoubleVal();
-			}
-		}
-		return super.getDoubleVal();
+		return (double) length;
 	}
 	
 	@Override

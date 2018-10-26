@@ -27,6 +27,14 @@ public class PrimitiveFixValueGenerator {
 	@Inject
 	private ITypeMethodCallStore typeMethodCallsStore;
 	
+	public GeneratedVariable generate(IType type, int firstVarId, String value) throws SavException {
+		GeneratedVariable root = new GeneratedVariable(firstVarId);
+		GeneratedVariable variable = root.newVariable();
+		Class<?> clazz = type.getRawType();
+		variable.append(RAssignment.assignmentFor(clazz, value));
+		return variable;
+	}
+	
 	public GeneratedVariable generate(IType type, int firstVarId, Number value) throws SavException {
 		GeneratedVariable root = new GeneratedVariable(firstVarId);
 		GeneratedVariable variable = root.newVariable();

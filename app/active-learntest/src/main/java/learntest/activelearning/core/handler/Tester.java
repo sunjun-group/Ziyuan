@@ -37,6 +37,7 @@ import microbat.model.value.VarValue;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.AlphanumComparator;
+import sav.common.core.utils.ArrayTypeUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.TextFormatUtils;
@@ -178,23 +179,26 @@ public class Tester {
 		if (value instanceof StringValue) {
 			execValue = new sav.strategies.dto.execute.value.StringValue(value.getVarID(), value.getStringValue());
 		} else if (value instanceof PrimitiveValue) {
-			execValue = new sav.strategies.dto.execute.value.PrimitiveValue(value.getVarID(), 
-					value.getStringValue(),
-					value.getType());
+			execValue = sav.strategies.dto.execute.value.PrimitiveValue.valueOf(value.getVarID(), value.getType(), value.getStringValue());
 		} else if (value instanceof ArrayValue) {
-			execValue = new sav.strategies.dto.execute.value.ArrayValue(value.getVarID());
+			sav.strategies.dto.execute.value.ArrayValue arrValue = new sav.strategies.dto.execute.value.ArrayValue(value.getVarID());
+			execValue = arrValue;
+			int maxIdx = -1;
+			for (VarValue child : value.getChildren()) {
+				ExecValue childExecVal = convert(child);
+				if (childExecVal != null) {
+					arrValue.add(childExecVal);
+					maxIdx = Math.max(maxIdx, arrValue.getElements().get(arrValue.getElements().size() - 1).getIdx());
+				}
+			}
+			arrValue.setLength(maxIdx + 1);
+			arrValue.setDimension(ArrayTypeUtils.getArrayDimension(value.getType()));
 		} else if (value instanceof ReferenceValue) {
 			ReferenceValue refVal = (ReferenceValue) value;
 			execValue = new sav.strategies.dto.execute.value.ReferenceValue(value.getVarID(), refVal.isNull());
 		}
 		if (execValue != null) {
-			for (VarValue child : value.getChildren()) {
-				ExecValue childExecVal = convert(child);
-				if (childExecVal != null) {
-					execValue.add(childExecVal);
-				}
-			}
-			execValue.setValueType(value.getType());
+			execValue.setValueType(value.getRuntimeType() == null ? value.getType() : value.getRuntimeType());
 		}
 		return execValue;
 	}

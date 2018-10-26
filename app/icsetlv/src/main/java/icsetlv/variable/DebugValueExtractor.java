@@ -391,7 +391,7 @@ public class DebugValueExtractor {
 	}
 	
 	private void appendNullVarVal(ExecValue parent, String varId) {
-		ReferenceValue val = ReferenceValue.nullValue(varId);
+		ReferenceValue val = new ReferenceValue(varId, true);
 		parent.add(val);
 	}
 
@@ -441,7 +441,7 @@ public class DebugValueExtractor {
 	private void appendArrVarVal(ExecValue parent, String varId,
 			ArrayReference value, int level, ThreadReference thread) {
 		ArrayValue val = new ArrayValue(varId);
-		val.setValue(value);
+//		val.setValue(value);
 		//add value of elements
 //		for (int i = 0; i < value.length() && i < MAX_ARRAY_ELEMENT_TO_COLLECT; i++) {
 //			appendVarVal(val, val.getElementId(i), getArrayEleValue(value, i), level, thread);

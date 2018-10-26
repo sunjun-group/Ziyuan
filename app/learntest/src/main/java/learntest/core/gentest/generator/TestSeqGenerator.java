@@ -100,11 +100,11 @@ public class TestSeqGenerator {
 			String varId = vars.get(i).getVarId();
 			if (failToSetVars.contains(varId)) {
 				solution[i] = 0.0;
-			} else {
-				if (varId.endsWith(ReferenceValue.NULL_CODE)) {
-					ExecValue value = breakpointValue.findVariableById(varId);
-					solution[i] = value.getDoubleVal();
-				}
+//			} else {
+//				if (varId.endsWith(ReferenceValue.NULL_CODE)) {
+//					ExecValue value = breakpointValue.findVariableById(varId);
+//					solution[i] = value.getDoubleVal();
+//				}
 			}
 		}
 	}
@@ -227,9 +227,9 @@ public class TestSeqGenerator {
 				String fieldId = fieldValue.getVarId();
 				Class<?> clazz = classMap.get(receiver);
 				String fieldName = value.getFieldName(fieldValue);
-				if (ReferenceValue.NULL_CODE.equals(fieldName)) {
-					continue;
-				}
+//				if (ReferenceValue.NULL_CODE.equals(fieldName)) {
+//					continue;
+//				}
 				Class<?> fieldClazz = classMap.get(fieldId);
 				if (fieldClazz == null) {
 					fieldClazz = lookupFieldAndGetType(clazz, fieldName);

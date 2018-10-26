@@ -13,7 +13,7 @@ package sav.strategies.dto.execute.value;
  *
  */
 public class ReferenceValue extends ExecValue {
-	public static final String NULL_CODE = "isNull";
+	private boolean isNull = false;
 
 	public ReferenceValue(String id) {
 		super(id);
@@ -21,11 +21,7 @@ public class ReferenceValue extends ExecValue {
 	
 	public ReferenceValue(String id, boolean isNull) {
 		super(id);
-		add(BooleanValue.of(getChildId(NULL_CODE), isNull));
-	}
-	
-	public static ReferenceValue nullValue(String id) {
-		return new ReferenceValue(id, true);
+		this.isNull = isNull;
 	}
 	
 	@Override
@@ -43,20 +39,11 @@ public class ReferenceValue extends ExecValue {
 	}
 	
 	public boolean isNull() {
-		ExecValue isNullVal = findVariableById(getChildId(NULL_CODE));
-		if (isNullVal == null) {
-			return false;
-		}
-		return ((BooleanValue) isNullVal).getBooleanVal();
+		return isNull;
 	}
 
 	public void setNull(boolean isNull) {
-		ExecValue isNullVal = findVariableById(getChildId(NULL_CODE));
-		if (isNullVal == null) {
-			isNullVal = BooleanValue.of(getChildId(NULL_CODE), isNull);
-			add(isNullVal);
-		}
-		((BooleanValue)isNullVal).setValue(isNull);
+		this.isNull = isNull;
 	}
 
 	@Override
