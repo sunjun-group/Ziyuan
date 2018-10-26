@@ -12,7 +12,6 @@ import sav.common.core.utils.Randomness;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ArrayValue.ArrValueElement;
 import sav.strategies.dto.execute.value.ExecVarType;
-import sav.strategies.dto.execute.value.IntegerValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
 
 public class FixLengthArrayValueGenerator {
@@ -49,7 +48,7 @@ public class FixLengthArrayValueGenerator {
 				}
 			}
 		}
-		if (value.getLengthValue() != null && CollectionUtils.isEmpty(value.getElements())) {
+		if (value.getLength() > 0 && CollectionUtils.isEmpty(value.getElements())) {
 			int limits[] = narrowDownArrayLimit(lengths);
 			/*
 			 * Check the last dimension, if there is no any data, try to fakely
@@ -130,21 +129,17 @@ public class FixLengthArrayValueGenerator {
 	}
 
 	private static void getArrayLength(ArrayValue value, int[] lengths, int idx) {
-		int length = -1;
-		IntegerValue lengthValue = value.getLengthValue();
-		if (lengthValue != null) {
-			length = lengthValue.getIntegerVal();
-		}
+		int maxLength =  value.getLength();
 		for (ArrValueElement element : CollectionUtils.nullToEmpty(value.getElements())) {
-			int minLength = element.getIdx() + 1;
-			if (length < minLength) {
-				length = minLength;
+			int length = element.getIdx() + 1;
+			if (maxLength < length) {
+				maxLength = length;
 			}
 			if (element.getValue().getType() == ExecVarType.ARRAY) {
-				getArrayLength((ArrayValue) element.getValue(), lengths, idx);
+				getArrayLength((ArrayValue) element.getValue(), lengths, idx + 1);
 			}
 		}
-		lengths[idx] = Math.max(lengths[idx], length); 
+		lengths[idx] = Math.max(lengths[idx], maxLength); 
 	}
 	
 	public static class LocationHolderExecValue extends ReferenceValue {
