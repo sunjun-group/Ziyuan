@@ -27,10 +27,15 @@ import sav.strategies.dto.execute.value.ReferenceValue;
 
 public class LearningVarCollector {
 	private Logger log = LoggerFactory.getLogger(LearningVarCollector.class);
-	private int variableLayer = 2;
-	private int arraySize = 5;
+	private int variableLayer;
+	private int arrSizeThreshold;
 	private Map<String, String> varIdTypeMap = new HashMap<>();
 	private ClassLoader classLoader;
+	
+	public LearningVarCollector(int variableLayer, int arrSizeThreshold) {
+		this.arrSizeThreshold = arrSizeThreshold;
+		this.variableLayer = variableLayer;
+	}
 	
 	public List<ExecVar> collectLearningVars(AppJavaClassPath appClasspath, MethodInfo methodInfo,
 			Collection<TestInputData> firstInputData) {
@@ -76,7 +81,7 @@ public class LearningVarCollector {
 				var = new ExecVar(varId, ExecVarType.primitiveTypeOf(type.getName()));
 			} else if (type.isArray()) {
 				var = new ExecVar(varId, ExecVarType.ARRAY);
-				for (int idx = 0; idx < arraySize; idx++) {
+				for (int idx = 0; idx < arrSizeThreshold; idx++) {
 					appendVariable(type.getComponentType(), getArrayElementID(varId, idx), var, retrieveLayer - 1);
 				}
 			} else {
@@ -92,6 +97,7 @@ public class LearningVarCollector {
 					}
 				}
 			}
+			var.setValueType(type.getName());
 			if (parent != null) {
 				parent.add(var);
 			}

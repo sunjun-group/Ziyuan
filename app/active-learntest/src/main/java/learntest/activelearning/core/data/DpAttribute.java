@@ -66,19 +66,24 @@ public class DpAttribute {
 	}
 
 	public DpAttribute setBoolean(boolean newValue) {
-		((BooleanValue) value).setValue(newValue);
+		setValue(new BooleanValue(value.getVarId(), newValue));
 		setPadding(false);
 		return this;
 	}
 
 	public void setChar(char newValue) {
-		((CharValue) value).setValue(newValue);
+		setValue(new CharValue(value.getVarId(), newValue));
 		setPadding(false);
 	}
 
 	public DpAttribute setInt(int newValue) {
-		((IntegerValue) value).setValue(newValue);
+		setValue(new IntegerValue(value.getVarId(), newValue));
 		setPadding(false);
 		return this;
+	}
+	
+	@Override
+	public String toString() {
+		return value.toString();
 	}
 }

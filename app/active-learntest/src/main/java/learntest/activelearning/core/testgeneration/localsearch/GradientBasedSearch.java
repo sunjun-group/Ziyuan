@@ -7,6 +7,7 @@ import java.util.Map;
 
 import icsetlv.common.dto.BreakpointValue;
 import icsetlv.common.utils.BreakpointDataUtils;
+import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
@@ -126,6 +127,8 @@ public class GradientBasedSearch {
 		inputData.add(newValue);
 		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, inputData,
 				vars);
+		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
+		
 		this.testsuite.addTestCases(newSuite);
 
 		TestInputData newInput = null;
@@ -167,8 +170,13 @@ public class GradientBasedSearch {
 			inputData.add(newValue);
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 					inputData, vars);
+			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
+			for (TestInputData id : newSuite.getInputData().values()) {
+				DpAttribute[] dataPoint = id.getDataPoint();
+				System.out.println(dataPoint);
+			}
 			this.testsuite.addTestCases(newSuite);
-
+			
 			TestInputData newInput = null;
 			while (newInput == null) {
 				try {

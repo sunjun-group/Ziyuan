@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
@@ -98,8 +99,10 @@ public class NNBasedTestGenerator extends TestGenerator{
 			DataPoints points = (DataPoints) response.getMessageBody();
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 					points.values, points.varList);
+			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
+			
 			this.testsuite.addTestCases(newSuite);
-
+			
 			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
 
 			for (String testcase : newSuite.getJunitTestcases()) {

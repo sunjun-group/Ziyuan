@@ -1,12 +1,9 @@
 package learntest.activelearning.core.data;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import gentest.core.value.generator.ArrayWalker;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.SavRtException;
 import sav.strategies.dto.execute.value.ArrayValue;
@@ -22,16 +19,18 @@ import sav.strategies.dto.execute.value.PrimitiveValue;
 import sav.strategies.dto.execute.value.ReferenceValue;
 import sav.strategies.dto.execute.value.StringValue;
 
-public class ExecDataMapper {
+public class LearnDataSetMapper {
 	private Map<String, Integer> posMap = new HashMap<>(); // map between ExecVar.varId & its start position
 	private Map<String, Integer> requireSlotsMap = new HashMap<>(); // map between ExecVar.varId & its required slots.
-	private int definedArraySize;
+	private int arrSizeThreshold;
 	private int size;
 	private List<ExecVar> methodInputs;
 	private Map<String, PrimitiveValue> defaultPaddingValues = new HashMap<>();
 	private Map<String, ExecVar> varMap = new HashMap<>();
 	
-	public ExecDataMapper(List<ExecVar> params, int k) {
+	public LearnDataSetMapper(List<ExecVar> params, int arrSizeThreshold) {
+		this.methodInputs = params;
+		this.arrSizeThreshold = arrSizeThreshold;
 		for (ExecVar var : params) {
 			calculateRequireSlot(var);
 		}
@@ -40,7 +39,6 @@ public class ExecDataMapper {
 			pos = assignPos(var, pos);
 		}
 		this.size = pos;
-		this.methodInputs = params;
 	}
 	
 	private int calculateRequireSlot(ExecVar var) {
@@ -48,7 +46,7 @@ public class ExecDataMapper {
 		int size = 0;
 		if (type == ExecVarType.STRING) {
 			/* isNotNull, length, charArray(definedArraySize - 2) elements */
-			size = definedArraySize;
+			size = arrSizeThreshold;
 		} else if (type == ExecVarType.ARRAY) {
 			/* isNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
 			int arrElementSlots = 0;
@@ -74,7 +72,7 @@ public class ExecDataMapper {
 		ExecVarType type = var.getType();
 		int childPos = pos;
 		if (type == ExecVarType.ARRAY) {
-			childPos += 2;
+			childPos += 3;
 		} else if (type == ExecVarType.REFERENCE) {
 			childPos += 1;
 		}
@@ -85,8 +83,6 @@ public class ExecDataMapper {
 	}
 
 	public DpAttribute[] getDatapoint(BreakpointValue bkpValue) {
-		Map<String, ExecValue> execValues = new HashMap<>();
-		collectExecValues(bkpValue.getChildren(), execValues);
 		DpAttribute[] dp = new DpAttribute[size];
 		for (ExecVar var : methodInputs) {
 			initDatapoint(dp, var);
@@ -106,13 +102,14 @@ public class ExecDataMapper {
 			/* isNull, length, charArray */
 			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true));
 			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true);
-			for (int i = 0; i < (definedArraySize - 2); i++) {
+			for (int i = 0; i < (arrSizeThreshold - 2); i++) {
 				dp[pos++] = new DpAttribute(new CharValue(var.getElementId(i), Character.MIN_VALUE), true);
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
+			/* isNull, dimension, arrayDimensionSize, arrayElements */
 			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true);
 			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("dimension"), 0), true);
+			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true);
 			for (ExecVar arrEleVar : var.getChildren()) {
 				initDatapoint(dp, arrEleVar);
 			}
@@ -122,7 +119,8 @@ public class ExecDataMapper {
 		} else {
 			PrimitiveValue defaultPaddingValue = defaultPaddingValues.get(varId);
 			if (defaultPaddingValue == null) {
-				defaultPaddingValues.put(varId, PrimitiveValue.valueOf(var, 0));
+				defaultPaddingValue = PrimitiveValue.valueOf(var, 0);
+				defaultPaddingValues.put(varId, defaultPaddingValue);
 			}
 			dp[pos] = new DpAttribute(defaultPaddingValue, true);
 		}
@@ -139,7 +137,7 @@ public class ExecDataMapper {
 			if (strVal != null) {
 				isNullAttr.setBoolean(false);
 				DpAttribute lengthAttr = dp[pos++].setInt(strVal.length());
-				int realEleSize = Math.min(strVal.length(), (definedArraySize - 2));
+				int realEleSize = Math.min(strVal.length(), (arrSizeThreshold - 2));
 				int i = 0;
 				for (; i < realEleSize; i++) {
 					dp[pos++].setChar(strVal.charAt(i));
@@ -156,7 +154,7 @@ public class ExecDataMapper {
 				isNullAttr.setBoolean(false);
 				dp[pos++].setInt(arrayValue.getDimension());
 				DpAttribute lengthAttr = dp[pos++].setInt(arrayValue.getLength());
-				int realEleSize = Math.min(arrayValue.getLength(), (definedArraySize - 2));
+				int realEleSize = Math.min(arrayValue.getLength(), (arrSizeThreshold));
 				int i = 0;
 				ArrValueElement[] arrElements = arrayValue.getElementArray(realEleSize);
 				for (; i < realEleSize; i++) {
@@ -205,13 +203,6 @@ public class ExecDataMapper {
 		return pos;
 	}
 
-	private void collectExecValues(List<ExecValue> values, Map<String, ExecValue> execValueMap) {
-		for (ExecValue value : values) {
-			execValueMap.put(value.getVarId(), value);
-			collectExecValues(value.getChildren(), execValueMap);
-		}
-	}
-	
 	public BreakpointValue toHierachyBreakpointValue(double[] dp) {
 		if (dp.length != size) {
 			throw new SavRtException("invalid Datapoint array!!");
@@ -233,7 +224,7 @@ public class ExecDataMapper {
 			double isNotNull = dp[pos++];
 			if (isNotNull >= 0) {
 				int length = (int) dp[pos++];
-				length = Math.min(length, definedArraySize);
+				length = Math.min(length, arrSizeThreshold);
 				char[] content = new char[length];
 				for (int i = 0; i < length; i++) {
 					content[i] = (char) dp[pos++];
@@ -243,25 +234,19 @@ public class ExecDataMapper {
 				value = new StringValue(varId, null);
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNotNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
+			/* isNotNull, dimension, arrayDimensionSize, arrayElements */
 			double isNotNull = dp[pos++];
 			if (isNotNull >= 0) {
-				value = new ArrayValue(varId, false);
+				ArrayValue arrValue = new ArrayValue(varId, false);
+				value = arrValue;
 				int dimension = (int) dp[pos++];
-				int[] arrDimSize = new int[dimension];
-				for(int i = 0; i < dimension; i++) {
-					arrDimSize[i] = (int) dp[pos++];
-					arrDimSize[i] = Math.min(arrDimSize[i], definedArraySize);
-				}
-				Set<String> definedElementIds = new HashSet<>();
-				int[] curLoc = ArrayWalker.next(null, arrDimSize);
-				while (curLoc != null) {
-					definedElementIds.add(ExecVarHelper.getArrayElementID(varId, curLoc));
-				}
-				for (ExecVar eleVar : var.getChildren()) {
-					if (definedElementIds.contains(eleVar.getVarId())) {
-						appendValue(eleVar, value, dp);
-					}
+				int length = (int) dp[pos++];
+				arrValue.setDimension(dimension);
+				arrValue.setLength(length);
+				int size = Math.min(length, arrSizeThreshold);
+				for (int i = 0; i < size; i++) {
+					ExecVar eleVar = var.getChildren().get(i);
+					appendValue(eleVar, arrValue, dp);
 				}
 			} else {
 				value = new ArrayValue(varId, true);
@@ -280,8 +265,11 @@ public class ExecDataMapper {
 		} else { // primitive type
 			value = PrimitiveValue.valueOf(var, dp[pos]);
 		}
-		if (value != null && parent != null) {
-			parent.add(value);
+		if (value != null) {
+			value.setValueType(var.getValueType());
+			if (parent != null) {
+				parent.add(value);
+			}
 		}
 		return value;
 	}

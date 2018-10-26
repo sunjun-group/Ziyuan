@@ -11,6 +11,7 @@ public class TestInputData {
 	private String testcase;
 	private BreakpointValue inputValue;
 	private Map<Integer, Double> conditionVariationMap;
+	private LearnDataSetMapper dataMapper;
 
 	public TestInputData(String testcase, BreakpointValue inputValue, Map<Integer, Double> conditionVariationMap) {
 		this.testcase = testcase;
@@ -90,5 +91,13 @@ public class TestInputData {
 
 	public String getTestcase() {
 		return testcase;
+	}
+	
+	public void setDataMapper(LearnDataSetMapper dataMapper) {
+		this.dataMapper = dataMapper;
+	}
+	
+	public DpAttribute[] getDataPoint() {
+		return dataMapper.getDatapoint(inputValue);
 	}
 }

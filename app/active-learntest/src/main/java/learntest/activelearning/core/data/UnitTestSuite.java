@@ -23,6 +23,7 @@ public class UnitTestSuite {
 	private List<ExecVar> inputVars;
 	private Map<String, Sequence> testcaseSequenceMap;
 	private CoverageSFlowGraph coverageGraph;
+	private LearnDataSetMapper learnDataMapper;
 	
 	public void setInputData(List<TestInputData> inputData) {
 		this.inputDataMap = new HashMap<>();
@@ -105,5 +106,16 @@ public class UnitTestSuite {
 
 	public void setMainClass(String mainClass) {
 		this.mainClass = mainClass;
+	}
+	
+	public void setLearnDataMapper(LearnDataSetMapper learnDataMapper) {
+		this.learnDataMapper = learnDataMapper;
+		for (TestInputData testInput : inputDataMap.values()) {
+			testInput.setDataMapper(learnDataMapper);
+		}
+	}
+	
+	public LearnDataSetMapper getLearnDataMapper() {
+		return learnDataMapper;
 	}
 }
