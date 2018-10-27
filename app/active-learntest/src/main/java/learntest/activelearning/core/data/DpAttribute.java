@@ -15,11 +15,6 @@ public class DpAttribute {
 		this.value = value;
 	}
 	
-	public DpAttribute(ExecValue value, boolean isPadding) {
-		this.value = value;
-		this.isPadding = isPadding;
-	}
-
 	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondtion) {
 		this.value = value;
 		this.isPadding = isPadding;

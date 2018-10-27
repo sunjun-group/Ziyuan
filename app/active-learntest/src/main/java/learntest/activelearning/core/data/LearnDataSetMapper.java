@@ -85,7 +85,7 @@ public class LearnDataSetMapper {
 	public DpAttribute[] getDatapoint(BreakpointValue bkpValue) {
 		DpAttribute[] dp = new DpAttribute[size];
 		for (ExecVar var : methodInputs) {
-			initDatapoint(dp, var);
+			initDatapoint(dp, var, null);
 		}
 		for (ExecValue value : bkpValue.getChildren()) {
 			fillDatapoint(value, dp, posMap.get(value.getVarId()));
@@ -93,36 +93,41 @@ public class LearnDataSetMapper {
 		return dp;
 	}
 	
-	private void initDatapoint(DpAttribute[] dp, ExecVar var) {
+	private void initDatapoint(DpAttribute[] dp, ExecVar var, DpAttribute paddingController) {
 		ExecVarType type = var.getType();
 		String varId = var.getVarId();
 		int sPos = posMap.get(varId);
 		int pos = sPos; 
 		if (type == ExecVarType.STRING) {
 			/* isNull, length, charArray */
-			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true));
-			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true);
+			DpAttribute isNullAttr = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true, paddingController);
+			DpAttribute lengthAttr = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true, isNullAttr);
+			dp[pos++] = isNullAttr;
+			dp[pos++] = lengthAttr;
 			for (int i = 0; i < (arrSizeThreshold - 2); i++) {
-				dp[pos++] = new DpAttribute(new CharValue(var.getElementId(i), Character.MIN_VALUE), true);
+				dp[pos++] = new DpAttribute(new CharValue(var.getElementId(i), Character.MIN_VALUE), true, lengthAttr);
 			}
 		} else if (type == ExecVarType.ARRAY) {
 			/* isNull, dimension, arrayDimensionSize, arrayElements */
-			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true);
-			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("dimension"), 0), true);
-			dp[pos++] = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true);
+			DpAttribute isNullAttr = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true, paddingController);
+			DpAttribute dimensionAttr = new DpAttribute(new IntegerValue(var.getChildId("dimension"), 0), true, isNullAttr);
+			DpAttribute lengthAttr = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true, isNullAttr);
+			dp[pos++] = isNullAttr;
+			dp[pos++] = dimensionAttr;
+			dp[pos++] = lengthAttr;
 			for (ExecVar arrEleVar : var.getChildren()) {
-				initDatapoint(dp, arrEleVar);
+				initDatapoint(dp, arrEleVar, lengthAttr);
 			}
 		} else if (type == ExecVarType.REFERENCE) {
 			/* isNotNull, fields */
-			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true);
+			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true, paddingController);
 		} else {
 			PrimitiveValue defaultPaddingValue = defaultPaddingValues.get(varId);
 			if (defaultPaddingValue == null) {
 				defaultPaddingValue = PrimitiveValue.valueOf(var, 0);
 				defaultPaddingValues.put(varId, defaultPaddingValue);
 			}
-			dp[pos] = new DpAttribute(defaultPaddingValue, true);
+			dp[pos] = new DpAttribute(defaultPaddingValue, true, paddingController);
 		}
 	}
 	
