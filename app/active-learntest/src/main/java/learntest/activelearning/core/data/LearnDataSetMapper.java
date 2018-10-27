@@ -120,7 +120,11 @@ public class LearnDataSetMapper {
 			}
 		} else if (type == ExecVarType.REFERENCE) {
 			/* isNotNull, fields */
-			dp[pos++] = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true, paddingController);
+			DpAttribute isNullAttr = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true, paddingController);
+			dp[pos++] = isNullAttr;
+			for (ExecVar arrEleVar : var.getChildren()) {
+				initDatapoint(dp, arrEleVar, isNullAttr);
+			}
 		} else {
 			PrimitiveValue defaultPaddingValue = defaultPaddingValues.get(varId);
 			if (defaultPaddingValue == null) {
