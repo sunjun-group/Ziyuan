@@ -57,7 +57,7 @@ public class NeuralActiveLearnTest {
 		CDGConstructor cdgConstructor = new CDGConstructor();
 		CDG cdg = cdgConstructor.construct(testsuite.getCoverageGraph());
 		/* learn */
-		PythonCommunicator communicator = new PythonCommunicator();
+		PythonCommunicator communicator = new PythonCommunicator(targetMethod);
 		communicator.start();
 		
 		NNBasedTestGenerator nnLearner = new NNBasedTestGenerator(tester, testsuite, communicator, appClasspath, targetMethod, settings);

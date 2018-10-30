@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.common.core.SavException;
@@ -17,11 +18,14 @@ public class PythonCommunicator {
 	private OutputDataReader outputReader;
 	private PythonVmRunner vmRunner;
 	private long timeout = -1;
+	
+	private MethodInfo targetMethod;
 
-	public PythonCommunicator() {
+	public PythonCommunicator(MethodInfo targetMethod) {
 		// init vm configuration
 		inputWriter = new InputDataWriter();
 		outputReader = new OutputDataReader();
+		this.targetMethod = targetMethod;
 	}
 	
 	public void start() throws SavException {
@@ -44,7 +48,7 @@ public class PythonCommunicator {
 	
 	public Message requestTraining(Branch branch, List<TestInputData> positiveData, 
 			List<TestInputData> negativeData){
-		InputData data = InputData.createTrainingRequest(branch, positiveData, negativeData);
+		InputData data = InputData.createTrainingRequest(targetMethod, branch, positiveData, negativeData);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
@@ -52,7 +56,7 @@ public class PythonCommunicator {
 	}
 	
 	public Message sendLabel(DataPoints points) {
-		InputData data = InputData.transferToJSON(points);
+		InputData data = InputData.transferToJSON(targetMethod, points);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
+import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -57,10 +58,12 @@ public class InputData /*implements IInputData*/ {
 		return inputData;
 	}
 	
-	public static InputData createTrainingRequest(Branch branch, List<TestInputData> positiveData, 
+	public static InputData createTrainingRequest(MethodInfo targetMethod, Branch branch, List<TestInputData> positiveData, 
 			List<TestInputData> negativeData) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$TRAINING;
+		
+		inputData.obj.put(JsLabels.METHOD_ID, targetMethod.getMethodFullName());
 		inputData.obj.put(JsLabels.BRANCH_ID, branch.getBranchID());
 		
 		JSONArray positiveArray = transferToJsonArray(positiveData);
@@ -83,10 +86,11 @@ public class InputData /*implements IInputData*/ {
 		return inputData;
 	}
 	
-	public static InputData transferToJSON(DataPoints points) {
+	public static InputData transferToJSON(MethodInfo targetMethod, DataPoints points) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$SEND_LABEL;
 		JSONArray array = new JSONArray();
+//		inputData.obj.put(JsLabels.METHOD_ID, targetMethod.getMethodFullName());
 		
 		for(int i=0; i<points.values.size(); i++){
 			JSONArray point = new JSONArray();
