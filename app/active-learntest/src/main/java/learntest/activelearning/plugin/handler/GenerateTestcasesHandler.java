@@ -48,6 +48,7 @@ public class GenerateTestcasesHandler extends AbstractHandler implements IHandle
 		MethodInfo methodInfo = IMethodUtils.initTargetMethod(config);
 		NeuralActiveLearnTest learntest = new NeuralActiveLearnTest();
 		LearntestSettings learntestSettings = ActiveLearntestUtils.getDefaultLearntestSettings();
+		
 		learntest.generateTestcase(appClasspath, methodInfo, learntestSettings);
 	}
 	
