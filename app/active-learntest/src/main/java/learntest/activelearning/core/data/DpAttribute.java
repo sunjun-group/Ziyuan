@@ -8,7 +8,7 @@ import sav.strategies.dto.execute.value.IntegerValue;
 public class DpAttribute {
 	private ExecValue value;
 	private boolean isPadding = false;
-	private DpAttribute paddingCondition = null;
+	private DpAttribute paddingConditionElement = null;
 	private boolean isModifiable = true;
 	
 	public DpAttribute(ExecValue value) {
@@ -18,13 +18,13 @@ public class DpAttribute {
 	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondtion) {
 		this.value = value;
 		this.isPadding = isPadding;
-		this.paddingCondition = paddingCondtion;
+		this.paddingConditionElement = paddingCondtion;
 	}
 	
 	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondtion, boolean isModifiable) {
 		this.value = value;
 		this.isPadding = isPadding;
-		this.paddingCondition = paddingCondtion;
+		this.paddingConditionElement = paddingCondtion;
 		this.isModifiable = isModifiable;
 	}
 	
@@ -37,11 +37,11 @@ public class DpAttribute {
 	}
 
 	public DpAttribute getPaddingCondition() {
-		return paddingCondition;
+		return paddingConditionElement;
 	}
 
 	public void setPaddingCondition(DpAttribute paddingCondition) {
-		this.paddingCondition = paddingCondition;
+		this.paddingConditionElement = paddingCondition;
 	}
 
 	public ExecValue getValue() {
