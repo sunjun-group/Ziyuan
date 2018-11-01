@@ -16,7 +16,7 @@ public class LearntestSettings {
 	private long runtimeForEachRound = 60000l;
 	private int testingIteration = 10;
 	private boolean coverageRunSocket = false;
-	private int learnArraySizeThreshold = 5;
+	private int learnArraySizeThreshold = 10;
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
