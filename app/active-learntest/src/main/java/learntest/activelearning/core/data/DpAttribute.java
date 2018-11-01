@@ -1,31 +1,28 @@
 package learntest.activelearning.core.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.BooleanValue;
 import sav.strategies.dto.execute.value.CharValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.IntegerValue;
 
 public class DpAttribute {
+	private int idx;
 	private ExecValue value;
 	private boolean isPadding = false;
 	private DpAttribute paddingConditionElement = null;
+	private List<DpAttribute> paddingDependentees;
 	private boolean isModifiable = true;
 	
-	public DpAttribute(ExecValue value) {
-		this.value = value;
-	}
-	
-	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondtion) {
+	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondtion,
+			int idx) {
 		this.value = value;
 		this.isPadding = isPadding;
-		this.paddingConditionElement = paddingCondtion;
-	}
-	
-	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondtion, boolean isModifiable) {
-		this.value = value;
-		this.isPadding = isPadding;
-		this.paddingConditionElement = paddingCondtion;
-		this.isModifiable = isModifiable;
+		setPaddingCondition(paddingCondtion);
+		this.idx = idx;
 	}
 	
 	public boolean isPadding() {
@@ -40,8 +37,18 @@ public class DpAttribute {
 		return paddingConditionElement;
 	}
 
-	public void setPaddingCondition(DpAttribute paddingCondition) {
-		this.paddingConditionElement = paddingCondition;
+	public void setPaddingCondition(DpAttribute paddingController) {
+		this.paddingConditionElement = paddingController;
+		if (paddingController != null) {
+			if (paddingController.paddingDependentees == null) {
+				paddingController.paddingDependentees = new ArrayList<>();
+			}
+			paddingController.paddingDependentees.add(this);
+		}
+	}
+	
+	public List<DpAttribute> getPaddingDependentees() {
+		return CollectionUtils.nullToEmpty(paddingDependentees);
 	}
 
 	public ExecValue getValue() {
@@ -81,4 +88,9 @@ public class DpAttribute {
 	public String toString() {
 		return value.toString();
 	}
+	
+	public int getIdx() {
+		return idx;
+	}
+	
 }
