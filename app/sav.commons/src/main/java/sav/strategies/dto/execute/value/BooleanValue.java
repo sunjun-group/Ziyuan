@@ -47,5 +47,11 @@ public class BooleanValue extends PrimitiveValue {
 	public ExecVarType getType() {
 		return ExecVarType.BOOLEAN;
 	}
-	
+
+	@Override
+	public ExecValue clone() {
+		BooleanValue clone = new BooleanValue(varId, value);
+		clone.valueType = valueType;
+		return clone;
+	}
 }

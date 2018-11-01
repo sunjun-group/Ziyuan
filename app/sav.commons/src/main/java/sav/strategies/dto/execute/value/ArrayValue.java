@@ -75,7 +75,7 @@ public class ArrayValue extends ReferenceValue {
 	}
 	
 	public List<ArrValueElement> getElements() {
-		return elements;
+		return CollectionUtils.nullToEmpty(elements);
 	}
 
 	@Override
@@ -149,4 +149,15 @@ public class ArrayValue extends ReferenceValue {
 		}
 	}
 
+	@Override
+	public ExecValue clone() {
+		ArrayValue clone = new ArrayValue(varId);
+		clone.length = length;
+		clone.dimension = dimension;
+		clone.valueType = valueType;
+		for (ArrValueElement ele : getElements()) {
+			clone.addElement(ele.idx, ele.value.clone());
+		}
+		return clone;
+	}
 }

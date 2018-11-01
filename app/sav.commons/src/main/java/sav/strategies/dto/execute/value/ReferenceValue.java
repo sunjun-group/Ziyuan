@@ -8,6 +8,8 @@
 
 package sav.strategies.dto.execute.value;
 
+import java.util.ArrayList;
+
 /**
  * @author LLT
  *
@@ -49,6 +51,18 @@ public class ReferenceValue extends ExecValue {
 	@Override
 	public boolean isPrimitive() {
 		return false;
+	}
+
+	@Override
+	public ExecValue clone() {
+		ReferenceValue value = new ReferenceValue(varId, isNull);
+		value.children = new ArrayList<ExecValue>(getChildren().size());
+		for (ExecValue child : getChildren()) {
+			value.children.add(child.clone());
+		}
+		value.valueType = valueType;
+		value.varId = varId;
+		return value;
 	}
 
 }

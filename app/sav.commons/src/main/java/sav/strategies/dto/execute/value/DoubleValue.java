@@ -22,4 +22,10 @@ public class DoubleValue extends PrimitiveValue {
 		return ExecVarType.DOUBLE;
 	}
 
+	@Override
+	public ExecValue clone() {
+		DoubleValue clone = new DoubleValue(varId, value);
+		clone.valueType = valueType;
+		return clone;
+	}
 }

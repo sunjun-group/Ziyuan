@@ -84,6 +84,8 @@ public class DpAttribute {
 		return this;
 	}
 	
+	
+	
 	@Override
 	public String toString() {
 		return value.toString();
@@ -91,6 +93,33 @@ public class DpAttribute {
 	
 	public int getIdx() {
 		return idx;
+	}
+	
+	public static DpAttribute[] deepClone(DpAttribute[] dpAttribute) {
+		DpAttribute[] clone = new DpAttribute[dpAttribute.length];
+		for (int i = 0; i < dpAttribute.length; i++) {
+			clone[i] = dpAttribute[i].clone();
+		}
+		for (DpAttribute clonedAtt : clone) {
+			if (clonedAtt.paddingConditionElement != null) {
+				clonedAtt.paddingConditionElement = clone[clonedAtt.paddingConditionElement.idx];
+			}
+			if (!clonedAtt.getPaddingDependentees().isEmpty()) {
+				List<DpAttribute> clonedDependentees = new ArrayList<>(clonedAtt.paddingDependentees.size());
+				for (DpAttribute dependentee : clonedAtt.getPaddingDependentees()) {
+					clonedDependentees.add(clone[dependentee.idx]);
+				}
+				clonedAtt.paddingDependentees = clonedDependentees;
+			}
+		}
+		return clone;
+	}
+	
+	public DpAttribute clone() {
+		DpAttribute clone = new DpAttribute(value.clone(), isPadding, 
+				paddingConditionElement, idx);
+		clone.paddingDependentees = paddingDependentees;
+		return clone;
 	}
 	
 }

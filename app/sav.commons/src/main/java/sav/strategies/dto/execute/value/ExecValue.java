@@ -207,4 +207,6 @@ public abstract class ExecValue implements IExecValue {
 	public abstract ExecVarType getType();
 	
 	public abstract boolean isPrimitive();
+	
+	public abstract ExecValue clone();
 }

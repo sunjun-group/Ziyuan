@@ -16,7 +16,6 @@ import sav.common.core.utils.PrimitiveUtils;
  */
 public class PrimitiveValue extends ExecValue {
 	private String strVal;
-	private String type;
 	private ExecVarType execVarType;
 	
 	public PrimitiveValue(String id, String strVal) {
@@ -26,7 +25,7 @@ public class PrimitiveValue extends ExecValue {
 
 	public PrimitiveValue(String id, String strVal, String type) {
 		this(id, strVal);
-		this.type = type;
+		this.valueType = type;
 		execVarType = ExecVarType.primitiveTypeOf(type);
 	}
 
@@ -120,7 +119,8 @@ public class PrimitiveValue extends ExecValue {
 		return true;
 	}
 	
-	public String getValueType() {
-		return type;
+	@Override
+	public ExecValue clone() {
+		return valueOf(varId, valueType, strVal);
 	}
 }

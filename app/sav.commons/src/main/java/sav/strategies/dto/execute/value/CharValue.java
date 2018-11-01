@@ -34,4 +34,10 @@ public class CharValue extends PrimitiveValue {
 		return ExecVarType.CHAR;
 	}
 	
+	@Override
+	public ExecValue clone() {
+		CharValue clone = new CharValue(varId, value);
+		clone.valueType = valueType;
+		return clone;
+	}
 }

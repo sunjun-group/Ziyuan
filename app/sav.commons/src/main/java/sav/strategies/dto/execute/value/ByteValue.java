@@ -26,4 +26,10 @@ public class ByteValue extends PrimitiveValue {
 		return ExecVarType.BYTE;
 	}
 
+	@Override
+	public ExecValue clone() {
+		ByteValue clone = new ByteValue(varId, value);
+		clone.valueType = valueType;
+		return clone;
+	}
 }

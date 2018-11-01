@@ -26,4 +26,10 @@ public class FloatValue extends PrimitiveValue {
 		return ExecVarType.FLOAT;
 	}
 
+	@Override
+	public ExecValue clone() {
+		FloatValue clone = new FloatValue(varId, value);
+		clone.valueType = valueType;
+		return clone;
+	}
 }

@@ -26,4 +26,10 @@ public class IntegerValue extends PrimitiveValue {
 		return ExecVarType.INTEGER;
 	}
 
+	@Override
+	public ExecValue clone() {
+		IntegerValue clone = new IntegerValue(varId, value);
+		clone.valueType = valueType;
+		return clone;
+	}
 }
