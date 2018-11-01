@@ -207,7 +207,7 @@ public class LearnDataSetMapper {
 		if (paddingCond != null) {
 			int endPos = requireSlotsMap.get(execVal.getVarId()) + spos;
 			while(pos < endPos) {
-				dp[pos++].setPaddingCondition(paddingCond);
+				dp[pos++].setPaddingConditionElement(paddingCond);
 			}
 		}
 		return pos;

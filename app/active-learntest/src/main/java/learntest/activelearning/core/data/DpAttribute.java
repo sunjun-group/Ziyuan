@@ -17,11 +17,11 @@ public class DpAttribute {
 	private List<DpAttribute> paddingDependentees;
 	private boolean isModifiable = true;
 	
-	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondtion,
+	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondition,
 			int idx) {
 		this.value = value;
 		this.isPadding = isPadding;
-		setPaddingCondition(paddingCondtion);
+		setPaddingConditionElement(paddingCondition);
 		this.idx = idx;
 	}
 	
@@ -37,7 +37,7 @@ public class DpAttribute {
 		return paddingConditionElement;
 	}
 
-	public void setPaddingCondition(DpAttribute paddingController) {
+	public void setPaddingConditionElement(DpAttribute paddingController) {
 		this.paddingConditionElement = paddingController;
 		if (paddingController != null) {
 			if (paddingController.paddingDependentees == null) {
