@@ -8,6 +8,7 @@
 
 package evosuite.core;
 
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
 
@@ -59,8 +60,9 @@ public class CoverageCounter {
 			MethodInfo targetMethod = new MethodInfo(new ClassInfo(result.targetClass));
 			targetMethod.setMethodName(SignatureUtils.extractMethodName(result.targetMethod));
 			targetMethod.setMethodSignature(SignatureUtils.extractSignature(result.targetMethod));
+			URLClassLoader newClassLoader = new URLClassLoader(((URLClassLoader)appClasspath.getClassLoader()).getURLs());
 			List<String> testMethods = JunitUtils.extractTestMethods(junitFilesInfo.junitClasses,
-					appClasspath.getClassLoader());
+					newClassLoader);
 			return cvgCounter.runCoverage(targetMethod, testMethods, appClasspath, learntestSettings.getInputValueExtractLevel(),
 					CoverageCollectionType.BRANCH_COVERAGE, null);
 		} catch (Exception e) {

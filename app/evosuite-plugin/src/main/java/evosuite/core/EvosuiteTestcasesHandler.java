@@ -43,7 +43,7 @@ public class EvosuiteTestcasesHandler {
 	public FilesInfo getEvosuiteTestcases(Configuration config, String newPkg, EvosuiteResult result) {
 		try {
 			System.out.println();
-			FilesInfo info = lookupJunitClasses(config, newPkg);
+			FilesInfo info = lookupJunitClasses(config, newPkg, result);
 			return info;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -51,14 +51,15 @@ public class EvosuiteTestcasesHandler {
 		}
 	}
 	
-	public FilesInfo lookupJunitClasses(Configuration config, String newPkg)
+	public FilesInfo lookupJunitClasses(Configuration config, String newPkg, EvosuiteResult result)
 			throws FileNotFoundException, IOException, SavException {
 		String folder = config.getEvoBaseDir() + "/evosuite-tests";
 		Collection<?> files = getAllJavaFiles(folder);
 		FilesInfo info = new FilesInfo();
 		for (Object obj : files) {
 			File file = (File) obj;
-			if (!file.getName().contains("ESTest_scaffolding")) {
+			String className = file.getPath().substring(folder.length() + 1).replace("\\", "/").replace("/", ".").replace("_ESTest.java", "");
+			if (className.equals(result.targetClass)) {
 				info.junitClasses.add(ClassUtils.getCanonicalName(newPkg, file.getName().replace(".java", "")));
 			}
 			info.allFiles.add(file);
@@ -67,7 +68,7 @@ public class EvosuiteTestcasesHandler {
 		String pkgDecl = new StringBuilder("package ").append(newPkg).append(";").toString();
 		FileUtils.mkDirs(config.getEvosuitSrcFolder());
 		String junitNewFolder = JavaFileUtils.getClassFolder(config.getEvosuitSrcFolder(), newPkg);
-		FileUtils.deleteAllFiles(junitNewFolder);
+		FileUtils.cleanDirectory(junitNewFolder);
 		FileUtils.copyFiles(info.allFiles, junitNewFolder);
 		/* update new files */
 		info.allFiles = CollectionUtils.toArrayList((File[])(new File(junitNewFolder)).listFiles());

@@ -196,4 +196,21 @@ public class FileUtils {
 			throw new SavRtException(e);
 		}
 	}
+
+	public static void cleanDirectory(String folderPath) {
+		File file = new File(folderPath);
+		if (!file.exists()) {
+			return;
+		}
+		if (file.isDirectory()) {
+			try {
+				org.apache.commons.io.FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			file.delete();
+		}
+	}
+	
 }
