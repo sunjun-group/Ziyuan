@@ -154,4 +154,15 @@ public class BreakpointValue extends ExecValue {
 	public boolean isPrimitive() {
 		return false;
 	}
+
+	@Override
+	public ExecValue clone() {
+		BreakpointValue bkpValue = new BreakpointValue(varId);
+		List<ExecValue> children = new ArrayList<>();
+		for (ExecValue child : getChildren()) {
+			children.add(child.clone());
+		}
+		bkpValue.children = children;
+		return bkpValue;
+	}
 }
