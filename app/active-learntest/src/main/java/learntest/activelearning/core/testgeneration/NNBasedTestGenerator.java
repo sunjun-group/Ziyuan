@@ -69,12 +69,14 @@ public class NNBasedTestGenerator extends TestGenerator {
 							branchCDGNode);
 					if (gradientInputs.isEmpty()) {
 						generateInputByExplorationSearch(branch, branchCDGNode);
-
 					}
 				}
 
 				inputs = this.branchInputMap.get(branch);
-				if (!inputs.isEmpty()) {
+				CoverageSFNode toNode = branch.getToNode();
+				CoverageSFNode stopNode = findStopNode(toNode);
+				CDGNode stopCDGNode = findCorrespondingCDG(cdg, stopNode);
+				if (!inputs.isEmpty() && !isAllChildrenCovered(stopCDGNode)) {
 					CoverageSFNode originalParentNode = testsuite.getCoverageGraph().getNodeList()
 							.get(branchCDGNode.getCfgNode().getCvgIdx());
 					learnClassificationModel(branch, originalParentNode);
@@ -84,6 +86,25 @@ public class NNBasedTestGenerator extends TestGenerator {
 
 		for (CDGNode decisionChild : decisionChildren) {
 			traverseLearning(decisionChild);
+		}
+	}
+
+	private CoverageSFNode findStopNode(CoverageSFNode toNode) {
+		CoverageSFNode node = toNode;
+		List<CoverageSFNode> list = new ArrayList<>();
+		while(node.getBranches().size()==1 && !list.contains(node)){
+			list.add(node);
+			node = node.getBranches().get(0);
+		}
+		
+		if(node.getBranches().size()==0){
+			return toNode;
+		}
+		else if(node.getBranches().size()==2){
+			return node;
+		}
+		else{
+			return toNode;
 		}
 	}
 
@@ -126,7 +147,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 			return;
 		}
 
-		int pointNumberLimit = 100;
+		int pointNumberLimit = 50;
 		Message response = communicator.requestTraining(branch, positiveInputs, negativeInputs, pointNumberLimit);
 		if (response == null) {
 			System.err.println("the python server is closed!");
