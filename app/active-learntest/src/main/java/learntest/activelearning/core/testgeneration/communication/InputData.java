@@ -48,7 +48,7 @@ public class InputData /*implements IInputData*/ {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$TRAINING;
 		
-		inputData.obj.put(JSLabels.METHOD_ID, targetMethod.getMethodFullName());
+		inputData.obj.put(JSLabels.METHOD_ID, targetMethod.getMethodId());
 		inputData.obj.put(JSLabels.BRANCH_ID, branch.getBranchID());
 		inputData.obj.put(JSLabels.POINT_NUMBER_LIMIT, pointNumberLimit);
 		
