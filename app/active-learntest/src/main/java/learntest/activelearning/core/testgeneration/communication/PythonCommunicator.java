@@ -38,6 +38,7 @@ public class PythonCommunicator {
 		vmConfig.setPythonHome("C:\\Program Files\\Python36\\python.exe");
 		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\nn_learntest.py");
 //		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\test.py");
+		vmRunner.setWorkingDir("E:\\linyun\\git_space\\nn_active_learning");
 		vmRunner.start(vmConfig);
 		
 		try {
@@ -48,8 +49,8 @@ public class PythonCommunicator {
 	}
 	
 	public Message requestTraining(Branch branch, List<TestInputData> positiveData, 
-			List<TestInputData> negativeData){
-		InputData data = InputData.createTrainingRequest(targetMethod, branch, positiveData, negativeData);
+			List<TestInputData> negativeData, int pointNumberLimit){
+		InputData data = InputData.createTrainingRequest(targetMethod, branch, positiveData, negativeData, pointNumberLimit);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);

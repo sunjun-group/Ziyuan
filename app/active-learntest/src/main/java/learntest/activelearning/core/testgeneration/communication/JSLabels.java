@@ -22,4 +22,5 @@ public class JSLabels {
 	public static final String RESULT = "RESULT";
 	public static final String TEST_DATA = "TEST_DATA";
 	public static final String EXISTENCE = "EXISTENCE";
+	public static final String POINT_NUMBER_LIMIT = "POINT_NUMBER_LIMIT";
 }

@@ -44,12 +44,13 @@ public class InputData /*implements IInputData*/ {
 	}
 
 	public static InputData createTrainingRequest(MethodInfo targetMethod, Branch branch, List<TestInputData> positiveData, 
-			List<TestInputData> negativeData) {
+			List<TestInputData> negativeData, int pointNumberLimit) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$TRAINING;
 		
 		inputData.obj.put(JSLabels.METHOD_ID, targetMethod.getMethodFullName());
 		inputData.obj.put(JSLabels.BRANCH_ID, branch.getBranchID());
+		inputData.obj.put(JSLabels.POINT_NUMBER_LIMIT, pointNumberLimit);
 		
 		JSONArray positiveArray = transferToJsonArray(positiveData);
 		inputData.obj.put(JSLabels.POSITIVE_DATA, positiveArray);

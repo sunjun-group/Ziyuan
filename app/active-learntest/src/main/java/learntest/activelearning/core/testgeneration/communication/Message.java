@@ -91,7 +91,7 @@ public class Message {
 			JSONObject obj = new JSONObject(jsonStr);
 			String existence = obj.getString(JSLabels.EXISTENCE);
 			outputData.messageBody = existence;
-			System.currentTimeMillis();
+			return outputData;
 //			outputData.dataSet = dataSet;
 		} catch (IOException e) {
 			log.debug(e.getMessage());

@@ -55,12 +55,10 @@ public class NNBasedTestGenerator extends TestGenerator {
 
 		List<CDGNode> decisionChildren = new ArrayList<>();
 		for (CDGNode child : branchCDGNode.getChildren()) {
-			if (isAllChildrenCovered(child)) {
-				continue;
-			}
-
 			if (child.getCfgNode().isConditionalNode()) {
-				decisionChildren.add(child);
+				if (!isAllChildrenCovered(child)) {
+					decisionChildren.add(child);
+				}
 			}
 
 			Branch branch = new Branch(branchCDGNode.getCfgNode(), child.getCfgNode());
@@ -85,7 +83,6 @@ public class NNBasedTestGenerator extends TestGenerator {
 		}
 
 		for (CDGNode decisionChild : decisionChildren) {
-			// Branch b = findParentBranch(parentNode, decisionChild);
 			traverseLearning(decisionChild);
 		}
 	}
@@ -129,7 +126,8 @@ public class NNBasedTestGenerator extends TestGenerator {
 			return;
 		}
 
-		Message response = communicator.requestTraining(branch, positiveInputs, negativeInputs);
+		int pointNumberLimit = 100;
+		Message response = communicator.requestTraining(branch, positiveInputs, negativeInputs, pointNumberLimit);
 		if (response == null) {
 			System.err.println("the python server is closed!");
 		}

@@ -22,13 +22,44 @@ public class JSONParser {
 			double[] value = new double[obj.length()];
 			for(int j=0; j<obj.length(); j++){
 				JSONObject input = (JSONObject) obj.get(j);
-				value[j] = input.getInt("VALUE");
+				ExecVarType varType = null;
+				String type = input.getString("TYPE");
+				if(type.equals(ExecVarType.BOOLEAN.toString())){
+					value[j] = input.getInt("VALUE");
+					varType = ExecVarType.BOOLEAN;
+				}
+				else if(type.equals(ExecVarType.BYTE.toString())){
+					value[j] = input.getInt("VALUE");
+					varType = ExecVarType.BYTE;
+				}
+				else if(type.equals(ExecVarType.INTEGER.toString())){
+					value[j] = input.getInt("VALUE");
+					varType = ExecVarType.INTEGER;
+				}
+				else if(type.equals(ExecVarType.CHAR.toString())){
+					value[j] = input.getInt("VALUE");
+					varType = ExecVarType.CHAR;
+				}
+				else if(type.equals(ExecVarType.DOUBLE.toString())){
+					value[j] = input.getDouble("VALUE");
+					varType = ExecVarType.DOUBLE;
+				}
+				else if(type.equals(ExecVarType.FLOAT.toString())){
+					value[j] = input.getDouble("VALUE");
+					varType = ExecVarType.FLOAT;
+				}
+				else if(type.equals(ExecVarType.LONG.toString())){
+					value[j] = input.getInt("VALUE");
+					varType = ExecVarType.LONG;
+				}
+				else if(type.equals(ExecVarType.SHORT.toString())){
+					value[j] = input.getInt("VALUE");
+					varType = ExecVarType.SHORT;
+				}
 				
 				if(i==0){
-					//TODO
-					String typeStr = input.getString("TYPE");
 					String name = input.getString("NAME");
-					varList.add(new ExecVar(name, ExecVarType.INTEGER));
+					varList.add(new ExecVar(name, varType));
 				}
 			}
 			values.add(value);
