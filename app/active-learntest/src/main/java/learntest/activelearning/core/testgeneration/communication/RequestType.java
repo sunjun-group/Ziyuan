@@ -1,4 +1,4 @@
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 /**
  * @author LLT
@@ -12,6 +12,6 @@ public enum RequestType {
 	$REQUEST_LABEL,
 	$RECEIVED, 
 	$SEND_LABEL,
-	$BOUNDARY_EXPLORATION
-	
+	$BOUNDARY_EXPLORATION,
+	$MODEL_CHECK
 }

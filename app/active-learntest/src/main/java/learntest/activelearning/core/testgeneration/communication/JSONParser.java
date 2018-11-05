@@ -1,4 +1,4 @@
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 import java.util.ArrayList;
 import java.util.List;

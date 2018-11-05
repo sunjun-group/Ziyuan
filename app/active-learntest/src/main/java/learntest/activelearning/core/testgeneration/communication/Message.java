@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import learntest.activelearning.core.testgeneration.Dataset;
 
 
 /**
@@ -70,15 +72,32 @@ public class Message {
 		try {
 			jsonStr = br.readLine();
 			JSONObject obj = new JSONObject(jsonStr);
-			Dataset dataSet = new Dataset(obj.getString(JsLabels.BRANCH_ID));
-			dataSet.setCoveredData(parseDatapoints(obj.getJSONArray(JsLabels.COVERED_DATA_POINTS)));
-			dataSet.setUncoveredData(parseDatapoints(obj.getJSONArray(JsLabels.UNCOVERED_DATA_POINTS)));
+			Dataset dataSet = new Dataset(obj.getString(JSLabels.BRANCH_ID));
+			dataSet.setCoveredData(parseDatapoints(obj.getJSONArray(JSLabels.COVERED_DATA_POINTS)));
+			dataSet.setUncoveredData(parseDatapoints(obj.getJSONArray(JSLabels.UNCOVERED_DATA_POINTS)));
 //			outputData.dataSet = dataSet;
 		} catch (IOException e) {
 			log.debug(e.getMessage());
 		}
 		
 		return outputData;
+	}
+	
+	public static Message parseModelCheck(BufferedReader br) {
+		Message outputData = new Message(RequestType.$MODEL_CHECK);
+		String jsonStr;
+		try {
+			jsonStr = br.readLine();
+			JSONObject obj = new JSONObject(jsonStr);
+			String existence = obj.getString(JSLabels.EXISTENCE);
+			outputData.messageBody = existence;
+			System.currentTimeMillis();
+//			outputData.dataSet = dataSet;
+		} catch (IOException e) {
+			log.debug(e.getMessage());
+		}
+		
+		return null;
 	}
 	
 	public static List<double[]> parseDatapoints(JSONArray arr) {
@@ -107,6 +126,5 @@ public class Message {
 		return null;
 	}
 
-	
 
 }

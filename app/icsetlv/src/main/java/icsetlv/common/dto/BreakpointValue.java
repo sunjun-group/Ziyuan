@@ -154,4 +154,10 @@ public class BreakpointValue extends ExecValue {
 	public boolean isPrimitive() {
 		return false;
 	}
+
+	@Override
+	public ExecValue clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

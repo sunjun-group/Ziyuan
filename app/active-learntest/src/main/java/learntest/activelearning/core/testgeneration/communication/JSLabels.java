@@ -1,11 +1,11 @@
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 /**
  * @author LLT
  *
  */
-public class JsLabels {
-	private JsLabels() {
+public class JSLabels {
+	private JSLabels() {
 	}
 	
 	public static final String BRANCH_ID = "BRANCH_ID";
@@ -21,5 +21,5 @@ public class JsLabels {
 	public static final String NAME = "NAME";
 	public static final String RESULT = "RESULT";
 	public static final String TEST_DATA = "TEST_DATA";
-	
+	public static final String EXISTENCE = "EXISTENCE";
 }

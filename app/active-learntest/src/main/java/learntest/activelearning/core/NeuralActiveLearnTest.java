@@ -15,7 +15,7 @@ import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.NNBasedTestGenerator;
-import learntest.activelearning.core.testgeneration.PythonCommunicator;
+import learntest.activelearning.core.testgeneration.communication.PythonCommunicator;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CFGUtility;

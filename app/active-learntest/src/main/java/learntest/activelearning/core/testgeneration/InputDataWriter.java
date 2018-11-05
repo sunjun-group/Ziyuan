@@ -11,6 +11,7 @@ package learntest.activelearning.core.testgeneration;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import learntest.activelearning.core.testgeneration.communication.InputData;
 import sav.strategies.vm.VMRunner;
 import sav.strategies.vm.interprocess.ServerInputWriter;
 
