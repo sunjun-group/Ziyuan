@@ -385,4 +385,15 @@ public class CollectionUtils {
 		}
 		return newMap;
 	}
+	
+	public static <T> void addIfNotExist(Collection<T> col, Collection<T> vals) {
+		if (isEmpty(vals)) {
+			return;
+		}
+		for (T val : vals) {
+			if (!col.contains(val)) {
+				col.add(val);
+			}
+		}
+	}
 }
