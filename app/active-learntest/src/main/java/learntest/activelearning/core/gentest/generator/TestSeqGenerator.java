@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,14 +25,12 @@ import gentest.core.data.variable.ISelectedVariable;
 import gentest.core.value.generator.ValueGeneratorMediator;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.gentest.generator.FixLengthArrayValueGenerator.LocationHolderExecValue;
-import learntest.activelearning.core.utils.DomainUtils;
 import sav.common.core.SavException;
 import sav.common.core.utils.ArrayTypeUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
-import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 import sav.strategies.dto.execute.value.ReferenceValue;
 
@@ -84,23 +81,6 @@ public class TestSeqGenerator {
 				classMap.put(param, clazz);
 				typeMap.put(clazz, paramTypes[index++]);
 			}
-		}
-	}
-
-	public Sequence generateSequence(double[] solution, List<ExecVar> vars, Set<String> failToSetVars)
-			throws SavException {
-		BreakpointValue breakpointValue = DomainUtils.toHierachyBreakpointValue(solution, vars);
-		Sequence sequence = generateSequence(breakpointValue, failToSetVars);
-		resetFailValues(vars, failToSetVars, solution, breakpointValue);
-		return sequence;
-	}
-	
-	private void resetFailValues(List<ExecVar> vars, Set<String> failToSetVars, double[] solution, BreakpointValue breakpointValue) {
-		for (int i = 0; i < solution.length; i++) {
-			String varId = vars.get(i).getVarId();
-			if (failToSetVars.contains(varId)) {
-				solution[i] = 0.0;
-			} 
 		}
 	}
 

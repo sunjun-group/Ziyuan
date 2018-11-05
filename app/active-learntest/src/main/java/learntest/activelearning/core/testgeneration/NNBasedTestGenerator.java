@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.localsearch.GradientBasedSearch;
+import learntest.activelearning.core.utils.DomainUtils;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
@@ -98,7 +98,7 @@ public class NNBasedTestGenerator extends TestGenerator{
 		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
 			DataPoints points = (DataPoints) response.getMessageBody();
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-					points.values, points.varList);
+					DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
 			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
 			
 			this.testsuite.addTestCases(newSuite);

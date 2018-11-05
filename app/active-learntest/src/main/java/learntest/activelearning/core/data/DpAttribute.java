@@ -84,8 +84,6 @@ public class DpAttribute {
 		return this;
 	}
 	
-	
-	
 	@Override
 	public String toString() {
 		return value.toString();

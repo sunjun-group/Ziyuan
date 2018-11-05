@@ -15,6 +15,7 @@ import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
+import learntest.activelearning.core.utils.DomainUtils;
 import learntest.core.commons.utils.VarSolutionUtils;
 import learntest.core.jdart.JdartTestInputUtils;
 import learntest.evaluation.core.CoverageProgressRecorder;
@@ -99,8 +100,7 @@ public class JDartGentest {
 								targetMethod.getMethodFullName());
 						List<ExecVar> vars = BreakpointDataUtils.collectAllVarsInturn(bkpVals);
 						List<double[]> solutions = VarSolutionUtils.buildSolutions(bkpVals, vars);
-						UnitTestSuite testsuite = tester.createTest(targetMethod, settings, appClasspath, solutions,
-								vars);
+						UnitTestSuite testsuite = tester.createTest(targetMethod, settings, appClasspath, DomainUtils.toHierachyBreakpointValue(solutions, vars));
 						recorder.updateNewCoverage(testsuite.getCoverageGraph(), testsuite.getJunitTestcases().size());
 						initTestsuite = testsuite;
 						junitMethods.addAll(testsuite.getJunitTestcases());
