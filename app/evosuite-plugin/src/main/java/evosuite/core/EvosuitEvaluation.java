@@ -116,15 +116,18 @@ public class EvosuitEvaluation {
 							cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
 									InstrumentationUtils.getClassLocation(result.targetClass, result.targetMethod),
 									learntestSettings.getCfgExtensionLayer());
-							cfgUtility.breakCircle(cfgInstance);
+//							cfgUtility.breakCircle(cfgInstance);
 							System.out.println(StringUtils.newLineJoin(CoverageUtils
 									.getBranchCoverageDisplayTexts(graphCoverage.getCoverageGraph(), cfgInstance)));
+							double cvg = CoverageUtils.getBranchCoverage(graphCoverage.getCoverageGraph(), params.getMethod());
+							System.out.println("Branch coverage: " + cvg);
+							System.out.print("");
 						}
 						
 						config.updateResult(targetClass.getMethodFullName(i), line, result, graphCoverage, cfgInstance);
 					} catch (Exception e) {
 						revert(adaptor);
-						log.debug(e.getMessage());
+						log.debug("Error: " + e.getMessage());
 						System.out.println(e);
 						config.logError(targetClass.getMethodFullName(i), line);
 					}

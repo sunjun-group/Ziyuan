@@ -157,7 +157,12 @@ public class BreakpointValue extends ExecValue {
 
 	@Override
 	public ExecValue clone() {
-		// TODO Auto-generated method stub
-		return null;
+		BreakpointValue bkpValue = new BreakpointValue(varId);
+		List<ExecValue> children = new ArrayList<>();
+		for (ExecValue child : getChildren()) {
+			children.add(child.clone());
+		}
+		bkpValue.children = children;
+		return bkpValue;
 	}
 }

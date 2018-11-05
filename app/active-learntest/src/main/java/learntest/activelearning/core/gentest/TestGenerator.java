@@ -10,7 +10,6 @@ package learntest.activelearning.core.gentest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,8 +32,8 @@ import gentest.junit.FileCompilationUnitPrinter;
 import gentest.junit.ICompilationUnitWriter;
 import gentest.junit.PrinterParams;
 import gentest.junit.TestsPrinter;
+import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.gentest.generator.TestSeqGenerator;
-import learntest.activelearning.core.utils.DomainUtils;
 import learntest.activelearning.core.utils.TimeController;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
@@ -43,7 +42,6 @@ import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.SingleTimer;
 import sav.strategies.dto.AppJavaClassPath;
-import sav.strategies.dto.execute.value.ExecVar;
 
 /**
  * @author LLT
@@ -104,14 +102,14 @@ public class TestGenerator {
 		return result;
 	}
 	
-	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars)
+	public GentestResult genTestAccordingToSolutions(GentestParams params, List<BreakpointValue> inputData)
 			throws SavException {
 		PrinterParams printerParams = params.getPrinterParams();
 		TestsPrinter printer = new TestsPrinter(printerParams);
 		if (!params.generateMainClass()) {
 			LearntestJWriter cuWriter = new LearntestJWriter(params.extractTestcaseSequenceMap());
 			printer.setCuWriter(cuWriter);
-			GentestResult result = genTestAccordingToSolutions(params, solutions, vars, cuWriter);
+			GentestResult result = genTestAccordingToSolutions(params, inputData, cuWriter);
 			result.setTestcaseSequenceMap(cuWriter.getTestcaseSequenceMap());
 			return result;
 		} 
@@ -119,7 +117,7 @@ public class TestGenerator {
 		MainClassJWriter cuWriter = new MainClassJWriter(printerParams.getPkg(),
 				printerParams.getClassPrefix(), params.extractTestcaseSequenceMap());
 		printer.setCuWriter(cuWriter);
-		GentestResult result = genTestAccordingToSolutions(params, solutions, vars, cuWriter);
+		GentestResult result = genTestAccordingToSolutions(params, inputData, cuWriter);
 		
 		/* add main class */
 		result.setMainClassName(TestsPrinter.getJunitClassName(cuWriter.getMainClass()));
@@ -133,7 +131,7 @@ public class TestGenerator {
 	/**
 	 * @param printOption whether to append existing test file or create a new one.
 	 */
-	public GentestResult genTestAccordingToSolutions(GentestParams params, List<double[]> solutions, List<ExecVar> vars,
+	public GentestResult genTestAccordingToSolutions(GentestParams params, List<BreakpointValue> inputData,
 			ICompilationUnitWriter cuWriter) throws SavException {
 		MethodCall target = createMethodCall(params);
 		if (target == null) {
@@ -153,17 +151,16 @@ public class TestGenerator {
 		//int index = 0;
 		Set<String> failToSetVars = new HashSet<String>();
 		HashMap<Sequence, Integer> map= new HashMap<>();
-		for (int i = 0; i < solutions.size(); i++) {
-			double[] solution = solutions.get(i);
-//			result.addInputData(DomainUtils.toBreakpointValue(solution, vars, i));
+		for (int i = 0; i < inputData.size(); i++) {
+			BreakpointValue solution = inputData.get(i);
 			try {
-				Sequence seq = generator.generateSequence(solution, vars, failToSetVars);
+				Sequence seq = generator.generateSequence(solution, failToSetVars);
 				map.put(seq, i);
 				sequences.add(seq);
 			} catch (Throwable e) {
 				e.printStackTrace();
 				log.debug(String.format("Fail to generate sequence for solution(%s) due to error: %s",
-						Arrays.toString(solution), e.getMessage()));
+						solution.toString(), e.getMessage()));
 			}
 		}
 		if (!failToSetVars.isEmpty()) {
@@ -180,8 +177,8 @@ public class TestGenerator {
 		int index = 0;
 		for (Sequence seq : printer.getValidSequences()) {
 			if (map.containsKey(seq)) {
-				double[] solution = solutions.get(map.get(seq));
-				result.addInputData(DomainUtils.toBreakpointValue(solution, vars, index));
+				BreakpointValue solution = inputData.get(map.get(seq));
+				result.addInputData(solution);
 				index++;
 			}
 		}

@@ -196,4 +196,52 @@ public class FileUtils {
 			throw new SavRtException(e);
 		}
 	}
+
+	public static void cleanDirectory(String folderPath) {
+		File file = new File(folderPath);
+		if (!file.exists()) {
+			return;
+		}
+		if (file.isDirectory()) {
+			try {
+				org.apache.commons.io.FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			file.delete();
+		}
+	}
+	
+	public static String backupFile(String fileName) {
+		int idx = fileName.lastIndexOf(".");
+		if (idx < 0) {
+			return fileName + "_bk";
+		}
+		String newfile = new StringBuilder(fileName.substring(0, idx))
+				.append("_bk").append(fileName.substring(idx)).toString();
+		copyFile(fileName, newfile, true);
+		return newfile;
+	}
+	
+	public static void copyFile(String srcFile, String destFile, boolean preserveFileDate) {
+		try {
+			org.apache.commons.io.FileUtils.copyFile(new File(srcFile), new File(destFile), preserveFileDate);
+		} catch (IOException e) {
+			throw new SavRtException(e);
+		}
+	}
+	
+	public static File createFolder(String folderPath) {
+		File folder = new File(folderPath);
+		if (folder.exists()) {
+			if (folder.isDirectory()) {
+				return folder;
+			}
+			throw new SavRtException(String.format("Path %s is not a folder!", folderPath));
+		}
+		folder.mkdirs();
+		return folder;
+	}
+	
 }

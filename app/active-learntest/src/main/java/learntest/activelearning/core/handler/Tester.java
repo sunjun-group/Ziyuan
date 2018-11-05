@@ -44,7 +44,6 @@ import sav.common.core.utils.TextFormatUtils;
 import sav.settings.SAVExecutionTimeOutException;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecValue;
-import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.vm.JavaCompiler;
 import sav.strategies.vm.VMConfiguration;
 
@@ -204,11 +203,11 @@ public class Tester {
 	}
 
 	public UnitTestSuite createTest(MethodInfo targetMethod, LearntestSettings settings,
-			AppJavaClassPath appClasspath, List<double[]> inputData, List<ExecVar> vars) throws SavRtException {
+			AppJavaClassPath appClasspath, List<BreakpointValue> inputData) throws SavRtException {
 		GentestParams params = initGentestParams(targetMethod, settings, appClasspath);
 		TestGenerator testGenerator = new TestGenerator(appClasspath);
 		try {
-			GentestResult testCases = testGenerator.genTestAccordingToSolutions(params, inputData, vars);
+			GentestResult testCases = testGenerator.genTestAccordingToSolutions(params, inputData);
 			return executeTest(targetMethod, settings, appClasspath, testCases);
 		} catch (Exception e) {
 			throw new SavRtException(e);

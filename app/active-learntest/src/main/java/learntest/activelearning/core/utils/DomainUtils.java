@@ -8,6 +8,7 @@
 
 package learntest.activelearning.core.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,6 +33,14 @@ public class DomainUtils {
 			BreakpointDataUtils.addToBreakpointValue(value, vars.get(i), solution[i]);
 		}
 		return value;
+	}
+	
+	public static List<BreakpointValue> toHierachyBreakpointValue(List<double[]>  solutions, List<ExecVar> vars) {
+		List<BreakpointValue> values = new ArrayList<>(solutions.size());
+		for (double[] solution : solutions) {
+			values.add(toHierachyBreakpointValue(solution, vars));
+		}
+		return values;
 	}
 	
 	public static BreakpointValue toHierachyBreakpointValue(double[] solution, List<ExecVar> vars) {
