@@ -27,7 +27,7 @@ public class SampleOutputReader extends ServerOutputReader {
 		waiting();
 	}
 	
-	public boolean isMatched(String line) {
+	public boolean isMatchCommand(String line) {
 		return OUTPUT_START_TOKEN.equals(line);
 	}
 

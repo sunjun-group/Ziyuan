@@ -33,7 +33,7 @@ public class GanOutputReader extends ServerOutputReader {
 		waiting();
 	}
 
-	public boolean isMatched(String line) {
+	public boolean isMatchCommand(String line) {
 		try {
 			log.debug("read data: {}", line);
 			requestType = RequestType.valueOf(line);

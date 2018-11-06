@@ -95,7 +95,7 @@ public class SocketVmRunner extends VMRunner {
 					String line = null;
 					try {
 						while ((line = br.readLine()) != null) {
-							if (!outputReader.isClosed() && outputReader.isMatched(line)) {
+							if (!outputReader.isClosed() && outputReader.isMatchCommand(line)) {
 								outputReader.read(br);
 							}
 						}

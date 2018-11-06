@@ -16,7 +16,7 @@ import java.io.BufferedReader;
  */
 public abstract class ServerOutputReader extends AbstractStatefulStream {
 
-	public abstract boolean isMatched(String line);
+	public abstract boolean isMatchCommand(String line);
 
 	public synchronized void read(BufferedReader br) {
 		synchronized (this) {
