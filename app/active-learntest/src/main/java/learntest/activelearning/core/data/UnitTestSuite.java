@@ -1,12 +1,16 @@
 package learntest.activelearning.core.data;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import gentest.core.data.Sequence;
+import microbat.instrumentation.cfgcoverage.graph.Branch;
+import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
+import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.JunitUtils;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -24,12 +28,32 @@ public class UnitTestSuite {
 	private Map<String, Sequence> testcaseSequenceMap;
 	private CoverageSFlowGraph coverageGraph;
 	private LearnDataSetMapper learnDataMapper;
+	private Map<Branch, List<TestInputData>> branchInputMap;
 	
 	public void setInputData(List<TestInputData> inputData) {
 		this.inputDataMap = new HashMap<>();
 		for (TestInputData testInput : inputData) {
 			if (testInput != null) {
 				inputDataMap.put(testInput.getTestcase(), testInput);
+			}
+		}
+		buildBranchTestInputMap();
+	}
+	
+	private void buildBranchTestInputMap() {
+		branchInputMap = new HashMap<>();
+		for (CoverageSFNode node : coverageGraph.getDecisionNodes()) {
+			for (CoverageSFNode branchNode : node.getBranches()) {
+				List<TestInputData> list = new ArrayList<>();
+				Branch branch = new Branch(node, branchNode);
+				List<String> coveredTcs = node.getCoveredTestcasesOnBranches().get(branchNode);
+				for (String testcase : CollectionUtils.nullToEmpty(coveredTcs)) {
+					TestInputData testInput = inputDataMap.get(testcase);
+					if (testInput != null) {
+						list.add(testInput);
+					}
+				}
+				branchInputMap.put(branch, list);
 			}
 		}
 	}
@@ -92,6 +116,11 @@ public class UnitTestSuite {
 		this.junitfiles.addAll(newTestSuite.junitfiles);
 		this.junitTestcases.addAll(newTestSuite.junitTestcases);
 		this.inputDataMap.putAll(newTestSuite.inputDataMap);
+		/* merge branchInputMap */
+		for (Branch branch : this.branchInputMap.keySet()) {
+			List<TestInputData> newInputs = newTestSuite.branchInputMap.get(branch);
+			this.branchInputMap.get(branch).addAll(newInputs);
+		}
 		if (this.testcaseSequenceMap == null) {
 			this.testcaseSequenceMap = newTestSuite.testcaseSequenceMap;
 		} else if (newTestSuite.testcaseSequenceMap != null) {
@@ -117,5 +146,9 @@ public class UnitTestSuite {
 	
 	public LearnDataSetMapper getLearnDataMapper() {
 		return learnDataMapper;
+	}
+
+	public Map<Branch, List<TestInputData>> getBranchInputMap() {
+		return branchInputMap;
 	}
 }

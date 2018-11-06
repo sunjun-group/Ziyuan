@@ -26,7 +26,7 @@ public class SearchBasedTestGenerator extends TestGenerator{
 	}
 
 	public void cover(CDG cdg) {
-		this.branchInputMap = buildBranchTestInputMap(testsuite.getInputData(), testsuite.getCoverageGraph());
+		this.branchInputMap = testsuite.getBranchInputMap();
 		for (CDGNode node : cdg.getStartNodes()) {
 			traverseLearning(node);
 		}

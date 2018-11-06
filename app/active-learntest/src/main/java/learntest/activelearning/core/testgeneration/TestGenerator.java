@@ -1,6 +1,5 @@
 package learntest.activelearning.core.testgeneration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +10,7 @@ import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
-import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
-import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
-import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class TestGenerator {
@@ -36,26 +32,6 @@ public class TestGenerator {
 		this.appClasspath = appClasspath;
 		this.targetMethod = targetMethod;
 		this.settings = settings;
-	}
-	
-	public Map<Branch, List<TestInputData>> buildBranchTestInputMap(Map<String, TestInputData> inputData,
-			CoverageSFlowGraph coverageSFlowGraph) {
-		Map<Branch, List<TestInputData>> map = new HashMap<>();
-		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
-			for (CoverageSFNode branchNode : node.getBranches()) {
-				List<TestInputData> list = new ArrayList<>();
-				Branch branch = new Branch(node, branchNode);
-				List<String> coveredTcs = node.getCoveredTestcasesOnBranches().get(branchNode);
-				for (String testcase : CollectionUtils.nullToEmpty(coveredTcs)) {
-					TestInputData testInput = inputData.get(testcase);
-					if (testInput != null) {
-						list.add(testInput);
-					}
-				}
-				map.put(branch, list);
-			}
-		}
-		return map;
 	}
 	
 	public boolean isAllChildrenCovered(CDGNode node) {
