@@ -1,4 +1,4 @@
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
+import learntest.activelearning.core.testgeneration.Dataset;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -35,53 +36,50 @@ public class InputData /*implements IInputData*/ {
 //		pw.flush();
 	}
 	
-	public static InputData forBoundaryRemaining(Dataset pathCoverage) {
-		InputData inputData = new InputData();
-		inputData.requestType = RequestType.$BOUNDARY_REMAINING;
-		inputData.obj.put(JsLabels.PATH_ID, pathCoverage.getId());
-		inputData.obj.put(JsLabels.COVERED_DATA_POINTS, pathCoverage.getCoveredData());
-		inputData.obj.put(JsLabels.UNCOVERED_DATA_POINTS, pathCoverage.getUncoveredData());
-		return inputData;
-	}
-
 	public static InputData createStartMethodRequest(String methodId) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$TRAINING;
-		inputData.obj.put(JsLabels.METHOD_ID, methodId);
+		inputData.obj.put(JSLabels.METHOD_ID, methodId);
 		return inputData;
 	}
 
-	public static InputData createBranchRequest(Branch branch) {
-		InputData inputData = new InputData();
-		inputData.requestType = RequestType.$TRAINING;
-		inputData.obj.put(JsLabels.BRANCH_ID, branch.getBranchID());
-		return inputData;
-	}
-	
 	public static InputData createTrainingRequest(MethodInfo targetMethod, Branch branch, List<TestInputData> positiveData, 
-			List<TestInputData> negativeData) {
+			List<TestInputData> negativeData, int pointNumberLimit) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$TRAINING;
 		
-		inputData.obj.put(JsLabels.METHOD_ID, targetMethod.getMethodFullName());
-		inputData.obj.put(JsLabels.BRANCH_ID, branch.getBranchID());
+		inputData.obj.put(JSLabels.METHOD_ID, targetMethod.getMethodId());
+		inputData.obj.put(JSLabels.BRANCH_ID, branch.getBranchID());
+		inputData.obj.put(JSLabels.POINT_NUMBER_LIMIT, pointNumberLimit);
 		
 		JSONArray positiveArray = transferToJsonArray(positiveData);
-		inputData.obj.put(JsLabels.POSITIVE_DATA, positiveArray);
+		inputData.obj.put(JSLabels.POSITIVE_DATA, positiveArray);
 		
 		JSONArray negativeArray = transferToJsonArray(negativeData);
-		inputData.obj.put(JsLabels.NEGATIVE_DATA, negativeArray);
+		inputData.obj.put(JSLabels.NEGATIVE_DATA, negativeArray);
 		
 		return inputData;
 	}
 	
-	public static InputData createBoundaryExplorationRequest(Branch branch, List<TestInputData> testData) {
+	public static InputData createBoundaryExplorationRequest(String methodID, Branch branch, List<TestInputData> testData) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$BOUNDARY_EXPLORATION;
-		inputData.obj.put(JsLabels.BRANCH_ID, branch.getBranchID());
+		inputData.obj.put(JSLabels.METHOD_ID, methodID);
+		
+		String branchID = branch==null ? "EMPTY" : branch.getBranchID(); 
+		inputData.obj.put(JSLabels.BRANCH_ID, branchID);
 		
 		JSONArray jArray = transferToJsonArray(testData);
-		inputData.obj.put(JsLabels.TEST_DATA, jArray);
+		inputData.obj.put(JSLabels.TEST_DATA, jArray);
+		
+		return inputData;
+	}
+	
+	public static InputData createModelCheckRequest(Branch parentBranch, String methodID) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$MODEL_CHECK;
+		inputData.obj.put(JSLabels.BRANCH_ID, parentBranch.getBranchID());
+		inputData.obj.put(JSLabels.METHOD_ID, methodID);
 		
 		return inputData;
 	}
@@ -97,17 +95,17 @@ public class InputData /*implements IInputData*/ {
 			for(int j=0; j<points.varList.size(); j++){
 				ExecVar var = points.getVarList().get(j);
 				JSONObject jsonObj = new JSONObject();
-				jsonObj.put(JsLabels.NAME, var.getVarId());
-				jsonObj.put(JsLabels.VALUE, points.values.get(i)[j]);
-				jsonObj.put(JsLabels.TYPE, points.varList.get(j).getType());
+				jsonObj.put(JSLabels.NAME, var.getVarId());
+				jsonObj.put(JSLabels.VALUE, points.values.get(i)[j]);
+				jsonObj.put(JSLabels.TYPE, points.varList.get(j).getType());
 				boolean label = points.getLabels().get(i);
-				jsonObj.put(JsLabels.LABEL, label);
+				jsonObj.put(JSLabels.LABEL, label);
 				point.put(jsonObj);
 			}
 			array.put(point);
 		}
 		
-		inputData.obj.put(JsLabels.RESULT, array);
+		inputData.obj.put(JSLabels.RESULT, array);
 		
 		return inputData;
 	}
@@ -121,9 +119,9 @@ public class InputData /*implements IInputData*/ {
 			for(int i=0; i<bpv.getChildren().size(); i++){
 				ExecValue value = bpv.getChildren().get(i);
 				JSONObject param = new JSONObject();
-				param.put(JsLabels.TYPE, value.getType());
-				param.put(JsLabels.VALUE, value.getStrVal());
-				param.put(JsLabels.NAME, value.getVarId());
+				param.put(JSLabels.TYPE, value.getType());
+				param.put(JSLabels.VALUE, value.getStrVal());
+				param.put(JSLabels.NAME, value.getVarId());
 				
 				positiveObj.put(param);
 			}
@@ -137,6 +135,8 @@ public class InputData /*implements IInputData*/ {
 		inputData.requestType = RequestType.$TRAINING;
 		return inputData;
 	}
+
+	
 
 
 }

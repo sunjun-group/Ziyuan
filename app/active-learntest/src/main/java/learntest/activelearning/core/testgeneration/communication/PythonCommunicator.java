@@ -1,4 +1,4 @@
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
+import learntest.activelearning.core.testgeneration.InputDataWriter;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.common.core.SavException;
 import sav.strategies.vm.interprocess.python.PythonVmConfiguration;
@@ -37,6 +38,7 @@ public class PythonCommunicator {
 		vmConfig.setPythonHome("C:\\Program Files\\Python36\\python.exe");
 		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\nn_learntest.py");
 //		vmConfig.setLaunchClass("E:\\linyun\\git_space\\nn_active_learning\\test.py");
+		vmRunner.setWorkingDir("E:\\linyun\\git_space\\nn_active_learning");
 		vmRunner.start(vmConfig);
 		
 		try {
@@ -47,8 +49,8 @@ public class PythonCommunicator {
 	}
 	
 	public Message requestTraining(Branch branch, List<TestInputData> positiveData, 
-			List<TestInputData> negativeData){
-		InputData data = InputData.createTrainingRequest(targetMethod, branch, positiveData, negativeData);
+			List<TestInputData> negativeData, int pointNumberLimit){
+		InputData data = InputData.createTrainingRequest(targetMethod, branch, positiveData, negativeData, pointNumberLimit);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
@@ -63,8 +65,16 @@ public class PythonCommunicator {
 		return output;
 	}
 	
-	public Message requestBoundaryExploration(Branch branch, List<TestInputData> testData) {
-		InputData data = InputData.createBoundaryExplorationRequest(branch, testData);
+	public Message requestBoundaryExploration(String methodID, Branch branch, List<TestInputData> testData) {
+		InputData data = InputData.createBoundaryExplorationRequest(methodID, branch, testData);
+		inputWriter.send(data, vmRunner);
+		
+		Message output = outputReader.readOutput(-1, vmRunner);
+		return output;
+	}
+	
+	public Message requestModelCheck(Branch parentBranch, String methodID) {
+		InputData data = InputData.createModelCheckRequest(parentBranch, methodID);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);

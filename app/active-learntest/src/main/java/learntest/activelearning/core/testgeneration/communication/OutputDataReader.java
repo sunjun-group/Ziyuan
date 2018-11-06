@@ -6,7 +6,7 @@
  *  Version:  $Revision: 1 $
  */
 
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 import java.io.BufferedReader;
 
@@ -47,23 +47,23 @@ public class OutputDataReader extends ServerOutputReader {
 		switch (requestType) {
 		case $BOUNDARY_REMAINING:
 			readOutput = Message.boundaryRemainingOuput(br);
-			ready();
 			break;
 		case $REQUEST_LABEL:
 			readOutput = Message.parseUnlabeledDataPoints(br);
-			ready();
 			break;
 		case $TRAINING_FINISH:
 			readOutput = Message.parseTrainingFinish(br);
-			ready();
 			break;
 		case $BOUNDARY_EXPLORATION:
 			readOutput = Message.parseBoundaryExplorationPoints(br);
-			ready();
 			break;
+		case $MODEL_CHECK:
+			readOutput = Message.parseModelCheck(br);
 		default:
 			break;
 		}
+		
+		ready();
 	}
 
 	@Override

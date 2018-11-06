@@ -149,6 +149,9 @@ public class GradientBasedSearch {
 				bestFitness = newFitness;
 			}
 		}
+		else{
+			list.add(newInput);
+		}
 
 		IntermediateSearchResult iResult = new IntermediateSearchResult(bestValue, bestFitness, list);
 		return iResult;
@@ -164,6 +167,8 @@ public class GradientBasedSearch {
 		double[] localBestValue = value;
 		double localBestFitness = bestFitness;
 
+		List<TestInputData> visitedInputs = new ArrayList<>();
+		
 		while (true) {
 			double[] newValue = value.clone();
 			mutator.mutateValue(newValue, index, currentDirection, amount);
@@ -189,13 +194,14 @@ public class GradientBasedSearch {
 			}
 
 			boolean isVisit = false;
-			if (!list.contains(newInput)) {
-				list.add(newInput);
+			if (!visitedInputs.contains(newInput)) {
+				visitedInputs.add(newInput);
 			} else {
 				isVisit = true;
 			}
 
 			if (branch.isCovered()) {
+				list.add(newInput);
 				break;
 			} else {
 				double newFitness = newInput.getFitness(decisionCDGNode, branch);

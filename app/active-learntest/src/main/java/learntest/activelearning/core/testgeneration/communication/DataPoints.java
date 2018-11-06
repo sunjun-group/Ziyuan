@@ -1,4 +1,4 @@
-package learntest.activelearning.core.testgeneration;
+package learntest.activelearning.core.testgeneration.communication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class DataPoints {
-	List<ExecVar> varList;
-	List<double[]> values;
-	private List<Boolean> labels = new ArrayList<>();
+	public List<ExecVar> varList;
+	public List<double[]> values;
+	public List<Boolean> labels = new ArrayList<>();
 
 	public DataPoints(List<ExecVar> varList, List<double[]> values) {
 		super();
