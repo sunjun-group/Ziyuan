@@ -60,7 +60,7 @@ public class CoverageUtils {
 		List<String> lines = new ArrayList<>(coverageSFlowGraph.getDecisionNodes().size());
 		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("NodeCoverage [id=").append(node.getId()).append(", ");
+			sb.append("NodeCoverage [id=").append(node.getCvgIdx()).append(", ");
 			sb.append(toString(cfg.getNodeList().get(node.getStartIdx()), null));
 			sb.append(", covered=").append(node.isCovered())
 				.append(", coveredBranches=").append(toBranchString(node.getCoveredBranches(), cfg))

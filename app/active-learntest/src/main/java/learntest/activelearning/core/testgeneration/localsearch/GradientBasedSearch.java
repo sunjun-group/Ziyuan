@@ -18,6 +18,7 @@ import learntest.activelearning.core.testgeneration.mutate.NumericMutator;
 import learntest.activelearning.core.utils.DomainUtils;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
+import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -174,7 +175,7 @@ public class GradientBasedSearch {
 			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
 			for (TestInputData id : newSuite.getInputData().values()) {
 				DpAttribute[] dataPoint = id.getDataPoint();
-				System.out.println(dataPoint);
+				System.out.println(TextFormatUtils.printObj(dataPoint));
 			}
 			this.testsuite.addTestCases(newSuite);
 			
