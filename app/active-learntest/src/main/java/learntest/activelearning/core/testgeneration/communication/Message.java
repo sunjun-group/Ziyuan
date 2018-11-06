@@ -48,6 +48,11 @@ public class Message {
 		return message;
 	}
 	
+	public static Message parseBoundaryExplorationFinish(BufferedReader br) {
+		Message message = new Message(RequestType.$BOUNDARY_EXPLORATION);
+		return message;
+	}
+	
 	public static Message parseUnlabeledDataPoints(BufferedReader br) {
 		String jsonStr;
 		try {

@@ -31,7 +31,7 @@ public class OutputDataReader extends ServerOutputReader {
 		waiting();
 	}
 
-	public boolean isMatched(String line) {
+	public boolean isMatchCommand(String line) {
 		try {
 			log.debug("read data: {}", line);
 			requestType = RequestType.valueOf(line);
@@ -53,6 +53,9 @@ public class OutputDataReader extends ServerOutputReader {
 			break;
 		case $TRAINING_FINISH:
 			readOutput = Message.parseTrainingFinish(br);
+			break;
+		case $EXPLORATION_FINISH:
+			readOutput = Message.parseBoundaryExplorationFinish(br);
 			break;
 		case $BOUNDARY_EXPLORATION:
 			readOutput = Message.parseBoundaryExplorationPoints(br);

@@ -198,15 +198,17 @@ public class NNBasedTestGenerator extends TestGenerator {
 		List<Branch> trainedParentBranches = new ArrayList<>();
 		findTrainedParentBranches(branchCDGNode, trainedParentBranches);
 
-		List<TestInputData> testData = retrieveNegativeInputs(branch, branchCDGNode.getCfgNode());
 		for (Branch parentBranch : trainedParentBranches) {
-			requestBoundaryExploration(this.targetMethod.getMethodId(), branch, parentBranch, testData);
+			List<TestInputData> relativeData = this.branchInputMap.get(parentBranch);
+			requestBoundaryExploration(this.targetMethod.getMethodId(), branch, parentBranch, relativeData);
 		}
 
+		List<TestInputData> testData = retrieveNegativeInputs(branch, branchCDGNode.getCfgNode());
 		if (trainedParentBranches.isEmpty()) {
 			requestBoundaryExploration(this.targetMethod.getMethodId(), branch, null, testData);
 		}
 	}
+
 
 	private void requestBoundaryExploration(String methodId, Branch branch, Branch parentBranch, List<TestInputData> testData) {
 		Message response = communicator.requestBoundaryExploration(this.targetMethod.getMethodId(), null, testData);
