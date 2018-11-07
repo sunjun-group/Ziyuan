@@ -3,6 +3,7 @@ package learntest.activelearning.core.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import learntest.activelearning.core.data.condition.Condition;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.BooleanValue;
 import sav.strategies.dto.execute.value.CharValue;
@@ -15,6 +16,8 @@ public class DpAttribute {
 	private boolean isPadding = false;
 	private DpAttribute paddingConditionElement = null;
 	private List<DpAttribute> paddingDependentees;
+	
+	private Condition paddingCondition;
 	
 	private boolean isModifiable = true;
 	
@@ -34,7 +37,7 @@ public class DpAttribute {
 		this.isPadding = isPadding;
 	}
 
-	public DpAttribute getPaddingCondition() {
+	public DpAttribute getPaddingConditionElement() {
 		return paddingConditionElement;
 	}
 
@@ -119,6 +122,14 @@ public class DpAttribute {
 				paddingConditionElement, idx);
 		clone.paddingDependentees = paddingDependentees;
 		return clone;
+	}
+
+	public Condition getPaddingCondition() {
+		return paddingCondition;
+	}
+
+	public void setPaddingCondition(Condition paddingCondition) {
+		this.paddingCondition = paddingCondition;
 	}
 	
 }
