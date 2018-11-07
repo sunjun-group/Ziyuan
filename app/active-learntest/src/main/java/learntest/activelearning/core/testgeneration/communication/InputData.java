@@ -9,12 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import icsetlv.common.dto.BreakpointValue;
+import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.testgeneration.Dataset;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
 
 /**
  * @author LLT
@@ -113,15 +115,34 @@ public class InputData /*implements IInputData*/ {
 	private static JSONArray transferToJsonArray(List<TestInputData> positiveData) {
 		JSONArray arrayObj = new JSONArray();
 		for(TestInputData testInput: positiveData){
-			
-			BreakpointValue bpv = testInput.getInputValue();
+			DpAttribute[] attributes = testInput.getDataPoint();
+//			BreakpointValue bpv = testInput.getInputValue();
 			JSONArray positiveObj = new JSONArray();
-			for(int i=0; i<bpv.getChildren().size(); i++){
-				ExecValue value = bpv.getChildren().get(i);
+			for(int i=0; i<attributes.length; i++){
+				DpAttribute attribute = attributes[i];
+				ExecValue value = attribute.getValue();
 				JSONObject param = new JSONObject();
+				
 				param.put(JSLabels.TYPE, value.getType());
-				param.put(JSLabels.VALUE, value.getStrVal());
 				param.put(JSLabels.NAME, value.getVarId());
+				if(value.getType().equals(ExecVarType.REFERENCE) || value.getType().equals(ExecVarType.ARRAY)){
+					param.put(JSLabels.VALUE, 1);
+				}
+				else{
+					param.put(JSLabels.VALUE, value.getStrVal());					
+				}
+				param.put(JSLabels.IS_PADDING, attribute.isPadding());
+				param.put(JSLabels.MODIFIABLE, attribute.isModifiable());
+				
+				List<DpAttribute> dependentees = attribute.getPaddingDependentees();
+				if(dependentees==null || dependentees.isEmpty()){
+					param.put(JSLabels.INFLUENTIAL_START, -1);
+					param.put(JSLabels.INFLUENTIAL_END, -1);
+				}
+				else{
+					param.put(JSLabels.INFLUENTIAL_START, dependentees.get(0).getIdx());
+					param.put(JSLabels.INFLUENTIAL_END, dependentees.get(dependentees.size()-1).getIdx());
+				}
 				
 				positiveObj.put(param);
 			}

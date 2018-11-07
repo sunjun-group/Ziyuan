@@ -15,6 +15,7 @@ public class DpAttribute {
 	private boolean isPadding = false;
 	private DpAttribute paddingConditionElement = null;
 	private List<DpAttribute> paddingDependentees;
+	
 	private boolean isModifiable = true;
 	
 	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondition,

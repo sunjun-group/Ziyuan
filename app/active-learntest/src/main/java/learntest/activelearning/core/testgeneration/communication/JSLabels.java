@@ -23,4 +23,8 @@ public class JSLabels {
 	public static final String TEST_DATA = "TEST_DATA";
 	public static final String EXISTENCE = "EXISTENCE";
 	public static final String POINT_NUMBER_LIMIT = "POINT_NUMBER_LIMIT";
+	public static final String IS_PADDING = "IS_PADDING";
+	public static final String INFLUENTIAL_START = "INFLUENTIAL_START";
+	public static final String INFLUENTIAL_END = "INFLUENTIAL_END";
+	public static final String MODIFIABLE = "MODIFIABLE";
 }
