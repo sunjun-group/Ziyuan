@@ -209,29 +209,35 @@ public class NNBasedTestGenerator extends TestGenerator {
 		}
 	}
 
+	
+	private Message generateAndSendLabels(Branch branch, DataPoints points){
+		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
+				DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
+		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
+
+		this.testsuite.addTestCases(newSuite);
+
+		CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
+
+		for (String testcase : newSuite.getJunitTestcases()) {
+			// TestInputData input = this.testsuite.getInputData().get(i);
+			if (branchNode.getCoveredTestcases().contains(testcase)) {
+				points.getLabels().add(true);
+			} else {
+				points.getLabels().add(false);
+			}
+		}
+
+		Message response = communicator.sendLabel(points);
+		return response;
+	}
+	
 
 	private void requestBoundaryExploration(String methodId, Branch branch, Branch parentBranch, List<TestInputData> testData) {
 		Message response = communicator.requestBoundaryExploration(this.targetMethod.getMethodId(), null, testData);
 		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
 			DataPoints points = (DataPoints) response.getMessageBody();
-			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-					DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
-			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
-
-			this.testsuite.addTestCases(newSuite);
-
-			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
-
-			for (String testcase : newSuite.getJunitTestcases()) {
-				// TestInputData input = this.testsuite.getInputData().get(i);
-				if (branchNode.getCoveredTestcases().contains(testcase)) {
-					points.getLabels().add(true);
-				} else {
-					points.getLabels().add(false);
-				}
-			}
-
-			response = communicator.sendLabel(points);
+			response = generateAndSendLabels(branch, points);
 		}
 	}
 
