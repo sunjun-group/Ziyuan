@@ -154,28 +154,37 @@ public class NNBasedTestGenerator extends TestGenerator {
 		}
 
 		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
-			DataPoints points = (DataPoints) response.getMessageBody();
-			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-					DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
-			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
-
-			this.testsuite.addTestCases(newSuite);
-
-			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
-
-			for (String testcase : newSuite.getJunitTestcases()) {
-				// TestInputData input = this.testsuite.getInputData().get(i);
-				if (branchNode.getCoveredTestcases().contains(testcase)) {
-					points.getLabels().add(true);
-				} else {
-					points.getLabels().add(false);
-				}
+			
+			if(response.getRequestType() == RequestType.$REQUEST_LABEL) {
+				DataPoints points = (DataPoints) response.getMessageBody();
+				response = generateAndSendLabels(branch, points);				
 			}
-
-			response = communicator.sendLabel(points);
+			else if(response.getRequestType() == RequestType.$REQUEST_POINT_INFO) {
+				DataPoints points = (DataPoints) response.getMessageBody();
+				response = generateAndSendPointInfo(branch, points);
+			}
 		}
 
 		System.currentTimeMillis();
+	}
+
+	private Message generateAndSendPointInfo(Branch branch, DataPoints points) {
+		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
+				DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
+		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
+
+		this.testsuite.addTestCases(newSuite);
+
+		CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
+
+		for (String testcase : newSuite.getJunitTestcases()) {
+			TestInputData input = this.testsuite.getInputData().get(testcase);
+			
+			//TODO
+		}
+
+		Message response = communicator.sendLabel(points);
+		return response;
 	}
 
 	private List<TestInputData> retrieveNegativeInputs(Branch branch, CoverageSFNode node) {
