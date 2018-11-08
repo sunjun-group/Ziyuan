@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import learntest.activelearning.core.data.condition.Condition;
+import learntest.activelearning.core.data.condition.LengthCondition;
+import learntest.activelearning.core.data.condition.ObjectNullCondition;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.BooleanValue;
 import sav.strategies.dto.execute.value.CharValue;
@@ -14,18 +16,17 @@ public class DpAttribute {
 	private int idx;
 	private ExecValue value;
 	private boolean isPadding = false;
-	private DpAttribute paddingConditionElement = null;
+	private DpAttribute paddingController = null;
 	private List<DpAttribute> paddingDependentees;
-	
-	private Condition paddingCondition;
+	private Condition paddingCondition; // apply for its dependentees.
 	
 	private boolean isModifiable = true;
 	
-	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingCondition,
+	public DpAttribute(ExecValue value, boolean isPadding, DpAttribute paddingController,
 			int idx) {
 		this.value = value;
 		this.isPadding = isPadding;
-		setPaddingConditionElement(paddingCondition);
+		setPaddingConditionElement(paddingController);
 		this.idx = idx;
 	}
 	
@@ -38,11 +39,11 @@ public class DpAttribute {
 	}
 
 	public DpAttribute getPaddingConditionElement() {
-		return paddingConditionElement;
+		return paddingController;
 	}
 
 	public void setPaddingConditionElement(DpAttribute paddingController) {
-		this.paddingConditionElement = paddingController;
+		this.paddingController = paddingController;
 		if (paddingController != null) {
 			if (paddingController.paddingDependentees == null) {
 				paddingController.paddingDependentees = new ArrayList<>();
@@ -71,6 +72,13 @@ public class DpAttribute {
 		this.isModifiable = isModifiable;
 	}
 
+	public Boolean getBoolean() {
+		if (!(value instanceof BooleanValue)) {
+			throw new IllegalArgumentException(String.format("expect BooleanValue, get %s", value.getClass().getName()));
+		}
+		return ((BooleanValue) value).getBooleanVal();
+	}
+	
 	public DpAttribute setBoolean(boolean newValue) {
 		setValue(new BooleanValue(value.getVarId(), newValue));
 		setPadding(false);
@@ -88,6 +96,13 @@ public class DpAttribute {
 		return this;
 	}
 	
+	public Integer getInt() {
+		if (!(value instanceof IntegerValue)) {
+			throw new IllegalArgumentException(String.format("expect IntegerValue, get %s", value.getClass().getName()));
+		}
+		return ((IntegerValue) value).getIntegerVal();
+	}
+	
 	@Override
 	public String toString() {
 		return value.toString();
@@ -103,8 +118,8 @@ public class DpAttribute {
 			clone[i] = dpAttribute[i].clone();
 		}
 		for (DpAttribute clonedAtt : clone) {
-			if (clonedAtt.paddingConditionElement != null) {
-				clonedAtt.paddingConditionElement = clone[clonedAtt.paddingConditionElement.idx];
+			if (clonedAtt.paddingController != null) {
+				clonedAtt.paddingController = clone[clonedAtt.paddingController.idx];
 			}
 			if (!clonedAtt.getPaddingDependentees().isEmpty()) {
 				List<DpAttribute> clonedDependentees = new ArrayList<>(clonedAtt.paddingDependentees.size());
@@ -119,7 +134,7 @@ public class DpAttribute {
 	
 	public DpAttribute clone() {
 		DpAttribute clone = new DpAttribute(value.clone(), isPadding, 
-				paddingConditionElement, idx);
+				paddingController, idx);
 		clone.paddingDependentees = paddingDependentees;
 		return clone;
 	}
@@ -128,8 +143,20 @@ public class DpAttribute {
 		return paddingCondition;
 	}
 
-	public void setPaddingCondition(Condition paddingCondition) {
-		this.paddingCondition = paddingCondition;
+	public void setObjectNullPaddingCondition() {
+		this.paddingCondition = new ObjectNullCondition(this);
 	}
 	
+	public void setLengthPaddingCondition() {
+		this.paddingCondition = new LengthCondition(this);
+	}
+	
+	public static void updatePaddingInfo(DpAttribute[] dpAttributes) {
+		for (DpAttribute dpAttribute : dpAttributes) {
+			/* only update from the root element */
+			if (dpAttribute.paddingController != null && dpAttribute.paddingCondition != null) {
+				dpAttribute.paddingCondition.updatePadding();
+			}
+		}
+	}
 }
