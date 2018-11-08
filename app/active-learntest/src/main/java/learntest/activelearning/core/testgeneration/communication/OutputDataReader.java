@@ -62,6 +62,10 @@ public class OutputDataReader extends ServerOutputReader {
 			break;
 		case $MODEL_CHECK:
 			readOutput = Message.parseModelCheck(br);
+			break;
+		case $REQUEST_MASK_RESULT:
+			readOutput = Message.parseUnmaskedDataPoints(br);
+			break;
 		default:
 			break;
 		}

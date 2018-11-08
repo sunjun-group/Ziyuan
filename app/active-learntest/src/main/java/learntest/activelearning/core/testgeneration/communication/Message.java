@@ -131,5 +131,21 @@ public class Message {
 		return null;
 	}
 
+	public static Message parseUnmaskedDataPoints(BufferedReader br) {
+		String jsonStr;
+		try {
+			jsonStr = br.readLine();
+			DataPoints values = JSONParser.parseUnmaskedDataPoints(jsonStr);
+			Message message = new Message(RequestType.$REQUEST_MASK_RESULT);
+			message.messageBody = values;
+			
+			return message;
+		} catch (IOException e) {
+			log.debug(e.getMessage());
+		}
+		
+		return null;
+	}
+
 
 }

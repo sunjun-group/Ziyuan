@@ -58,7 +58,15 @@ public class PythonCommunicator {
 	}
 	
 	public Message sendLabel(DataPoints points) {
-		InputData data = InputData.transferToJSON(targetMethod, points);
+		InputData data = InputData.transferToLabelJSON(targetMethod, points);
+		inputWriter.send(data, vmRunner);
+		
+		Message output = outputReader.readOutput(-1, vmRunner);
+		return output;
+	}
+	
+	public Message sendMaskResult(DataPoints points) {
+		InputData data = InputData.transferToLabelJSON(targetMethod, points);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);

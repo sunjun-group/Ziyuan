@@ -86,7 +86,7 @@ public class InputData /*implements IInputData*/ {
 		return inputData;
 	}
 	
-	public static InputData transferToJSON(MethodInfo targetMethod, DataPoints points) {
+	public static InputData transferToLabelJSON(MethodInfo targetMethod, DataPoints points) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$SEND_LABEL;
 		JSONArray array = new JSONArray();
@@ -94,6 +94,7 @@ public class InputData /*implements IInputData*/ {
 		
 		for(int i=0; i<points.values.size(); i++){
 			JSONArray point = new JSONArray();
+			DpAttribute[] attributes = points.attributes.get(i);
 			for(int j=0; j<points.varList.size(); j++){
 				ExecVar var = points.getVarList().get(j);
 				JSONObject jsonObj = new JSONObject();
@@ -102,6 +103,47 @@ public class InputData /*implements IInputData*/ {
 				jsonObj.put(JSLabels.TYPE, points.varList.get(j).getType());
 				boolean label = points.getLabels().get(i);
 				jsonObj.put(JSLabels.LABEL, label);
+				
+				DpAttribute attribute = attributes[j];
+				jsonObj.put(JSLabels.IS_PADDING, attribute.isPadding());
+				jsonObj.put(JSLabels.MODIFIABLE, attribute.isModifiable());
+				jsonObj.put(JSLabels.INFLUENTIAL_START, -1);
+				jsonObj.put(JSLabels.INFLUENTIAL_END, -1);
+				
+				point.put(jsonObj);
+			}
+			array.put(point);
+		}
+		
+		inputData.obj.put(JSLabels.RESULT, array);
+		
+		return inputData;
+	}
+	
+	public static InputData transferToMaskJSON(MethodInfo targetMethod, DataPoints points) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$SEND_MASK_RESULT;
+		JSONArray array = new JSONArray();
+//		inputData.obj.put(JsLabels.METHOD_ID, targetMethod.getMethodFullName());
+		
+		for(int i=0; i<points.values.size(); i++){
+			JSONArray point = new JSONArray();
+			DpAttribute[] attributes = points.attributes.get(i);
+			for(int j=0; j<points.varList.size(); j++){
+				ExecVar var = points.getVarList().get(j);
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put(JSLabels.NAME, var.getVarId());
+				jsonObj.put(JSLabels.VALUE, points.values.get(i)[j]);
+				jsonObj.put(JSLabels.TYPE, points.varList.get(j).getType());
+				boolean label = points.getLabels().get(i);
+				jsonObj.put(JSLabels.LABEL, label);
+				
+				DpAttribute attribute = attributes[j];
+				jsonObj.put(JSLabels.IS_PADDING, attribute.isPadding());
+				jsonObj.put(JSLabels.MODIFIABLE, attribute.isModifiable());
+				jsonObj.put(JSLabels.INFLUENTIAL_START, -1);
+				jsonObj.put(JSLabels.INFLUENTIAL_END, -1);
+				
 				point.put(jsonObj);
 			}
 			array.put(point);

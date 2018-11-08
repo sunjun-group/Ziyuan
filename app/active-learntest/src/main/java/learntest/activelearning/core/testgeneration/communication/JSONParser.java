@@ -67,4 +67,8 @@ public class JSONParser {
 		
 		return new DataPoints(varList, values);
 	}
+
+	public static DataPoints parseUnmaskedDataPoints(String jsonStr) {
+		return parseUnlabeledDataPoints(jsonStr);
+	}
 }

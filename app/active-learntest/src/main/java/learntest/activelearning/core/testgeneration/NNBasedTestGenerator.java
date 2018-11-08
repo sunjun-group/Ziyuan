@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
@@ -153,37 +154,28 @@ public class NNBasedTestGenerator extends TestGenerator {
 			System.err.println("the python server is closed!");
 		}
 
-		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
-			
+		while (response != null) {
 			if(response.getRequestType() == RequestType.$REQUEST_LABEL) {
 				DataPoints points = (DataPoints) response.getMessageBody();
-				response = generateAndSendLabels(branch, points);				
+				response = generateAndSendLabels(branch, points);					
 			}
-			else if(response.getRequestType() == RequestType.$REQUEST_POINT_INFO) {
+			else if(response.getRequestType() == RequestType.$REQUEST_MASK_RESULT) {
 				DataPoints points = (DataPoints) response.getMessageBody();
-				response = generateAndSendPointInfo(branch, points);
+				response = generateAndSendMaskResult(branch, points);	
+			}
+			else {
+				break;				
 			}
 		}
 
 		System.currentTimeMillis();
 	}
 
-	private Message generateAndSendPointInfo(Branch branch, DataPoints points) {
-		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-				DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
-		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
-
-		this.testsuite.addTestCases(newSuite);
-
-		CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
-
-		for (String testcase : newSuite.getJunitTestcases()) {
-			TestInputData input = this.testsuite.getInputData().get(testcase);
-			
-			//TODO
-		}
-
-		Message response = communicator.sendLabel(points);
+	private Message generateAndSendMaskResult(Branch branch, DataPoints points) {
+		List<DpAttribute[]> attributesList = points.convertToDpAttributeList();
+		points.attributes = attributesList;
+		
+		Message response = communicator.sendMaskResult(points);
 		return response;
 	}
 
@@ -217,7 +209,6 @@ public class NNBasedTestGenerator extends TestGenerator {
 			requestBoundaryExploration(this.targetMethod.getMethodId(), branch, null, testData);
 		}
 	}
-
 	
 	private Message generateAndSendLabels(Branch branch, DataPoints points){
 		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
@@ -229,7 +220,11 @@ public class NNBasedTestGenerator extends TestGenerator {
 		CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
 
 		for (String testcase : newSuite.getJunitTestcases()) {
-			// TestInputData input = this.testsuite.getInputData().get(i);
+			TestInputData input = this.testsuite.getInputData().get(testcase);
+			DpAttribute[] vector = input.getDataPoint();
+			DpAttribute.updatePaddingInfo(vector);
+			points.attributes.add(vector);
+			
 			if (branchNode.getCoveredTestcases().contains(testcase)) {
 				points.getLabels().add(true);
 			} else {
@@ -245,8 +240,17 @@ public class NNBasedTestGenerator extends TestGenerator {
 	private void requestBoundaryExploration(String methodId, Branch branch, Branch parentBranch, List<TestInputData> testData) {
 		Message response = communicator.requestBoundaryExploration(this.targetMethod.getMethodId(), null, testData);
 		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
-			DataPoints points = (DataPoints) response.getMessageBody();
-			response = generateAndSendLabels(branch, points);
+			if(response.getRequestType() == RequestType.$REQUEST_LABEL) {
+				DataPoints points = (DataPoints) response.getMessageBody();
+				response = generateAndSendLabels(branch, points);					
+			}
+			else if(response.getRequestType() == RequestType.$REQUEST_MASK_RESULT) {
+				DataPoints points = (DataPoints) response.getMessageBody();
+				response = generateAndSendMaskResult(branch, points);	
+			}
+			else {
+				break;				
+			}
 		}
 	}
 
