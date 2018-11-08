@@ -16,14 +16,15 @@ public class LengthCondition extends Condition {
 			for (int i = 0; i < paddings.length; i++) {
 				paddings[i] = true;
 			}
-		}
-		int realEles = Math.min(length, paddings.length);
-		int i = 0;
-		for (; i < realEles; i++) {
-			paddings[i] = false;
-		}
-		for (; i < paddings.length; i++) {
-			paddings[i] = true;
+		} else {
+			int realEles = Math.min(length, paddings.length);
+			int i = 0;
+			for (; i < realEles; i++) {
+				paddings[i] = false;
+			}
+			for (; i < paddings.length; i++) {
+				paddings[i] = true;
+			}
 		}
 		return paddings; 
 	}
