@@ -19,10 +19,11 @@ import sav.common.core.formula.utils.ExpressionVisitor;
  * 
  */
 public class ExecVar implements Var {
+	public static final String IS_NULL_CODE = "isNull";
+	public static final String LENGTH_CODE = "length";
 	private final String varId;
 	private ExecVarType type;
 	private String valueType;
-	private boolean isModifiable = true;
 	private double defaultValue = 0.0;
 	private List<ExecVar> children = new ArrayList<>();
 
@@ -120,10 +121,6 @@ public class ExecVar implements Var {
 		this.valueType = valueType;
 	}
 	
-	public void setModifiable(boolean isModifiable) {
-		this.isModifiable = isModifiable;
-	}
-	
 	public void setDefaultValue(double defaultValue) {
 		this.defaultValue = defaultValue;
 	}
@@ -146,5 +143,13 @@ public class ExecVar implements Var {
 	
 	public String getElementId(int idx) {
 		return ExecVarHelper.getArrayElementID(varId, idx);
+	}
+	
+	public String getIsNullChildId() {
+		return getChildId(IS_NULL_CODE);
+	}
+	
+	public String getLengthChildId() {
+		return getChildId(LENGTH_CODE);
 	}
 }
