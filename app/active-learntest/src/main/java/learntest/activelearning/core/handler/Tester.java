@@ -37,7 +37,6 @@ import microbat.model.value.VarValue;
 import sav.common.core.SavException;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.AlphanumComparator;
-import sav.common.core.utils.ArrayTypeUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StopTimer;
 import sav.common.core.utils.TextFormatUtils;
@@ -191,7 +190,6 @@ public class Tester {
 				}
 			}
 			arrValue.setLength(maxIdx + 1);
-			arrValue.setDimension(ArrayTypeUtils.getArrayDimension(value.getType()));
 		} else if (value instanceof ReferenceValue) {
 			ReferenceValue refVal = (ReferenceValue) value;
 			execValue = new sav.strategies.dto.execute.value.ReferenceValue(value.getVarID(), refVal.isNull());

@@ -19,7 +19,6 @@ import sav.common.core.utils.CollectionUtils;
 public class ArrayValue extends ReferenceValue {
 	private List<ArrValueElement> elements; 
 	private int length;
-	private int dimension;
 	
 	public ArrayValue(String id) {
 		super(id, false);
@@ -29,14 +28,6 @@ public class ArrayValue extends ReferenceValue {
 		super(id, isNull);
 	}
 	
-	public int getDimension() {
-		return dimension;
-	}
-
-	public void setDimension(int dimension) {
-		this.dimension = dimension;
-	}
-
 	public int getLength() {
 		return length;
 	}
@@ -153,7 +144,6 @@ public class ArrayValue extends ReferenceValue {
 	public ExecValue clone() {
 		ArrayValue clone = new ArrayValue(varId);
 		clone.length = length;
-		clone.dimension = dimension;
 		clone.valueType = valueType;
 		for (ArrValueElement ele : getElements()) {
 			clone.addElement(ele.idx, ele.value.clone());

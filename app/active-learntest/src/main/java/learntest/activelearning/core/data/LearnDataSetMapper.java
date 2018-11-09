@@ -110,14 +110,12 @@ public class LearnDataSetMapper {
 				dp[pos] = new DpAttribute(new CharValue(var.getElementId(i), Character.MIN_VALUE), true, lengthAttr, pos);
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNull, dimension, arrayDimensionSize, arrayElements */
+			/* isNull, length, arrayElements */
 			DpAttribute isNullAttr = new DpAttribute(new BooleanValue(var.getChildId("isNull"), true), true, paddingController, pos++);
 			isNullAttr.setObjectNullPaddingCondition();
-			DpAttribute dimensionAttr = new DpAttribute(new IntegerValue(var.getChildId("dimension"), 0), true, isNullAttr, pos++);
 			DpAttribute lengthAttr = new DpAttribute(new IntegerValue(var.getChildId("length"), 0), true, isNullAttr, pos++);
 			lengthAttr.setLengthPaddingCondition();
 			dp[isNullAttr.getIdx()] = isNullAttr;
-			dp[dimensionAttr.getIdx()] = dimensionAttr;
 			dp[lengthAttr.getIdx()] = lengthAttr;
 			for (ExecVar arrEleVar : var.getChildren()) {
 				initDatapoint(dp, arrEleVar, lengthAttr);
@@ -162,12 +160,11 @@ public class LearnDataSetMapper {
 				paddingCond = isNullAttr;
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNull, dimension, arrayDimensionSize, (k^dim) arrayElements */
+			/* isNull, length, (k^dim) arrayElements */
 			ArrayValue arrayValue = (ArrayValue) execVal;
 			DpAttribute isNullAttr = dp[pos++];
 			if (!arrayValue.isNull()) {
 				isNullAttr.setBoolean(false);
-				dp[pos++].setInt(arrayValue.getDimension());
 				DpAttribute lengthAttr = dp[pos++].setInt(arrayValue.getLength());
 				int realEleSize = Math.min(arrayValue.getLength(), (arrSizeThreshold));
 				int i = 0;
@@ -254,9 +251,7 @@ public class LearnDataSetMapper {
 			if (isNotNull >= 0) {
 				ArrayValue arrValue = new ArrayValue(varId, false);
 				value = arrValue;
-				int dimension = (int) dp[pos++];
 				int length = (int) dp[pos++];
-				arrValue.setDimension(dimension);
 				arrValue.setLength(length);
 				int size = Math.min(length, arrSizeThreshold);
 				for (int i = 0; i < size; i++) {
