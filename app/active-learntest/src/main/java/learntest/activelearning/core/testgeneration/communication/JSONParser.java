@@ -26,14 +26,7 @@ public class JSONParser {
 				ExecVarType varType = null;
 				String type = input.getString("TYPE");
 				if(type.equals(ExecVarType.BOOLEAN.toString())){
-					try{
-						value[j] = input.getInt("VALUE");						
-					}
-					catch(JSONException e){
-						//TODO
-						System.out.println(input);
-						System.currentTimeMillis();
-					}
+					value[j] = input.getInt("VALUE");
 					varType = ExecVarType.BOOLEAN;
 				}
 				else if(type.equals(ExecVarType.BYTE.toString())){

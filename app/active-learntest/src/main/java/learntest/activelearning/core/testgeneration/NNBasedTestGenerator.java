@@ -76,6 +76,10 @@ public class NNBasedTestGenerator extends TestGenerator {
 					List<TestInputData> gradientInputs = searchStategy.generateInputByGradientSearch(branch,
 							branchCDGNode);
 					if (gradientInputs.isEmpty()) {
+						generateInputByBoundaryRemaining(branch, branchCDGNode);
+					}
+					
+					if (gradientInputs.isEmpty()) {
 						generateInputByExplorationSearch(branch, branchCDGNode);
 					}
 				}
@@ -95,6 +99,18 @@ public class NNBasedTestGenerator extends TestGenerator {
 		for (CDGNode decisionChild : decisionChildren) {
 			traverseLearning(decisionChild);
 		}
+	}
+
+	private void generateInputByBoundaryRemaining(Branch branch, CDGNode branchCDGNode) throws ProcessDeadException {
+		List<Branch> trainedParentBranches = new ArrayList<>();
+		findTrainedParentBranches(branchCDGNode, trainedParentBranches);
+
+		for (Branch parentBranch : trainedParentBranches) {
+			List<TestInputData> relativeData = this.branchInputMap.get(parentBranch);
+			//TODO
+//			requestBoundaryRemaining(this.targetMethod.getMethodId(), branch, parentBranch, relativeData);
+		}
+
 	}
 
 	private CoverageSFNode findStopNode(CoverageSFNode toNode) {
