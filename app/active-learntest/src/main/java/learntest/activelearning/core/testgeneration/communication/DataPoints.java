@@ -53,6 +53,7 @@ public class DataPoints {
 				attribute.setModifiable(true);
 				attributes[j] = attribute;
 			}
+			list.add(attributes);
 		}
 		
 		return list;

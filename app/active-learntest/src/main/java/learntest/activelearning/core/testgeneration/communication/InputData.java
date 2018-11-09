@@ -135,8 +135,6 @@ public class InputData /*implements IInputData*/ {
 				jsonObj.put(JSLabels.NAME, var.getVarId());
 				jsonObj.put(JSLabels.VALUE, points.values.get(i)[j]);
 				jsonObj.put(JSLabels.TYPE, points.varList.get(j).getType());
-				boolean label = points.getLabels().get(i);
-				jsonObj.put(JSLabels.LABEL, label);
 				
 				DpAttribute attribute = attributes[j];
 				jsonObj.put(JSLabels.IS_PADDING, attribute.isPadding());

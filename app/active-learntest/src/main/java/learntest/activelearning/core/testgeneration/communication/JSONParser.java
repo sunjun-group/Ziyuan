@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import sav.strategies.dto.execute.value.ExecVar;
@@ -25,7 +26,13 @@ public class JSONParser {
 				ExecVarType varType = null;
 				String type = input.getString("TYPE");
 				if(type.equals(ExecVarType.BOOLEAN.toString())){
-					value[j] = input.getInt("VALUE");
+					try{
+						boolean bValue = input.getBoolean("VALUE");						
+						value[j] = bValue ? 1 : 0;
+					}
+					catch(JSONException e){
+						//TODO
+					}
 					varType = ExecVarType.BOOLEAN;
 				}
 				else if(type.equals(ExecVarType.BYTE.toString())){
