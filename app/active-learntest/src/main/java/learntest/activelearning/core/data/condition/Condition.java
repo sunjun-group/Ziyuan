@@ -11,6 +11,7 @@ public abstract class Condition {
 	
 	public void updatePadding() {
 		boolean[] paddings = calculateDependenteePadding();
+		System.currentTimeMillis();
 		int i = 0;
 		for (DpAttribute dependentee : owner.getPaddingDependentees()) {
 			boolean isPadding = paddings[i++];

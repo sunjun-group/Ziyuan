@@ -153,8 +153,12 @@ public class DpAttribute {
 	
 	public static void updatePaddingInfo(DpAttribute[] dpAttributes) {
 		for (DpAttribute dpAttribute : dpAttributes) {
+			dpAttribute.setPadding(false);
+		}
+		
+		for (DpAttribute dpAttribute : dpAttributes) {
 			/* only update from the root element */
-			if (dpAttribute.paddingController != null && dpAttribute.paddingCondition != null) {
+			if (dpAttribute.paddingCondition != null) {
 				dpAttribute.paddingCondition.updatePadding();
 			}
 		}
