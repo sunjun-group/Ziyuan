@@ -107,10 +107,34 @@ public class NNBasedTestGenerator extends TestGenerator {
 
 		for (Branch parentBranch : trainedParentBranches) {
 			List<TestInputData> relativeData = this.branchInputMap.get(parentBranch);
-			//TODO
-//			requestBoundaryRemaining(this.targetMethod.getMethodId(), branch, parentBranch, relativeData);
+			requestBoundaryRemaining(this.targetMethod.getMethodId(), branch, parentBranch, relativeData);
 		}
 
+	}
+
+	private void requestBoundaryRemaining(String methodId, Branch branch, Branch parentBranch,
+			List<TestInputData> relativeData) {
+		List<TestInputData> coveredInputs = new ArrayList<>();
+		
+		Message response = communicator.requestBoundaryRemaining(this.targetMethod.getMethodId(), branch, relativeData);
+		if(response!=null && response.getRequestType()==RequestType.$SEND_BOUNDARY_REMAINING_POINTS){
+			DataPoints points = (DataPoints) response.getMessageBody();
+			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
+					DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
+			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
+
+			this.testsuite.addTestCases(newSuite);
+
+			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
+
+			for (String testcase : newSuite.getJunitTestcases()) {
+				TestInputData input = this.testsuite.getInputData().get(testcase);
+				if (branchNode.getCoveredTestcases().contains(testcase)) {
+					coveredInputs.add(input);
+				} 
+			}
+		}
+		
 	}
 
 	private CoverageSFNode findStopNode(CoverageSFNode toNode) {

@@ -112,6 +112,11 @@ public class PythonCommunicator {
 		return output;
 	}
 	
+	public Message requestBoundaryRemaining(String methodId, Branch branch, List<TestInputData> relativeData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public void stop() {
 		vmRunner.stop();
 	}
