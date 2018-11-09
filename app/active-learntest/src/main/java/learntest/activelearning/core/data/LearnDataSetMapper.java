@@ -317,6 +317,7 @@ public class LearnDataSetMapper {
 				dpAttribute.setModifiable(true);
 			}
 			DpAttribute.updatePaddingInfo(dp);
+			list.add(dp);
 		}
 		
 		return list;
