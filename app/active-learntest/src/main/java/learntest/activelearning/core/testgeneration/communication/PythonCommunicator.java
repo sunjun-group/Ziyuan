@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import com.sun.tools.internal.ws.wsdl.document.jaxws.Exception;
+
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.testgeneration.InputDataWriter;
@@ -48,44 +50,65 @@ public class PythonCommunicator {
 		}
 	}
 	
+	public void checkAliveProcess() throws ProcessDeadException{
+		if(!this.vmRunner.getProcess().isAlive()){
+			throw new ProcessDeadException("VM is not alive");
+		}
+	}
+	
 	public Message requestTraining(Branch branch, List<TestInputData> positiveData, 
-			List<TestInputData> negativeData, int pointNumberLimit){
+			List<TestInputData> negativeData, int pointNumberLimit) throws ProcessDeadException{
+		checkAliveProcess();
+		
 		InputData data = InputData.createTrainingRequest(targetMethod, branch, positiveData, negativeData, pointNumberLimit);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
+		checkAliveProcess();
 		return output;
 	}
 	
-	public Message sendLabel(DataPoints points) {
+	public Message sendLabel(DataPoints points) throws ProcessDeadException {
+		checkAliveProcess();
+		
 		InputData data = InputData.transferToLabelJSON(targetMethod, points);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
+		checkAliveProcess();
 		return output;
 	}
 	
-	public Message sendMaskResult(DataPoints points) {
+	public Message sendMaskResult(DataPoints points) throws ProcessDeadException {
+		checkAliveProcess();
+		
 		InputData data = InputData.transferToMaskJSON(targetMethod, points);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
+		checkAliveProcess();
 		return output;
 	}
 	
-	public Message requestBoundaryExploration(String methodID, Branch branch, List<TestInputData> testData) {
+	public Message requestBoundaryExploration(String methodID, Branch branch, List<TestInputData> testData) throws ProcessDeadException {
+		checkAliveProcess();
+		
 		InputData data = InputData.createBoundaryExplorationRequest(methodID, branch, testData);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
+		checkAliveProcess();
 		return output;
 	}
 	
-	public Message requestModelCheck(Branch parentBranch, String methodID) {
+	public Message requestModelCheck(Branch parentBranch, String methodID) throws ProcessDeadException {
+		checkAliveProcess();
+		
 		InputData data = InputData.createModelCheckRequest(parentBranch, methodID);
 		inputWriter.send(data, vmRunner);
 		
 		Message output = outputReader.readOutput(-1, vmRunner);
+		checkAliveProcess();
 		return output;
 	}
 	

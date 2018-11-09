@@ -27,11 +27,12 @@ public class JSONParser {
 				String type = input.getString("TYPE");
 				if(type.equals(ExecVarType.BOOLEAN.toString())){
 					try{
-						boolean bValue = input.getBoolean("VALUE");						
-						value[j] = bValue ? 1 : 0;
+						value[j] = input.getInt("VALUE");						
 					}
 					catch(JSONException e){
 						//TODO
+						System.out.println(input);
+						System.currentTimeMillis();
 					}
 					varType = ExecVarType.BOOLEAN;
 				}

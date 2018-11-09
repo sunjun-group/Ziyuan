@@ -44,7 +44,22 @@ public class DataPoints {
 	}
 
 	public List<DpAttribute[]> convertToDpAttributeList() {
-		return LearnTestContext.getLearnDataSetMapper().toDpAttributeVector(varList, values);
+		List<DpAttribute[]> list = new ArrayList<>();
+		for(int i=0; i<values.size(); i++) {
+			double[] pointValue = values.get(i);
+			DpAttribute[] attributes = new DpAttribute[pointValue.length];
+			for(int j=0; j<pointValue.length; j++) {
+				//TODO for lyly
+				DpAttribute attribute = new DpAttribute(null, false, null, j);
+				attribute.setModifiable(true);
+				attributes[j] = attribute;
+			}
+			list.add(attributes);
+		}
+		
+		return list;
+		
+//		return LearnTestContext.getLearnDataSetMapper().toDpAttributeVector(varList, values);
 	}
 
 }

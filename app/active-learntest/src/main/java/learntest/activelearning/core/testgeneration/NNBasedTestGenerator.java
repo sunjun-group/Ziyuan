@@ -12,6 +12,7 @@ import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.communication.DataPoints;
 import learntest.activelearning.core.testgeneration.communication.Message;
+import learntest.activelearning.core.testgeneration.communication.ProcessDeadException;
 import learntest.activelearning.core.testgeneration.communication.PythonCommunicator;
 import learntest.activelearning.core.testgeneration.communication.RequestType;
 import learntest.activelearning.core.testgeneration.localsearch.GradientBasedSearch;
@@ -46,11 +47,17 @@ public class NNBasedTestGenerator extends TestGenerator {
 		this.branchInputMap = testsuite.getBranchInputMap();
 		this.cdg = cdg;
 		for (CDGNode node : cdg.getStartNodes()) {
-			traverseLearning(node);
+			try{
+				traverseLearning(node);				
+			}
+			catch(ProcessDeadException e){
+				e.printStackTrace();
+				break;
+			}
 		}
 	}
 
-	private void traverseLearning(CDGNode branchCDGNode) {
+	private void traverseLearning(CDGNode branchCDGNode) throws ProcessDeadException {
 		GradientBasedSearch searchStategy = new GradientBasedSearch(this.branchInputMap, this.testsuite, this.tester,
 				this.appClasspath, this.targetMethod, this.settings);
 
@@ -140,7 +147,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 		return false;
 	}
 
-	private void learnClassificationModel(Branch branch, CoverageSFNode parent) {
+	private void learnClassificationModel(Branch branch, CoverageSFNode parent) throws ProcessDeadException {
 		List<TestInputData> positiveInputs = this.branchInputMap.get(branch);
 		List<TestInputData> negativeInputs = retrieveNegativeInputs(branch, parent);
 		System.currentTimeMillis();
@@ -171,7 +178,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 		System.currentTimeMillis();
 	}
 
-	private Message generateAndSendMaskResult(Branch branch, DataPoints points) {
+	private Message generateAndSendMaskResult(Branch branch, DataPoints points) throws ProcessDeadException {
 		List<DpAttribute[]> attributesList = points.convertToDpAttributeList();
 		points.attributes = attributesList;
 		
@@ -195,7 +202,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 		return negativeInputs;
 	}
 
-	private void generateInputByExplorationSearch(Branch branch, CDGNode branchCDGNode) {
+	private void generateInputByExplorationSearch(Branch branch, CDGNode branchCDGNode) throws ProcessDeadException {
 		List<Branch> trainedParentBranches = new ArrayList<>();
 		findTrainedParentBranches(branchCDGNode, trainedParentBranches);
 
@@ -210,7 +217,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 		}
 	}
 	
-	private Message generateAndSendLabels(Branch branch, DataPoints points){
+	private Message generateAndSendLabels(Branch branch, DataPoints points) throws ProcessDeadException{
 		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 				DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
 		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
@@ -237,7 +244,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 	}
 	
 
-	private void requestBoundaryExploration(String methodId, Branch branch, Branch parentBranch, List<TestInputData> testData) {
+	private void requestBoundaryExploration(String methodId, Branch branch, Branch parentBranch, List<TestInputData> testData) throws ProcessDeadException {
 		Message response = communicator.requestBoundaryExploration(this.targetMethod.getMethodId(), null, testData);
 		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
 			if(response.getRequestType() == RequestType.$REQUEST_LABEL) {
@@ -254,7 +261,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 		}
 	}
 
-	private void findTrainedParentBranches(CDGNode branchCDGNode, List<Branch> trainedParentBranches) {
+	private void findTrainedParentBranches(CDGNode branchCDGNode, List<Branch> trainedParentBranches) throws ProcessDeadException {
 
 		List<Branch> parentBranches = findDirectParentBranches(branchCDGNode);
 		for (Branch parentBranch : parentBranches) {
