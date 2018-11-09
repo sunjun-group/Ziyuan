@@ -304,6 +304,7 @@ public class LearnDataSetMapper {
 				DpAttribute dpAttribute = dp[posMap.get(var.getVarId())];
 				dpAttribute.setValue(PrimitiveValue.valueOf(var, varValue));
 				dpAttribute.setModifiable(true);
+				dpAttribute.setPadding(false);
 			}
 			DpAttribute.updatePaddingInfo(dp);
 			list.add(dp);

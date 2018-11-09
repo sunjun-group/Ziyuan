@@ -158,7 +158,7 @@ public class DpAttribute {
 		
 		for (DpAttribute dpAttribute : dpAttributes) {
 			/* only update from the root element */
-			if (dpAttribute.paddingCondition != null) {
+			if (dpAttribute.paddingController == null && dpAttribute.paddingCondition != null) {
 				dpAttribute.paddingCondition.updatePadding();
 			}
 		}
