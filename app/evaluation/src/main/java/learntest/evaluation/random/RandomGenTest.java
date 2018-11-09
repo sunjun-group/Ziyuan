@@ -1,12 +1,19 @@
 package learntest.evaluation.random;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import gentest.main.GentestService;
 import learntest.activelearning.core.IProgressMonitor;
 import learntest.activelearning.core.coverage.CoverageUtils;
+import learntest.activelearning.core.data.DpAttribute;
+import learntest.activelearning.core.data.LearnDataSetMapper;
+import learntest.activelearning.core.data.LearnTestContext;
+import learntest.activelearning.core.data.LearningVarCollector;
 import learntest.activelearning.core.data.MethodInfo;
+import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
@@ -20,6 +27,7 @@ import microbat.instrumentation.cfgcoverage.graph.CoverageSFlowGraph;
 import sav.common.core.utils.SingleTimer;
 import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
+import sav.strategies.dto.execute.value.ExecVar;
 
 public class RandomGenTest {
 	private Logger log = LoggerFactory.getLogger(RandomGenTest.class);
@@ -31,6 +39,7 @@ public class RandomGenTest {
 
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings,
 			IProgressMonitor progressMonitor) throws Exception {
+		LearnTestContext.init();
 		settings.setInitRandomTestNumber(1);
 		settings.setCfgExtensionLayer(1);
 		settings.setRunCoverageAsMethodInvoke(true);
@@ -44,12 +53,12 @@ public class RandomGenTest {
 		CoverageSFlowGraph coverageSFlowGraph = constructor.buildCoverageGraph(cfgInstance);
 		
 		Tester tester = new Tester(settings, false, appClasspath);
-		tester.setCvgType(CoverageCollectionType.BRANCH_COVERAGE);
+//		tester.setCvgType(CoverageCollectionType.BRANCH_COVERAGE);
 		UnitTestSuite finalTestsuit = null;
 		long startTime = 0;
 		long endTime = 0;
-		int interval = 10000;
-		int numInterval = 90;
+		int interval = 5000;
+		int numInterval = 3;
 		CoverageProgressRecorder progressRecorder = new CoverageProgressRecorder(targetMethod, outputFolder + "/coverage_progress.xlsx", outputFolder + "/coverage_casenumber.xlsx");
 		
 		log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(coverageSFlowGraph, cfgInstance), "\n"));
@@ -68,6 +77,15 @@ public class RandomGenTest {
 						log.info(String.format("Run method: %s, round %s", targetMethod.toString(), i));
 						long startTest = System.currentTimeMillis();
 						UnitTestSuite testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
+						List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(), settings.getLearnArraySizeThreshold())
+											.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
+						LearnTestContext.setDatasetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
+						testsuite.setLearnDataMapper(LearnTestContext.getLearnDataSetMapper());
+						for (TestInputData inputData : testsuite.getInputData().values()) {
+							DpAttribute[] dataPoint = inputData.getDataPoint();
+							log.debug(TextFormatUtils.printObj(dataPoint));
+						}
+						
 						endTime = System.currentTimeMillis();
 						newCoverageGraph = testsuite.getCoverageGraph();
 						log.debug(TextFormatUtils.printCol(CoverageUtils.getBranchCoverageDisplayTexts(newCoverageGraph, cfgInstance), "\n"));
@@ -106,6 +124,7 @@ public class RandomGenTest {
 			GentestService.reset();
 		}
 		log.debug("Finish RandomGenTest");
+		LearnTestContext.dispose();
 	}
 
 }

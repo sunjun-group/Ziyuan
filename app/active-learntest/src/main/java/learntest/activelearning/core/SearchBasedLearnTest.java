@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.LearnDataSetMapper;
+import learntest.activelearning.core.data.LearnTestContext;
 import learntest.activelearning.core.data.LearningVarCollector;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
@@ -29,6 +30,7 @@ public class SearchBasedLearnTest {
 	private static Logger log = LoggerFactory.getLogger(NeuralActiveLearnTest.class);
 
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
+		LearnTestContext.init();
 		settings.setInitRandomTestNumber(10);
 		//settings.setMethodExecTimeout(100);
 		CFGUtility cfgUtility = new CFGUtility();
@@ -46,8 +48,8 @@ public class SearchBasedLearnTest {
 		
 		List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(), settings.getLearnArraySizeThreshold())
 										.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
-		LearnDataSetMapper dataMapper = new LearnDataSetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
-		testsuite.setLearnDataMapper(dataMapper);
+		LearnTestContext.setDatasetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
+		testsuite.setLearnDataMapper(LearnTestContext.getLearnDataSetMapper());
 		for (TestInputData inputData : testsuite.getInputData().values()) {
 			DpAttribute[] dataPoint = inputData.getDataPoint();
 			log.debug(TextFormatUtils.printObj(dataPoint));
@@ -59,5 +61,6 @@ public class SearchBasedLearnTest {
 		
 		SearchBasedTestGenerator generator = new SearchBasedTestGenerator(tester, testsuite, appClasspath, targetMethod, settings);
 		generator.cover(cdg);
+		LearnTestContext.dispose();
 	}
 }
