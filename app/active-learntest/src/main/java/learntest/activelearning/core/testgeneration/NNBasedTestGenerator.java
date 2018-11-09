@@ -271,7 +271,6 @@ public class NNBasedTestGenerator extends TestGenerator {
 				}
 			}
 		}
-
 	}
 
 	private microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode findCorrespondingCDG(CDG cdg2, CoverageSFNode node) {

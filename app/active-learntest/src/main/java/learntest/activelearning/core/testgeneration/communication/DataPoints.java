@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import learntest.activelearning.core.data.DpAttribute;
+import learntest.activelearning.core.data.LearnTestContext;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class DataPoints {
@@ -43,19 +44,7 @@ public class DataPoints {
 	}
 
 	public List<DpAttribute[]> convertToDpAttributeList() {
-		List<DpAttribute[]> list = new ArrayList<>();
-		for(int i=0; i<values.size(); i++) {
-			double[] pointValue = values.get(i);
-			DpAttribute[] attributes = new DpAttribute[pointValue.length];
-			for(int j=0; j<pointValue.length; j++) {
-				//TODO for lyly
-				DpAttribute attribute = new DpAttribute(null, false, null, j);
-				attribute.setModifiable(true);
-				attributes[j] = attribute;
-			}
-		}
-		
-		return list;
+		return LearnTestContext.getLearnDataSetMapper().toDpAttributeVector(varList, values);
 	}
 
 }

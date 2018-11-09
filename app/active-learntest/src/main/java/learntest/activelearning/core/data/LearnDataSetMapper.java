@@ -1,5 +1,6 @@
 package learntest.activelearning.core.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class LearnDataSetMapper {
 	private Map<String, PrimitiveValue> defaultPaddingValues = new HashMap<>();
 	private Map<String, ExecVar> varMap = new HashMap<>();
 	
-	public LearnDataSetMapper(List<ExecVar> params, int arrSizeThreshold) {
+	LearnDataSetMapper(List<ExecVar> params, int arrSizeThreshold) {
 		this.methodInputs = params;
 		this.arrSizeThreshold = arrSizeThreshold;
 		for (ExecVar var : params) {
@@ -48,12 +49,12 @@ public class LearnDataSetMapper {
 			/* isNotNull, length, charArray(definedArraySize - 2) elements */
 			size = arrSizeThreshold;
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNull, dimension, arrayDimensionSize, arrayElements */
+			/* isNull, length, arrayElements */
 			int arrElementSlots = 0;
 			for (ExecVar arrEleVar : var.getChildren()) {
 				arrElementSlots += calculateRequireSlot(arrEleVar);
 			}
-			size = 1/*isNull*/ + 1/*dimension*/ + 1/*length*/ + arrElementSlots;
+			size = 1/*isNull*/ + 1/*length*/ + arrElementSlots;
 		} else if (type == ExecVarType.REFERENCE) {
 			for (ExecVar field : var.getChildren()) {
 				size += calculateRequireSlot(field);
@@ -72,9 +73,9 @@ public class LearnDataSetMapper {
 		ExecVarType type = var.getType();
 		int childPos = pos;
 		if (type == ExecVarType.ARRAY) {
-			childPos += 3;
+			childPos += 2; /* for isNull & length */
 		} else if (type == ExecVarType.REFERENCE) {
-			childPos += 1;
+			childPos += 1; /* for isNull */
 		}
 		for (ExecVar child : var.getChildren()) {
 			childPos = assignPos(child, childPos);
@@ -83,12 +84,17 @@ public class LearnDataSetMapper {
 	}
 
 	public DpAttribute[] getDatapoint(BreakpointValue bkpValue) {
+		DpAttribute[] dp = initDpAttributes();
+		for (ExecValue value : bkpValue.getChildren()) {
+			fillDatapoint(value, dp, posMap.get(value.getVarId()));
+		}
+		return dp;
+	}
+	
+	public DpAttribute[] initDpAttributes() {
 		DpAttribute[] dp = new DpAttribute[size];
 		for (ExecVar var : methodInputs) {
 			initDatapoint(dp, var, null);
-		}
-		for (ExecValue value : bkpValue.getChildren()) {
-			fillDatapoint(value, dp, posMap.get(value.getVarId()));
 		}
 		return dp;
 	}
@@ -160,7 +166,7 @@ public class LearnDataSetMapper {
 				paddingCond = isNullAttr;
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNull, length, (k^dim) arrayElements */
+			/* isNull, length, arrayElements */
 			ArrayValue arrayValue = (ArrayValue) execVal;
 			DpAttribute isNullAttr = dp[pos++];
 			if (!arrayValue.isNull()) {
@@ -246,7 +252,7 @@ public class LearnDataSetMapper {
 				value = new StringValue(varId, null);
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNotNull, dimension, arrayDimensionSize, arrayElements */
+			/* isNotNull, length, arrayElements */
 			double isNotNull = dp[pos++];
 			if (isNotNull >= 0) {
 				ArrayValue arrValue = new ArrayValue(varId, false);
@@ -284,4 +290,36 @@ public class LearnDataSetMapper {
 		return value;
 	}
 	
+	
+	public DpAttribute[] toDpAttributeVector(BreakpointValue bkpValue) {
+		DpAttribute[] dp = new DpAttribute[size];
+		for (ExecVar var : methodInputs) {
+			initDatapoint(dp, var, null);
+		}
+		for (ExecValue value : bkpValue.getChildren()) {
+			fillDatapoint(value, dp, posMap.get(value.getVarId()));
+		}
+		return dp;
+	}
+
+	/**
+	 * TODO-LLT separate vector properties & its values.
+	 */
+	public List<DpAttribute[]> toDpAttributeVector(List<ExecVar> varList, List<double[]> values) {
+		List<DpAttribute[]> list = new ArrayList<>(values.size());
+		for (double[] value : values) {
+			DpAttribute[] dp = initDpAttributes();
+			int i = 0;
+			for (ExecVar var : varList) {
+				double varValue = value[i++];
+				DpAttribute dpAttribute = dp[posMap.get(var.getVarId())];
+				dpAttribute.setValue(PrimitiveValue.valueOf(var, varValue));
+				dpAttribute.setModifiable(true);
+			}
+			DpAttribute.updatePaddingInfo(dp);
+		}
+		
+		return list;
+	}
+
 }
