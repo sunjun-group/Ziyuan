@@ -15,7 +15,6 @@ public class DataPoints {
 	public List<DpAttribute[]> attributes = new ArrayList<>();
 
 	public DataPoints(List<ExecVar> varList, List<double[]> values) {
-		super();
 		this.varList = varList;
 		this.values = values;
 	}

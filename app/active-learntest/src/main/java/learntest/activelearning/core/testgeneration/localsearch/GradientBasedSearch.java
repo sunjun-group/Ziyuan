@@ -13,9 +13,9 @@ import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
+import learntest.activelearning.core.testgeneration.communication.DataPoints;
 import learntest.activelearning.core.testgeneration.mutate.Mutator;
 import learntest.activelearning.core.testgeneration.mutate.NumericMutator;
-import learntest.activelearning.core.utils.DomainUtils;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.common.core.utils.TextFormatUtils;
@@ -127,8 +127,8 @@ public class GradientBasedSearch {
 
 		List<double[]> inputData = new ArrayList<>();
 		inputData.add(newValue);
-		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath, 
-				DomainUtils.toHierachyBreakpointValue(inputData, vars));
+		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
+				new DataPoints(vars, inputData).toBreakpointValues());
 		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
 		
 		this.testsuite.addTestCases(newSuite);
@@ -176,7 +176,7 @@ public class GradientBasedSearch {
 			List<double[]> inputData = new ArrayList<>();
 			inputData.add(newValue);
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-					DomainUtils.toHierachyBreakpointValue(inputData, vars));
+					new DataPoints(vars, inputData).toBreakpointValues());
 			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
 			for (TestInputData id : newSuite.getInputData().values()) {
 				DpAttribute[] dataPoint = id.getDataPoint();
