@@ -120,7 +120,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 		if(response!=null && response.getRequestType()==RequestType.$SEND_BOUNDARY_REMAINING_POINTS){
 			DataPoints points = (DataPoints) response.getMessageBody();
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-					DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
+					points.toBreakpointValues());
 			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
 
 			this.testsuite.addTestCases(newSuite);
@@ -259,7 +259,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 	
 	private Message generateAndSendLabels(Branch branch, DataPoints points) throws ProcessDeadException{
 		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-				DomainUtils.toHierachyBreakpointValue(points.values, points.varList));
+				points.toBreakpointValues());
 		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
 
 		this.testsuite.addTestCases(newSuite);

@@ -78,7 +78,11 @@ public abstract class ExecValue implements IExecValue {
 		} else if(ri >= 0 && (ri < ai || ai < 0)) {
 			String refId = varId.substring(0, ri);
 			ExecValue refVal = getReferenceValue(refId);
-			refVal.append(varId, ri + 1, primitiveVar, value);
+			if(refVal.getChildId(ExecVar.IS_NULL_CODE).equals(varId)) {
+				((ReferenceValue) refVal).setNull(value.intValue() > 0 ? true : false);
+			} else {
+				refVal.append(varId, ri + 1, primitiveVar, value);
+			}
 		}
 	}
 

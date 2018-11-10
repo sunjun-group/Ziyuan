@@ -17,8 +17,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.StringUtils;
+import sav.strategies.dto.execute.value.ArrayValue;
+import sav.strategies.dto.execute.value.BooleanValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVarType;
+import sav.strategies.dto.execute.value.ReferenceValue;
 
 /**
  * @author LLT
@@ -106,6 +109,13 @@ public class BreakpointValue extends ExecValue {
 			return Arrays.asList(value.getDoubleVal());
 		} else {
 			List<Double> labels = new ArrayList<Double>();
+			if (value.getType() == ExecVarType.REFERENCE) {
+				labels.add(BooleanValue.getDoubleVal(((ReferenceValue)value).isNull()));
+			} else if (value.getType() == ExecVarType.ARRAY) {
+				labels.add(BooleanValue.getDoubleVal(((ArrayValue)value).isNull()));
+				labels.add((double)((ArrayValue) value).getLength());
+			}
+			
 			for (ExecValue child : value.getChildren()) {
 				labels.addAll(getChildValues(child));
 			}

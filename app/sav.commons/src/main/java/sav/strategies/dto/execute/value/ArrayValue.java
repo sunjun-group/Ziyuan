@@ -82,8 +82,15 @@ public class ArrayValue extends ReferenceValue {
 	public static ArrayValue convert(ExecValue val) {
 		ArrayValue arrValue = new ArrayValue(val.getVarId());
 		if (val.getChildren() != null) {
-			for (ExecValue child : val.getChildren()) {
-				arrValue.add(child, true);
+			ReferenceValue refVal = (ReferenceValue) val;
+			String lengthVarId = refVal.getChildId(ExecVar.LENGTH_CODE);
+			arrValue.setNull(refVal.isNull());
+			for (ExecValue child : refVal.getChildren()) {
+				if (lengthVarId.equals(child.getVarId())) {
+					arrValue.setLength(Integer.valueOf(child.getStrVal()));
+				} else {
+					arrValue.add(child, true);
+				}
 			}
 		}
 		return arrValue;

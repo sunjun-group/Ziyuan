@@ -222,7 +222,7 @@ public class LearnDataSetMapper {
 		return pos;
 	}
 
-	public BreakpointValue toHierachyBreakpointValue(double[] dp) {
+	public BreakpointValue toHierachyBreakpointValue(DpAttribute[] dp) {
 		if (dp.length != size) {
 			throw new SavRtException("invalid Datapoint array!!");
 		}
@@ -233,54 +233,54 @@ public class LearnDataSetMapper {
 		return bkpValue;
 	}
 	
-	private ExecValue appendValue(ExecVar var, ExecValue parent, double[] dp) {
+	private ExecValue appendValue(ExecVar var, ExecValue parent, DpAttribute[] dp) {
 		ExecVarType type = var.getType();
 		String varId = var.getVarId();
 		ExecValue value = null;
 		int pos = posMap.get(varId);
 		if (type == ExecVarType.STRING) {
-			/* isNotNull, length, charArray */
-			double isNotNull = dp[pos++];
-			if (isNotNull >= 0) {
-				int length = (int) dp[pos++];
+			/* isNull, length, charArray */
+			DpAttribute isNull = dp[pos++];
+			if (Boolean.TRUE.equals(isNull.getBoolean())) {
+				value = new StringValue(varId, null);
+			} else {
+				int length = (int) dp[pos++].getInt();
 				length = Math.min(length, arrSizeThreshold);
 				char[] content = new char[length];
 				for (int i = 0; i < length; i++) {
-					content[i] = (char) dp[pos++];
+					content[i] = ((CharValue) dp[pos++].getValue()).getCharVal();
 				}
 				value = new StringValue(varId, String.valueOf(content));
-			} else {
-				value = new StringValue(varId, null);
 			}
 		} else if (type == ExecVarType.ARRAY) {
-			/* isNotNull, length, arrayElements */
-			double isNotNull = dp[pos++];
-			if (isNotNull >= 0) {
+			/* isNull, length, arrayElements */
+			DpAttribute isNull = dp[pos++];
+			if (Boolean.TRUE.equals(isNull.getBoolean())) {
+				value = new ArrayValue(varId, true);
+			} else {
 				ArrayValue arrValue = new ArrayValue(varId, false);
 				value = arrValue;
-				int length = (int) dp[pos++];
+				int length = (int) dp[pos++].getInt();
 				arrValue.setLength(length);
 				int size = Math.min(length, arrSizeThreshold);
 				for (int i = 0; i < size; i++) {
 					ExecVar eleVar = var.getChildren().get(i);
 					appendValue(eleVar, arrValue, dp);
 				}
-			} else {
-				value = new ArrayValue(varId, true);
 			}
 		} else if (type == ExecVarType.REFERENCE) {
-			/* isNotNull, fields */
-			double isNotNull = dp[pos++];
-			if (isNotNull >= 0) {
+			/* isNull, fields */
+			DpAttribute isNull = dp[pos++];
+			if (Boolean.TRUE.equals(isNull.getBoolean())) {
+				value = new ReferenceValue(varId, true);
+			} else {
 				value = new ReferenceValue(varId, false);
 				for (ExecVar fieldVar : var.getChildren()) {
 					appendValue(fieldVar, value, dp);
 				}
-			} else {
-				value = new ReferenceValue(varId, true);
 			}
 		} else { // primitive type
-			value = PrimitiveValue.valueOf(var, dp[pos]);
+			value = dp[pos].getValue();
 		}
 		if (value != null) {
 			value.setValueType(var.getValueType());

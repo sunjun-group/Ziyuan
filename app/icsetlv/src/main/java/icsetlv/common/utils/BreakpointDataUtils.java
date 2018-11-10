@@ -20,6 +20,7 @@ import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
+import sav.strategies.dto.execute.value.ExecVarType;
 import sav.strategies.dto.execute.value.PrimitiveValue;
 
 /**
@@ -61,6 +62,12 @@ public class BreakpointDataUtils {
 			return;
 		}
 		for (ExecValue val : vals) {
+			if (val.getType() == ExecVarType.REFERENCE) {
+				vars.add(new ExecVar(val.getChildId(ExecVar.IS_NULL_CODE), ExecVarType.BOOLEAN));
+			} else if (val.getType() == ExecVarType.ARRAY) {
+				vars.add(new ExecVar(val.getChildId(ExecVar.IS_NULL_CODE), ExecVarType.BOOLEAN));
+				vars.add(new ExecVar(val.getChildId(ExecVar.LENGTH_CODE), ExecVarType.INTEGER));
+			}
 			if (CollectionUtils.isEmpty(val.getChildren())) {
 				String varId = val.getVarId();
 				ExecVar var = new ExecVar(varId, val.getType());

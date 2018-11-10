@@ -3,6 +3,7 @@ package learntest.activelearning.core.testgeneration.communication;
 import java.util.ArrayList;
 import java.util.List;
 
+import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.LearnTestContext;
 import sav.strategies.dto.execute.value.ExecVar;
@@ -58,8 +59,15 @@ public class DataPoints {
 //		}
 //		
 //		return list;
-		
 		return LearnTestContext.getLearnDataSetMapper().toDpAttributeVector(varList, values);
 	}
 
+	public List<BreakpointValue> toBreakpointValues() {
+		List<DpAttribute[]> dpAttributes = convertToDpAttributeList();
+		List<BreakpointValue> bkValues = new ArrayList<>(dpAttributes.size());
+		for (DpAttribute[] attribute : dpAttributes) {
+			bkValues.add(LearnTestContext.getLearnDataSetMapper().toHierachyBreakpointValue(attribute));
+		}
+		return bkValues;
+	}
 }
