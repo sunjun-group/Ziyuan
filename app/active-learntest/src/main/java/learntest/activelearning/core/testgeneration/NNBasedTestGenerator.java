@@ -284,8 +284,8 @@ public class NNBasedTestGenerator extends TestGenerator {
 	
 
 	private void requestBoundaryExploration(String methodId, Branch branch, Branch parentBranch, List<TestInputData> testData) throws ProcessDeadException {
-		Message response = communicator.requestBoundaryExploration(this.targetMethod.getMethodId(), null, testData);
-		while (response != null && response.getRequestType() == RequestType.$REQUEST_LABEL) {
+		Message response = communicator.requestBoundaryExploration(this.targetMethod.getMethodId(), parentBranch, testData);
+		while (response != null) {
 			if(response.getRequestType() == RequestType.$REQUEST_LABEL) {
 				DataPoints points = (DataPoints) response.getMessageBody();
 				response = generateAndSendLabels(branch, points);					

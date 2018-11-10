@@ -301,10 +301,13 @@ public class LearnDataSetMapper {
 			int i = 0;
 			for (ExecVar var : varList) {
 				double varValue = value[i++];
-				DpAttribute dpAttribute = dp[posMap.get(var.getVarId())];
-				dpAttribute.setValue(PrimitiveValue.valueOf(var, varValue));
-				dpAttribute.setModifiable(true);
-				dpAttribute.setPadding(false);
+				Integer index = posMap.get(var.getVarId());
+				if(null != index){
+					DpAttribute dpAttribute = dp[index];
+					dpAttribute.setValue(PrimitiveValue.valueOf(var, varValue));
+					dpAttribute.setModifiable(true);
+					dpAttribute.setPadding(false);
+				}
 			}
 			DpAttribute.updatePaddingInfo(dp);
 			list.add(dp);
