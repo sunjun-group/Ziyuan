@@ -129,7 +129,7 @@ public class FixLengthArrayValueGenerator {
 	}
 
 	private static void getArrayLength(ArrayValue value, int[] lengths, int idx) {
-		int maxLength =  value.getLength();
+		int maxLength =  Math.max(value.getLength(), 0);
 		for (ArrValueElement element : CollectionUtils.nullToEmpty(value.getElements())) {
 			int length = element.getIdx() + 1;
 			if (maxLength < length) {

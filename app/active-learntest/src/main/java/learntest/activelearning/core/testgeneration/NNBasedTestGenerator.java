@@ -16,7 +16,6 @@ import learntest.activelearning.core.testgeneration.communication.ProcessDeadExc
 import learntest.activelearning.core.testgeneration.communication.PythonCommunicator;
 import learntest.activelearning.core.testgeneration.communication.RequestType;
 import learntest.activelearning.core.testgeneration.localsearch.GradientBasedSearch;
-import learntest.activelearning.core.utils.DomainUtils;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
