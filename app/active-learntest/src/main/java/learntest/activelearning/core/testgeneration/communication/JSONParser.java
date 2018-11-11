@@ -72,4 +72,8 @@ public class JSONParser {
 	public static DataPoints parseUnmaskedDataPoints(String jsonStr) {
 		return parseUnlabeledDataPoints(jsonStr);
 	}
+
+	public static DataPoints parseBoundaryRemainingPoints(String jsonStr) {
+		return parseUnlabeledDataPoints(jsonStr);
+	}
 }

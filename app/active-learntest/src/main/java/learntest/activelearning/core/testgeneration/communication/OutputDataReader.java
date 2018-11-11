@@ -66,6 +66,9 @@ public class OutputDataReader extends ServerOutputReader {
 		case $REQUEST_MASK_RESULT:
 			readOutput = Message.parseUnmaskedDataPoints(br);
 			break;
+		case $SEND_BOUNDARY_REMAINING_POINTS:
+			readOutput = Message.parseBoundaryRemainingDataPoints(br);
+			break;
 		default:
 			break;
 		}

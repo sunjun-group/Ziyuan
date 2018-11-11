@@ -112,12 +112,16 @@ public class NNBasedTestGenerator extends TestGenerator {
 	}
 
 	private void requestBoundaryRemaining(String methodId, Branch branch, Branch parentBranch,
-			List<TestInputData> relativeData) {
+			List<TestInputData> relativeData) throws ProcessDeadException {
 		List<TestInputData> coveredInputs = new ArrayList<>();
 		
-		Message response = communicator.requestBoundaryRemaining(this.targetMethod.getMethodId(), branch, relativeData);
+		Message response = communicator.requestBoundaryRemaining(this.targetMethod.getMethodId(), parentBranch, relativeData);
 		if(response!=null && response.getRequestType()==RequestType.$SEND_BOUNDARY_REMAINING_POINTS){
 			DataPoints points = (DataPoints) response.getMessageBody();
+			if(points.values.size()==0){
+				return;
+			}
+			
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 					points.toBreakpointValues());
 			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());

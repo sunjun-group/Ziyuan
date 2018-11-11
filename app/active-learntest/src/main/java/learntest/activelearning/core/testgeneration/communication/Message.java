@@ -147,5 +147,20 @@ public class Message {
 		return null;
 	}
 
+	public static Message parseBoundaryRemainingDataPoints(BufferedReader br) {
+		String jsonStr;
+		try {
+			jsonStr = br.readLine();
+			DataPoints values = JSONParser.parseBoundaryRemainingPoints(jsonStr);
+			Message message = new Message(RequestType.$SEND_BOUNDARY_REMAINING_POINTS);
+			message.messageBody = values;
+			
+			return message;
+		} catch (IOException e) {
+			log.debug(e.getMessage());
+		}
+		return null;
+	}
+
 
 }

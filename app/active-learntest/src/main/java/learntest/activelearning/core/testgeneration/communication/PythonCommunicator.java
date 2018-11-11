@@ -112,9 +112,15 @@ public class PythonCommunicator {
 		return output;
 	}
 	
-	public Message requestBoundaryRemaining(String methodId, Branch branch, List<TestInputData> relativeData) {
-		// TODO Auto-generated method stub
-		return null;
+	public Message requestBoundaryRemaining(String methodId, Branch branch, List<TestInputData> relativeData) throws ProcessDeadException {
+		checkAliveProcess();
+		
+		InputData data = InputData.createBoundaryRemainingRequest(branch, methodId, relativeData);
+		inputWriter.send(data, vmRunner);
+		
+		Message output = outputReader.readOutput(-1, vmRunner);
+		checkAliveProcess();
+		return output;
 	}
 	
 	public void stop() {

@@ -52,55 +52,6 @@ public class InputData /* implements IInputData */ {
 		// pw.flush();
 	}
 
-	public static InputData createStartMethodRequest(String methodId) {
-		InputData inputData = new InputData();
-		inputData.requestType = RequestType.$TRAINING;
-		inputData.obj.put(JSLabels.METHOD_ID, methodId);
-		return inputData;
-	}
-
-	public static InputData createTrainingRequest(MethodInfo targetMethod, Branch branch,
-			List<TestInputData> positiveData, List<TestInputData> negativeData, int pointNumberLimit) {
-		InputData inputData = new InputData();
-		inputData.requestType = RequestType.$TRAINING;
-
-		inputData.obj.put(JSLabels.METHOD_ID, targetMethod.getMethodId());
-		inputData.obj.put(JSLabels.BRANCH_ID, branch.getBranchID());
-		inputData.obj.put(JSLabels.POINT_NUMBER_LIMIT, pointNumberLimit);
-
-		JSONArray positiveArray = transferToJsonArray(positiveData);
-		inputData.obj.put(JSLabels.POSITIVE_DATA, positiveArray);
-
-		JSONArray negativeArray = transferToJsonArray(negativeData);
-		inputData.obj.put(JSLabels.NEGATIVE_DATA, negativeArray);
-
-		return inputData;
-	}
-
-	public static InputData createBoundaryExplorationRequest(String methodID, Branch branch,
-			List<TestInputData> testData) {
-		InputData inputData = new InputData();
-		inputData.requestType = RequestType.$BOUNDARY_EXPLORATION;
-		inputData.obj.put(JSLabels.METHOD_ID, methodID);
-
-		String branchID = branch == null ? "EMPTY" : branch.getBranchID();
-		inputData.obj.put(JSLabels.BRANCH_ID, branchID);
-
-		JSONArray jArray = transferToJsonArray(testData);
-		inputData.obj.put(JSLabels.TEST_DATA, jArray);
-
-		return inputData;
-	}
-
-	public static InputData createModelCheckRequest(Branch parentBranch, String methodID) {
-		InputData inputData = new InputData();
-		inputData.requestType = RequestType.$MODEL_CHECK;
-		inputData.obj.put(JSLabels.BRANCH_ID, parentBranch.getBranchID());
-		inputData.obj.put(JSLabels.METHOD_ID, methodID);
-
-		return inputData;
-	}
-
 	public static InputData transferToLabelJSON(MethodInfo targetMethod, DataPoints points) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$SEND_LABEL;
@@ -209,6 +160,70 @@ public class InputData /* implements IInputData */ {
 	public static InputData createInputType(RequestType training) {
 		InputData inputData = new InputData();
 		inputData.requestType = RequestType.$TRAINING;
+		return inputData;
+	}
+	
+	public static InputData createStartMethodRequest(String methodId) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$TRAINING;
+		inputData.obj.put(JSLabels.METHOD_ID, methodId);
+		return inputData;
+	}
+
+	public static InputData createTrainingRequest(MethodInfo targetMethod, Branch branch,
+			List<TestInputData> positiveData, List<TestInputData> negativeData, int pointNumberLimit) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$TRAINING;
+
+		inputData.obj.put(JSLabels.METHOD_ID, targetMethod.getMethodId());
+		inputData.obj.put(JSLabels.BRANCH_ID, branch.getBranchID());
+		inputData.obj.put(JSLabels.POINT_NUMBER_LIMIT, pointNumberLimit);
+
+		JSONArray positiveArray = transferToJsonArray(positiveData);
+		inputData.obj.put(JSLabels.POSITIVE_DATA, positiveArray);
+
+		JSONArray negativeArray = transferToJsonArray(negativeData);
+		inputData.obj.put(JSLabels.NEGATIVE_DATA, negativeArray);
+
+		return inputData;
+	}
+
+	public static InputData createBoundaryExplorationRequest(String methodID, Branch branch,
+			List<TestInputData> testData) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$BOUNDARY_EXPLORATION;
+		inputData.obj.put(JSLabels.METHOD_ID, methodID);
+
+		String branchID = branch == null ? "EMPTY" : branch.getBranchID();
+		inputData.obj.put(JSLabels.BRANCH_ID, branchID);
+
+		JSONArray jArray = transferToJsonArray(testData);
+		inputData.obj.put(JSLabels.TEST_DATA, jArray);
+
+		return inputData;
+	}
+
+	public static InputData createModelCheckRequest(Branch parentBranch, String methodID) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$MODEL_CHECK;
+		inputData.obj.put(JSLabels.BRANCH_ID, parentBranch.getBranchID());
+		inputData.obj.put(JSLabels.METHOD_ID, methodID);
+
+		return inputData;
+	}
+
+	public static InputData createBoundaryRemainingRequest(Branch branch, String methodID,
+			List<TestInputData> relativeData) {
+		InputData inputData = new InputData();
+		inputData.requestType = RequestType.$BOUNDARY_REMAINING;
+		inputData.obj.put(JSLabels.METHOD_ID, methodID);
+
+		String branchID = branch == null ? "EMPTY" : branch.getBranchID();
+		inputData.obj.put(JSLabels.BRANCH_ID, branchID);
+
+		JSONArray jArray = transferToJsonArray(relativeData);
+		inputData.obj.put(JSLabels.TEST_DATA, jArray);
+
 		return inputData;
 	}
 
