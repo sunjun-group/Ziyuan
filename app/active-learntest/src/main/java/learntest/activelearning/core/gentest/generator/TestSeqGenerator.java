@@ -22,6 +22,7 @@ import gentest.core.data.type.IType;
 import gentest.core.data.type.ITypeCreator;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.data.variable.ISelectedVariable;
+import gentest.core.value.generator.ValueGenerator;
 import gentest.core.value.generator.ValueGeneratorMediator;
 import icsetlv.common.dto.BreakpointValue;
 import learntest.activelearning.core.gentest.generator.FixLengthArrayValueGenerator.LocationHolderExecValue;
@@ -185,13 +186,12 @@ public class TestSeqGenerator {
 			throws SavException {
 		String receiver = value.getVarId();
 		if (value.isNull()) {
+			GeneratedVariable variable = new GeneratedVariable(firstVarIdx);
+			ValueGenerator.assignNull(variable, classMap.get(receiver));
+			sequence.append(variable);
+			firstVarIdx += variable.getNewVariables().size();
+			varMap.put(value.getVarId(), variable);
 			return firstVarIdx;
-//			if (value.getChildren().size() > 1) {
-//				log.warn("reset isNull to false for variable: {}", value.getVarId());
-//				value.setNull(false);
-//			} else {
-//				return firstVarIdx;
-//			}
 		}
 		
 		ISelectedVariable variable = varMap.get(receiver);
@@ -244,11 +244,15 @@ public class TestSeqGenerator {
 	private int appendArrayVariables(ExecValue parent, ArrayValue value, Sequence sequence, Set<String> failToSetVars,
 			Map<String, ISelectedVariable> varMap, int firstVarIdx, Class<?> arrayClazz) throws SavException {
 		if (value.isNull()) {
+			GeneratedVariable variable = new GeneratedVariable(firstVarIdx);
+			ValueGenerator.assignNull(variable, arrayClazz);
+			sequence.append(variable);
+			firstVarIdx += variable.getNewVariables().size();
+			varMap.put(value.getVarId(), variable);
 			return firstVarIdx;
 		}
 		
 		String varId = value.getVarId();
-		ISelectedVariable variable = varMap.get(varId);
 		int dimension = ArrayTypeUtils.getArrayDimension(arrayClazz);
 		Class<?> arrContentClazz = ArrayTypeUtils.getContentClass(classMap.get(varId));
 		int[] arrayLength = FixLengthArrayValueGenerator.customizeArrayAndDetermineLength(value, arrContentClazz,
@@ -258,8 +262,14 @@ public class TestSeqGenerator {
 				log.warn("reset isNull to true for variable: {}", value.getVarId());
 			}
 			value.setNull(true);
+			GeneratedVariable variable = new GeneratedVariable(firstVarIdx);
+			ValueGenerator.assignNull(variable, arrayClazz);
+			sequence.append(variable);
+			firstVarIdx += variable.getNewVariables().size();
+			varMap.put(value.getVarId(), variable);
 			return firstVarIdx;
 		}
+		ISelectedVariable variable = varMap.get(varId);
 		IType type = typeMap.get(classMap.get(varId));
 		if (variable == null) {
 			variable = arrayValueGenerator.generate(type, firstVarIdx, arrayLength);
