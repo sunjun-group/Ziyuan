@@ -11,17 +11,17 @@ package icsetlv.common.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import icsetlv.common.dto.BreakpointData;
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.utils.CollectionUtils;
+import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ExecValue;
 import sav.strategies.dto.execute.value.ExecVar;
 import sav.strategies.dto.execute.value.ExecVarType;
 import sav.strategies.dto.execute.value.PrimitiveValue;
+import sav.strategies.dto.execute.value.ReferenceValue;
 
 /**
  * @author LLT
@@ -53,6 +53,7 @@ public class BreakpointDataUtils {
 		return new ArrayList<ExecVar>(allVars);
 	}
 	
+	@Deprecated
 	public static List<ExecVar> collectAllVars(List<BreakpointValue> bkpVals) {
 		return collectAllVarsForMultiValList(Arrays.asList(bkpVals));
 	}
@@ -63,10 +64,10 @@ public class BreakpointDataUtils {
 		}
 		for (ExecValue val : vals) {
 			if (val.getType() == ExecVarType.REFERENCE) {
-				vars.add(new ExecVar(val.getChildId(ExecVar.IS_NULL_CODE), ExecVarType.BOOLEAN));
+				vars.add(new ExecVar(val.getChildId(ReferenceValue.NULL_CODE), ExecVarType.BOOLEAN));
 			} else if (val.getType() == ExecVarType.ARRAY) {
-				vars.add(new ExecVar(val.getChildId(ExecVar.IS_NULL_CODE), ExecVarType.BOOLEAN));
-				vars.add(new ExecVar(val.getChildId(ExecVar.LENGTH_CODE), ExecVarType.INTEGER));
+				vars.add(new ExecVar(val.getChildId(ReferenceValue.NULL_CODE), ExecVarType.BOOLEAN));
+				vars.add(new ExecVar(val.getChildId(ArrayValue.LENGTH_CODE), ExecVarType.INTEGER));
 			}
 			if (CollectionUtils.isEmpty(val.getChildren())) {
 				String varId = val.getVarId();
@@ -121,6 +122,7 @@ public class BreakpointDataUtils {
 		parentVal.add(child);
 	}
 	
+	@Deprecated
 	public static List<double[]> toDataPoint(List<ExecVar> vars, List<BreakpointValue> values) {
 		List<double[]> result = new ArrayList<double[]>(values.size());
 		for (BreakpointValue value : values) {

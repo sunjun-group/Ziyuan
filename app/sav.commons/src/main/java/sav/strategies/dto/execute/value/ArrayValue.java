@@ -17,8 +17,8 @@ import sav.common.core.utils.CollectionUtils;
  * will be removed, be replaced with MultiDimArrayValue
  */
 public class ArrayValue extends ReferenceValue {
+	public static final String LENGTH_CODE = "length";
 	private List<ArrValueElement> elements; 
-	private int length;
 	
 	public ArrayValue(String id) {
 		super(id, false);
@@ -29,11 +29,22 @@ public class ArrayValue extends ReferenceValue {
 	}
 	
 	public int getLength() {
-		return length;
+		ExecValue lengthValue = findVariableById(getChildId(LENGTH_CODE));
+		if (lengthValue != null) {
+			return ((IntegerValue) lengthValue).getIntegerVal();
+		} else {
+			return -1;
+		}
 	}
 
 	public void setLength(int length) {
-		this.length = length;
+		ExecValue lengthValue = findVariableById(getChildId(LENGTH_CODE));
+		if (lengthValue != null) {
+			((IntegerValue) lengthValue).setValue(length);
+		} else {
+			lengthValue = new IntegerValue(getChildId(LENGTH_CODE), length);
+			add(lengthValue);
+		}
 	}
 
 	public String getElementId(int i) {
@@ -48,6 +59,11 @@ public class ArrayValue extends ReferenceValue {
 			}
 		}
 		return elements;
+	}
+	
+	@Override
+	public void add(ExecValue child) {
+		add(child, false);
 	}
 	
 	@Override
@@ -71,7 +87,7 @@ public class ArrayValue extends ReferenceValue {
 
 	@Override
 	public Double getDoubleVal() {
-		return (double) length;
+		return (double) getLength();
 	}
 	
 	@Override
@@ -83,14 +99,8 @@ public class ArrayValue extends ReferenceValue {
 		ArrayValue arrValue = new ArrayValue(val.getVarId());
 		if (val.getChildren() != null) {
 			ReferenceValue refVal = (ReferenceValue) val;
-			String lengthVarId = refVal.getChildId(ExecVar.LENGTH_CODE);
-			arrValue.setNull(refVal.isNull());
 			for (ExecValue child : refVal.getChildren()) {
-				if (lengthVarId.equals(child.getVarId())) {
-					arrValue.setLength(Integer.valueOf(child.getStrVal()));
-				} else {
-					arrValue.add(child, true);
-				}
+				arrValue.add(child, true);
 			}
 		}
 		return arrValue;
@@ -150,10 +160,12 @@ public class ArrayValue extends ReferenceValue {
 	@Override
 	public ExecValue clone() {
 		ArrayValue clone = new ArrayValue(varId);
-		clone.length = length;
 		clone.valueType = valueType;
 		for (ArrValueElement ele : getElements()) {
 			clone.addElement(ele.idx, ele.value.clone());
+		}
+		for (ExecValue child : getChildren()) {
+			clone.add(child.clone());
 		}
 		return clone;
 	}

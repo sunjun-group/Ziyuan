@@ -123,7 +123,7 @@ public class RandomTestDistributionRunner {
 			else {
 				for(int j = 0; j < nodeProcessing.bfsNode.getBranches().size(); j++ ) {
 					tPath = listDeepCopy(nodeProcessing.prePath);
-					newnode = new BfsNode(nodeProcessing.bfsNode.getBranches().get(j),tPath);
+					newnode = new BfsNode(nodeProcessing.bfsNode.getBranchTargets().get(j),tPath);
 					queue.offer(newnode);
 				}
 			}

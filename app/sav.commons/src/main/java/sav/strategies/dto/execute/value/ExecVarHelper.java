@@ -47,8 +47,8 @@ public class ExecVarHelper {
 		return String.format("%s.%s", parentId, fieldName);
 	}
 
-	public static String getStringChildId(String varId, String childCode) {
-		return String.format("%s{%s}", varId, childCode);
+	public static String getStringChildId(String varId, int charIdx) {
+		return String.format("%s{%s}", varId, charIdx);
 	}
 
 }

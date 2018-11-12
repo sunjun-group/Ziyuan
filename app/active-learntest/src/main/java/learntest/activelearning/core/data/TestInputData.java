@@ -1,20 +1,23 @@
 package learntest.activelearning.core.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import icsetlv.common.dto.BreakpointValue;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoveragePath;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
+import sav.strategies.dto.execute.value.ExecVar;
 
 public class TestInputData {
 	private String testcase;
 	private BreakpointValue inputValue;
-	private Map<Integer, Double> conditionVariationMap;
+	private Map<Branch, Double> conditionVariationMap;
 	private LearnDataSetMapper dataMapper;
 	private DpAttribute[] datapoint;
-
-	public TestInputData(String testcase, BreakpointValue inputValue, Map<Integer, Double> conditionVariationMap) {
+	
+	public TestInputData(String testcase, BreakpointValue inputValue, Map<Branch, Double> conditionVariationMap) {
 		this.testcase = testcase;
 		this.inputValue = inputValue;
 		this.conditionVariationMap = conditionVariationMap;
@@ -44,8 +47,7 @@ public class TestInputData {
 	}
 
 	public double getFitness(CDGNode decisionCDGNode, Branch branch) {
-		int decisionNodeID = decisionCDGNode.getCfgNode().getCvgIdx();
-		Double fitness = this.conditionVariationMap.get(decisionNodeID);
+		Double fitness = this.conditionVariationMap.get(branch.getBranchID());
 
 		if (fitness != null) {
 			if(!branch.isCovered() && fitness==0){
@@ -55,22 +57,24 @@ public class TestInputData {
 			return 1 - Math.pow(1.001, -Math.abs(fitness));
 		} else {
 			ApproachLevel approachLevel = new ApproachLevel(1);
-			CDGNode exercisedParent = findTheExercisedParent(decisionCDGNode, approachLevel);
-			fitness = this.conditionVariationMap.get(exercisedParent.getCfgNode().getCvgIdx());
+			Branch exercisedParent = findTheExercisedParent(decisionCDGNode, approachLevel);
+			fitness = this.conditionVariationMap.get(exercisedParent);
 			return approachLevel.level + (1 - Math.pow(1.001, -Math.abs(fitness)));
 		}
 	}
 
-	private CDGNode findTheExercisedParent(CDGNode node, ApproachLevel approachLevel) {
+	private Branch findTheExercisedParent(CDGNode node, ApproachLevel approachLevel) {
 		approachLevel.level++;
 		for (CDGNode parent : node.getParent()) {
-			if (this.conditionVariationMap.containsKey(parent.getCfgNode().getCvgIdx())) {
-				return parent;
-			} else {
-				CDGNode p = findTheExercisedParent(parent, approachLevel);
-				if (p != null) {
-					return p;
+			for (Branch branchToParent : parent.getCfgNode().getBranches()) {
+				if (this.conditionVariationMap.containsKey(branchToParent)) {
+					return branchToParent;
 				}
+			}
+			
+			Branch p = findTheExercisedParent(parent, approachLevel);
+			if (p != null) {
+				return p;
 			}
 		}
 
@@ -103,5 +107,22 @@ public class TestInputData {
 			datapoint = dataMapper.getDatapoint(inputValue);
 		}
 		return datapoint;
+	}
+
+	public List<ExecVar> getLearningVars() {
+		List<ExecVar> vars = new ArrayList<>(getDataPoint().length);
+		for (DpAttribute att : getDataPoint()) {
+			vars.add(new ExecVar(att.getValue().getVarId(), att.getValue().getType()));
+		}
+		return vars;
+	}
+
+	public double[] getDoubleVector() {
+		double[] doubleValue = new double[getDataPoint().length];
+		int i = 0;
+		for (DpAttribute att : getDataPoint()) {
+			doubleValue[i++] = att.getValue().getDoubleVal();
+		}
+		return doubleValue;
 	}
 }

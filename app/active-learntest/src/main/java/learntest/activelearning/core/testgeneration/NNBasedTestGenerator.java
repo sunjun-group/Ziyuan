@@ -68,7 +68,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 				}
 			}
 
-			Branch branch = new Branch(branchCDGNode.getCfgNode(), child.getCfgNode());
+			Branch branch = Branch.of(branchCDGNode.getCfgNode(), child.getCfgNode());
 			List<TestInputData> inputs = this.branchInputMap.get(branch);
 			if (inputs != null) {
 				if (inputs.isEmpty()) {
@@ -143,15 +143,15 @@ public class NNBasedTestGenerator extends TestGenerator {
 	private CoverageSFNode findStopNode(CoverageSFNode toNode) {
 		CoverageSFNode node = toNode;
 		List<CoverageSFNode> list = new ArrayList<>();
-		while(node.getBranches().size()==1 && !list.contains(node)){
+		while(node.getBranchTargets().size()==1 && !list.contains(node)){
 			list.add(node);
-			node = node.getBranches().get(0);
+			node = node.getBranchTargets().get(0);
 		}
 		
-		if(node.getBranches().size()==0){
+		if(node.getBranchTargets().size()==0){
 			return toNode;
 		}
-		else if(node.getBranches().size()==2){
+		else if(node.getBranchTargets().size()==2){
 			return node;
 		}
 		else{
@@ -164,9 +164,9 @@ public class NNBasedTestGenerator extends TestGenerator {
 		List<Branch> list = new ArrayList<>();
 		for (CDGNode parent : branchCDGNode.getParent()) {
 			CoverageSFNode parentCFGNode = parent.getCfgNode();
-			for (CoverageSFNode childCFGNode : parentCFGNode.getBranches()) {
+			for (CoverageSFNode childCFGNode : parentCFGNode.getBranchTargets()) {
 				if (canReach(childCFGNode, branchCFGNode)) {
-					Branch branch = new Branch(parentCFGNode, childCFGNode);
+					Branch branch = Branch.of(parentCFGNode, childCFGNode);
 					list.add(branch);
 				}
 			}
@@ -180,7 +180,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 			return true;
 		}
 
-		for (CoverageSFNode child : node1.getBranches()) {
+		for (CoverageSFNode child : node1.getBranchTargets()) {
 			boolean canReach = canReach(child, node2);
 			if (canReach) {
 				return true;

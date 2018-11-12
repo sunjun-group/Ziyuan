@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  */
 public class ReferenceValue extends ExecValue {
-	private boolean isNull = false;
+	public static final String NULL_CODE = "isNull";
 
 	public ReferenceValue(String id) {
 		super(id);
@@ -23,7 +23,11 @@ public class ReferenceValue extends ExecValue {
 	
 	public ReferenceValue(String id, boolean isNull) {
 		super(id);
-		this.isNull = isNull;
+		add(BooleanValue.of(getChildId(NULL_CODE), isNull));
+	}
+	
+	public static ReferenceValue nullValue(String id) {
+		return new ReferenceValue(id, true);
 	}
 	
 	@Override
@@ -41,11 +45,21 @@ public class ReferenceValue extends ExecValue {
 	}
 	
 	public boolean isNull() {
-		return isNull;
+		ExecValue isNullVal = findVariableById(getChildId(NULL_CODE));
+		if (isNullVal == null) {
+			return false;
+		}
+		return ((BooleanValue) isNullVal).getBooleanVal();
 	}
 
 	public void setNull(boolean isNull) {
-		this.isNull = isNull;
+		ExecValue isNullVal = findVariableById(getChildId(NULL_CODE));
+		if (isNullVal == null) {
+			isNullVal = BooleanValue.of(getChildId(NULL_CODE), isNull);
+			add(isNullVal);
+		} else {
+			((BooleanValue)isNullVal).setValue(isNull);
+		}
 	}
 
 	@Override
@@ -55,7 +69,7 @@ public class ReferenceValue extends ExecValue {
 
 	@Override
 	public ExecValue clone() {
-		ReferenceValue value = new ReferenceValue(varId, isNull);
+		ReferenceValue value = new ReferenceValue(varId, isNull());
 		value.children = new ArrayList<ExecValue>(getChildren().size());
 		for (ExecValue child : getChildren()) {
 			value.children.add(child.clone());
@@ -64,5 +78,4 @@ public class ReferenceValue extends ExecValue {
 		value.varId = varId;
 		return value;
 	}
-
 }

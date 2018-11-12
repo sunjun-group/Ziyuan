@@ -37,7 +37,7 @@ public class CoverageProgressRecorder {
 	}
 	
 	public void setCoverageGraph(CoverageSFlowGraph graph) {
-		allBranches = CoverageUtils.getAllBranches(graph);
+		allBranches = graph.getAllBranches();
 	}
 	
 	public void updateNewCoverage(CoverageSFlowGraph newCoverage, int numberOfTestcases) {

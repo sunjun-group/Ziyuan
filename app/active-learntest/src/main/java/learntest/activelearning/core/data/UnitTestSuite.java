@@ -43,10 +43,9 @@ public class UnitTestSuite {
 	private void buildBranchTestInputMap() {
 		branchInputMap = new HashMap<>();
 		for (CoverageSFNode node : coverageGraph.getDecisionNodes()) {
-			for (CoverageSFNode branchNode : node.getBranches()) {
+			for (Branch branch : node.getBranches()) {
 				List<TestInputData> list = new ArrayList<>();
-				Branch branch = new Branch(node, branchNode);
-				List<String> coveredTcs = node.getCoveredTestcasesOnBranches().get(branchNode);
+				List<String> coveredTcs = node.getCoveredTestcasesOnBranches().get(branch.getToNode());
 				for (String testcase : CollectionUtils.nullToEmpty(coveredTcs)) {
 					TestInputData testInput = inputDataMap.get(testcase);
 					if (testInput != null) {
