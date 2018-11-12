@@ -5,8 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import icsetlv.common.dto.BreakpointValue;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.execute.value.ArrayValue;
 import sav.strategies.dto.execute.value.ArrayValue.ArrValueElement;
 import sav.strategies.dto.execute.value.BooleanValue;
@@ -21,6 +25,7 @@ import sav.strategies.dto.execute.value.ReferenceValue;
 import sav.strategies.dto.execute.value.StringValue;
 
 public class LearnDataSetMapper {
+	private Logger log = LoggerFactory.getLogger(LearnDataSetMapper.class);
 	private Map<String, Integer> posMap = new HashMap<>(); // map between ExecVar.varId & its start position
 	private Map<String, Integer> requireSlotsMap = new HashMap<>(); // map between ExecVar.varId & its required slots.
 	private int arrSizeThreshold;
@@ -300,6 +305,10 @@ public class LearnDataSetMapper {
 			DpAttribute[] dp = initDpAttributes();
 			int i = 0;
 			for (ExecVar var : varList) {
+				if (i >= value.length) {
+					log.warn(String.format("mismatch between varList & values! (vars = %s), (values = %s)",
+							TextFormatUtils.printObj(varList), TextFormatUtils.printObj(values)));
+				}
 				double varValue = value[i++];
 				Integer index = posMap.get(var.getVarId());
 				if(null != index){
