@@ -53,6 +53,7 @@ public class BreakpointDataUtils {
 		return new ArrayList<ExecVar>(allVars);
 	}
 	
+	@Deprecated
 	public static List<ExecVar> collectAllVars(List<BreakpointValue> bkpVals) {
 		return collectAllVarsForMultiValList(Arrays.asList(bkpVals));
 	}
@@ -121,6 +122,7 @@ public class BreakpointDataUtils {
 		parentVal.add(child);
 	}
 	
+	@Deprecated
 	public static List<double[]> toDataPoint(List<ExecVar> vars, List<BreakpointValue> values) {
 		List<double[]> result = new ArrayList<double[]>(values.size());
 		for (BreakpointValue value : values) {

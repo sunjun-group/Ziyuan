@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import icsetlv.common.dto.BreakpointValue;
-import icsetlv.common.utils.BreakpointDataUtils;
 import learntest.activelearning.core.data.DpAttribute;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
@@ -62,13 +60,10 @@ public class GradientBasedSearch {
 			return new ArrayList<>();
 		} else {
 			TestInputData closestInput = findClosestInput(otherInputs, branchCDGNode, branch);
-			List<BreakpointValue> l = new ArrayList<>();
-			l.add(closestInput.getInputValue());
-			System.currentTimeMillis();
-			List<ExecVar> vars = BreakpointDataUtils.collectAllVars(l);
+			List<ExecVar> vars = closestInput.getLearningVars();
 
 			List<TestInputData> list = new ArrayList<>();
-			double[] value = closestInput.getInputValue().getAllValues();
+			double[] value = closestInput.getDoubleVector();
 
 			double[] bestValue = value;
 			double bestFitness = closestInput.getFitness(branchCDGNode, branch);
@@ -212,7 +207,7 @@ public class GradientBasedSearch {
 				double newFitness = newInput.getFitness(decisionCDGNode, branch);
 				if (newFitness < localBestFitness) {
 					localBestFitness = newFitness;
-					localBestValue = newInput.getInputValue().getAllValues();
+					localBestValue = newInput.getDoubleVector();
 					amount *= factor;
 
 					if (localBestFitness < bestFitness) {
