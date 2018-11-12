@@ -185,12 +185,13 @@ public class TestSeqGenerator {
 			throws SavException {
 		String receiver = value.getVarId();
 		if (value.isNull()) {
-			if (value.getChildren().size() > 1) {
-				log.warn("reset isNull to false for variable: {}", value.getVarId());
-				value.setNull(false);
-			} else {
-				return firstVarIdx;
-			}
+			return firstVarIdx;
+//			if (value.getChildren().size() > 1) {
+//				log.warn("reset isNull to false for variable: {}", value.getVarId());
+//				value.setNull(false);
+//			} else {
+//				return firstVarIdx;
+//			}
 		}
 		
 		ISelectedVariable variable = varMap.get(receiver);
@@ -242,6 +243,10 @@ public class TestSeqGenerator {
 
 	private int appendArrayVariables(ExecValue parent, ArrayValue value, Sequence sequence, Set<String> failToSetVars,
 			Map<String, ISelectedVariable> varMap, int firstVarIdx, Class<?> arrayClazz) throws SavException {
+		if (value.isNull()) {
+			return firstVarIdx;
+		}
+		
 		String varId = value.getVarId();
 		ISelectedVariable variable = varMap.get(varId);
 		int dimension = ArrayTypeUtils.getArrayDimension(arrayClazz);
