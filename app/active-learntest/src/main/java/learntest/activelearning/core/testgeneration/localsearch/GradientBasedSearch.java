@@ -64,6 +64,7 @@ public class GradientBasedSearch {
 			TestInputData closestInput = findClosestInput(otherInputs, branchCDGNode, branch);
 			List<BreakpointValue> l = new ArrayList<>();
 			l.add(closestInput.getInputValue());
+			System.currentTimeMillis();
 			List<ExecVar> vars = BreakpointDataUtils.collectAllVars(l);
 
 			List<TestInputData> list = new ArrayList<>();
@@ -84,6 +85,7 @@ public class GradientBasedSearch {
 				case LONG:
 				case SHORT:
 					iResult = doIntegerSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
+					System.currentTimeMillis();
 					break;
 				case DOUBLE:
 				case FLOAT:
@@ -168,11 +170,13 @@ public class GradientBasedSearch {
 		double localBestFitness = bestFitness;
 
 		List<TestInputData> visitedInputs = new ArrayList<>();
+		Double boundary = null;
 		
 		while (true) {
 			double[] newValue = value.clone();
-			mutator.mutateValue(newValue, index, currentDirection, amount);
-
+			mutator.mutateValue(newValue, index, currentDirection, amount, boundary, minimumUnit);
+			
+			System.currentTimeMillis();
 			List<double[]> inputData = new ArrayList<>();
 			inputData.add(newValue);
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
@@ -183,6 +187,7 @@ public class GradientBasedSearch {
 				System.out.println(TextFormatUtils.printObj(dataPoint));
 			}
 			this.testsuite.addTestCases(newSuite);
+			System.currentTimeMillis();
 			
 			TestInputData newInput = null;
 			while (newInput == null) {
@@ -222,6 +227,7 @@ public class GradientBasedSearch {
 						break;
 					}
 
+					boundary = localBestValue[index];
 					if (amount != minimumUnit) {
 						value = newValue;
 						localBestFitness = newFitness;

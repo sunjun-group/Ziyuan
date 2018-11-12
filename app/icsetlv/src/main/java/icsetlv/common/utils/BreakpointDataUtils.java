@@ -42,7 +42,7 @@ public class BreakpointDataUtils {
 	}
 
 	public static List<ExecVar> collectAllVarsForMultiValList(List<List<BreakpointValue>> bkpValsList) {
-		Set<ExecVar> allVars = new HashSet<ExecVar>();
+		List<ExecVar> allVars = new ArrayList<>();
 		for (List<BreakpointValue> bkpVals : bkpValsList) {
 			for (ExecValue bkpVal : bkpVals) {
 				if (bkpVal != null) {
@@ -57,7 +57,7 @@ public class BreakpointDataUtils {
 		return collectAllVarsForMultiValList(Arrays.asList(bkpVals));
 	}
 	
-	public static void collectExecVar(List<ExecValue> vals, Set<ExecVar> vars) {
+	public static void collectExecVar(List<ExecValue> vals, List<ExecVar> vars) {
 		if (CollectionUtils.isEmpty(vals)) {
 			return;
 		}
@@ -84,7 +84,7 @@ public class BreakpointDataUtils {
 	 * then call this function.
 	 */
 	public static List<ExecVar> collectVars(BreakpointData bkpData) {
-		Set<ExecVar> allVars = new HashSet<ExecVar>();
+		ArrayList<ExecVar> allVars = new ArrayList<ExecVar>();
 		List<BreakpointValue> values = CollectionUtils.isNotEmpty(bkpData.getFailValues()) ? 
 				bkpData.getFailValues() : bkpData.getPassValues();
 		if (CollectionUtils.isNotEmpty(values)) {
@@ -94,7 +94,7 @@ public class BreakpointDataUtils {
 	}
 	
 	public static List<ExecVar> collectVars(BreakpointValue bkpVal) {
-		Set<ExecVar> allVars = new HashSet<ExecVar>();
+		ArrayList<ExecVar> allVars = new ArrayList<ExecVar>();
 		collectExecVar(bkpVal.getChildren(), allVars);
 		return new ArrayList<ExecVar>(allVars);
 	}
