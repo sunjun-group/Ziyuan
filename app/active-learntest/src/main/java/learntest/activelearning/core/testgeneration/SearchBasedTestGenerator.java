@@ -47,7 +47,7 @@ public class SearchBasedTestGenerator extends TestGenerator{
 				decisionChildren.add(child);
 			}
 
-			Branch branch = new Branch(branchCDGNode.getCfgNode(), child.getCfgNode());
+			Branch branch = Branch.of(branchCDGNode.getCfgNode(), child.getCfgNode());
 			List<TestInputData> inputs = this.branchInputMap.get(branch);
 			if (inputs != null) {
 				if (inputs.isEmpty()) {

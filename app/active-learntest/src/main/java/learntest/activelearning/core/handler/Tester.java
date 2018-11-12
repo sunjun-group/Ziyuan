@@ -167,7 +167,7 @@ public class Tester {
 				inputValue.add(convert(value));
 			}
 			resultMap.put(testIdx,
-					new TestInputData(testcases.get(testIdx), inputValue, testInputs.getConditionVariationMap()));
+					new TestInputData(testcases.get(testIdx), inputValue, testInputs.getBranchFitnessMap(coverageOutput.getCoverageGraph())));
 		}
 		return resultMap;
 	}

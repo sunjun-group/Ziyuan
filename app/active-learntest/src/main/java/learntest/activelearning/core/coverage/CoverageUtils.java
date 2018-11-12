@@ -20,7 +20,7 @@ public class CoverageUtils {
 	  int allBranches = 0;
 	  int coveredBranches = 0;
 	  for(CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
-			for (CoverageSFNode branchNode : node.getBranches()) {
+			for (CoverageSFNode branchNode : node.getBranchTargets()) {
 				allBranches++;
 				if (!CollectionUtils.isEmpty(node.getCoveredTestcasesOnBranches().get(branchNode))) {
 					coveredBranches++;
@@ -37,25 +37,15 @@ public class CoverageUtils {
 	public static Set<Branch> getCoveredBranches(CoverageSFlowGraph coverageSFlowGraph, String methodId) {
 		Set<Branch> branches = new HashSet<>();
 		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
-			for (CoverageSFNode branchNode : node.getBranches()) {
+			for (CoverageSFNode branchNode : node.getBranchTargets()) {
 				if (!CollectionUtils.isEmpty(node.getCoveredTestcasesOnBranches().get(branchNode))) {
-					branches.add(new Branch(node, branchNode));
+					branches.add(Branch.of(node, branchNode));
 				}
 			}
 		}
 		return branches;
 	}
 
-	public static Set<Branch> getAllBranches(CoverageSFlowGraph coverageSFlowGraph) {
-		Set<Branch> branches = new HashSet<>();
-		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
-			for (CoverageSFNode branchNode : node.getBranches()) {
-				branches.add(new Branch(node, branchNode));
-			}
-		}
-		return branches;
-	}
-	
 	public static List<String> getBranchCoverageDisplayTexts(CoverageSFlowGraph coverageSFlowGraph, CFGInstance cfg) {
 		List<String> lines = new ArrayList<>(coverageSFlowGraph.getDecisionNodes().size());
 		for (CoverageSFNode node : coverageSFlowGraph.getDecisionNodes()) {
