@@ -261,6 +261,12 @@ public class NNBasedTestGenerator extends TestGenerator {
 	}
 	
 	private Message generateAndSendLabels(Branch branch, DataPoints points) throws ProcessDeadException{
+		for(double[] vs: points.values){
+			if(vs.length>15){
+				System.currentTimeMillis();
+			}
+		}
+		
 		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 				points.toBreakpointValues());
 		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());

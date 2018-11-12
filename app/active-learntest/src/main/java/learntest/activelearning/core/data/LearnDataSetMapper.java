@@ -74,14 +74,14 @@ public class LearnDataSetMapper {
 	}
 	
 	private int assignPos(ExecVar var, int pos) {
-		posMap.put(var.getVarId(), pos);
+		getPosMap().put(var.getVarId(), pos);
 		ExecVarType type = var.getType();
 		int childPos = pos;
 		if (type == ExecVarType.ARRAY) {
-			posMap.put(var.getIsNullChildId(), childPos++);
-			posMap.put(var.getLengthChildId(), childPos++);
+			getPosMap().put(var.getIsNullChildId(), childPos++);
+			getPosMap().put(var.getLengthChildId(), childPos++);
 		} else if (type == ExecVarType.REFERENCE) {
-			posMap.put(var.getIsNullChildId(), childPos++);
+			getPosMap().put(var.getIsNullChildId(), childPos++);
 		}
 		for (ExecVar child : var.getChildren()) {
 			childPos = assignPos(child, childPos);
@@ -92,7 +92,7 @@ public class LearnDataSetMapper {
 	public DpAttribute[] getDatapoint(BreakpointValue bkpValue) {
 		DpAttribute[] dp = initDpAttributes();
 		for (ExecValue value : bkpValue.getChildren()) {
-			fillDatapoint(value, dp, posMap.get(value.getVarId()));
+			fillDatapoint(value, dp, getPosMap().get(value.getVarId()));
 		}
 		return dp;
 	}
@@ -108,7 +108,7 @@ public class LearnDataSetMapper {
 	private void initDatapoint(DpAttribute[] dp, ExecVar var, DpAttribute paddingController) {
 		ExecVarType type = var.getType();
 		String varId = var.getVarId();
-		int sPos = posMap.get(varId);
+		int sPos = getPosMap().get(varId);
 		int pos = sPos; 
 		if (type == ExecVarType.STRING) {
 			/* isNull, length, charArray */
@@ -196,7 +196,7 @@ public class LearnDataSetMapper {
 					} else {
 						eleValue = ele.getValue();
 					}
-					pos = fillDatapoint(eleValue, dp, posMap.get(ele.getValue().getVarId()));
+					pos = fillDatapoint(eleValue, dp, getPosMap().get(ele.getValue().getVarId()));
 				}
 				paddingCond = lengthAttr;
 			} else {
@@ -210,7 +210,7 @@ public class LearnDataSetMapper {
 			} else {
 				isNullAttr.setBoolean(false);
 				for (ExecValue fieldValue : refValue.getChildren()) {
-					pos = fillDatapoint(fieldValue, dp, posMap.get(fieldValue.getVarId()));
+					pos = fillDatapoint(fieldValue, dp, getPosMap().get(fieldValue.getVarId()));
 				}
 			}
 		} else {
@@ -242,7 +242,7 @@ public class LearnDataSetMapper {
 		ExecVarType type = var.getType();
 		String varId = var.getVarId();
 		ExecValue value = null;
-		int pos = posMap.get(varId);
+		int pos = getPosMap().get(varId);
 		if (type == ExecVarType.STRING) {
 			/* isNull, length, charArray */
 			DpAttribute isNull = dp[pos++];
@@ -310,7 +310,7 @@ public class LearnDataSetMapper {
 							TextFormatUtils.printObj(varList), TextFormatUtils.printObj(values)));
 				}
 				double varValue = value[i++];
-				Integer index = posMap.get(var.getVarId());
+				Integer index = getPosMap().get(var.getVarId());
 				if(null != index){
 					DpAttribute dpAttribute = dp[index];
 					dpAttribute.setValue(PrimitiveValue.valueOf(var, varValue));
@@ -323,6 +323,10 @@ public class LearnDataSetMapper {
 		}
 		
 		return list;
+	}
+
+	public Map<String, Integer> getPosMap() {
+		return posMap;
 	}
 
 }
