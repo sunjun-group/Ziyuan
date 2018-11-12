@@ -19,8 +19,6 @@ import sav.common.core.formula.utils.ExpressionVisitor;
  * 
  */
 public class ExecVar implements Var {
-	public static final String IS_NULL_CODE = "isNull";
-	public static final String LENGTH_CODE = "length";
 	private final String varId;
 	private ExecVarType type;
 	private String valueType;
@@ -145,11 +143,15 @@ public class ExecVar implements Var {
 		return ExecVarHelper.getArrayElementID(varId, idx);
 	}
 	
+	public String getStringCharId(int charIdx) {
+		return ExecVarHelper.getStringChildId(varId, charIdx);
+	}
+	
 	public String getIsNullChildId() {
-		return getChildId(IS_NULL_CODE);
+		return getChildId(ReferenceValue.NULL_CODE);
 	}
 	
 	public String getLengthChildId() {
-		return getChildId(LENGTH_CODE);
+		return getChildId(ArrayValue.LENGTH_CODE);
 	}
 }

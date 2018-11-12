@@ -1,6 +1,5 @@
 package learntest.activelearning.core.data;
 
-import static sav.strategies.dto.execute.value.ExecVarHelper.getArrayElementID;
 import static sav.strategies.dto.execute.value.ExecVarHelper.getFieldId;
 
 import java.lang.reflect.Field;
@@ -77,12 +76,19 @@ public class LearningVarCollector {
 		try {
 			if (PrimitiveUtils.isString(type.getName())) {
 				var = new ExecVar(varId, ExecVarType.STRING);
+				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer);
+				appendVariable(int.class, var.getLengthChildId(), var, retrieveLayer);
+				for (int idx = 0; idx < arrSizeThreshold - 2; idx++) {
+					appendVariable(char.class, var.getStringCharId(idx), var, retrieveLayer);
+				}
 			} else if (PrimitiveUtils.isPrimitive(type.getName())) {
 				var = new ExecVar(varId, ExecVarType.primitiveTypeOf(type.getName()));
 			} else if (type.isArray()) {
 				var = new ExecVar(varId, ExecVarType.ARRAY);
+				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer);
+				appendVariable(int.class, var.getLengthChildId(), var, retrieveLayer);
 				for (int idx = 0; idx < arrSizeThreshold; idx++) {
-					appendVariable(type.getComponentType(), getArrayElementID(varId, idx), var, retrieveLayer - 1);
+					appendVariable(type.getComponentType(), var.getElementId(idx), var, retrieveLayer - 1);
 				}
 			} else {
 				String runtimeClass = varIdTypeMap.get(varId);
@@ -91,6 +97,7 @@ public class LearningVarCollector {
 				}
 				// reference type
 				var = new ExecVar(varId, ExecVarType.REFERENCE);
+				appendVariable(boolean.class, parent.getIsNullChildId(), var, retrieveLayer);
 				for (Field field : type.getDeclaredFields()) {
 					if (!Modifier.isFinal(field.getModifiers())) {
 						appendVariable(field.getType(), getFieldId(varId, field.getName()), var, retrieveLayer - 1);
