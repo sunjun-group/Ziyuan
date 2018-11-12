@@ -84,7 +84,7 @@ public class TestInputData {
 	public boolean equals(Object obj){
 		if(obj instanceof TestInputData){
 			TestInputData thatInput = (TestInputData)obj;
-			return thatInput.toString().equals(this.toString());
+			return thatInput.getDataPoint().toString().equals(this.getDataPoint().toString());
 		}
 		
 		return false;

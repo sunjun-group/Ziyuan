@@ -202,6 +202,12 @@ public class Tester {
 
 	public UnitTestSuite createTest(MethodInfo targetMethod, LearntestSettings settings,
 			AppJavaClassPath appClasspath, List<BreakpointValue> inputData) throws SavRtException {
+		for(BreakpointValue v: inputData){
+			if(v.getChildren().get(0).getChildren().size() > 10){
+				System.currentTimeMillis();
+			}
+		}
+		
 		GentestParams params = initGentestParams(targetMethod, settings, appClasspath);
 		TestGenerator testGenerator = new TestGenerator(appClasspath);
 		try {

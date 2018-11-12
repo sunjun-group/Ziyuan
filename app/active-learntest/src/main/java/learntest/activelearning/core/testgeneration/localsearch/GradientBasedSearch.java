@@ -2,6 +2,7 @@ package learntest.activelearning.core.testgeneration.localsearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,14 +22,14 @@ import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
 public class GradientBasedSearch {
-	
+
 	private Map<Branch, List<TestInputData>> branchInputMap = new HashMap<>();
 	private UnitTestSuite testsuite;
 	private Tester tester;
 	private AppJavaClassPath appClasspath;
 	private MethodInfo targetMethod;
 	private LearntestSettings settings;
-	
+
 	public GradientBasedSearch(Map<Branch, List<TestInputData>> branchInputMap, UnitTestSuite testsuite, Tester tester,
 			AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) {
 		super();
@@ -49,7 +50,7 @@ public class GradientBasedSearch {
 	 * @return
 	 */
 	public List<TestInputData> generateInputByGradientSearch(Branch branch, CDGNode branchCDGNode) {
-		
+
 		Branch siblingBranch = findSiblingBranch(branch);
 		if (siblingBranch == null) {
 			return new ArrayList<>();
@@ -61,7 +62,6 @@ public class GradientBasedSearch {
 		} else {
 			TestInputData closestInput = findClosestInput(otherInputs, branchCDGNode, branch);
 			List<ExecVar> vars = closestInput.getLearningVars();
-
 			List<TestInputData> list = new ArrayList<>();
 			double[] value = closestInput.getDoubleVector();
 
@@ -127,7 +127,7 @@ public class GradientBasedSearch {
 		UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 				new DataPoints(vars, inputData).toBreakpointValues());
 		newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
-		
+
 		this.testsuite.addTestCases(newSuite);
 
 		TestInputData newInput = null;
@@ -145,8 +145,7 @@ public class GradientBasedSearch {
 				bestValue = newValue.clone();
 				bestFitness = newFitness;
 			}
-		}
-		else{
+		} else {
 			list.add(newInput);
 		}
 
@@ -154,8 +153,9 @@ public class GradientBasedSearch {
 		return iResult;
 	}
 
-	private IntermediateSearchResult doSearch(Mutator mutator, double[] bestValue, double bestFitness, int index, List<ExecVar> vars,
-			List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, double minimumUnit, double factor) {
+	private IntermediateSearchResult doSearch(Mutator mutator, double[] bestValue, double bestFitness, int index,
+			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, double minimumUnit,
+			double factor) {
 		double amount = minimumUnit;
 
 		boolean currentDirection = true;
@@ -165,12 +165,12 @@ public class GradientBasedSearch {
 		double localBestFitness = bestFitness;
 
 		List<TestInputData> visitedInputs = new ArrayList<>();
-		Double boundary = null;
-		
+		// Double boundary = null;
+
 		while (true) {
 			double[] newValue = value.clone();
-			mutator.mutateValue(newValue, index, currentDirection, amount, boundary, minimumUnit);
-			
+			mutator.mutateValue(newValue, index, currentDirection, amount);
+
 			System.currentTimeMillis();
 			List<double[]> inputData = new ArrayList<>();
 			inputData.add(newValue);
@@ -183,7 +183,7 @@ public class GradientBasedSearch {
 			}
 			this.testsuite.addTestCases(newSuite);
 			System.currentTimeMillis();
-			
+
 			TestInputData newInput = null;
 			while (newInput == null) {
 				try {
@@ -193,11 +193,8 @@ public class GradientBasedSearch {
 				}
 			}
 
-			boolean isVisit = false;
 			if (!visitedInputs.contains(newInput)) {
 				visitedInputs.add(newInput);
-			} else {
-				isVisit = true;
 			}
 
 			if (branch.isCovered()) {
@@ -218,18 +215,15 @@ public class GradientBasedSearch {
 					value = newValue;
 					continue;
 				} else {
-					if (isVisit) {
+					boolean isNeibourVisited = isNeibourVisited(bestValue, visitedInputs, index, minimumUnit);
+					if (isNeibourVisited) {
 						break;
 					}
 
-					boundary = localBestValue[index];
-					if (amount != minimumUnit) {
-						value = newValue;
-						localBestFitness = newFitness;
-						localBestValue = value.clone();
-					}
-
 					currentDirection = !currentDirection;
+					value = bestValue;
+					localBestFitness = bestFitness;
+					localBestValue = value.clone();
 					amount = minimumUnit;
 				}
 			}
@@ -239,12 +233,35 @@ public class GradientBasedSearch {
 		return iResult;
 	}
 
+	private boolean isNeibourVisited(double[] bestValue, List<TestInputData> visitedInputs, int index,
+			double minimunUnit) {
+		double newValue = bestValue[index];
+		
+		boolean leftVisited = false;
+		boolean rightVisited = false;
+		for (TestInputData input : visitedInputs) {
+			double value = input.getInputValue().getAllValues()[index];
+			if (value == newValue - minimunUnit) {
+				leftVisited = true;
+			}
+			else if(value == newValue + minimunUnit){
+				rightVisited = true;
+			}
+			
+			if(leftVisited && rightVisited){
+				break;
+			}
+		}
+		return leftVisited && rightVisited;
+	}
+
 	private IntermediateSearchResult doDoubleSearch(double[] bestValue, double bestFitness, int index,
 			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
 		double minimumUnit = 0.001;
 		double factor = 2;
 
-		return doSearch(new NumericMutator(), bestValue, bestFitness, index, vars, list, branch, decisionCDGNode, minimumUnit, factor);
+		return doSearch(new NumericMutator(), bestValue, bestFitness, index, vars, list, branch, decisionCDGNode,
+				minimumUnit, factor);
 	}
 
 	private IntermediateSearchResult doIntegerSearch(double[] bestValue, double bestFitness, int index,
@@ -252,9 +269,10 @@ public class GradientBasedSearch {
 		double minimumUnit = 1;
 		double factor = 2;
 
-		return doSearch(new NumericMutator(), bestValue, bestFitness, index, vars, list, branch, decisionCDGNode, minimumUnit, factor);
+		return doSearch(new NumericMutator(), bestValue, bestFitness, index, vars, list, branch, decisionCDGNode,
+				minimumUnit, factor);
 	}
-	
+
 	private TestInputData findClosestInput(List<TestInputData> otherInputs, CDGNode decisionCDGNode, Branch branch) {
 		TestInputData returnInput = null;
 		double closestValue = -1;
