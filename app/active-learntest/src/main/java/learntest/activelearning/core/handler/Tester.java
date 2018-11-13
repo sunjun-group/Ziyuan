@@ -179,17 +179,21 @@ public class Tester {
 		} else if (value instanceof PrimitiveValue) {
 			execValue = sav.strategies.dto.execute.value.PrimitiveValue.valueOf(value.getVarID(), value.getType(), value.getStringValue());
 		} else if (value instanceof ArrayValue) {
-			sav.strategies.dto.execute.value.ArrayValue arrValue = new sav.strategies.dto.execute.value.ArrayValue(value.getVarID());
+			boolean isNull = ((ArrayValue) value).isNull();
+			sav.strategies.dto.execute.value.ArrayValue arrValue = new sav.strategies.dto.execute.value.ArrayValue(value.getVarID(), 
+					isNull);
 			execValue = arrValue;
-			int maxIdx = -1;
-			for (VarValue child : value.getChildren()) {
-				ExecValue childExecVal = convert(child);
-				if (childExecVal != null) {
-					arrValue.add(childExecVal);
-					maxIdx = Math.max(maxIdx, arrValue.getElements().get(arrValue.getElements().size() - 1).getIdx());
+			if (!isNull) {
+				int maxIdx = -1;
+				for (VarValue child : value.getChildren()) {
+					ExecValue childExecVal = convert(child);
+					if (childExecVal != null) {
+						arrValue.add(childExecVal);
+						maxIdx = Math.max(maxIdx, arrValue.getElements().get(arrValue.getElements().size() - 1).getIdx());
+					}
 				}
+				arrValue.setLength(maxIdx + 1);
 			}
-			arrValue.setLength(maxIdx + 1);
 		} else if (value instanceof ReferenceValue) {
 			ReferenceValue refVal = (ReferenceValue) value;
 			execValue = new sav.strategies.dto.execute.value.ReferenceValue(value.getVarID(), refVal.isNull());

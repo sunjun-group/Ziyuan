@@ -277,7 +277,7 @@ public class LearnDataSetMapper {
 		if (value != null) {
 			value.setValueType(var.getValueType());
 			if (parent != null) {
-				parent.add(value);
+				parent.add(value, true);
 			}
 		}
 		return value;
