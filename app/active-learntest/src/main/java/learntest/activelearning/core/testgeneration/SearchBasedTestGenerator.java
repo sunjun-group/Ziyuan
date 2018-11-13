@@ -15,14 +15,16 @@ import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class SearchBasedTestGenerator extends TestGenerator{
-
+	private CDG cdg;
+	
 	public SearchBasedTestGenerator(Tester tester, UnitTestSuite testsuite, AppJavaClassPath appClasspath,
-			MethodInfo targetMethod, LearntestSettings settings) {
+			MethodInfo targetMethod, LearntestSettings settings, CDG cdg) {
 		this.testsuite = testsuite;
 		this.tester = tester;
 		this.appClasspath = appClasspath;
 		this.targetMethod = targetMethod;
 		this.settings = settings;
+		this.cdg = cdg;
 	}
 
 	public void cover(CDG cdg) {
@@ -35,7 +37,7 @@ public class SearchBasedTestGenerator extends TestGenerator{
 
 	private void traverseLearning(CDGNode branchCDGNode) {
 		GradientBasedSearch searchStategy = new GradientBasedSearch(this.branchInputMap, this.testsuite, this.tester,
-			this.appClasspath, this.targetMethod, this.settings);
+			this.appClasspath, this.targetMethod, this.settings, this.cdg);
 		
 		List<CDGNode> decisionChildren = new ArrayList<>();
 		for (CDGNode child : branchCDGNode.getChildren()) {

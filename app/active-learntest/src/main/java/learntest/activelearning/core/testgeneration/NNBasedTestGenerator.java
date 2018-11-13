@@ -58,7 +58,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 
 	private void traverseLearning(CDGNode branchCDGNode) throws ProcessDeadException {
 		GradientBasedSearch searchStategy = new GradientBasedSearch(this.branchInputMap, this.testsuite, this.tester,
-				this.appClasspath, this.targetMethod, this.settings);
+				this.appClasspath, this.targetMethod, this.settings, this.cdg);
 
 		List<CDGNode> decisionChildren = new ArrayList<>();
 		for (CDGNode child : branchCDGNode.getChildren()) {
@@ -157,37 +157,6 @@ public class NNBasedTestGenerator extends TestGenerator {
 		else{
 			return toNode;
 		}
-	}
-
-	private List<Branch> findDirectParentBranches(CDGNode branchCDGNode) {
-		CoverageSFNode branchCFGNode = branchCDGNode.getCfgNode();
-		List<Branch> list = new ArrayList<>();
-		for (CDGNode parent : branchCDGNode.getParent()) {
-			CoverageSFNode parentCFGNode = parent.getCfgNode();
-			for (CoverageSFNode childCFGNode : parentCFGNode.getBranchTargets()) {
-				if (canReach(childCFGNode, branchCFGNode)) {
-					Branch branch = Branch.of(parentCFGNode, childCFGNode);
-					list.add(branch);
-				}
-			}
-		}
-
-		return list;
-	}
-
-	private boolean canReach(CoverageSFNode node1, CoverageSFNode node2) {
-		if (node1.getCvgIdx() == node2.getCvgIdx()) {
-			return true;
-		}
-
-		for (CoverageSFNode child : node1.getBranchTargets()) {
-			boolean canReach = canReach(child, node2);
-			if (canReach) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private void learnClassificationModel(Branch branch, CoverageSFNode parent) throws ProcessDeadException {
@@ -312,7 +281,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 
 	private void findTrainedParentBranches(CDGNode branchCDGNode, List<Branch> trainedParentBranches) throws ProcessDeadException {
 
-		List<Branch> parentBranches = findDirectParentBranches(branchCDGNode);
+		List<Branch> parentBranches = branchCDGNode.findDirectParentBranches();
 		for (Branch parentBranch : parentBranches) {
 			Message existenceResponse = communicator.requestModelCheck(parentBranch, this.targetMethod.getMethodId());
 //			System.currentTimeMillis();

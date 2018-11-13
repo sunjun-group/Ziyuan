@@ -59,7 +59,7 @@ public class SearchBasedLearnTest {
 		CDGConstructor cdgConstructor = new CDGConstructor();
 		CDG cdg = cdgConstructor.construct(testsuite.getCoverageGraph());
 		
-		SearchBasedTestGenerator generator = new SearchBasedTestGenerator(tester, testsuite, appClasspath, targetMethod, settings);
+		SearchBasedTestGenerator generator = new SearchBasedTestGenerator(tester, testsuite, appClasspath, targetMethod, settings, cdg);
 		generator.cover(cdg);
 		LearnTestContext.dispose();
 	}

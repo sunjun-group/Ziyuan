@@ -2,11 +2,11 @@ package learntest.activelearning.core.testgeneration.localsearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import learntest.activelearning.core.data.DpAttribute;
+import learntest.activelearning.core.data.LearnTestContext;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
@@ -16,6 +16,7 @@ import learntest.activelearning.core.testgeneration.communication.DataPoints;
 import learntest.activelearning.core.testgeneration.mutate.Mutator;
 import learntest.activelearning.core.testgeneration.mutate.NumericMutator;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
+import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.common.core.utils.TextFormatUtils;
 import sav.strategies.dto.AppJavaClassPath;
@@ -29,9 +30,10 @@ public class GradientBasedSearch {
 	private AppJavaClassPath appClasspath;
 	private MethodInfo targetMethod;
 	private LearntestSettings settings;
+	private CDG cdg;
 
 	public GradientBasedSearch(Map<Branch, List<TestInputData>> branchInputMap, UnitTestSuite testsuite, Tester tester,
-			AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) {
+			AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings, CDG cdg) {
 		super();
 		this.branchInputMap = branchInputMap;
 		this.testsuite = testsuite;
@@ -39,6 +41,7 @@ public class GradientBasedSearch {
 		this.appClasspath = appClasspath;
 		this.targetMethod = targetMethod;
 		this.settings = settings;
+		this.cdg = cdg;
 	}
 
 	/**
@@ -66,7 +69,7 @@ public class GradientBasedSearch {
 			double[] value = closestInput.getDoubleVector();
 
 			double[] bestValue = value;
-			double bestFitness = closestInput.getFitness(branchCDGNode, branch);
+			double bestFitness = closestInput.getFitness(branchCDGNode, branch, this.cdg);
 
 			for (int index = 0; index < vars.size(); index++) {
 
@@ -140,7 +143,7 @@ public class GradientBasedSearch {
 		}
 
 		if (!branch.isCovered()) {
-			double newFitness = newInput.getFitness(decisionCDGNode, branch);
+			double newFitness = newInput.getFitness(decisionCDGNode, branch, this.cdg);
 			if (newFitness < bestFitness) {
 				bestValue = newValue.clone();
 				bestFitness = newFitness;
@@ -168,12 +171,20 @@ public class GradientBasedSearch {
 		// Double boundary = null;
 
 		while (true) {
+			List<double[]> valueList = new ArrayList<>();
+			valueList.add(value);
+			DpAttribute[] attribute = LearnTestContext.getLearnDataSetMapper().toDpAttributeVector(vars, valueList).get(0);
+			if(attribute[index].isPadding()){
+				break;
+			}
+			
 			double[] newValue = value.clone();
 			mutator.mutateValue(newValue, index, currentDirection, amount);
 
 			System.currentTimeMillis();
 			List<double[]> inputData = new ArrayList<>();
 			inputData.add(newValue);
+			System.currentTimeMillis();
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 					new DataPoints(vars, inputData).toBreakpointValues());
 			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
@@ -201,7 +212,7 @@ public class GradientBasedSearch {
 				list.add(newInput);
 				break;
 			} else {
-				double newFitness = newInput.getFitness(decisionCDGNode, branch);
+				double newFitness = newInput.getFitness(decisionCDGNode, branch, this.cdg);
 				if (newFitness < localBestFitness) {
 					localBestFitness = newFitness;
 					localBestValue = newInput.getDoubleVector();
@@ -240,7 +251,7 @@ public class GradientBasedSearch {
 		boolean leftVisited = false;
 		boolean rightVisited = false;
 		for (TestInputData input : visitedInputs) {
-			double value = input.getInputValue().getAllValues()[index];
+			double value = input.getDoubleVector()[index];
 			if (value == newValue - minimunUnit) {
 				leftVisited = true;
 			}
@@ -279,9 +290,9 @@ public class GradientBasedSearch {
 		for (TestInputData input : otherInputs) {
 			if (returnInput == null) {
 				returnInput = input;
-				closestValue = input.getFitness(decisionCDGNode, branch);
+				closestValue = input.getFitness(decisionCDGNode, branch, this.cdg);
 			} else {
-				Double value = input.getFitness(decisionCDGNode, branch);
+				Double value = input.getFitness(decisionCDGNode, branch, this.cdg);
 				;
 				if (closestValue > value) {
 					closestValue = value;

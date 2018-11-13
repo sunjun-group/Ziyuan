@@ -7,6 +7,8 @@ import java.util.Map;
 import icsetlv.common.dto.BreakpointValue;
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CoveragePath;
+import microbat.instrumentation.cfgcoverage.graph.CoverageSFNode;
+import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -46,8 +48,8 @@ public class TestInputData {
 		return null;
 	}
 
-	public double getFitness(CDGNode decisionCDGNode, Branch branch) {
-		Double fitness = this.conditionVariationMap.get(branch.getBranchID());
+	public double getFitness(CDGNode decisionCDGNode, Branch branch, CDG cdg) {
+		Double fitness = this.conditionVariationMap.get(branch);
 
 		if (fitness != null) {
 			if(!branch.isCovered() && fitness==0){
@@ -56,25 +58,33 @@ public class TestInputData {
 			
 			return 1 - Math.pow(1.001, -Math.abs(fitness));
 		} else {
-			ApproachLevel approachLevel = new ApproachLevel(1);
-			Branch exercisedParent = findTheExercisedParent(decisionCDGNode, approachLevel);
-			fitness = this.conditionVariationMap.get(exercisedParent);
-			return approachLevel.level + (1 - Math.pow(1.001, -Math.abs(fitness)));
+			System.currentTimeMillis();
+			ApproachLevel approachLevel = new ApproachLevel(0);
+			Branch exercisedParent = findTheExercisedParent(decisionCDGNode, approachLevel, cdg);
+			if(exercisedParent != null){
+				fitness = this.conditionVariationMap.get(exercisedParent);				
+			}
+			else{
+				fitness = 10000.0;
+			}
+			return approachLevel.level + (1 - Math.pow(1.001, -fitness));
 		}
 	}
 
-	private Branch findTheExercisedParent(CDGNode node, ApproachLevel approachLevel) {
+	private Branch findTheExercisedParent(CDGNode node, ApproachLevel approachLevel, CDG cdg) {
 		approachLevel.level++;
-		for (CDGNode parent : node.getParent()) {
-			for (Branch branchToParent : parent.getCfgNode().getBranches()) {
-				if (this.conditionVariationMap.containsKey(branchToParent)) {
-					return branchToParent;
-				}
+		List<Branch> parentBranches = node.findDirectParentBranches();
+		if(!parentBranches.isEmpty()){
+			Branch parentBranch = parentBranches.get(0);
+			Double fitness = this.conditionVariationMap.get(parentBranch);
+			if(fitness != null){
+				return parentBranch;
 			}
-			
-			Branch p = findTheExercisedParent(parent, approachLevel);
-			if (p != null) {
-				return p;
+			else{
+				CoverageSFNode parentCFGNode = parentBranch.getFromNode();
+				CDGNode parentCDGNode = cdg.findCDGNode(parentCFGNode);
+				
+				return findTheExercisedParent(parentCDGNode, approachLevel, cdg);
 			}
 		}
 

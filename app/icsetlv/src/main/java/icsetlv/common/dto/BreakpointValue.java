@@ -96,6 +96,7 @@ public class BreakpointValue extends ExecValue {
 
 	public double[] getAllValues() {
 		List<Double> list = getChildValues(this);
+		System.currentTimeMillis();
 		double[] array = new double[list.size()];
 		int i = 0;
 		for (Double val : list) {
