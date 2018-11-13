@@ -254,8 +254,8 @@ public class LearnDataSetMapper {
 				value = arrValue;
 				int length = (int) dp[pos++].getInt();
 				arrValue.setLength(length);
-				int size = Math.min(length, arrSizeThreshold);
-				for (int i = 0; i < size; i++) {
+				int size = Math.min(length, arrSizeThreshold) + 2; // the first two elements are isNull & length
+				for (int i = 2; i < size; i++) {
 					ExecVar eleVar = var.getChildren().get(i);
 					appendValue(eleVar, arrValue, dp);
 				}
