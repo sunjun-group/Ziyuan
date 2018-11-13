@@ -106,15 +106,16 @@ public class ObjectValueGenerator extends ValueGenerator {
 				/* in case resolved type of param is the super type of receiver, 
 				 * we try to choose a subtype for it. In the worse case that subtype is the same with receiver type,
 				 * we better ignore it to avoid a loop call */
+				int nextLevel = level + 1;
 				if (paramResolvedType.getRawType().isAssignableFrom(constructor.getDeclaringClass())) {
 					Class<?> paramSubType = getSubTypesScanner().getRandomImplClzz(paramResolvedType);
 					if (paramSubType == null || 
 							paramSubType.isAssignableFrom(constructor.getDeclaringClass())) {
-						return false;
+						nextLevel += 2;
 					}
 					paramResolvedType = selectedType.resolveType(paramSubType);
 				}
-				GeneratedVariable newVariable = appendVariable(variable, level + 1,
+				GeneratedVariable newVariable = appendVariable(variable, nextLevel,
 						paramResolvedType);
 				paramIds[i] = newVariable.getReturnVarId();
 			}

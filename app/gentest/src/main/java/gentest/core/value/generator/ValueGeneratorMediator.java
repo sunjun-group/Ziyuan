@@ -90,7 +90,7 @@ public class ValueGeneratorMediator {
 			/* generate the new one*/
 			if (PrimitiveValueGenerator.accept(type.getRawType())) {
 				goodVariable = primitiveGenerator.doAppend(variable, level, type.getRawType());
-			}  else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
+			} else if (level > GentestConstants.VALUE_GENERATION_MAX_LEVEL) {
 				log.debug("level of value generation exceeds the limit ({} levels)", GentestConstants.VALUE_GENERATION_MAX_LEVEL);
 				ValueGenerator.assignNull(variable, type.getRawType());
 			} else if (level > 1 && Randomness
