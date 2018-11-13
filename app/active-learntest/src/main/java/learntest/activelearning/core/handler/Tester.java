@@ -197,6 +197,14 @@ public class Tester {
 		} else if (value instanceof ReferenceValue) {
 			ReferenceValue refVal = (ReferenceValue) value;
 			execValue = new sav.strategies.dto.execute.value.ReferenceValue(value.getVarID(), refVal.isNull());
+			if (!refVal.isNull()) {
+				for (VarValue child : value.getChildren()) {
+					ExecValue childExecVal = convert(child);
+					if (childExecVal != null) {
+						execValue.add(childExecVal);
+					}
+				}
+			}
 		}
 		if (execValue != null) {
 			execValue.setValueType(value.getRuntimeType() == null ? value.getType() : value.getRuntimeType());
