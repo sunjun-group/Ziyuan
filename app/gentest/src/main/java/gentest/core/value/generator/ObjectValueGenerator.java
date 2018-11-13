@@ -51,10 +51,12 @@ public class ObjectValueGenerator extends ValueGenerator {
 		for (; i < GentestConstants.OBJECT_VALUE_GENERATOR_MAX_TRY_SELECTING_CONSTRUCTOR; i++) {
 			long now = System.currentTimeMillis();
 			if (now > start +limit) {
+				variable.reset();
 				break;
 			}
 			TypeInitializer initializer = loadInitializer(type, 0);
 			if (initializer == null || initializer.hasNoConstructor()) {
+				variable.reset();
 				continue;
 			}
 			selectedType = type;
@@ -63,6 +65,7 @@ public class ObjectValueGenerator extends ValueGenerator {
 			} 
 			Object initializedStmt = initializer.getRandomConstructor();
 			if (!appendConstructor(variable, level,	initializedStmt)) {
+				variable.reset();
 				// if fail, retry
 				continue;
 			}
