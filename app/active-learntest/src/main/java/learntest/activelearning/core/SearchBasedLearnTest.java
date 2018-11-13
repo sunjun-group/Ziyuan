@@ -26,6 +26,7 @@ import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGConstructor;
 import sav.common.core.SavRtException;
 import sav.common.core.utils.TextFormatUtils;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -33,6 +34,8 @@ public class SearchBasedLearnTest {
 	private static Logger log = LoggerFactory.getLogger(NeuralActiveLearnTest.class);
 
 	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
+		SAVTimer.startTime = System.currentTimeMillis();
+		
 		LearnTestContext.init();
 		settings.setInitRandomTestNumber(10);
 		//settings.setMethodExecTimeout(100);

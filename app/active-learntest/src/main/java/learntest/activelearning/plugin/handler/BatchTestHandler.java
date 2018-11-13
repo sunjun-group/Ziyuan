@@ -22,12 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import learntest.activelearning.core.SearchBasedLearnTest;
 import learntest.activelearning.core.data.MethodInfo;
-import learntest.activelearning.core.distribution.RandomTestDistributionRunner;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.plugin.settings.GentestSettings;
 import learntest.activelearning.plugin.settings.LearntestLogger;
 import learntest.activelearning.plugin.utils.ActiveLearnTestConfig;
-import learntest.activelearning.plugin.utils.IMethodUtils;
 import learntest.activelearning.plugin.utils.IStatusUtils;
 import learntest.activelearning.plugin.utils.PluginUtils;
 import learntest.activelearning.plugin.utils.filter.IMethodFilter;

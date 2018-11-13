@@ -19,6 +19,7 @@ import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
 import sav.common.core.utils.TextFormatUtils;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecVar;
 
@@ -74,6 +75,11 @@ public class GradientBasedSearch {
 			double bestFitness = closestInput.getFitness(branchCDGNode, branch, this.cdg);
 
 			for (int index = 0; index < vars.size(); index++) {
+				long executionTime = SAVTimer.getExecutionTime();
+				if(executionTime > this.settings.getMethodExecTimeout()){
+					break;
+				}
+				
 
 				IntermediateSearchResult iResult = null;
 
@@ -165,6 +171,10 @@ public class GradientBasedSearch {
 		while (true) {
 			long current = System.currentTimeMillis();
 			if(current - start > this.settings.getEachGradientSearchExecutionTimeOut()){
+				break;
+			}
+			long executionTime = SAVTimer.getExecutionTime();
+			if(executionTime > this.settings.getMethodExecTimeout()){
 				break;
 			}
 			
