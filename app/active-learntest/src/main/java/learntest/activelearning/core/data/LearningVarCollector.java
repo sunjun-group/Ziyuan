@@ -72,6 +72,9 @@ public class LearningVarCollector {
 	}
 
 	private ExecVar appendVariable(Class<?> type, String varId, ExecVar parent, int retrieveLayer) {
+		if (retrieveLayer <= 0) {
+			return null;
+		}
 		ExecVar var = null;
 		try {
 			if (PrimitiveUtils.isString(type.getName())) {
@@ -92,7 +95,7 @@ public class LearningVarCollector {
 				}
 			} else {
 				String runtimeClass = varIdTypeMap.get(varId);
-				if (!runtimeClass.equals(type.getName())) {
+				if (runtimeClass != null && !runtimeClass.equals(type.getName())) {
 					type = classLoader.loadClass(runtimeClass);
 				}
 				// reference type
