@@ -1,5 +1,6 @@
 package learntest.activelearning.core;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.bcel.Repository;
@@ -12,6 +13,8 @@ import learntest.activelearning.core.data.LearningVarCollector;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
+import learntest.activelearning.core.distribution.DistributionExcelWriter;
+import learntest.activelearning.core.distribution.DistributionRow;
 import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.SearchBasedTestGenerator;
@@ -66,6 +69,14 @@ public class SearchBasedLearnTest {
 		System.out.println(coverage);
 		List<Branch> uncovered = generator.getUncoveredBranches();
 		System.out.println(uncovered);
+		
+		DistributionExcelWriter writer = new DistributionExcelWriter(new File("E:/linyun/report.xlsx"));
+		DistributionRow trial = new DistributionRow();
+		trial.setMethodName(targetMethod.getMethodFullName()+"."+targetMethod.getLineNum());
+		Integer[] distribution = new Integer[1];
+		distribution[0] = (int) (coverage*10000);
+		trial.setDistribution(distribution);
+		writer.addRowData(trial);
 		
 		LearnTestContext.dispose();
 		
