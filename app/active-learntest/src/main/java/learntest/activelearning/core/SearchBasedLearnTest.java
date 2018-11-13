@@ -17,6 +17,7 @@ import learntest.activelearning.core.handler.Tester;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.SearchBasedTestGenerator;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
+import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
@@ -61,6 +62,14 @@ public class SearchBasedLearnTest {
 		
 		SearchBasedTestGenerator generator = new SearchBasedTestGenerator(tester, testsuite, appClasspath, targetMethod, settings, cdg);
 		generator.cover(cdg);
+		
+		double coverage = generator.computeTestCoverage();
+		System.out.println(coverage);
+		List<Branch> uncovered = generator.getUncoveredBranches();
+		System.out.println(uncovered);
+		
 		LearnTestContext.dispose();
+		
+		
 	}
 }

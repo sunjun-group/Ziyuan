@@ -17,6 +17,7 @@ import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.NNBasedTestGenerator;
 import learntest.activelearning.core.testgeneration.communication.PythonCommunicator;
 import microbat.instrumentation.cfgcoverage.InstrumentationUtils;
+import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.CFGInstance;
 import microbat.instrumentation.cfgcoverage.graph.CFGUtility;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
@@ -63,6 +64,12 @@ public class NeuralActiveLearnTest {
 		
 		NNBasedTestGenerator nnLearner = new NNBasedTestGenerator(tester, testsuite, communicator, appClasspath, targetMethod, settings);
 		nnLearner.cover(cdg);
+		
+		double coverage = nnLearner.computeTestCoverage();
+		System.out.println(coverage);
+		List<Branch> uncovered = nnLearner.getUncoveredBranches();
+		System.out.println(uncovered);
+		
 		communicator.stop();
 		LearnTestContext.dispose();
 	}

@@ -1,5 +1,6 @@
 package learntest.activelearning.core.testgeneration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,29 @@ public class TestGenerator {
 		this.appClasspath = appClasspath;
 		this.targetMethod = targetMethod;
 		this.settings = settings;
+	}
+	
+	public double computeTestCoverage(){
+		double total = this.branchInputMap.keySet().size();
+		double count = 0;
+		for(Branch branch: this.branchInputMap.keySet()){
+			if(this.branchInputMap.get(branch)!=null && !this.branchInputMap.get(branch).isEmpty()){
+				count++;
+			}
+		}
+		
+		return count/total;
+	}
+	
+	public List<Branch> getUncoveredBranches(){
+		List<Branch> uncoveredBranches = new ArrayList<>();
+		for(Branch branch: this.branchInputMap.keySet()){
+			if(this.branchInputMap.get(branch)==null || this.branchInputMap.get(branch).isEmpty()){
+				uncoveredBranches.add(branch);
+			}
+		}
+		
+		return uncoveredBranches;
 	}
 	
 	public boolean isAllChildrenCovered(CDGNode node) {
