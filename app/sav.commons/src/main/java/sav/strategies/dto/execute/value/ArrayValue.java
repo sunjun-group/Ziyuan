@@ -19,6 +19,7 @@ import sav.common.core.utils.CollectionUtils;
 public class ArrayValue extends ReferenceValue {
 	public static final String LENGTH_CODE = "length";
 	private List<ArrValueElement> elements; 
+	private String contentType;
 	
 	public ArrayValue(String id) {
 		super(id, false);
@@ -155,6 +156,14 @@ public class ArrayValue extends ReferenceValue {
 		public String toString() {
 			return "[idx=" + idx + "] = " + value + "]";
 		}
+	}
+	
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	
+	public String getContentType() {
+		return contentType;
 	}
 
 	@Override

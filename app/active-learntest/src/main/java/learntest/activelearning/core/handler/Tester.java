@@ -183,6 +183,7 @@ public class Tester {
 			sav.strategies.dto.execute.value.ArrayValue arrValue = new sav.strategies.dto.execute.value.ArrayValue(value.getVarID(), 
 					isNull);
 			execValue = arrValue;
+			arrValue.setContentType(((ArrayValue) value).getComponentType());
 			if (!isNull) {
 				int maxIdx = -1;
 				for (VarValue child : value.getChildren()) {

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import gentest.core.data.MethodCall;
 import gentest.core.data.Sequence;
@@ -45,6 +46,8 @@ public class TestSeqGenerator {
 	private PrimitiveFixValueGenerator fixValueGenerator;
 	@Inject
 	private FixLengthArrayValueGenerator arrayValueGenerator;
+	@Inject @Named("prjClassLoader")
+	private ClassLoader prjClassLoader;
 
 	private static final String RECEIVER_PARAM_KEY = VarScope.THIS.getDisplayName();
 	private Map<String, Class<?>> classMap;
@@ -147,7 +150,7 @@ public class TestSeqGenerator {
 			addFailToSetVars(value, failToSetVars);
 			return firstVarIdx;
 		}
-		Class<?> clazz = classMap.get(receiver);
+		Class<?> clazz = getDefinedClass(value);
 		if (clazz.isArray() && (value.getType() != ExecVarType.ARRAY)) {
 			value = ArrayValue.convert(value);
 		}
@@ -185,9 +188,12 @@ public class TestSeqGenerator {
 			Set<String> failToSetVars, Map<String, ISelectedVariable> varMap, int firstVarIdx)
 			throws SavException {
 		String receiver = value.getVarId();
+		if (value.getValueType() != null) {
+			getDefinedClass(value);
+		}
 		if (value.isNull()) {
 			GeneratedVariable variable = new GeneratedVariable(firstVarIdx);
-			ValueGenerator.assignNull(variable, classMap.get(receiver));
+			ValueGenerator.assignNull(variable, getDefinedClass(value));
 			sequence.append(variable);
 			firstVarIdx += variable.getNewVariables().size();
 			varMap.put(value.getVarId(), variable);
@@ -196,7 +202,7 @@ public class TestSeqGenerator {
 		
 		ISelectedVariable variable = varMap.get(receiver);
 		if (variable == null) {
-			variable = valueGenerator.generate(typeMap.get(classMap.get(receiver)), firstVarIdx, true);
+			variable = valueGenerator.generate(typeMap.get(getDefinedClass(value)), firstVarIdx, true);
 			sequence.append(variable);
 			firstVarIdx += variable.getNewVariables().size();
 			varMap.put(receiver, variable);
@@ -206,12 +212,12 @@ public class TestSeqGenerator {
 		for (ExecValue fieldValue : CollectionUtils.nullToEmpty(value.getChildren())) {
 			try {
 				String fieldId = fieldValue.getVarId();
-				Class<?> clazz = classMap.get(receiver);
+				Class<?> clazz = getDefinedClass(value);
 				String fieldName = value.getFieldName(fieldValue);
 				if (ReferenceValue.NULL_CODE.equals(fieldName)) {
 					continue;
 				}
-				Class<?> fieldClazz = classMap.get(fieldId);
+				Class<?> fieldClazz = getDefinedClass(fieldValue);
 				if (fieldClazz == null) {
 					fieldClazz = lookupFieldAndGetType(clazz, fieldName);
 					updateClassTypeMap(fieldId, fieldClazz);
@@ -221,7 +227,7 @@ public class TestSeqGenerator {
 						firstVarIdx);
 				ISelectedVariable field = varMap.get(fieldId);
 				if (field != null) {
-					RqueryMethod method = new RqueryMethod(MethodCall.of(setter, classMap.get(receiver)),
+					RqueryMethod method = new RqueryMethod(MethodCall.of(setter, getDefinedClass(value)),
 							variable.getReturnVarId());
 					int[] varId = new int[] { field.getReturnVarId() };
 					method.setInVarIds(varId);
@@ -233,6 +239,17 @@ public class TestSeqGenerator {
 			}
 		}
 		return firstVarIdx;
+	}
+
+	private Class<?> getDefinedClass(ExecValue value) {
+		if (value != null && value.getValueType() != null) {
+			try {
+				updateClassTypeMap(value.getVarId(), prjClassLoader.loadClass(value.getValueType()));
+			} catch (ClassNotFoundException e) {
+//				e.printStackTrace();
+			}
+		}
+		return classMap.get(value.getVarId());
 	}
 
 	public void updateClassTypeMap(String varId, Class<?> varClazz) {
@@ -257,7 +274,7 @@ public class TestSeqGenerator {
 		
 		String varId = value.getVarId();
 		int dimension = ArrayTypeUtils.getArrayDimension(arrayClazz);
-		Class<?> arrContentClazz = ArrayTypeUtils.getContentClass(classMap.get(varId));
+		Class<?> arrContentClazz = ArrayTypeUtils.getContentClass(getDefinedClass(value));
 		int[] arrayLength = FixLengthArrayValueGenerator.customizeArrayAndDetermineLength(value, arrContentClazz,
 				dimension);
 		if (dimension == 0) {
@@ -273,7 +290,7 @@ public class TestSeqGenerator {
 			return firstVarIdx;
 		}
 		ISelectedVariable variable = varMap.get(varId);
-		IType type = typeMap.get(classMap.get(varId));
+		IType type = typeMap.get(getDefinedClass(value));
 		if (variable == null) {
 			variable = arrayValueGenerator.generate(type, firstVarIdx, arrayLength);
 			firstVarIdx += variable.getNewVariables().size();
