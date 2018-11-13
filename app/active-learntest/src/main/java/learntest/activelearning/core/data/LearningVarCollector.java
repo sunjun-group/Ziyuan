@@ -97,7 +97,7 @@ public class LearningVarCollector {
 				}
 				// reference type
 				var = new ExecVar(varId, ExecVarType.REFERENCE);
-				appendVariable(boolean.class, parent.getIsNullChildId(), var, retrieveLayer);
+				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer);
 				for (Field field : type.getDeclaredFields()) {
 					if (!Modifier.isFinal(field.getModifiers())) {
 						appendVariable(field.getType(), getFieldId(varId, field.getName()), var, retrieveLayer - 1);

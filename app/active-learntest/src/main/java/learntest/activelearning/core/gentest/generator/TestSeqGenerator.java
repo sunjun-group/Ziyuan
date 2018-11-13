@@ -208,6 +208,9 @@ public class TestSeqGenerator {
 				String fieldId = fieldValue.getVarId();
 				Class<?> clazz = classMap.get(receiver);
 				String fieldName = value.getFieldName(fieldValue);
+				if (ReferenceValue.NULL_CODE.equals(fieldName)) {
+					continue;
+				}
 				Class<?> fieldClazz = classMap.get(fieldId);
 				if (fieldClazz == null) {
 					fieldClazz = lookupFieldAndGetType(clazz, fieldName);
