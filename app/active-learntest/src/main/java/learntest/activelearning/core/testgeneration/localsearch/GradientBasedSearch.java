@@ -181,7 +181,6 @@ public class GradientBasedSearch {
 			double[] newValue = value.clone();
 			mutator.mutateValue(newValue, index, currentDirection, amount);
 
-			System.currentTimeMillis();
 			List<double[]> inputData = new ArrayList<>();
 			inputData.add(newValue);
 			System.currentTimeMillis();
@@ -193,7 +192,6 @@ public class GradientBasedSearch {
 				System.out.println(TextFormatUtils.printObj(dataPoint));
 			}
 			this.testsuite.addTestCases(newSuite);
-			System.currentTimeMillis();
 
 			TestInputData newInput = null;
 			while (newInput == null) {

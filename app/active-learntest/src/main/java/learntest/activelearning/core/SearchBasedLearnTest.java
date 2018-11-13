@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import learntest.activelearning.core.data.DpAttribute;
-import learntest.activelearning.core.data.LearnDataSetMapper;
 import learntest.activelearning.core.data.LearnTestContext;
 import learntest.activelearning.core.data.LearningVarCollector;
 import learntest.activelearning.core.data.MethodInfo;

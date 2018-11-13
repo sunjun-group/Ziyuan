@@ -15,6 +15,7 @@ public class ActiveLearntestUtils {
 		resources.setSavJunitRunnerJarPath(
 				IResourceUtils.getResourceAbsolutePath(ActiveLearntestPlugin.PLUGIN_ID, "sav.testrunner.jar"));
 		LearntestSettings learntestSettings = new LearntestSettings(resources);
+//		learntestSettings.setInputValueExtractLevel(2);
 		return learntestSettings;
 	}
 }
