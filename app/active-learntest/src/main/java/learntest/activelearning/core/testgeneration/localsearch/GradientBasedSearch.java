@@ -63,6 +63,8 @@ public class GradientBasedSearch {
 		if (otherInputs.isEmpty()) {
 			return new ArrayList<>();
 		} else {
+			long start = System.currentTimeMillis();
+			
 			TestInputData closestInput = findClosestInput(otherInputs, branchCDGNode, branch);
 			List<ExecVar> vars = closestInput.getLearningVars();
 			List<TestInputData> list = new ArrayList<>();
@@ -82,18 +84,14 @@ public class GradientBasedSearch {
 				case CHAR:
 				case LONG:
 				case SHORT:
-					iResult = doIntegerSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
-					System.currentTimeMillis();
+					iResult = doIntegerSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode, start);
 					break;
 				case DOUBLE:
 				case FLOAT:
-					iResult = doDoubleSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
+					iResult = doDoubleSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode, start);
 					break;
 				case BOOLEAN:
-					iResult = doBooleanSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
-					break;
-				case STRING:
-					iResult = doStringSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode);
+					iResult = doBooleanSearch(bestValue, bestFitness, index, vars, list, branch, branchCDGNode, start);
 					break;
 				default:
 					break;
@@ -110,14 +108,8 @@ public class GradientBasedSearch {
 		}
 	}
 
-	private IntermediateSearchResult doStringSearch(double[] bestValue, double bestFitness, int index,
-			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	private IntermediateSearchResult doBooleanSearch(double[] bestValue, double bestFitness, int index,
-			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
+			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, long start) {
 		double[] newValue = bestValue.clone();
 		if (newValue[index] == 1.0) {
 			newValue[index] = 0.0;
@@ -158,7 +150,7 @@ public class GradientBasedSearch {
 
 	private IntermediateSearchResult doSearch(Mutator mutator, double[] bestValue, double bestFitness, int index,
 			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, double minimumUnit,
-			double factor) {
+			double factor, long start) {
 		double amount = minimumUnit;
 
 		boolean currentDirection = true;
@@ -171,6 +163,11 @@ public class GradientBasedSearch {
 		// Double boundary = null;
 
 		while (true) {
+			long current = System.currentTimeMillis();
+			if(current - start > this.settings.getEachGradientSearchExecutionTimeOut()){
+				break;
+			}
+			
 			List<double[]> valueList = new ArrayList<>();
 			valueList.add(value);
 			DpAttribute[] attribute = LearnTestContext.getLearnDataSetMapper().toDpAttributeVector(vars, valueList).get(0);
@@ -183,7 +180,7 @@ public class GradientBasedSearch {
 
 			List<double[]> inputData = new ArrayList<>();
 			inputData.add(newValue);
-			System.currentTimeMillis();
+			
 			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
 					new DataPoints(vars, inputData).toBreakpointValues());
 			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
@@ -195,6 +192,10 @@ public class GradientBasedSearch {
 
 			TestInputData newInput = null;
 			while (newInput == null) {
+				if(current - start > this.settings.getEachGradientSearchExecutionTimeOut()){
+					break;
+				}
+				
 				try {
 					newInput = newSuite.getInputData().values().iterator().next();
 				} catch (Exception e) {
@@ -265,21 +266,21 @@ public class GradientBasedSearch {
 	}
 
 	private IntermediateSearchResult doDoubleSearch(double[] bestValue, double bestFitness, int index,
-			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
+			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, long start) {
 		double minimumUnit = 0.001;
 		double factor = 2;
 
 		return doSearch(new NumericMutator(), bestValue, bestFitness, index, vars, list, branch, decisionCDGNode,
-				minimumUnit, factor);
+				minimumUnit, factor, start);
 	}
 
 	private IntermediateSearchResult doIntegerSearch(double[] bestValue, double bestFitness, int index,
-			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode) {
+			List<ExecVar> vars, List<TestInputData> list, Branch branch, CDGNode decisionCDGNode, long start) {
 		double minimumUnit = 1;
 		double factor = 2;
 
 		return doSearch(new NumericMutator(), bestValue, bestFitness, index, vars, list, branch, decisionCDGNode,
-				minimumUnit, factor);
+				minimumUnit, factor, start);
 	}
 
 	private TestInputData findClosestInput(List<TestInputData> otherInputs, CDGNode decisionCDGNode, Branch branch) {
