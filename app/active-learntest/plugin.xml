@@ -28,6 +28,11 @@
             id="active-learntest.plugin.commands.hillclimbing"
             name="Test with hill-climbing search">
       </command>
+      <command
+            defaultHandler="learntest.activelearning.plugin.handler.BatchTestHandler"
+            id="active-learntest.plugin.commands.batchtest"
+            name="Batch Test">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -39,6 +44,11 @@
             <command
                   commandId="active-learntest.plugin.commands.gentest"
                   label="Generate Test"
+                  style="push">
+            </command>
+            <command
+                  commandId="active-learntest.plugin.commands.batchtest"
+                  label="Batch Test"
                   style="push">
             </command>
             <command

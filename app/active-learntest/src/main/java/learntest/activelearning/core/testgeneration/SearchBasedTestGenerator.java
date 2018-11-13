@@ -12,6 +12,7 @@ import learntest.activelearning.core.testgeneration.localsearch.GradientBasedSea
 import microbat.instrumentation.cfgcoverage.graph.Branch;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDG;
 import microbat.instrumentation.cfgcoverage.graph.cdg.CDGNode;
+import sav.settings.SAVTimer;
 import sav.strategies.dto.AppJavaClassPath;
 
 public class SearchBasedTestGenerator extends TestGenerator{
@@ -30,12 +31,22 @@ public class SearchBasedTestGenerator extends TestGenerator{
 	public void cover(CDG cdg) {
 		this.branchInputMap = testsuite.getBranchInputMap();
 		for (CDGNode node : cdg.getStartNodes()) {
+			long executionTime = SAVTimer.getExecutionTime();
+			if(executionTime > this.settings.getMethodExecTimeout()){
+				break;
+			}
+			
 			traverseLearning(node);
 		}
 		
 	}
 
 	private void traverseLearning(CDGNode branchCDGNode) {
+		long executionTime = SAVTimer.getExecutionTime();
+		if(executionTime > this.settings.getMethodExecTimeout()){
+			return;
+		}
+		
 		GradientBasedSearch searchStategy = new GradientBasedSearch(this.branchInputMap, this.testsuite, this.tester,
 			this.appClasspath, this.targetMethod, this.settings, this.cdg);
 		

@@ -17,6 +17,7 @@ public class LearntestSettings {
 	private int testingIteration = 10;
 	private boolean coverageRunSocket = false;
 	private int learnArraySizeThreshold = 10;
+	private long eachGradientSearchExecutionTimeOut = 60000; //ms
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
@@ -116,6 +117,14 @@ public class LearntestSettings {
 
 	public void setLearnArraySizeThreshold(int learnArraySizeThreshold) {
 		this.learnArraySizeThreshold = learnArraySizeThreshold;
+	}
+
+	public long getEachGradientSearchExecutionTimeOut() {
+		return eachGradientSearchExecutionTimeOut;
+	}
+
+	public void setEachGradientSearchExecutionTimeOut(long branchExecutionTimeOut) {
+		this.eachGradientSearchExecutionTimeOut = branchExecutionTimeOut;
 	}
 	
 	
