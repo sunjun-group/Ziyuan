@@ -86,6 +86,10 @@ public class BatchTestHandler extends AbstractHandler implements IHandler {
 			return;
 		}
 		for (MethodInfo method : validMethods) {
+			System.out.println("******************");
+			System.out.println(method);
+			System.out.println("******************");
+			
 			learntestSettings.setInitRandomTestNumber(100);
 			SearchBasedLearnTest learntest = new SearchBasedLearnTest();
 			try {

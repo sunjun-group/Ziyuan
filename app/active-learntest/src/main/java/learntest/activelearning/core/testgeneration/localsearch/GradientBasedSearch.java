@@ -137,6 +137,7 @@ public class GradientBasedSearch {
 				newInput = newSuite.getInputData().values().iterator().next();
 			} catch (Exception e) {
 				e.printStackTrace();
+				break;
 			}
 		}
 
@@ -210,6 +211,7 @@ public class GradientBasedSearch {
 					newInput = newSuite.getInputData().values().iterator().next();
 				} catch (Exception e) {
 					e.printStackTrace();
+					break;
 				}
 			}
 
@@ -261,10 +263,12 @@ public class GradientBasedSearch {
 		boolean rightVisited = false;
 		for (TestInputData input : visitedInputs) {
 			double value = input.getDoubleVector()[index];
-			if (value == newValue - minimunUnit) {
+			double left = Double.parseDouble(String.format("%.3f", newValue - minimunUnit));
+			double right = Double.parseDouble(String.format("%.3f", newValue + minimunUnit));
+			if (value == left) {
 				leftVisited = true;
 			}
-			else if(value == newValue + minimunUnit){
+			else if(value == right){
 				rightVisited = true;
 			}
 			

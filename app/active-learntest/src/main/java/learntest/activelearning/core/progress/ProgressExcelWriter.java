@@ -27,6 +27,7 @@ public class ProgressExcelWriter extends SimpleExcelWriter<ProgressRow>{
 		for(int i=0; i < rowData.getProgress().length; i++) {
 			addCell(row, i+1, rowData.getProgress()[i]);
 		}
+		addCell(row, rowData.getProgress().length+1, rowData.getErrorMessage());
 		writeWorkbook();
 	}
 
