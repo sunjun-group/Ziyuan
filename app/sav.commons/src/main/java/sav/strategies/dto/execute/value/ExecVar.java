@@ -24,6 +24,7 @@ public class ExecVar implements Var {
 	private String valueType;
 	private double defaultValue = 0.0;
 	private List<ExecVar> children = new ArrayList<>();
+	private boolean isModifiable = true;
 
 	public ExecVar(String varId, String valueType) {
 		this.varId = varId;
@@ -153,5 +154,13 @@ public class ExecVar implements Var {
 	
 	public String getLengthChildId() {
 		return getChildId(ArrayValue.LENGTH_CODE);
+	}
+
+	public boolean isModifiable() {
+		return isModifiable;
+	}
+
+	public void setModifiable(boolean isModifiable) {
+		this.isModifiable = isModifiable;
 	}
 }

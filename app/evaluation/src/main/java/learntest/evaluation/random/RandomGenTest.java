@@ -77,7 +77,8 @@ public class RandomGenTest {
 						log.info(String.format("Run method: %s, round %s", targetMethod.toString(), i));
 						long startTest = System.currentTimeMillis();
 						UnitTestSuite testsuite = tester.createRandomTest(targetMethod, settings, appClasspath);
-						List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(), settings.getLearnArraySizeThreshold())
+						List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(), settings.getLearnArraySizeThreshold(),
+																	settings.getReceiverFieldRetrieveLevel())
 											.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
 						LearnTestContext.setDatasetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
 						testsuite.setLearnDataMapper(LearnTestContext.getLearnDataSetMapper());

@@ -102,7 +102,9 @@ public class LearnDataSetMapper {
 				defaultPaddingValue = PrimitiveValue.valueOf(var, 0);
 				defaultPaddingValues.put(varId, defaultPaddingValue);
 			}
-			dp[pos] = new DpAttribute(defaultPaddingValue, true, paddingController, pos);
+			DpAttribute dpAttribute = new DpAttribute(defaultPaddingValue, true, paddingController, pos);
+			dpAttribute.setModifiable(var.isModifiable());
+			dp[pos] = dpAttribute;
 			pos++;
 		}
 	}
@@ -305,7 +307,7 @@ public class LearnDataSetMapper {
 				if(null != index){
 					DpAttribute dpAttribute = dp[index];
 					dpAttribute.setValue(PrimitiveValue.valueOf(var, varValue));
-					dpAttribute.setModifiable(true);
+					dpAttribute.setModifiable(var.isModifiable());
 					dpAttribute.setPadding(false);
 				}
 			}

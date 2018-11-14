@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +28,7 @@ import learntest.core.commons.utils.DomainUtils;
 import learntest.core.gentest.generator.FixLengthArrayValueGenerator.LocationHolderExecValue;
 import sav.common.core.SavException;
 import sav.common.core.utils.ArrayTypeUtils;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.BreakPoint.Variable.VarScope;
 import sav.strategies.dto.execute.value.ArrayValue;
@@ -235,7 +235,7 @@ public class TestSeqGenerator {
 					fieldClazz = lookupFieldAndGetType(clazz, fieldName);
 					updateClassTypeMap(fieldId, fieldClazz);
 				}
-				Method setter = findSetMethod(clazz, fieldName, fieldClazz);
+				Method setter = ClassUtils.findPublicSetterMethod(clazz, fieldName, fieldClazz);
 				firstVarIdx = appendVariables(value, fieldValue, sequence, failToSetVars, varMap,
 						firstVarIdx);
 				ISelectedVariable field = varMap.get(fieldId);
@@ -325,15 +325,6 @@ public class TestSeqGenerator {
 
 	private void addFailToSetVars(ExecValue value, Set<String> failToSetVars) {
 		failToSetVars.add(value.getVarId());
-	}
-
-	private Method findSetMethod(Class<?> clazz, String fieldName, Class<?> fieldType) throws Exception {
-		String methodName = new StringBuilder("set").append(StringUtils.capitalize(fieldName)).toString();
-		Method setter = clazz.getMethod(methodName, fieldType);
-		if (!Modifier.isPublic(setter.getModifiers())) {
-			throw new SavException("Setter method [%s] is invisible!", methodName);
-		}
-		return setter;
 	}
 
 	private Class<?> lookupFieldAndGetType(Class<?> clazz, String fieldName) {
