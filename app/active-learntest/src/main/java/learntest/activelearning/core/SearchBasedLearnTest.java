@@ -61,7 +61,6 @@ public class SearchBasedLearnTest {
 		
 		CoverageTimer timer = new CoverageTimer(testsuite.getBranchInputMap(), settings.getMethodExecTimeout(), 10000);
 		Thread t = new Thread(timer);
-		t.start();
 		
 		try {
 			List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(),
@@ -78,6 +77,8 @@ public class SearchBasedLearnTest {
 			CDGConstructor cdgConstructor = new CDGConstructor();
 			CDG cdg = cdgConstructor.construct(testsuite.getCoverageGraph());
 			
+			t.start();
+			
 			SearchBasedTestGenerator generator = new SearchBasedTestGenerator(tester, testsuite, appClasspath, targetMethod,
 					settings, cdg);
 			generator.cover(cdg);
@@ -91,8 +92,6 @@ public class SearchBasedLearnTest {
 			e.printStackTrace();
 			exceptionMessage = e.getMessage();
 		}
-
-
 
 		List<Double> progressCoverages = timer.getProgressCoverages();
 		List<Integer> tcsNum = timer.getTcsNum();

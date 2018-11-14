@@ -55,6 +55,7 @@ public class TestableMethodFilter implements IMethodFilter {
 	List<String> noPrimitiveVars = new LinkedList<>();
 	List<String> allPrimitiveVars = new LinkedList<>();
 	List<String> somePrimitiveVars = new LinkedList<>();
+	List<String> interfaceParams = new LinkedList<>();
 	
 	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
 		if(md.parameters().isEmpty() && !hasField(cu)) {
@@ -76,12 +77,30 @@ public class TestableMethodFilter implements IMethodFilter {
 		else if (!checkPrimitiveType(md, cu)){
 			return false;
 		}
+		else if(containsInterfaceType(md, cu)){
+			interfaceParams.add(md.getName().toString());
+			return false;
+		}
 //		if (CollectionUtils.isEmpty(md.getBody().statements())) {
 //			emptyBody.add(md.getName().toString());
 //			return false;
 //		}
 		ok.add(md.getName().toString());
 		return true;
+	}
+
+	private boolean containsInterfaceType(MethodDeclaration md, CompilationUnit cu) {
+		System.currentTimeMillis();
+		for(Object obj: md.parameters()){
+			if(obj instanceof SingleVariableDeclaration){
+				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
+				Type t = svd.getType();
+				if(t.resolveBinding().isInterface()){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private boolean checkPrimitiveType(MethodDeclaration md, CompilationUnit cu){
