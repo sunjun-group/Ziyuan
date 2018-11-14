@@ -36,10 +36,16 @@ import sav.common.core.utils.Randomness;
 public class ExtObjectValueGenerator extends ObjectValueGenerator {
 	private Logger log = LoggerFactory.getLogger(ExtObjectValueGenerator.class);
 	private List<Method> methodcalls;
+	private int maxExtMethodCall = OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS;
 	
 	public ExtObjectValueGenerator(IType type, List<String> methodSigns) {
+		this(type, methodSigns, OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS);
+	}
+	
+	public ExtObjectValueGenerator(IType type, List<String> methodSigns, int maxExtMethodCall) {
 		super(type);
 		initMethodCalls(methodSigns);
+		this.maxExtMethodCall = maxExtMethodCall;
 	}
 
 	private void initMethodCalls(List<String> methodSigns) {
@@ -50,7 +56,7 @@ public class ExtObjectValueGenerator extends ObjectValueGenerator {
 			initMethods = MethodUtils.lookupMethods(type.getRawType(), methodSigns);
 		}
 		methodcalls = new ArrayList<Method>(
-				Randomness.randomSequence(initMethods, OBJECT_VALUE_GENERATOR_MAX_SELECTED_METHODS));
+				Randomness.randomSequence(initMethods, maxExtMethodCall));
 		filterDuplicateSetMethod(methodcalls);
 	}
 
