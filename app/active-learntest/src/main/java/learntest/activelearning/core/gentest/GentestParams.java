@@ -23,7 +23,8 @@ public class GentestParams {
 	private String targetClassName;
 	private int numberOfTcs;
 	private int testPerQuery;
-	private long methodExecTimeout;
+	private long targetMethodExecTimeout;
+	private long extMethodExecTimeout;
 
 	/* for generated tests printer */
 	private PrinterParams printerParams = new PrinterParams();
@@ -98,12 +99,20 @@ public class GentestParams {
 		return printerParams;
 	}
 
-	public long getMethodExecTimeout() {
-		return methodExecTimeout;
+	public long getTargetMethodExecTimeout() {
+		return targetMethodExecTimeout;
 	}
 
-	public void setMethodExecTimeout(long methodExecTimeout) {
-		this.methodExecTimeout = methodExecTimeout;
+	public void setTargetMethodExecTimeout(long targetMethodExecTimeout) {
+		this.targetMethodExecTimeout = targetMethodExecTimeout;
+	}
+
+	public long getExtMethodExecTimeout() {
+		return extMethodExecTimeout;
+	}
+
+	public void setExtMethodExecTimeout(long extMethodExecTimeout) {
+		this.extMethodExecTimeout = extMethodExecTimeout;
 	}
 
 	public boolean extractTestcaseSequenceMap() {

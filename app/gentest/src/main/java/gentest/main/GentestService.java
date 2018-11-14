@@ -7,12 +7,12 @@ import sav.common.core.utils.CachePoolExecutionTimer;
 public class GentestService {
 	
 	public static void cleanupThread() {
-		CachePoolExecutionTimer executionTimer = VariableRuntimeExecutor.executionTimer;
+		CachePoolExecutionTimer executionTimer = VariableRuntimeExecutor.getExecutionTimer();
 		executionTimer.cleanUpThreads();
 	}
 	
 	public static void reset() {
-		VariableRuntimeExecutor.executionTimer.shutdown();
+		VariableRuntimeExecutor.getExecutionTimer().shutdown();
 		SubTypesScanner.getInstance().clear();
 	}
 }

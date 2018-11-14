@@ -133,12 +133,16 @@ public class LearnDataSetMapper {
 	public DpAttribute[] getDatapoint(BreakpointValue bkpValue) {
 		DpAttribute[] dp = initDpAttributes();
 		for (ExecValue value : bkpValue.getChildren()) {
-			fillDatapoint(value, dp, posMap.get(value.getVarId()));
+			fillDatapoint(value, dp, posMap.get(value.getVarId()), -1);
 		}
 		return dp;
 	}
 	
-	private int fillDatapoint(ExecValue execVal, DpAttribute[] dp, int spos) {
+	private int fillDatapoint(ExecValue execVal, DpAttribute[] dp, Integer spos, int curPos) {
+		if (spos == null) {
+			log.warn(String.format("Cannot find var %s in methodInputs vars", execVal.getVarId()));
+			return curPos;
+		}
 		ExecVarType type = execVal.getType();
 		int pos = spos;
 		DpAttribute paddingCond = null;
@@ -183,7 +187,7 @@ public class LearnDataSetMapper {
 					} else {
 						eleValue = ele.getValue();
 					}
-					pos = fillDatapoint(eleValue, dp, posMap.get(ele.getValue().getVarId()));
+					pos = fillDatapoint(eleValue, dp, posMap.get(ele.getValue().getVarId()), pos);
 				}
 				paddingCond = lengthAttr;
 			} else {
@@ -197,7 +201,7 @@ public class LearnDataSetMapper {
 			} else {
 				isNullAttr.setBoolean(false);
 				for (ExecValue fieldValue : refValue.getChildren()) {
-					pos = fillDatapoint(fieldValue, dp, posMap.get(fieldValue.getVarId()));
+					pos = fillDatapoint(fieldValue, dp, posMap.get(fieldValue.getVarId()), pos);
 				}
 			}
 		} else {

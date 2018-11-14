@@ -183,6 +183,7 @@ public class Tester {
 			sav.strategies.dto.execute.value.ArrayValue arrValue = new sav.strategies.dto.execute.value.ArrayValue(value.getVarID(), 
 					isNull);
 			execValue = arrValue;
+			arrValue.setContentType(((ArrayValue) value).getComponentType());
 			if (!isNull) {
 				int maxIdx = -1;
 				for (VarValue child : value.getChildren()) {
@@ -233,7 +234,7 @@ public class Tester {
 	public GentestParams initGentestParams(MethodInfo targetMethod, LearntestSettings settings,
 			AppJavaClassPath appClasspath) {
 		GentestParams params = new GentestParams();
-		params.setMethodExecTimeout(settings.getMethodExecTimeout());
+		params.setTargetMethodExecTimeout(settings.getGentestTargetMethodTimeout());
 		params.setMethodSignature(targetMethod.getMethodSignature());
 		params.setTargetClassName(targetMethod.getClassName());
 		params.setNumberOfTcs(settings.getInitRandomTestNumber());
