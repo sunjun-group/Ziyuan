@@ -79,11 +79,12 @@ public class GradientBasedSearch {
 				if(executionTime > this.settings.getMethodExecTimeout()){
 					break;
 				}
-				
-
 				IntermediateSearchResult iResult = null;
 
 				ExecVar var = vars.get(index);
+				if (!var.isModifiable()) {
+					continue;
+				}
 				switch (var.getType()) {
 				case INTEGER:
 				case BYTE:

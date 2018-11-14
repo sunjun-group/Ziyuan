@@ -53,6 +53,13 @@ public class LearnDataSetMapper {
 		for (ExecVar var : methodInputs) {
 			initDatapoint(dp, var, null);
 		}
+		for (DpAttribute att : dp) {
+			if (att.isModifiable()) {
+				ExecVar var = varMap.get(att.getValue().getVarId());
+				att.setModifiable(var.isModifiable());
+			}
+			
+		}
 		return dp;
 	}
 	
@@ -103,7 +110,6 @@ public class LearnDataSetMapper {
 				defaultPaddingValues.put(varId, defaultPaddingValue);
 			}
 			DpAttribute dpAttribute = new DpAttribute(defaultPaddingValue, true, paddingController, pos);
-			dpAttribute.setModifiable(var.isModifiable());
 			dp[pos] = dpAttribute;
 			pos++;
 		}

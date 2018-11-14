@@ -122,7 +122,9 @@ public class TestInputData {
 	public List<ExecVar> getLearningVars() {
 		List<ExecVar> vars = new ArrayList<>(getDataPoint().length);
 		for (DpAttribute att : getDataPoint()) {
-			vars.add(new ExecVar(att.getValue().getVarId(), att.getValue().getType()));
+			ExecVar var = new ExecVar(att.getValue().getVarId(), att.getValue().getType());
+			var.setModifiable(att.isModifiable());
+			vars.add(var);
 		}
 		return vars;
 	}
