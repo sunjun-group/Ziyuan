@@ -10,6 +10,7 @@ package gentest.core.value.generator;
 
 import static sav.common.core.utils.CollectionUtils.listOf;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ import gentest.core.data.type.IType;
 import gentest.core.data.variable.GeneratedVariable;
 import gentest.core.value.store.iface.ITypeInitializerStore;
 import gentest.core.value.store.iface.ITypeMethodCallStore;
+import gentest.main.GentestConstants;
+import gentest.utils.SignatureUtils;
 import sav.common.core.Pair;
 import sav.common.core.SavException;
 import sav.common.core.utils.Randomness;
@@ -64,10 +67,20 @@ public abstract class ValueGenerator {
 					typeDef.b);
 		}
 		// comment following condition will call method multiple times
-		if (isReceiver || ignoreMethodCalls.contains(rawType)) {
+		if (ignoreMethodCalls.contains(rawType)) {
 			return new ObjectValueGenerator(type);
+		} else if (isReceiver) {
+			/* select simple setter methods */
+			List<String> setterMethods = new ArrayList<>();
+			for (Method method : type.getRawType().getMethods()) {
+				if (method.getName().startsWith("set")) {
+					setterMethods.add(SignatureUtils.createMethodNameSign(method));
+				}
+			}
+			return new ExtObjectValueGenerator(type, setterMethods, GentestConstants.RECEIVER_EXT_METHODS_LIMIT);
+		} else {
+			return new ExtObjectValueGenerator(type, null);
 		}
-		return new ExtObjectValueGenerator(type, null);
 	}
 
 	private static Pair<Class<?>, List<String>> loadSpecialObjDescription(Class<?> rawType) {
