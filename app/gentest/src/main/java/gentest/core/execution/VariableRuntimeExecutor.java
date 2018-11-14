@@ -42,11 +42,18 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	private static Logger log = LoggerFactory.getLogger(VariableRuntimeExecutor.class);
 	@Inject @Named("methodExecTimeout")
 	static long methodExecTimeout;
+	private long extMethodExecTimeout = 20l;
 	protected RuntimeData data;
 	protected Boolean successful;
-	public static CachePoolExecutionTimer executionTimer = (CachePoolExecutionTimer) ExecutionTimer
-			.getCachePoolExecutionTimer(methodExecTimeout);
+	private static CachePoolExecutionTimer executionTimer;
 
+	public static CachePoolExecutionTimer getExecutionTimer() {
+		if (executionTimer == null) {
+			executionTimer = (CachePoolExecutionTimer) ExecutionTimer.getCachePoolExecutionTimer(methodExecTimeout);
+		}
+		return executionTimer;
+	}
+	
 	public VariableRuntimeExecutor() {
 		data = new RuntimeData();
 	}
@@ -80,6 +87,9 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	public boolean execute(List<Statement> stmts) {
 		for (Statement stmt : stmts) {
 			execute(stmt);
+			if (!isSuccessful()) {
+				return successful;
+			}
 		}
 		return successful;
 	}
@@ -172,6 +182,10 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 	
 	@Override
 	public boolean visitRmethod(Rmethod stmt) {
+		return visitRmethod(stmt, extMethodExecTimeout);
+	}
+
+	protected boolean visitRmethod(Rmethod stmt, long timeout) {
 		final List<Object> inputs = new ArrayList<Object>(stmt.getInVarIds().length);
 		for (int var : stmt.getInVarIds()) {
 			inputs.add(getExecData(var));
@@ -181,7 +195,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		try {
 			final Object obj = getExecData(stmt.getReceiverVarId());
 			final Method method = stmt.getMethod();
-			invokeMethodByExecutionTimer(inputs, value, obj, method);			
+			invokeMethodByExecutionTimer(inputs, value, obj, method, timeout);			
 			if (isSuccessful()) {
 				// update data
 				for (int i = 0; i < stmt.getInVarIds().length; i++) {
@@ -198,9 +212,9 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 		return successful;
 	}
 	
-	private void invokeMethodByExecutionTimer(final List<Object> inputs, final ReturnValue value, final Object obj,
-			final Method method) throws Exception {
-		boolean success = executionTimer.run(new Runnable() {
+	protected void invokeMethodByExecutionTimer(final List<Object> inputs, final ReturnValue value, final Object obj,
+			final Method method, long timeout) throws Exception {
+		boolean success = getExecutionTimer().run(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -210,7 +224,7 @@ public class VariableRuntimeExecutor implements StatementVisitor {
 					onFail();
 				}
 			}
-		});
+		}, timeout);
 		if (!success) {
 			onFail();
 		}

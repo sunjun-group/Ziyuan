@@ -86,7 +86,7 @@ public class TestGenerator {
 		Class<?> clazz = loadClass(params.getTargetClassName());
 		RandomTraceGentestBuilder gentest = new RandomTraceGentestBuilder(params.getNumberOfTcs())
 										.classLoader(prjClassLoader)
-										.methodExecTimeout(params.getMethodExecTimeout())
+										.methodExecTimeout(params.getTargetMethodExecTimeout())
 										.queryMaxLength(params.getQueryMaxLength())
 										.testPerQuery(params.getTestPerQuery())
 										.forClass(clazz)

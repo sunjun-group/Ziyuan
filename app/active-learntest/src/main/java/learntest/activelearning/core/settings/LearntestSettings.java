@@ -18,6 +18,8 @@ public class LearntestSettings {
 	private boolean coverageRunSocket = false;
 	private int learnArraySizeThreshold = 10;
 	private long eachGradientSearchExecutionTimeOut = 60000; //ms
+	private long gentestTargetMethodTimeout = 200l;
+	private long gentestExtMethodTimeout = 20l;
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
@@ -126,7 +128,21 @@ public class LearntestSettings {
 	public void setEachGradientSearchExecutionTimeOut(long branchExecutionTimeOut) {
 		this.eachGradientSearchExecutionTimeOut = branchExecutionTimeOut;
 	}
-	
-	
+
+	public long getGentestTargetMethodTimeout() {
+		return gentestTargetMethodTimeout;
+	}
+
+	public void setGentestTargetMethodTimeout(long gentestTargetMethodTimeout) {
+		this.gentestTargetMethodTimeout = gentestTargetMethodTimeout;
+	}
+
+	public long getGentestExtMethodTimeout() {
+		return gentestExtMethodTimeout;
+	}
+
+	public void setGentestExtMethodTimeout(long gentestExtMethodTimeout) {
+		this.gentestExtMethodTimeout = gentestExtMethodTimeout;
+	}
 	
 }

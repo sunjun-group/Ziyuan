@@ -234,7 +234,7 @@ public class Tester {
 	public GentestParams initGentestParams(MethodInfo targetMethod, LearntestSettings settings,
 			AppJavaClassPath appClasspath) {
 		GentestParams params = new GentestParams();
-		params.setMethodExecTimeout(settings.getMethodExecTimeout());
+		params.setTargetMethodExecTimeout(settings.getGentestTargetMethodTimeout());
 		params.setMethodSignature(targetMethod.getMethodSignature());
 		params.setTargetClassName(targetMethod.getClassName());
 		params.setNumberOfTcs(settings.getInitRandomTestNumber());

@@ -33,7 +33,7 @@ public class RuntimeExecutor extends VariableRuntimeExecutor implements Statemen
 			}
 		}
 		try {
-			rmethod.accept(this);
+			visitRmethod(rmethod, VariableRuntimeExecutor.methodExecTimeout);
 		} catch (Throwable e) {
 			log.debug(e.getMessage());
 			successful = false;
