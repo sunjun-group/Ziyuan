@@ -10,12 +10,15 @@ package sav.common.core.utils;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sav.common.core.Constants;
 import sav.common.core.Pair;
@@ -26,6 +29,7 @@ import sav.common.core.Pair;
  *
  */
 public class ClassUtils {
+	private static final Logger log = LoggerFactory.getLogger(ClassUtils.class);
 	private ClassUtils() {}
 
 	public static String getCanonicalName(String pkg, String clName) {
@@ -199,4 +203,17 @@ public class ClassUtils {
 				, clazz.getName()));
 	}
 
+	public static Method findPublicSetterMethod(Class<?> clazz, String fieldName, Class<?> fieldType) {
+		String methodName = new StringBuilder("set").append(org.apache.commons.lang.StringUtils.capitalize(fieldName)).toString();
+		try {
+			Method setter = clazz.getMethod(methodName, fieldType);
+			if (!Modifier.isPublic(setter.getModifiers())) {
+				log.debug(String.format("Setter method [%s] is invisible!", methodName));
+				return null;
+			}
+			return setter;
+		} catch(Exception ex) {
+			return null;
+		}
+	}
 }

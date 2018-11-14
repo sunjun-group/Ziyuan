@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import gentest.core.commons.utils.MethodUtils;
 import microbat.util.PrimitiveUtils;
 import sav.common.core.SavRtException;
+import sav.common.core.utils.ClassUtils;
 import sav.common.core.utils.CollectionUtils;
 import sav.strategies.dto.AppJavaClassPath;
 import sav.strategies.dto.execute.value.ExecValue;
@@ -25,15 +26,18 @@ import sav.strategies.dto.execute.value.ExecVarType;
 import sav.strategies.dto.execute.value.ReferenceValue;
 
 public class LearningVarCollector {
+	public static final String RECEIVER_VAR_ID = "this";
 	private Logger log = LoggerFactory.getLogger(LearningVarCollector.class);
 	private int variableLayer;
 	private int arrSizeThreshold;
 	private Map<String, String> varIdTypeMap = new HashMap<>();
 	private ClassLoader classLoader;
+	private int receiverFieldLayer;
 	
-	public LearningVarCollector(int variableLayer, int arrSizeThreshold) {
+	public LearningVarCollector(int variableLayer, int arrSizeThreshold, int receiverFieldLayer) {
 		this.arrSizeThreshold = arrSizeThreshold;
 		this.variableLayer = variableLayer;
+		this.receiverFieldLayer = receiverFieldLayer;
 	}
 	
 	public List<ExecVar> collectLearningVars(AppJavaClassPath appClasspath, MethodInfo methodInfo,
@@ -43,17 +47,47 @@ public class LearningVarCollector {
 		try {
 			initVarIdTypeMap(firstInputData);
 			Class<?> clazz = classLoader.loadClass(methodInfo.getClassName());
+			/* receiver */
+			ExecVar receiverVar = appendVariable(clazz, RECEIVER_VAR_ID, null, variableLayer, true);
+			for (ExecVar var : receiverVar.getChildren()) {
+				if (var.getVarId().equals(receiverVar.getIsNullChildId())) {
+					var.setModifiable(false); // not necessary to set receiver to be null
+					break;
+				}
+			}
+			vars.add(receiverVar);
+			/* method params */
 			Method method = MethodUtils.findMethod(clazz, methodInfo.getMethodWithSignature());
 			int i = 0;
 			for (Class<?> paramType : method.getParameterTypes()) {
 				String varId = methodInfo.getParams().get(i++);
-				ExecVar execVar = appendVariable(paramType, varId, null, variableLayer);
+				ExecVar execVar = appendVariable(paramType, varId, null, variableLayer, true);
 				vars.add(execVar);
 			}
 		} catch (Throwable t) {
 			throw new SavRtException(t);
 		}
 		return vars;
+	}
+	
+	private List<Field> collectModifiableFields(Class<?> clazz, int maxLevel) {
+		List<Field> fields = new ArrayList<>();
+		collectModifiableFields(fields, clazz, maxLevel);
+		return fields;
+	}
+	
+	private void collectModifiableFields(List<Field> fields, Class<?> clazz, int level) {
+		if (level <= 0) {
+			return;
+		}
+		for (Field field : clazz.getDeclaredFields()) {
+			if (!Modifier.isFinal(field.getModifiers())) {
+				fields.add(field);
+			}
+		}
+		if (!clazz.equals(clazz.getSuperclass())) {
+			collectModifiableFields(fields, clazz.getSuperclass(), level - 1);
+		}
 	}
 	
 	private void initVarIdTypeMap(Collection<TestInputData> firstInputData) {
@@ -71,7 +105,7 @@ public class LearningVarCollector {
 		}
 	}
 
-	private ExecVar appendVariable(Class<?> type, String varId, ExecVar parent, int retrieveLayer) {
+	private ExecVar appendVariable(Class<?> type, String varId, ExecVar parent, int retrieveLayer, boolean modifiable) {
 		if (retrieveLayer <= 0) {
 			return null;
 		}
@@ -79,19 +113,19 @@ public class LearningVarCollector {
 		try {
 			if (PrimitiveUtils.isString(type.getName())) {
 				var = new ExecVar(varId, ExecVarType.STRING);
-				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer);
-				appendVariable(int.class, var.getLengthChildId(), var, retrieveLayer);
+				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer, modifiable);
+				appendVariable(int.class, var.getLengthChildId(), var, retrieveLayer, modifiable);
 				for (int idx = 0; idx < arrSizeThreshold - 2; idx++) {
-					appendVariable(char.class, var.getStringCharId(idx), var, retrieveLayer);
+					appendVariable(char.class, var.getStringCharId(idx), var, retrieveLayer, modifiable);
 				}
 			} else if (PrimitiveUtils.isPrimitive(type.getName())) {
 				var = new ExecVar(varId, ExecVarType.primitiveTypeOf(type.getName()));
 			} else if (type.isArray()) {
 				var = new ExecVar(varId, ExecVarType.ARRAY);
-				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer);
-				appendVariable(int.class, var.getLengthChildId(), var, retrieveLayer);
+				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer, modifiable);
+				appendVariable(int.class, var.getLengthChildId(), var, retrieveLayer, modifiable);
 				for (int idx = 0; idx < arrSizeThreshold; idx++) {
-					appendVariable(type.getComponentType(), var.getElementId(idx), var, retrieveLayer - 1);
+					appendVariable(type.getComponentType(), var.getElementId(idx), var, retrieveLayer - 1, modifiable);
 				}
 			} else {
 				String runtimeClass = varIdTypeMap.get(varId);
@@ -100,11 +134,12 @@ public class LearningVarCollector {
 				}
 				// reference type
 				var = new ExecVar(varId, ExecVarType.REFERENCE);
-				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer);
-				for (Field field : type.getDeclaredFields()) {
-					if (!Modifier.isFinal(field.getModifiers())) {
-						appendVariable(field.getType(), getFieldId(varId, field.getName()), var, retrieveLayer - 1);
-					}
+				appendVariable(boolean.class, var.getIsNullChildId(), var, retrieveLayer, modifiable);
+				for (Field field : collectModifiableFields(type, 1)) {
+					boolean hasSetter = ClassUtils.findPublicSetterMethod(type, field.getName(),
+							field.getType()) != null;
+					appendVariable(field.getType(), getFieldId(varId, field.getName()), var, retrieveLayer - 1,
+							modifiable & hasSetter);
 				}
 			}
 			var.setValueType(type.getName());
@@ -115,6 +150,7 @@ public class LearningVarCollector {
 			e.printStackTrace();
 			log.debug(e.getMessage());
 		}
+		var.setModifiable(modifiable);
 		return var;
 	}
 }

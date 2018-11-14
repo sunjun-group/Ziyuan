@@ -46,8 +46,9 @@ public class NeuralActiveLearnTest {
 		if (testsuite == null) {
 			throw new SavRtException("Fail to generate random test!");
 		}
-		List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(), settings.getLearnArraySizeThreshold())
-					.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
+		List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(),
+								settings.getLearnArraySizeThreshold(), settings.getReceiverFieldRetrieveLevel())
+									.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
 		LearnTestContext.setDatasetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
 		testsuite.setLearnDataMapper(LearnTestContext.getLearnDataSetMapper());
 		for (TestInputData inputData : testsuite.getInputData().values()) {

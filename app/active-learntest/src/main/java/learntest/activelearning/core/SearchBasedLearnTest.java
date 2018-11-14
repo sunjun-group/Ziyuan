@@ -64,8 +64,8 @@ public class SearchBasedLearnTest {
 		
 		try {
 			List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(),
-					settings.getLearnArraySizeThreshold()).collectLearningVars(appClasspath, targetMethod,
-							testsuite.getInputData().values());
+					settings.getLearnArraySizeThreshold(), settings.getReceiverFieldRetrieveLevel())
+							.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
 			LearnTestContext.setDatasetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
 			testsuite.setLearnDataMapper(LearnTestContext.getLearnDataSetMapper());
 			for (TestInputData inputData : testsuite.getInputData().values()) {

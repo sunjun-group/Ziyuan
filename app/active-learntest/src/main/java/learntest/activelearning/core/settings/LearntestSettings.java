@@ -9,6 +9,7 @@ public class LearntestSettings {
 	private int initRandomTestNumber = 1;
 	private int inputValueExtractLevel = 3;
 	private int nnLearningThreshold = 3;
+	private int receiverFieldRetrieveLevel = 2; 
 	private int cfgExtensionLayer = 2;
 	private LearnTestResources resources;
 	private boolean runCoverageAsMethodInvoke = false;
@@ -144,5 +145,12 @@ public class LearntestSettings {
 	public void setGentestExtMethodTimeout(long gentestExtMethodTimeout) {
 		this.gentestExtMethodTimeout = gentestExtMethodTimeout;
 	}
-	
+
+	public int getReceiverFieldRetrieveLevel() {
+		return receiverFieldRetrieveLevel;
+	}
+
+	public void setReceiverFieldRetrieveLevel(int receiverFieldRetrieveLevel) {
+		this.receiverFieldRetrieveLevel = receiverFieldRetrieveLevel;
+	}
 }
