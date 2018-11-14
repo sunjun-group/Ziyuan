@@ -141,14 +141,16 @@ public class GradientBasedSearch {
 			}
 		}
 
-		if (!branch.isCovered()) {
-			double newFitness = newInput.getFitness(decisionCDGNode, branch, this.cdg);
-			if (newFitness < bestFitness) {
-				bestValue = newValue.clone();
-				bestFitness = newFitness;
+		if(newInput != null){
+			if (!branch.isCovered()) {
+				double newFitness = newInput.getFitness(decisionCDGNode, branch, this.cdg);
+				if (newFitness < bestFitness) {
+					bestValue = newValue.clone();
+					bestFitness = newFitness;
+				}
+			} else {
+				list.add(newInput);
 			}
-		} else {
-			list.add(newInput);
 		}
 
 		IntermediateSearchResult iResult = new IntermediateSearchResult(bestValue, bestFitness, list);
