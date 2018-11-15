@@ -47,6 +47,17 @@ public class TestGenerator {
 		return count/total;
 	}
 	
+	public int computeTestNumber() {
+		int total = 0;
+		for (Branch branch : this.branchInputMap.keySet()) {
+			if (this.branchInputMap.get(branch) != null && !this.branchInputMap.get(branch).isEmpty()) {
+				total += this.branchInputMap.get(branch).size();
+			}
+		}
+
+		return total;
+	}
+	
 	public List<Branch> getUncoveredBranches(){
 		List<Branch> uncoveredBranches = new ArrayList<>();
 		for(Branch branch: this.branchInputMap.keySet()){

@@ -32,7 +32,7 @@ public class SearchBasedTestGenerator extends TestGenerator{
 		this.branchInputMap = testsuite.getBranchInputMap();
 		for (CDGNode node : cdg.getStartNodes()) {
 			long executionTime = SAVTimer.getExecutionTime();
-			if(executionTime > this.settings.getMethodExecTimeout()){
+			if(executionTime > this.settings.getTestTotalTimeout()){
 				break;
 			}
 			
@@ -43,7 +43,7 @@ public class SearchBasedTestGenerator extends TestGenerator{
 
 	private void traverseLearning(CDGNode branchCDGNode) {
 		long executionTime = SAVTimer.getExecutionTime();
-		if(executionTime > this.settings.getMethodExecTimeout()){
+		if(executionTime > this.settings.getTestTotalTimeout()){
 			return;
 		}
 		

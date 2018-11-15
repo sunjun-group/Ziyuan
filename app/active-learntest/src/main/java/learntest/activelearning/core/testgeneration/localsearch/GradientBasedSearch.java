@@ -76,7 +76,7 @@ public class GradientBasedSearch {
 
 			for (int index = 0; index < vars.size(); index++) {
 				long executionTime = SAVTimer.getExecutionTime();
-				if(executionTime > this.settings.getMethodExecTimeout()){
+				if(executionTime > this.settings.getTestTotalTimeout()){
 					break;
 				}
 				IntermediateSearchResult iResult = null;
@@ -107,6 +107,10 @@ public class GradientBasedSearch {
 				if (iResult != null) {
 					bestFitness = iResult.bestFitness;
 					bestValue = iResult.bestValue;
+				}
+				
+				if(!list.isEmpty()){
+					break;
 				}
 
 			}
