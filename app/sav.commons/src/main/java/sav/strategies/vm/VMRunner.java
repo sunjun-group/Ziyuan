@@ -244,7 +244,7 @@ public class VMRunner {
 	}
 
 	private void logCommands(List<String> commands) {
-		System.out.println(StringUtils.join(commands, " "));
+//		System.out.println(StringUtils.join(commands, " "));
 		if (isLog && log.isDebugEnabled()) {
 			log.debug("start cmd..");
 			log.debug(StringUtils.join(commands, " "));

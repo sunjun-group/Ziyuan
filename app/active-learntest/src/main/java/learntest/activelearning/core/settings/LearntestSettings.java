@@ -21,6 +21,7 @@ public class LearntestSettings {
 	private long eachGradientSearchExecutionTimeOut = 60000; //ms
 	private long gentestTargetMethodTimeout = 200l;
 	private long gentestExtMethodTimeout = 20l;
+	private long testTotalTimeout = 90000;
 	
 	public LearntestSettings(LearnTestResources resources) {
 		this.resources = resources;
@@ -152,5 +153,13 @@ public class LearntestSettings {
 
 	public void setReceiverFieldRetrieveLevel(int receiverFieldRetrieveLevel) {
 		this.receiverFieldRetrieveLevel = receiverFieldRetrieveLevel;
+	}
+
+	public long getTestTotalTimeout() {
+		return testTotalTimeout;
+	}
+
+	public void setTestTotalTimeout(long testTotalTimeout) {
+		this.testTotalTimeout = testTotalTimeout;
 	}
 }

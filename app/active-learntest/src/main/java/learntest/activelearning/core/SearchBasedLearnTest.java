@@ -59,8 +59,11 @@ public class SearchBasedLearnTest {
 
 		String exceptionMessage = "";
 		
-		CoverageTimer timer = new CoverageTimer(testsuite.getBranchInputMap(), settings.getMethodExecTimeout(), 10000);
+		CoverageTimer timer = new CoverageTimer(testsuite.getBranchInputMap(), settings.getTestTotalTimeout() + 10000, 10000);
 		Thread t = new Thread(timer);
+		
+		List<Double> progressCoverages = new ArrayList<>();
+		List<Integer> tcsNum = new ArrayList<>();
 		
 		try {
 			List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(),
@@ -83,18 +86,23 @@ public class SearchBasedLearnTest {
 					settings, cdg);
 			generator.cover(cdg);
 			
+			progressCoverages = timer.getProgressCoverages();
+			tcsNum = timer.getTcsNum();
+			
 			double coverage = generator.computeTestCoverage();
-			System.out.println(coverage);
+			progressCoverages.add(coverage);
+			tcsNum.add(generator.computeTestNumber());
+			
 			List<Branch> uncovered = generator.getUncoveredBranches();
 			System.out.println(uncovered);
-
+			System.out.println(coverage);
 		} catch (Exception e) {
 			e.printStackTrace();
 			exceptionMessage = e.getMessage();
 		}
 
-		List<Double> progressCoverages = timer.getProgressCoverages();
-		List<Integer> tcsNum = timer.getTcsNum();
+		
+		
 		
 		System.out.println("Total tcs: " + tcsNum);
 		ProgressExcelWriter coverageWriter = new ProgressExcelWriter(new File("E:/linyun/coverage_report.xlsx"));

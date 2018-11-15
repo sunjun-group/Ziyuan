@@ -11,12 +11,12 @@ import sav.settings.SAVTimer;
 
 public class CoverageTimer implements Runnable {
 
-	private Map<Branch, List<TestInputData>> branchInputMap = new HashMap<>();
+	private volatile Map<Branch, List<TestInputData>> branchInputMap = new HashMap<>();
 	private long timeout = 90000;
 	private long interval = 10000;
 
-	private List<Double> progressCoverages = new ArrayList<>();
-	private List<Integer> tcsNum = new ArrayList<>();
+	private volatile List<Double> progressCoverages = new ArrayList<>();
+	private volatile List<Integer> tcsNum = new ArrayList<>();
 
 	
 	public CoverageTimer(Map<Branch, List<TestInputData>> branchInputMap, long timeout, long interval) {
@@ -44,6 +44,11 @@ public class CoverageTimer implements Runnable {
 
 			executionTime = SAVTimer.getExecutionTime();
 		}
+		
+		double coverage = computeTestCoverage();
+		int num = computeTestNumber();
+		getProgressCoverages().add(coverage);
+		getTcsNum().add(num);
 
 	}
 
