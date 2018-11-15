@@ -16,13 +16,18 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
@@ -60,6 +65,7 @@ public class TestableMethodFilter implements IMethodFilter {
 	List<String> allPrimitiveVars = new LinkedList<>();
 	List<String> somePrimitiveVars = new LinkedList<>();
 	List<String> interfaceParams = new LinkedList<>();
+	List<String> callMethodInCondition = new LinkedList<>();
 	
 	public boolean isValid(CompilationUnit cu, MethodDeclaration md) {
 		if(md.parameters().isEmpty() && !hasField(cu)) {
@@ -90,12 +96,69 @@ public class TestableMethodFilter implements IMethodFilter {
 			interfaceParams.add(md.getName().toString());
 			return false;
 		}
+		else if(!callMethodInCondition(md, cu)){
+			callMethodInCondition.add(md.getName().toString());
+//			return false;
+		}
 //		if (CollectionUtils.isEmpty(md.getBody().statements())) {
 //			emptyBody.add(md.getName().toString());
 //			return false;
 //		}
 		ok.add(md.getName().toString());
 		return true;
+	}
+
+	private boolean callMethodInCondition(MethodDeclaration md, CompilationUnit cu) {
+		MethodCallConditionVisitor visitor = new MethodCallConditionVisitor(md);
+		md.accept(visitor);
+		return visitor.yes;
+	}
+	
+	class MethodCallConditionVisitor extends ASTVisitor{
+		public boolean yes = false;
+		public MethodDeclaration method;
+		
+		public MethodCallConditionVisitor(MethodDeclaration method) {
+			super();
+			this.method = method;
+		}
+
+		public boolean visit(MethodInvocation invocation){
+			if(yes) return false;
+			
+			ASTNode ifState = null;
+			ASTNode node = invocation;
+			while(node != null && !node.equals(method)){
+				if(node instanceof IfStatement){
+					ifState = node;
+				}
+				else if(node instanceof ForStatement){
+					ifState = node;
+				}
+				node = node.getParent();
+			}
+			
+			Expression expr = null;
+			if(ifState != null && ifState instanceof IfStatement){
+				expr = ((IfStatement)ifState).getExpression();
+			}
+			else if(ifState != null && ifState instanceof ForStatement){
+				expr = ((ForStatement)ifState).getExpression();
+			}
+			
+			if(expr != null){
+				ASTNode n = invocation;
+				while(n != null && !n.equals(method)){
+					if(n.equals(expr)){
+						yes = true;
+						break;
+					}
+					n = n.getParent();
+				}
+			}
+			
+			return true;
+		}
 	}
 
 	private boolean containsInterfaceParam(MethodDeclaration md, CompilationUnit cu) {
