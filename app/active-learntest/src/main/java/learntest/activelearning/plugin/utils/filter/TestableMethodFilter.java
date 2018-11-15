@@ -16,15 +16,19 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.internal.core.SourceType;
 
-import sav.common.core.utils.CollectionUtils;
 import sav.common.core.utils.PrimitiveUtils;
 
 /**
@@ -77,7 +81,12 @@ public class TestableMethodFilter implements IMethodFilter {
 		else if (!checkPrimitiveType(md, cu)){
 			return false;
 		}
-		else if(containsInterfaceType(md, cu)){
+		else if(containsInterfaceParam(md, cu)){
+			interfaceParams.add(md.getName().toString());
+			return false;
+		}
+		else if(containsInterfaceField(md, cu)){
+//			System.out.println(md.getName());
 			interfaceParams.add(md.getName().toString());
 			return false;
 		}
@@ -89,8 +98,7 @@ public class TestableMethodFilter implements IMethodFilter {
 		return true;
 	}
 
-	private boolean containsInterfaceType(MethodDeclaration md, CompilationUnit cu) {
-		System.currentTimeMillis();
+	private boolean containsInterfaceParam(MethodDeclaration md, CompilationUnit cu) {
 		for(Object obj: md.parameters()){
 			if(obj instanceof SingleVariableDeclaration){
 				SingleVariableDeclaration svd = (SingleVariableDeclaration)obj;
@@ -101,6 +109,32 @@ public class TestableMethodFilter implements IMethodFilter {
 			}
 		}
 		return false;
+	}
+	
+	
+	class AccessedFieldVisitor extends ASTVisitor{
+		boolean containsInterface = false;
+		
+		@Override
+		public boolean visit(SimpleName name){
+			if(!containsInterface){
+				IBinding binding = name.resolveBinding();
+				if(binding instanceof IVariableBinding){
+					IVariableBinding vBinding = (IVariableBinding)binding;
+					ITypeBinding type = vBinding.getType();
+					if(type.isInterface()){
+						containsInterface = true;
+					}
+				}
+			}
+			return false;
+		}
+	}
+	
+	private boolean containsInterfaceField(MethodDeclaration md, CompilationUnit cu){
+		AccessedFieldVisitor afVisitor = new AccessedFieldVisitor();
+		md.accept(afVisitor);
+		return afVisitor.containsInterface;
 	}
 
 	private boolean checkPrimitiveType(MethodDeclaration md, CompilationUnit cu){
