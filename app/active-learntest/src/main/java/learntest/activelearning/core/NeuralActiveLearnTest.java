@@ -1,5 +1,6 @@
 package learntest.activelearning.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.bcel.Repository;
@@ -13,6 +14,7 @@ import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.data.TestInputData;
 import learntest.activelearning.core.data.UnitTestSuite;
 import learntest.activelearning.core.handler.Tester;
+import learntest.activelearning.core.report.CoverageTimer;
 import learntest.activelearning.core.settings.LearntestSettings;
 import learntest.activelearning.core.testgeneration.NNBasedTestGenerator;
 import learntest.activelearning.core.testgeneration.communication.PythonCommunicator;
@@ -30,10 +32,11 @@ import sav.strategies.dto.execute.value.ExecVar;
 public class NeuralActiveLearnTest {
 	private static Logger log = LoggerFactory.getLogger(NeuralActiveLearnTest.class);
 
-	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings) throws Exception {
+	public void generateTestcase(AppJavaClassPath appClasspath, MethodInfo targetMethod, LearntestSettings settings)
+			throws Exception {
 		LearnTestContext.init();
 		settings.setInitRandomTestNumber(10);
-		//settings.setMethodExecTimeout(100);
+		// settings.setMethodExecTimeout(100);
 		CFGUtility cfgUtility = new CFGUtility();
 		Repository.clearCache();
 		CFGInstance cfgInstance = cfgUtility.buildProgramFlowGraph(appClasspath,
@@ -46,32 +49,60 @@ public class NeuralActiveLearnTest {
 		if (testsuite == null) {
 			throw new SavRtException("Fail to generate random test!");
 		}
-		List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(),
-								settings.getLearnArraySizeThreshold(), settings.getReceiverFieldRetrieveLevel())
-									.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
-		LearnTestContext.setDatasetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
-		testsuite.setLearnDataMapper(LearnTestContext.getLearnDataSetMapper());
-		for (TestInputData inputData : testsuite.getInputData().values()) {
-			DpAttribute[] dataPoint = inputData.getDataPoint();
-			log.debug(TextFormatUtils.printObj(dataPoint));
+
+		String exceptionMessage = "";
+
+		CoverageTimer timer = new CoverageTimer(testsuite.getBranchInputMap(), settings.getTestTotalTimeout() + 10000,
+				10000);
+		Thread t = new Thread(timer);
+
+		List<Double> progressCoverages = new ArrayList<>();
+		List<Integer> tcsNum = new ArrayList<>();
+
+		try {
+			List<ExecVar> learningVarsSet = new LearningVarCollector(settings.getInputValueExtractLevel(),
+					settings.getLearnArraySizeThreshold(), settings.getReceiverFieldRetrieveLevel())
+							.collectLearningVars(appClasspath, targetMethod, testsuite.getInputData().values());
+			LearnTestContext.setDatasetMapper(learningVarsSet, settings.getLearnArraySizeThreshold());
+			testsuite.setLearnDataMapper(LearnTestContext.getLearnDataSetMapper());
+			for (TestInputData inputData : testsuite.getInputData().values()) {
+				DpAttribute[] dataPoint = inputData.getDataPoint();
+				log.debug(TextFormatUtils.printObj(dataPoint));
+			}
+
+			testsuite.getCoverageGraph().setCfg(cfgInstance);
+			CDGConstructor cdgConstructor = new CDGConstructor();
+			CDG cdg = cdgConstructor.construct(testsuite.getCoverageGraph());
+			
+			/* learn */
+			PythonCommunicator communicator = new PythonCommunicator(targetMethod);
+			communicator.start();
+			
+			t.start();
+
+			NNBasedTestGenerator nnLearner = new NNBasedTestGenerator(tester, testsuite, communicator, appClasspath,
+					targetMethod, settings);
+			nnLearner.cover(cdg);
+			
+			progressCoverages = timer.getProgressCoverages();
+			tcsNum = timer.getTcsNum();
+			
+			double coverage = nnLearner.computeTestCoverage();
+			progressCoverages.add(coverage);
+			tcsNum.add(nnLearner.computeTestNumber());
+
+			System.out.println(coverage);
+			List<Branch> uncovered = nnLearner.getUncoveredBranches();
+			System.out.println(uncovered);
+			
+			communicator.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+			exceptionMessage = e.getMessage();
 		}
+
+		CoverageReport.generateCoverageReport(targetMethod, exceptionMessage, progressCoverages, tcsNum);
 		
-		testsuite.getCoverageGraph().setCfg(cfgInstance);
-		CDGConstructor cdgConstructor = new CDGConstructor();
-		CDG cdg = cdgConstructor.construct(testsuite.getCoverageGraph());
-		/* learn */
-		PythonCommunicator communicator = new PythonCommunicator(targetMethod);
-		communicator.start();
-		
-		NNBasedTestGenerator nnLearner = new NNBasedTestGenerator(tester, testsuite, communicator, appClasspath, targetMethod, settings);
-		nnLearner.cover(cdg);
-		
-		double coverage = nnLearner.computeTestCoverage();
-		System.out.println(coverage);
-		List<Branch> uncovered = nnLearner.getUncoveredBranches();
-		System.out.println(uncovered);
-		
-		communicator.stop();
 		LearnTestContext.dispose();
 	}
 

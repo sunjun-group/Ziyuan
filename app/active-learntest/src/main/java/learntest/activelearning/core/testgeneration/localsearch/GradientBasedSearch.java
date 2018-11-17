@@ -325,7 +325,7 @@ public class GradientBasedSearch {
 		return returnInput;
 	}
 
-	private Branch findSiblingBranch(Branch branch) {
+	public Branch findSiblingBranch(Branch branch) {
 		for (Branch b : branchInputMap.keySet()) {
 			if (b.getFromNodeIdx() == branch.getFromNodeIdx() && b.getToNodeIdx() != branch.getToNodeIdx()) {
 				return b;

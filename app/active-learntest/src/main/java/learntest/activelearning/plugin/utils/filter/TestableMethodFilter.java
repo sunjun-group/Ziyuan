@@ -98,7 +98,7 @@ public class TestableMethodFilter implements IMethodFilter {
 		}
 		else if(!callMethodInCondition(md, cu)){
 			callMethodInCondition.add(md.getName().toString());
-//			return false;
+			return false;
 		}
 //		if (CollectionUtils.isEmpty(md.getBody().statements())) {
 //			emptyBody.add(md.getName().toString());

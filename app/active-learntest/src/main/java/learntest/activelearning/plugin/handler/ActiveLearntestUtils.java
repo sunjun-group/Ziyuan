@@ -16,7 +16,7 @@ public class ActiveLearntestUtils {
 				IResourceUtils.getResourceAbsolutePath(ActiveLearntestPlugin.PLUGIN_ID, "sav.testrunner.jar"));
 		LearntestSettings learntestSettings = new LearntestSettings(resources);
 		learntestSettings.setEachGradientSearchExecutionTimeOut(600000);
-		learntestSettings.setTestTotalTimeout(900000);
+		learntestSettings.setTestTotalTimeout(150000);
 //		learntestSettings.setMethodExecTimeout(900000);
 		return learntestSettings;
 	}

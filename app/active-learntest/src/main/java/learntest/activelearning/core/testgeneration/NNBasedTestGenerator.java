@@ -45,6 +45,18 @@ public class NNBasedTestGenerator extends TestGenerator {
 	public void cover(CDG cdg) {
 		this.branchInputMap = testsuite.getBranchInputMap();
 		this.cdg = cdg;
+		
+		boolean traversable = false;
+		for(Branch branch: this.branchInputMap.keySet()){
+			if(!this.branchInputMap.get(branch).isEmpty()){
+				traversable = true;
+			}
+		}
+		
+		if(!traversable){
+			return;
+		}
+		
 		for (CDGNode node : cdg.getStartNodes()) {
 			try{
 				traverseLearning(node);				
@@ -79,7 +91,7 @@ public class NNBasedTestGenerator extends TestGenerator {
 					}
 					
 					if (gradientInputs.isEmpty()) {
-						generateInputByExplorationSearch(branch, branchCDGNode);
+						generateInputByExplorationSearch(branch, branchCDGNode, searchStategy);
 					}
 				}
 
@@ -214,7 +226,17 @@ public class NNBasedTestGenerator extends TestGenerator {
 		return negativeInputs;
 	}
 
-	private void generateInputByExplorationSearch(Branch branch, CDGNode branchCDGNode) throws ProcessDeadException {
+	private void generateInputByExplorationSearch(Branch branch, CDGNode branchCDGNode, GradientBasedSearch searchStategy) throws ProcessDeadException {
+		Branch siblingBranch = searchStategy.findSiblingBranch(branch);
+		if (siblingBranch == null) {
+			return;
+		}
+		
+		List<TestInputData> otherInputs = this.branchInputMap.get(siblingBranch);
+		if(otherInputs.isEmpty()){
+			return;
+		}
+		
 		List<Branch> trainedParentBranches = new ArrayList<>();
 		findTrainedParentBranches(branchCDGNode, trainedParentBranches);
 

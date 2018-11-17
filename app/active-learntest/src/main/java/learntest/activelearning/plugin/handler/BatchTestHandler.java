@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import learntest.activelearning.core.NeuralActiveLearnTest;
 import learntest.activelearning.core.SearchBasedLearnTest;
 import learntest.activelearning.core.data.MethodInfo;
 import learntest.activelearning.core.settings.LearntestSettings;
@@ -86,17 +87,18 @@ public class BatchTestHandler extends AbstractHandler implements IHandler {
 			return;
 		}
 		for (MethodInfo method : validMethods) {
-			System.out.println("******************");
 			System.out.println(method);
-			System.out.println("******************");
-			
-			learntestSettings.setInitRandomTestNumber(100);
-			SearchBasedLearnTest learntest = new SearchBasedLearnTest();
-			try {
-				learntest.generateTestcase(appClasspath, method, learntestSettings);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
+//			System.out.println("******************");
+//			System.out.println(method);
+//			System.out.println("******************");
+//			
+//			learntestSettings.setInitRandomTestNumber(100);
+//			NeuralActiveLearnTest learntest = new NeuralActiveLearnTest();
+//			try {
+//				learntest.generateTestcase(appClasspath, method, learntestSettings);
+//			} catch (Exception e1) {
+//				e1.printStackTrace();
+//			}
 		}
 	}
 
@@ -157,6 +159,6 @@ public class BatchTestHandler extends AbstractHandler implements IHandler {
 				run(validMethods, cu, appClasspath, learntestSettings, monitor);
 			}
 		}
-		log.info("package : {} ", pkg.getElementName());
+//		log.info("package : {} ", pkg.getElementName());
 	}
 }
