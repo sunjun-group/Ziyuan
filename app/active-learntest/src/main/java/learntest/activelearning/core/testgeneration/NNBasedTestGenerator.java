@@ -128,25 +128,36 @@ public class NNBasedTestGenerator extends TestGenerator {
 		List<TestInputData> coveredInputs = new ArrayList<>();
 		
 		Message response = communicator.requestBoundaryRemaining(this.targetMethod.getMethodId(), parentBranch, relativeData);
-		if(response!=null && response.getRequestType()==RequestType.$SEND_BOUNDARY_REMAINING_POINTS){
-			DataPoints points = (DataPoints) response.getMessageBody();
-			if(points.values.size()==0){
-				return;
+		while (response != null) {
+			if(response.getRequestType() == RequestType.$SEND_BOUNDARY_REMAINING_POINTS) {
+				DataPoints points = (DataPoints) response.getMessageBody();
+				if(points.values.size()==0){
+					return;
+				}
+				
+				UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
+						points.toBreakpointValues());
+				newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
+
+				this.testsuite.addTestCases(newSuite);
+
+				CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
+
+				for (String testcase : newSuite.getJunitTestcases()) {
+					TestInputData input = this.testsuite.getInputData().get(testcase);
+					if (branchNode.getCoveredTestcases().contains(testcase)) {
+						coveredInputs.add(input);
+					} 
+				}
+				
+				break;
 			}
-			
-			UnitTestSuite newSuite = this.tester.createTest(this.targetMethod, this.settings, this.appClasspath,
-					points.toBreakpointValues());
-			newSuite.setLearnDataMapper(testsuite.getLearnDataMapper());
-
-			this.testsuite.addTestCases(newSuite);
-
-			CoverageSFNode branchNode = testsuite.getCoverageGraph().getNodeList().get(branch.getToNodeIdx());
-
-			for (String testcase : newSuite.getJunitTestcases()) {
-				TestInputData input = this.testsuite.getInputData().get(testcase);
-				if (branchNode.getCoveredTestcases().contains(testcase)) {
-					coveredInputs.add(input);
-				} 
+			else if(response.getRequestType() == RequestType.$REQUEST_MASK_RESULT) {
+				DataPoints points = (DataPoints) response.getMessageBody();
+				response = generateAndSendMaskResult(branch, points);	
+			}
+			else {
+				break;				
 			}
 		}
 		

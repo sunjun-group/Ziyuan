@@ -133,6 +133,7 @@ public class TestGenerator {
 	 */
 	public GentestResult genTestAccordingToSolutions(GentestParams params, List<BreakpointValue> inputData,
 			ICompilationUnitWriter cuWriter) throws SavException {
+		System.currentTimeMillis();
 		MethodCall target = createMethodCall(params);
 		if (target == null) {
 			return null;

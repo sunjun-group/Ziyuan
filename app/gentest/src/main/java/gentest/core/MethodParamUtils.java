@@ -10,6 +10,7 @@ public class MethodParamUtils {
 	public static String[] getParamNames(MethodCall methodCall) {
 		if (methodCall.getParamNames() == null) {
 			String[] paramNames = paramNameDiscover.getParameterNames(methodCall.getMethod());
+			System.currentTimeMillis();
 			methodCall.setParamNames(paramNames);
 		}
 		return methodCall.getParamNames();
